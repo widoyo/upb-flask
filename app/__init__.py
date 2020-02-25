@@ -20,6 +20,9 @@ app.register_blueprint(api_bp, url_prefix='/api')
 from app.main import bp as main_bp
 app.register_blueprint(main_bp, url_prefix='')
 
+from app.map import bp as map_bp
+app.register_blueprint(map_bp, url_prefix='/map')
+
 from app.about import bp as about_bp
 app.register_blueprint(about_bp, url_prefix='/profile')
 
