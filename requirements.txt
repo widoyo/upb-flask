@@ -24,6 +24,7 @@ Jinja2==2.10.3
 Mako==1.0.7
 MarkupSafe==1.1.1
 monotonic==1.5
+mysql-connector-python==8.0.19
 # numpy==1.16.1
 paho-mqtt==1.4.0
 # pandas==0.24.0
