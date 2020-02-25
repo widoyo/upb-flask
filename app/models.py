@@ -142,6 +142,16 @@ class Bendungan(BaseLog):
     elev_puncak = db.Column(db.Float)
     kab = db.Column(db.Text)
 
+    vn1_panjang_saluran = db.Column(db.Float)
+    vn2_panjang_saluran = db.Column(db.Float)
+    vn3_panjang_saluran = db.Column(db.Float)
+    vn1_q_limit = db.Column(db.Float)
+    vn2_q_limit = db.Column(db.Float)
+    vn3_q_limit = db.Column(db.Float)
+    vn1_tin_limit = db.Column(db.Float)
+    vn2_tin_limit = db.Column(db.Float)
+    vn3_tin_limit = db.Column(db.Float)
+
 
 class Foto(BaseLog):
     __tablename__ = 'foto'
