@@ -7,7 +7,8 @@ bp = Blueprint('map', __name__)
 @bp.route('/bendungan')
 def bendungan():
     ''' Map Bendungan '''
-    return render_template('map/bendungan.html')
+    bendungan = Bendungan.query.all()
+    return render_template('map/bendungan.html', bendungan=bendungan)
 
 
 @bp.route('/embung')

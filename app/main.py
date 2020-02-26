@@ -45,7 +45,7 @@ def index():
     print(hujan_list)
     return render_template('index.html', hujan_list=hujan_list,
                            hujan_sejak=sejak,
-                           title='primaBase')
+                           title='Home')
 
 @app.route('/map')
 @login_required
