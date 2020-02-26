@@ -42,9 +42,9 @@ def example(sampling):
 def import_master():
     mydb = mysql.connector.connect(
         host="localhost",
-        user="upbadmin",
-        passwd="id4545",
-        database="upbbsolodb"
+        user=os.environ['MYSQL_USER'],
+        passwd=os.environ['MYSQL_PASS'],
+        database=os.environ['MYSQL_DB']
     )
     mycursor = mydb.cursor()
 
@@ -53,6 +53,7 @@ def import_master():
     for waduk in all_waduk:
         pprint(waduk)
         new_bend = Bendungan(
+            id=waduk["AgentID"],
             nama=waduk["cname"],
             ll=waduk["ll"],
             muka_air_min=waduk["CriticalLower"],
