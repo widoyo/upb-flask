@@ -3,14 +3,201 @@
 {% set title = "Embung" %}
 
 {% block css %}
+<link rel="stylesheet" href="//cdn.datatables.net/1.10.20/css/jquery.dataTables.min.css">
 {% endblock %}
 
 {% block content %}
 <div class="container">
-    <h3>Index Embung</h3>
+    <h1>Embung</h1>
+    <nav>
+      <div class="nav nav-tabs" id="nav-tab" role="tablist">
+        <a class="nav-item nav-link active"
+            id="nav-home-tab" data-toggle="tab"
+            href="#nav-home" role="tab"
+            aria-controls="penampung-air" aria-selected="true">
+            <h3>Penampung Air</h3>
+        </a>
+        <a class="nav-item nav-link"
+            id="nav-profile-tab" data-toggle="tab"
+            href="#nav-profile" role="tab"
+            aria-controls="air-baku" aria-selected="false">
+            <h3>Air Baku</h3>
+        </a>
+      </div>
+    </nav>
+    <div class="tab-content" id="nav-tabContent">
+      <div class="tab-pane fade show active mt-2"
+        id="nav-home" role="tabpanel"
+        aria-labelledby="penampung-air-tab">
+        <table id="bpa" class="table table-bordered">
+            <thead>
+                <tr>
+                    <th>No</th>
+                    <th>Nama</th>
+                    <th>Kec, Kab</th>
+                    <th>Tampungan</th>
+                    <th>Irigasi</th>
+                </tr>
+            </thead>
+            <tbody>
+            <tr>
+                          <td>1</td>
+                          <td>Embung Joho</td>
+                          <td>Pracimantoro, <b>Wonogiri</b></td>
+                          <td class="text-right">3072.0</td>
+                          <td class="text-right">3.9</td>
+                  </tr>
+            <tr>
+                          <td>2</td>
+                          <td>Embung geming</td>
+                          <td>Giritontro, <b>Wonogiri</b></td>
+                          <td class="text-right">3945.0</td>
+                          <td class="text-right">2.8</td>
+                  </tr>
+            <tr>
+                          <td>3</td>
+                          <td>Embung Bendokerep</td>
+                          <td>Wonogiri, <b>Wonogiri</b></td>
+                          <td class="text-right">54372.0</td>
+                          <td class="text-right">47.6</td>
+                  </tr>
+            <tr>
+                          <td>4</td>
+                          <td>Embung Pakis</td>
+                          <td>Selogiri, <b>Wonogiri</b></td>
+                          <td class="text-right">47203.0</td>
+                          <td class="text-right">69.7</td>
+                  </tr>
+            <tr>
+                          <td>5</td>
+                          <td>Embung Brecak</td>
+                          <td>Ngadirojo, <b>Wonogiri</b></td>
+                          <td class="text-right">25299.0</td>
+                          <td class="text-right">8.6</td>
+                  </tr>
+            <tr>
+                          <td>6</td>
+                          <td>Embung Brubuh</td>
+                          <td>Ngadirojo, <b>Wonogiri</b></td>
+                          <td class="text-right">15186.0</td>
+                          <td class="text-right">4.8</td>
+                  </tr>
+            <tr>
+                          <td>7</td>
+                          <td>Embung Ketos</td>
+                          <td>Pracimantoro, <b>Wonogiri</b></td>
+                          <td class="text-right">11423.0</td>
+                          <td class="text-right">8.8</td>
+                  </tr>
+            </tbody>
+        </table>
+      </div>
+      <div class="tab-pane fade mt-2"
+        id="nav-profile" role="tabpanel"
+        aria-labelledby="air-baku-tab">
+        <table id="ab" class="table table-bordered ">
+            <thead>
+                    <tr>
+                            <th>No</th>
+                            <th>Nama</th>
+                            <th>Kec, Kab</th>
+                            <th>Tampungan</th>
+                            <th>Air Baku</th>
+                    </tr>
+            </thead>
+            <tbody>
+            <tr>
+                          <td>1</td>
+                          <td>Embung Digal</td>
+                          <td>Pracimantoro, <b>Wonogiri</b></td>
+                          <td class="text-right">34971.0</td>
+                          <td class="text-right">0</td>
+                  </tr>
+            <tr>
+                          <td>2</td>
+                          <td>Embung Sebagor</td>
+                          <td>Pracimantoro, <b>Wonogiri</b></td>
+                          <td class="text-right">38415.0</td>
+                          <td class="text-right">0</td>
+                  </tr>
+            <tr>
+                          <td>3</td>
+                          <td>Embung Sumberagung</td>
+                          <td>Pracimantoro, <b>Wonogiri</b></td>
+                          <td class="text-right">33241.0</td>
+                          <td class="text-right">0</td>
+                  </tr>
+            <tr>
+                          <td>4</td>
+                          <td>Embung Mesu</td>
+                          <td>Pracimantoro, <b>Wonogiri</b></td>
+                          <td class="text-right">23445.0</td>
+                          <td class="text-right">0</td>
+                  </tr>
+            </tbody>
+        </table>
+      </div>
+    </div>
 </div>
 {% endblock %}
 
 {% block js %}
+<script src="//cdn.datatables.net/1.10.20/js/jquery.dataTables.min.js"></script>
+<script>
+    jQuery.fn.dataTable.Api.register( 'sum()', function ( ) {
+            return this.flatten().reduce( function ( a, b ) {
+                    if ( typeof a === 'string' ) {
+                            a = a.replace(/[^\d.-]/g, '') * 1;
+                    }
+                    if ( typeof b === 'string' ) {
+                            b = b.replace(/[^\d.-]/g, '') * 1;
+                    }
+
+            return a + b;
+            }, 0 );
+    } );
+    $(document).ready(function() {
+            var numberFormat = function (obj) {
+                    return parseInt(obj).toLocaleString('id-ID');
+            };
+            var dt_bpa = $('#bpa').DataTable({
+                    "order": [[3, 'desc']],
+                    "paging": false,
+                    "dom": '<"summary">f',
+                    "language": {
+                            "decimal": ",",
+                            "thousands": "."
+                    }
+            });
+            $('div.summary').html('Banyak: <b id="s_banyak" class="s_item">102</b> Tampungan: <b class="s_item"><span  id="s_tampungan">-</span> M<sup>3</sup></b>Irigasi: <b class="s_item"><span id="s_irigasi"></span> Ha</b>');
+            var dt_ab = $('#ab').DataTable({
+                    "order": [[3, 'desc']],
+                    "dom": '<"summary_ab">f',
+                    "paging": false,
+                    "language": {
+                            "decimal": ",",
+                            "thousands": "."
+                    }
+            });
+            $('div.summary_ab').html('Banyak: <b id="s_banyak_ab" class="s_item">72</b> Tampungan: <b class="s_item"><span  id="s_tampungan_ab">-</span> M<sup>3</sup></b>Air Baku: <b class="s_item"><span id="s_airbaku"></span> KK</b>');
+            dt_bpa.on('draw', function () {
+                    var tampungan = dt_bpa.column(3, {filter: 'applied'}).data().sum();
+                    $('#s_tampungan').text(numberFormat(tampungan));
+                    $('#s_banyak').text(dt_bpa.rows({filter: 'applied'}).data().length)
+                    $('#s_irigasi').text(numberFormat(dt_bpa.column(4, {filter: 'applied'}).data().sum()));
+
+            });
+            dt_ab.on('draw', function () {
+                    $('#s_banyak_ab').text(dt_ab.rows({filter: 'applied'}).data().length)
+                    $('#s_tampungan_ab').text(numberFormat(dt_ab.column(3, {filter: 'applied'}).data().sum()));
+                    $('#s_airbaku').text(numberFormat(dt_ab.column(4, {filter: 'applied'}).data().sum()));
+            });
+            $('#s_tampungan').text(dt_bpa.column(3, {filter: 'applied'}).data().sum());
+            $('#s_irigasi').text(numberFormat(dt_bpa.column(4, {filter: 'applied'}).data().sum()));
+            $('#s_tampungan').text(numberFormat($('#s_tampungan').text()));
+            $('#s_tampungan_ab').text(numberFormat(dt_ab.column(3, {filter: 'applied'}).data().sum()));
+            $('#s_airbaku').text(numberFormat(dt_ab.column(4, {filter: 'applied'}).data().sum()));
+    });
+  </script>
 
 {% endblock %}

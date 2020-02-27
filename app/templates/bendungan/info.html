@@ -1,0 +1,129 @@
+{% extends 'master/base.html' %}
+
+{% set title = "Bendungan" %}
+
+{% block css %}
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-datepicker/1.9.0/css/bootstrap-datepicker.css">
+{% endblock %}
+
+{% block content %}
+<div class="container">
+    <div class="row">
+        <div class="col-md-6">
+            <h1>{{ waduk.nama }}</h1>
+        </div>
+        <div class="col-md-6">
+            <div class="btn-group" role="group" style="float: right">
+                <a class="btn btn-primary disabled" href="{{ url_for('bendungan.tma', lokasi_id=waduk.id) }}">TMA</a>
+                <a class="btn btn-primary" href="{{ url_for('bendungan.operasi', lokasi_id=waduk.id) }}">RTOW</a>
+                <a class="btn btn-primary" href="{{ url_for('bendungan.vnotch', lokasi_id=waduk.id) }}">VNotch</a>
+                <a class="btn btn-primary" href="{{ url_for('bendungan.piezo', lokasi_id=waduk.id) }}">Piezometer</a>
+            </div>
+        </div>
+    </div>
+    <div class="text-center">
+        <h5><span id="datepicker">{{ sampling }}</span></h5>
+    </div>
+    <br>
+    <div class="container" style="width: 100%; height: 350px; margin-bottom: 200px;">
+        <h4>Status TMA</h4>
+        <svg height="380px" width="1000px">
+    		<g>
+                <text id="nmab" x="35" y="14" fill="red" font-family="monospace">Elevasi Puncak: </text>
+    			<text id="ntma" x="35" y="60" fill="blue" font-family="monospace">TMA: </text>
+    			<text id="nman" x="35" y="48" fill="orange" font-family="monospace">MAN: </text>
+    			<text id="nmamin" x="35" y="237" fill="gray" font-family="monospace">MaMin: </text>
+    			<defs>
+    				<linearGradient id="grad2" x1="0%" y1="0%" x2="0%" y2="100%">
+    					<stop offset="0%" style="stop-color:lightblue;stop-opacity:1" />
+    					<stop offset="100%" style="stop-color:rgba(196,196,255,0.5);stop-opacity:1" />
+    				</linearGradient>
+    			</defs>
+    			<path id="air_id" d="M180 271, L180 35 520 35 520 271 Z" stroke="black" stroke-width="0" fill="url(#grad2)" />
+    			<line id="etma" x1="180" x2="520" style="stroke:blue;stroke-width:2" />
+                <line id="emab" x1="180" x2="1020" style="stroke:red;stroke-width:1" />
+    			<line id="emamin" x1="180" x2="520" y1="250" y2="250" style="stroke:gray;stroke-width:1" />
+    			<line x1="880" y1="330" x2="960" y2="330" style="stroke:blue;stroke-width:1" />
+    			<!--<path d="M180 272, L240 272, C600 -44, 460 -44, 820 272, L920 370, 1020 272" stroke="#888888" stroke-width="5" fill="transparent" />-->
+    			<!--<path d="M180 274, L242 274, C600 -41 460 -41, 818 274, L919 373 180 373 Z" stroke="black" stroke-width="0" fill="tan" />-->
+                <path d="M180 274, L242 274, C600 -24 460 -24, 818 274, L919 373 180 373 Z" stroke="black" stroke-width="0" fill="tan" />
+    			<line id="eman" x1="180" x2="520" y1="34" y2="34"style="stroke:orange;stroke-width:1" />
+    			<path d="M180 272, L240 272, C600 -24, 460 -24, 820 272, L920 370, 1020 272" stroke="#888888" stroke-width="5" fill="transparent" />
+    			<path d="M921 373, L1000 373 1000 295 Z" stroke="#888888" stroke-width="1" fill="tan" />
+    			<path d="M884 332, L920 366 955 332" stroke="black" stroke-width="0" fill="lightblue" />
+
+    		</g>
+    	</svg>
+    </div>
+</div>
+{% endblock %}
+
+{% block js %}
+    <script src="https://cdn.jsdelivr.net/npm/chart.js@2.8.0"></script>
+    <script>
+        $(document).ready(function() {
+          $(function () {
+            $('[data-toggle="tooltip"]').tooltip()
+          });
+    	     moment.locale('id');
+          $('.hari').each(function (i, e) {
+            console.log($(e).prepend(moment($(e).data('tgl')).fromNow()));
+          });
+          // $('#sejak').popover({
+          //       html: true,
+    		// 	placement: 'right',
+          //       title: "Sejak ? hari",
+          //       content: $('#sejakForm').html()
+          // });
+
+
+        });
+
+        $('#datepicker').datepicker({
+            todayHighlight: true,
+            autoclose: true,
+            format: "yyyy-mm-dd"
+        });
+        $('#datepicker').on('changeDate', function () {
+            window.location = "{{ url_for('bendungan.tma', lokasi_id=waduk.id) }}?sampling=" + $('#datepicker').datepicker('getFormattedDate')
+        });
+
+        let drawDam = function (nTma, nMab, nMan, nMamin) {
+            let maxi = Math.max(nTma, nMab, nMan, nMamin);
+            let rMax = function (maxi, d) { return 170 - ((170/maxi) * d) };
+
+            let yTma = 210 - ((nTma - nMamin) * (210 - 48) / (nMan - nMamin));
+            let air = "M180 271, L180 "+ yTma +" 520 "+ yTma +" 520 271 Z";
+            let eGambarAir = document.getElementById('air_id');
+            eGambarAir.setAttribute("d", air);
+            let etma = document.getElementById('etma');
+            etma.setAttribute("y1", yTma);
+            etma.setAttribute("y2", yTma);
+            let emab = document.getElementById('emab');
+            emab.setAttribute("y1", 2);
+            emab.setAttribute("y2", 2);
+
+            let eman = document.getElementById('eman');
+            eman.setAttribute("y1", 48);
+            eman.setAttribute("y2", 48);
+            let emamin = document.getElementById('emamin');
+            emamin.setAttribute("y1", 250);
+            emamin.setAttribute("y2", 250);
+            let nmab = document.getElementById('nmab');
+            nmab.innerHTML = 'Elevasi Puncak: +' + nMab + 'm';
+
+            let ntma = document.getElementById('ntma');
+            ntma.innerHTML = 'TMA: +' + nTma + 'm';
+            if (yTma <= 60) {
+                ntma.setAttribute("y", 60);
+            } else {
+                ntma.setAttribute("y", yTma);
+            }
+            let nman = document.getElementById('nman');
+            nman.innerHTML = 'MAN: +' + nMan + 'm';
+            let nmamin = document.getElementById('nmamin');
+            nmamin.innerHTML = 'MaMin: +' + nMamin + 'm';
+        };
+        drawDam({% if not waduk.tma %}0{% else %}{{ waduk.tma }}{% endif %}, {{ waduk.elev_puncak }}, {{ waduk.muka_air_normal }}, {{ waduk.muka_air_min }});
+    </script>
+{% endblock %}

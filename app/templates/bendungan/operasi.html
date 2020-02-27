@@ -1,0 +1,211 @@
+{% extends 'master/base.html' %}
+
+{% set title = "Bendungan" %}
+
+{% block css %}
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-datepicker/1.9.0/css/bootstrap-datepicker.css">
+{% endblock %}
+
+{% block content %}
+    <div class="container">
+        <div class="row">
+            <div class="col-md-6">
+                <h1>{{ waduk.nama }} RTOW</h1>
+            </div>
+            <div class="col-md-6">
+                <div class="btn-group" role="group" style="float: right">
+                    <a class="btn btn-primary" href="{{ url_for('bendungan.tma', lokasi_id=waduk.id) }}">TMA</a>
+                    <a class="btn btn-primary disabled" href="{{ url_for('bendungan.operasi', lokasi_id=waduk.id) }}">RTOW</a>
+                    <a class="btn btn-primary" href="{{ url_for('bendungan.vnotch', lokasi_id=waduk.id) }}">VNotch</a>
+                    <a class="btn btn-primary" href="{{ url_for('bendungan.piezo', lokasi_id=waduk.id) }}">Piezometer</a>
+                </div>
+            </div>
+        </div>
+        <div class="text-center">
+            <h5>Periode : <span id="datepicker">{{ sampling }}</span> (Nov {{ sampling }} - Okt {{ sampling }})</h5>
+        </div>
+        <br>
+        <div>
+            <canvas id="operasiChart" style="width: 100%; height: 300px; border: solid 1px #eee;" class="chartjs-render-monitor"></canvas>
+        </div>
+        <p>{{ waduk.nama }}</p>
+        <div>
+            <canvas id="outflowChart" style="width: 100%; height: 300px; border: solid 1px #eee;" class="chartjs-render-monitor"></canvas>
+        </div>
+        <p>{{ waduk.nama }}</p>
+        <div>
+            <canvas id="inflowChart" style="width: 100%; height: 300px; border: solid 1px #eee;" class="chartjs-render-monitor"></canvas>
+        </div>
+    </div>
+
+{% endblock %}
+
+{% block js %}
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-datepicker/1.9.0/js/bootstrap-datepicker.min.js" type="text/javascript"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js@2.8.0"></script>
+    <script>
+        $(document).ready(function() {
+          $(function () {
+            $('[data-toggle="tooltip"]').tooltip()
+          });
+    	     moment.locale('id');
+          $('.hari').each(function (i, e) {
+            console.log($(e).prepend(moment($(e).data('tgl')).fromNow()));
+          });
+          // $('#sejak').popover({
+          //       html: true,
+    		// 	placement: 'right',
+          //       title: "Sejak ? hari",
+          //       content: $('#sejakForm').html()
+          // });
+
+
+        });
+
+        $('#datepicker').datepicker({
+            todayHighlight: true,
+            autoclose: true,
+            format: "yyyy",
+            viewMode: "years",
+            minViewMode: "years"
+        });
+        $('#datepicker').on('changeDate', function () {
+            window.location = "{{ url_for('bendungan.operasi', lokasi_id=waduk.id) }}?sampling=" + $('#datepicker').datepicker('getFormattedDate')
+        });
+
+        // chart
+        let options = {
+            responsive: true,
+            legend: {
+                labels: {
+                    usePointStyle: true,
+                },
+            },
+            scales: {
+                yAxes: [{
+                    ticks: {
+                        beginAtZero: false
+                    }
+                }]
+            },
+            tooltips: {
+                position: "nearest",
+                mode: "index",
+                intersect: false,
+                callbacks: {
+                    label: (item, data) => `${data.datasets[item.datasetIndex].label} : ${item.yLabel} cm`,
+                },
+            },
+        };
+        let ctx = document.getElementById('operasiChart').getContext('2d');
+        let myChart = new Chart(ctx, {
+            type: 'line',
+            data: {
+                labels: [{{ tanggal|safe }}],
+                datasets: [
+                    {
+                        label: "Batas Atas",
+                        data: [{{ operasi.po_bona|safe }}],
+                        backgroundColor: 'rgba(255,0,0,0.5)',
+                        borderColor: 'rgba(255,0,0,1)',
+                        borderWidth: 1,
+                        fill: false,
+                        pointStyle: 'triangle'
+                    },
+                    {
+                        label: "Batas Bawah",
+                        data: [{{ operasi.po_bonb|safe }}],
+                        backgroundColor: 'rgba(0,255,0,0.5)',
+                        borderColor: 'rgba(0,255,0,1)',
+                        borderWidth: 1,
+                        fill: false
+                    },
+                    {
+                        label: "Realisasi",
+                        data: [{{ operasi.real|safe }}],
+                        backgroundColor: 'rgba(0,0,255,0.5)',
+                        borderColor: 'rgba(0,0,255,1)',
+                        borderWidth: 1,
+                        fill: false,
+                        pointStyle: 'rectRot'
+                    },
+                    {
+                        label: "Elevasi Minimal",
+                        data: [{{ operasi.elev_min|safe }}],
+                        backgroundColor: 'rgba(255,0,255,0.5)',
+                        borderColor: 'rgba(255,0,255,1)',
+                        borderWidth: 1,
+                        fill: false,
+                        pointStyle: 'cross'
+                    },
+                    {
+                        label: "Sedimen",
+                        data: [{{ operasi.sedimen|safe }}],
+                        backgroundColor: 'rgba(0,0,0,0.5)',
+                        borderColor: 'rgba(0,0,0,1)',
+                        borderWidth: 1,
+                        fill: false,
+                        pointStyle: 'line'
+                    }
+                ]
+            },
+            options: options
+        });
+
+        let ctx_out = document.getElementById('outflowChart').getContext('2d');
+        let outChart = new Chart(ctx_out, {
+            type: 'line',
+            data: {
+                labels: [{{ tanggal|safe }}],
+                datasets: [
+                    {
+                        label: "Outflow Rencana",
+                        data: [{{ operasi.po_outflow|safe }}],
+                        backgroundColor: 'rgba(0,0,255,0.5)',
+                        borderColor: 'rgba(0,0,255,1)',
+                        borderWidth: 1,
+                        fill: false
+                    },
+                    {
+                        label: "Outflow Realisasi",
+                        data: [{{ operasi.real_outflow|safe }}],
+                        backgroundColor: 'rgba(0,0,0,0.5)',
+                        borderColor: 'rgba(0,0,0,1)',
+                        borderWidth: 1,
+                        fill: false,
+                        pointStyle: 'rectRot'
+                    }
+                ]
+            },
+            options: options
+        });
+
+        let ctx_in = document.getElementById('inflowChart').getContext('2d');
+        let inChart = new Chart(ctx_in, {
+            type: 'line',
+            data: {
+                labels: [{{ tanggal|safe }}],
+                datasets: [
+                    {
+                        label: "Inflow Rencana",
+                        data: [{{ operasi.po_inflow|safe }}],
+                        backgroundColor: 'rgba(0,0,255,0.5)',
+                        borderColor: 'rgba(0,0,255,1)',
+                        borderWidth: 1,
+                        fill: false
+                    },
+                    {
+                        label: "Inflow Realisasi",
+                        data: [{{ operasi.real_inflow|safe }}],
+                        backgroundColor: 'rgba(0,0,0,0.5)',
+                        borderColor: 'rgba(0,0,0,1)',
+                        borderWidth: 1,
+                        fill: false,
+                        pointStyle: 'rectRot'
+                    }
+                ]
+            },
+            options: options
+        });
+    </script>
+{% endblock %}
