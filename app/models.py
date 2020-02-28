@@ -121,6 +121,18 @@ class Embung(BaseLog):
 
     id = db.Column(db.Integer, primary_key=True)
     nama = db.Column(db.Text)
+    jenis = db.Column(db.String(1))
+    desa = db.Column(db.Text)
+    kec = db.Column(db.Text)
+    kab = db.Column(db.Text)
+    ll = db.Column(db.Text)
+    sumber_air = db.Column(db.Text)
+    tampungan = db.Column(db.Float)
+    debit = db.Column(db.Float)
+    pipa_transmisi = db.Column(db.Float)
+    saluran_transmisi = db.Column(db.Float)
+    air_baku = db.Column(db.Integer)
+    irigasi = db.Column(db.Float)
 
 
 class Bendungan(BaseLog):

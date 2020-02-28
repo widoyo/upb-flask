@@ -16,7 +16,7 @@ from sqlalchemy.exc import IntegrityError
 from telegram import Bot
 
 from app import app, db
-from app.models import Bendungan
+from app.models import Bendungan, Embung
 
 upbbendungan = ("upbuser", "upbsecret")
 
@@ -79,6 +79,32 @@ def import_master():
             vn3_tin_limit=waduk["vn_tin3_limit"]
         )
         db.session.add(new_bend)
+        db.session.commit()
+
+    all_embung = custom_query(mycursor, 'embung', limit=None)
+    for embung in all_embung:
+        pprint(embung)
+        new_emb = Embung(
+            id=embung["id"],
+            nama=embung["nama"],
+            jenis=embung["jenis"],
+            desa=embung["desa"],
+            kec=embung["kec"],
+            kab=embung["kab"],
+            ll=embung["ll"],
+            sumber_air=embung["sumber_air"],
+            tampungan=embung["tampungan"],
+            debit=embung["debit"],
+            pipa_transmisi=embung["pipa_transmisi"],
+            saluran_transmisi=embung["saluran_transmisi"],
+            air_baku=embung["air_baku"],
+            irigasi=embung["irigasi"],
+            c_user=embung["cuser"],
+            c_date=embung["cdate"],
+            m_user=embung["muser"],
+            m_date=embung["mdate"]
+        )
+        db.session.add(new_emb)
         db.session.commit()
 
 
