@@ -8,7 +8,12 @@ bp = Blueprint('bendungan', __name__)
 @bp.route('/')
 def index():
     ''' Home Bendungan '''
-    return render_template('bendungan/index.html')
+    waduk = Bendungan.query.all()
+    sampling = datetime.datetime.now()
+
+    return render_template('bendungan/index.html',
+                            waduk=waduk,
+                            sampling=sampling)
 
 
 @bp.route('/<lokasi_id>', methods=['GET', 'POST'])
