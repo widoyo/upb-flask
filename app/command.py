@@ -83,6 +83,7 @@ def import_master():
             db.session.commit()
         except Exception as e:
             print(f"Error : {e}")
+            db.session.rollback()
 
     all_embung = custom_query(mycursor, 'embung', limit=None)
     for embung in all_embung:
@@ -112,6 +113,7 @@ def import_master():
             db.session.commit()
         except Exception as e:
             print(f"Error : {e}")
+            db.session.rollback()
 
 
 def custom_query(cursor, table, filter=None, limit=None):
