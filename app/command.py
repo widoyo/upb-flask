@@ -51,61 +51,67 @@ def import_master():
     all_waduk = custom_query(mycursor, 'agent', limit=None)
     # pprint(all_waduk)
     for waduk in all_waduk:
-        pprint(waduk)
-        new_bend = Bendungan(
-            id=waduk["AgentID"],
-            nama=waduk["cname"],
-            ll=waduk["ll"],
-            muka_air_min=waduk["CriticalLower"],
-            muka_air_normal=waduk["Normal"],
-            muka_air_max=waduk["SiagaUpper"],
-            sedimen=waduk["Sedimen"],
-            bts_elev_awas=waduk["bts_elev_awas"],
-            bts_elev_siaga=waduk["bts_elev_siaga"],
-            bts_elev_waspada=waduk["bts_elev_waspada"],
-            lbi=waduk["lbi"],
-            volume=waduk["volume"],
-            lengkung_kapasitas=waduk["lengkung_kapasitas"],
-            elev_puncak=waduk["elev_puncak"],
-            kab=waduk["kab"],
-            vn1_panjang_saluran=waduk["vn1_panjang_saluran"],
-            vn2_panjang_saluran=waduk["vn2_panjang_saluran"],
-            vn3_panjang_saluran=waduk["vn3_panjang_saluran"],
-            vn1_q_limit=waduk["vn_q1_limit"],
-            vn2_q_limit=waduk["vn_q2_limit"],
-            vn3_q_limit=waduk["vn_q3_limit"],
-            vn1_tin_limit=waduk["vn_tin1_limit"],
-            vn2_tin_limit=waduk["vn_tin2_limit"],
-            vn3_tin_limit=waduk["vn_tin3_limit"]
-        )
-        db.session.add(new_bend)
-        db.session.commit()
+        try:
+            pprint(waduk)
+            new_bend = Bendungan(
+                id=waduk["AgentID"],
+                nama=waduk["cname"],
+                ll=waduk["ll"],
+                muka_air_min=waduk["CriticalLower"],
+                muka_air_normal=waduk["Normal"],
+                muka_air_max=waduk["SiagaUpper"],
+                sedimen=waduk["Sedimen"],
+                bts_elev_awas=waduk["bts_elev_awas"],
+                bts_elev_siaga=waduk["bts_elev_siaga"],
+                bts_elev_waspada=waduk["bts_elev_waspada"],
+                lbi=waduk["lbi"],
+                volume=waduk["volume"],
+                lengkung_kapasitas=waduk["lengkung_kapasitas"],
+                elev_puncak=waduk["elev_puncak"],
+                kab=waduk["kab"],
+                vn1_panjang_saluran=waduk["vn1_panjang_saluran"],
+                vn2_panjang_saluran=waduk["vn2_panjang_saluran"],
+                vn3_panjang_saluran=waduk["vn3_panjang_saluran"],
+                vn1_q_limit=waduk["vn_q1_limit"],
+                vn2_q_limit=waduk["vn_q2_limit"],
+                vn3_q_limit=waduk["vn_q3_limit"],
+                vn1_tin_limit=waduk["vn_tin1_limit"],
+                vn2_tin_limit=waduk["vn_tin2_limit"],
+                vn3_tin_limit=waduk["vn_tin3_limit"]
+            )
+            db.session.add(new_bend)
+            db.session.commit()
+        except Exception:
+            print(f"Integrity Error")
 
     all_embung = custom_query(mycursor, 'embung', limit=None)
     for embung in all_embung:
-        pprint(embung)
-        new_emb = Embung(
-            id=embung["id"],
-            nama=embung["nama"],
-            jenis=embung["jenis"],
-            desa=embung["desa"],
-            kec=embung["kec"],
-            kab=embung["kab"],
-            ll=embung["ll"],
-            sumber_air=embung["sumber_air"],
-            tampungan=embung["tampungan"],
-            debit=embung["debit"],
-            pipa_transmisi=embung["pipa_transmisi"],
-            saluran_transmisi=embung["saluran_transmisi"],
-            air_baku=embung["air_baku"],
-            irigasi=embung["irigasi"],
-            c_user=embung["cuser"],
-            c_date=embung["cdate"],
-            m_user=embung["muser"],
-            m_date=embung["mdate"]
-        )
-        db.session.add(new_emb)
-        db.session.commit()
+        try:
+            pprint(embung)
+            new_emb = Embung(
+                id=embung["id"],
+                nama=embung["nama"],
+                jenis=embung["jenis"],
+                desa=embung["desa"],
+                kec=embung["kec"],
+                kab=embung["kab"],
+                ll=embung["ll"],
+                sumber_air=embung["sumber_air"],
+                tampungan=embung["tampungan"],
+                debit=embung["debit"],
+                pipa_transmisi=embung["pipa_transmisi"],
+                saluran_transmisi=embung["saluran_transmisi"],
+                air_baku=embung["air_baku"],
+                irigasi=embung["irigasi"],
+                c_user=embung["cuser"],
+                c_date=embung["cdate"],
+                m_user=embung["muser"],
+                m_date=embung["mdate"]
+            )
+            db.session.add(new_emb)
+            db.session.commit()
+        except Exception:
+            print(f"Integrity Error")
 
 
 def custom_query(cursor, table, filter=None, limit=None):
