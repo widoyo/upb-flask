@@ -81,8 +81,8 @@ def import_master():
             )
             db.session.add(new_bend)
             db.session.commit()
-        except Exception:
-            print(f"Integrity Error")
+        except Exception as e:
+            print(f"Error : {e}")
 
     all_embung = custom_query(mycursor, 'embung', limit=None)
     for embung in all_embung:
@@ -110,8 +110,8 @@ def import_master():
             )
             db.session.add(new_emb)
             db.session.commit()
-        except Exception:
-            print(f"Integrity Error")
+        except Exception as e:
+            print(f"Error : {e}")
 
 
 def custom_query(cursor, table, filter=None, limit=None):
