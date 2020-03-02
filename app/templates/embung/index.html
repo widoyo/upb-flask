@@ -15,13 +15,13 @@
             id="nav-home-tab" data-toggle="tab"
             href="#nav-home" role="tab"
             aria-controls="penampung-air" aria-selected="true">
-            <h3>Penampung Air</h3>
+            <h3>Penampung Air <span class="badge badge-secondary">{{ embung_b|length }}</span></h3>
         </a>
         <a class="nav-item nav-link"
             id="nav-profile-tab" data-toggle="tab"
             href="#nav-profile" role="tab"
             aria-controls="air-baku" aria-selected="false">
-            <h3>Air Baku</h3>
+            <h3>Air Baku <span class="badge badge-secondary">{{ embung_a|length }}</span></h3>
         </a>
       </div>
     </nav>
@@ -40,55 +40,15 @@
                 </tr>
             </thead>
             <tbody>
-            <tr>
-                          <td>1</td>
-                          <td>Embung Joho</td>
-                          <td>Pracimantoro, <b>Wonogiri</b></td>
-                          <td class="text-right">3072.0</td>
-                          <td class="text-right">3.9</td>
-                  </tr>
-            <tr>
-                          <td>2</td>
-                          <td>Embung geming</td>
-                          <td>Giritontro, <b>Wonogiri</b></td>
-                          <td class="text-right">3945.0</td>
-                          <td class="text-right">2.8</td>
-                  </tr>
-            <tr>
-                          <td>3</td>
-                          <td>Embung Bendokerep</td>
-                          <td>Wonogiri, <b>Wonogiri</b></td>
-                          <td class="text-right">54372.0</td>
-                          <td class="text-right">47.6</td>
-                  </tr>
-            <tr>
-                          <td>4</td>
-                          <td>Embung Pakis</td>
-                          <td>Selogiri, <b>Wonogiri</b></td>
-                          <td class="text-right">47203.0</td>
-                          <td class="text-right">69.7</td>
-                  </tr>
-            <tr>
-                          <td>5</td>
-                          <td>Embung Brecak</td>
-                          <td>Ngadirojo, <b>Wonogiri</b></td>
-                          <td class="text-right">25299.0</td>
-                          <td class="text-right">8.6</td>
-                  </tr>
-            <tr>
-                          <td>6</td>
-                          <td>Embung Brubuh</td>
-                          <td>Ngadirojo, <b>Wonogiri</b></td>
-                          <td class="text-right">15186.0</td>
-                          <td class="text-right">4.8</td>
-                  </tr>
-            <tr>
-                          <td>7</td>
-                          <td>Embung Ketos</td>
-                          <td>Pracimantoro, <b>Wonogiri</b></td>
-                          <td class="text-right">11423.0</td>
-                          <td class="text-right">8.8</td>
-                  </tr>
+                {% for e in embung_b %}
+                    <tr>
+                      <td>{{ loop.index }}</td>
+                      <td>{{ e.nama }}</td>
+                      <td>{{ e.kec }}, <b>{{ e.kab }}</b></td>
+                      <td class="text-right">{{ e.tampungan }}</td>
+                      <td class="text-right">{{ e.irigasi }}</td>
+                    </tr>
+                {% endfor %}
             </tbody>
         </table>
       </div>
@@ -106,34 +66,15 @@
                     </tr>
             </thead>
             <tbody>
-            <tr>
-                          <td>1</td>
-                          <td>Embung Digal</td>
-                          <td>Pracimantoro, <b>Wonogiri</b></td>
-                          <td class="text-right">34971.0</td>
-                          <td class="text-right">0</td>
-                  </tr>
-            <tr>
-                          <td>2</td>
-                          <td>Embung Sebagor</td>
-                          <td>Pracimantoro, <b>Wonogiri</b></td>
-                          <td class="text-right">38415.0</td>
-                          <td class="text-right">0</td>
-                  </tr>
-            <tr>
-                          <td>3</td>
-                          <td>Embung Sumberagung</td>
-                          <td>Pracimantoro, <b>Wonogiri</b></td>
-                          <td class="text-right">33241.0</td>
-                          <td class="text-right">0</td>
-                  </tr>
-            <tr>
-                          <td>4</td>
-                          <td>Embung Mesu</td>
-                          <td>Pracimantoro, <b>Wonogiri</b></td>
-                          <td class="text-right">23445.0</td>
-                          <td class="text-right">0</td>
-                  </tr>
+                {% for e in embung_a %}
+                    <tr>
+                      <td>{{ loop.index }}</td>
+                      <td>{{ e.nama }}</td>
+                      <td>{{ e.kec }}, <b>{{ e.kab }}</b></td>
+                      <td class="text-right">{{ e.tampungan }}</td>
+                      <td class="text-right">{{ e.air_baku }}</td>
+                    </tr>
+                {% endfor %}
             </tbody>
         </table>
       </div>

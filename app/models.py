@@ -133,6 +133,7 @@ class Embung(BaseLog):
     saluran_transmisi = db.Column(db.Float)
     air_baku = db.Column(db.Integer)
     irigasi = db.Column(db.Float)
+    is_verified = db.Column(db.String(1))
 
 
 class Bendungan(BaseLog):
