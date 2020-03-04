@@ -21,8 +21,10 @@ class Users(UserMixin, db.Model):
     __tablename__ = 'users'
 
     id = db.Column(db.Integer, primary_key=True)
-    username = db.Column(db.String(12), index=True, unique=True, nullable=False)
+    username = db.Column(db.String(30), index=True, unique=True, nullable=False)
     password = db.Column(db.String(128))
+    role = db.Column(db.String(1))
+    bendungan_id = db.Column(db.Integer, db.ForeignKey('bendungan.id'), nullable=True)
 
     def set_password(self, password):
         self.password = generate_password_hash(password)
@@ -53,12 +55,17 @@ class ManualDaily(BaseLog):
     spillway_deb = db.Column(db.Float)
     bendungan_id = db.Column(db.Integer, db.ForeignKey('bendungan.id'), nullable=True)
 
+    __table_args__ = (db.UniqueConstraint('bendungan_id', 'sampling',
+                                          name='manualdaily_bendungan_sampling'),)
+
 
 class ManualVnotch(BaseLog):
     __tablename__ = 'manual_vnotch'
 
     id = db.Column(db.Integer, primary_key=True)
     sampling = db.Column(db.DateTime, index=True)
+    vn_tma = db.Column(db.Float)
+    vn_deb = db.Column(db.Float)
     vn1_tma = db.Column(db.Float)
     vn1_deb = db.Column(db.Float)
     vn2_tma = db.Column(db.Float)
@@ -67,20 +74,26 @@ class ManualVnotch(BaseLog):
     vn3_deb = db.Column(db.Float)
     bendungan_id = db.Column(db.Integer, db.ForeignKey('bendungan.id'), nullable=True)
 
-
-class ManualPiezo(BaseLog):
-    __tablename__ = 'manual_piezo'
-
-    id = db.Column(db.Integer, primary_key=True)
-    sampling = db.Column(db.DateTime, index=True)
-    lokasi_id = db.Column(db.Integer, db.ForeignKey('lokasi.id'), nullable=True)
-    manual = db.Column(db.Float)
-    telemetri = db.Column(db.Float)
-    petugas = db.Column(db.Integer, nullable=True)
+    __table_args__ = (db.UniqueConstraint('bendungan_id', 'sampling',
+                                          name='manualvnotch_bendungan_sampling'),)
 
 
 class ManualTma(BaseLog):
     __tablename__ = 'manual_tma'
+
+    id = db.Column(db.Integer, primary_key=True)
+    sampling = db.Column(db.DateTime, index=True)
+    bendungan_id = db.Column(db.Integer, db.ForeignKey('bendungan.id'), nullable=True)
+    tma = db.Column(db.Float)
+    vol = db.Column(db.Float)
+    telemetri = db.Column(db.Float)
+
+    __table_args__ = (db.UniqueConstraint('bendungan_id', 'sampling',
+                                          name='manualtma_bendungan_sampling'),)
+
+
+class ManualPiezo(BaseLog):
+    __tablename__ = 'manual_piezo'
 
     id = db.Column(db.Integer, primary_key=True)
     sampling = db.Column(db.DateTime, index=True)
@@ -100,6 +113,9 @@ class ManualTma(BaseLog):
     p5b = db.Column(db.Float)
     p5c = db.Column(db.Float)
     bendungan_id = db.Column(db.Integer, db.ForeignKey('bendungan.id'), nullable=True)
+
+    __table_args__ = (db.UniqueConstraint('bendungan_id', 'sampling',
+                                          name='manualpiezo_bendungan_sampling'),)
 
 
 class Asset(BaseLog):
@@ -210,7 +226,7 @@ class Rencana(BaseLog):
     __tablename__ = 'rencana'
 
     id = db.Column(db.Integer, primary_key=True)
-    waktu = db.Column(db.DateTime, index=True)
+    sampling = db.Column(db.DateTime, index=True)
     po_tma = db.Column(db.Float)
     po_vol = db.Column(db.Float)
     po_inflow_vol = db.Column(db.Float)
@@ -222,6 +238,9 @@ class Rencana(BaseLog):
     vol_bona = db.Column(db.Float)
     vol_bonb = db.Column(db.Float)
     bendungan_id = db.Column(db.Integer, db.ForeignKey('bendungan.id'), nullable=True)
+
+    __table_args__ = (db.UniqueConstraint('bendungan_id', 'sampling',
+                                          name='rencana_bendungan_sampling'),)
 
 
 class Device(BaseLog):
