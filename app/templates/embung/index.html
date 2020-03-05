@@ -15,13 +15,13 @@
             id="nav-home-tab" data-toggle="tab"
             href="#nav-home" role="tab"
             aria-controls="penampung-air" aria-selected="true">
-            <h3>Penampung Air <span class="badge badge-secondary">{{ embung_b|length }}</span></h3>
+            <h3>Penampung Air <small><span class="badge badge-secondary" id="eb_len"></span></small></h3>
         </a>
         <a class="nav-item nav-link"
             id="nav-profile-tab" data-toggle="tab"
             href="#nav-profile" role="tab"
             aria-controls="air-baku" aria-selected="false">
-            <h3>Air Baku <span class="badge badge-secondary">{{ embung_a|length }}</span></h3>
+            <h3>Air Baku <small><span class="badge badge-secondary" id="ea_len"></span></small></h3>
         </a>
       </div>
     </nav>
@@ -97,7 +97,14 @@
             return a + b;
             }, 0 );
     } );
+    function updateLen(id, val) {
+        document.getElementById(id).innerHTML = val;
+    }
     $(document).ready(function() {
+            let eb_len = {{ embung_b|length }};
+            let ea_len = {{ embung_a|length }};
+            updateLen("ea_len", ea_len);
+            updateLen("eb_len", eb_len);
             var numberFormat = function (obj) {
                     return parseInt(obj).toLocaleString('id-ID');
             };
@@ -110,7 +117,7 @@
                             "thousands": "."
                     }
             });
-            $('div.summary').html('Banyak: <b id="s_banyak" class="s_item">102</b> Tampungan: <b class="s_item"><span  id="s_tampungan">-</span> M<sup>3</sup></b>Irigasi: <b class="s_item"><span id="s_irigasi"></span> Ha</b>');
+            $('div.summary').html('Banyak: <b id="s_banyak" class="s_item">102</b>, Tampungan: <b class="s_item"><span id="s_tampungan">-</span> M<sup>3</sup>, </b>Irigasi: <b class="s_item"><span id="s_irigasi"></span> Ha</b>');
             var dt_ab = $('#ab').DataTable({
                     "order": [[3, 'desc']],
                     "dom": '<"summary_ab">f',
@@ -126,12 +133,13 @@
                     $('#s_tampungan').text(numberFormat(tampungan));
                     $('#s_banyak').text(dt_bpa.rows({filter: 'applied'}).data().length)
                     $('#s_irigasi').text(numberFormat(dt_bpa.column(4, {filter: 'applied'}).data().sum()));
-
+                    updateLen("eb_len", dt_bpa.rows({filter: 'applied'}).data().length);
             });
             dt_ab.on('draw', function () {
                     $('#s_banyak_ab').text(dt_ab.rows({filter: 'applied'}).data().length)
                     $('#s_tampungan_ab').text(numberFormat(dt_ab.column(3, {filter: 'applied'}).data().sum()));
                     $('#s_airbaku').text(numberFormat(dt_ab.column(4, {filter: 'applied'}).data().sum()));
+                    updateLen("ea_len", dt_ab.rows({filter: 'applied'}).data().length);
             });
             $('#s_tampungan').text(dt_bpa.column(3, {filter: 'applied'}).data().sum());
             $('#s_irigasi').text(numberFormat(dt_bpa.column(4, {filter: 'applied'}).data().sum()));

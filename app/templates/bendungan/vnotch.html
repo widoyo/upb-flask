@@ -22,7 +22,7 @@
         </div>
     </div>
     <div class="text-center">
-        <h5>Periode : <span id="datepicker">{{ sampling }}</span> (Nov {{ sampling }} - Okt {{ sampling }})</h5>
+        <h5>Periode : <span id="datepicker">{{ sampling.year }}</span> (Nov {{ sampling.year - 1 }} - Okt {{ sampling.year }})</h5>
     </div>
     <br>
     <div>
@@ -35,6 +35,9 @@
 {% endblock %}
 
 {% block js %}
+    <script src="{{ url_for('static', filename='js/moment.min.js') }}"></script>
+    <script src="{{ url_for('static', filename='js/id.js') }}"></script>
+    <script src="{{ url_for('static', filename='js/bootstrap-editable.min.js') }}"></script>
     <script src="https://cdn.jsdelivr.net/npm/chart.js@2.8.0"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-datepicker/1.9.0/js/bootstrap-datepicker.min.js" type="text/javascript"></script>
     <script>
@@ -114,10 +117,10 @@
             data: {
                 labels: [{{ vnotch.tanggal|safe }}],
                 datasets: [
-                    {% for i, vnn in vnotch.vn %}
+                    {% for vnn in vnotch.vn %}
                         {
-                            label: "{{ i }}",
-                            data: [{{ vnn|safe }}],
+                            label: "{{ vnn }}",
+                            data: [{{ vnotch.vn[vnn]|safe }}],
                             backgroundColor: 'rgba(255,0,255,0.5)',
                             borderColor: 'rgba(255,0,255,1)',
                             borderWidth: 1,
