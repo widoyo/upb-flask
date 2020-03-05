@@ -29,14 +29,6 @@ MQTT_PORT = 14983
 MQTT_TOPIC = "upbbendungan"
 MQTT_CLIENT = ""
 
-mydb = mysql.connector.connect(
-    host="localhost",
-    user=os.environ['MYSQL_USER'],
-    passwd=os.environ['MYSQL_PASS'],
-    database=os.environ['MYSQL_DB']
-)
-mycursor = mydb.cursor()
-
 logging.basicConfig(
         filename='/tmp/upbflask.log',
         level=logging.DEBUG, format='%(asctime)s [%(levelname)s] %(message)s')
