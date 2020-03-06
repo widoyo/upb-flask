@@ -176,6 +176,7 @@ def import_manual_data():
         except Exception as e:
             print(f"-- Error Rencana : {type(e)}")
             db.session.rollback()
+    mycursor.close()
 
 
 @app.cli.command()
@@ -317,7 +318,6 @@ def insert_user(waduk_name, waduk_id):
     except Exception as e:
         print(f"Error User : {e}")
         db.session.rollback()
-    mycursor.close()
 
 
 def insert_kerusakan(waduk_name, waduk_id):
@@ -357,7 +357,6 @@ def insert_kerusakan(waduk_name, waduk_id):
         except Exception as e:
             print(f"Error Kerusakan : {e}")
             db.session.rollback()
-    mycursor.close()
 
 
 def insert_kegiatan(waduk_name, waduk_id):
@@ -388,7 +387,6 @@ def insert_kegiatan(waduk_name, waduk_id):
         except Exception as e:
             print(f"Error Kegiatan : {e}")
             db.session.rollback()
-    mycursor.close()
 
 
 def insert_assets(waduk_name, waduk_id):
@@ -419,7 +417,6 @@ def insert_assets(waduk_name, waduk_id):
         except Exception as e:
             print(f"Error Asset : {e}")
             db.session.rollback()
-    mycursor.close()
 
 
 def custom_query(cursor, table, filter=None, limit=None):
