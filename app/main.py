@@ -59,14 +59,14 @@ def index():
     }
 
     for t in all_tma:
-        real['volume'] += t.vol if t.vol else 0
+        real['volume'] += t.vol
     for d in all_daily:
-        real['inflow'] += d.inflow_vol if d.inflow_vol else 0
-        real['outflow'] += d.outflow_vol if d.outflow_vol else 0
+        real['inflow'] += d.inflow_vol
+        real['outflow'] += d.outflow_vol
     for r in all_rencana:
-        rtow['volume'] += r.po_vol if r.po_vol else 0
-        rtow['inflow'] += r.po_inflow_vol if r.po_inflow_vol else 0
-        rtow['outflow'] += r.po_outflow_vol if r.po_outflow_vol else 0
+        rtow['volume'] += r.po_vol
+        rtow['inflow'] += r.po_inflow_vol
+        rtow['outflow'] += r.po_outflow_vol
 
     return render_template('index.html',
                             vol_potensi=vol_potensi,
