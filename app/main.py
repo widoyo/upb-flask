@@ -15,6 +15,11 @@ bp = Blueprint('about', __name__)
 def index():
     ''' Index UPB '''
     today = datetime.datetime.now()
+    if today.day < 15:
+        today = today - datetime.timedelta(days=today.day)
+    else:
+        today.day = 15
+    print(today)
     sampling = f"{today.strftime('%Y-%m-%d')} 00:00:00"
 
     all_waduk = Bendungan.query.all()
