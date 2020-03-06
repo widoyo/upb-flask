@@ -14,7 +14,8 @@ bp = Blueprint('about', __name__)
 @app.route('/')
 def index():
     ''' Index UPB '''
-    today = datetime.datetime.now()
+    now = datetime.datetime.now()
+    today = now
     if today.day < 15:
         today = today - datetime.timedelta(days=today.day)
     else:
@@ -23,7 +24,9 @@ def index():
     sampling = f"{today.strftime('%Y-%m-%d')} 00:00:00"
 
     all_waduk = Bendungan.query.all()
-    all_embung = Embung.query.all()
+    all_embung = Embung.query.filter(
+                                Embung.is_verified == '1'
+                            ).all()
     rencana = Rencana.query.filter(
                                 Rencana.sampling <= sampling
                             ).first()
@@ -34,12 +37,16 @@ def index():
                                 ManualTma.sampling == f"{rencana.sampling.strftime('%Y-%m-%d')} 06:00:00"
                             ).all()
     all_daily = ManualDaily.query.filter(
-                                ManualDaily.sampling == f"{rencana.sampling.strftime('%Y-%m-%d')} 06:00:00"
+                                ManualDaily.sampling == f"{rencana.sampling.strftime('%Y-%m-%d')} 00:00:00"
                             ).all()
 
     vol_potensi = round(sum([w.volume if w.volume else 0 for w in all_waduk]))
     vol_embung = round(sum([e.tampungan if e.tampungan else 0 for e in all_embung]))
 
+    count = {
+        'waduk': len(all_waduk),
+        'embung': len(all_embung)
+    }
     real = {
         'volume': 0,
         'inflow': 0,
@@ -66,6 +73,8 @@ def index():
                             real=real,
                             rtow=rtow,
                             vol_embung=vol_embung,
+                            tgl=now,
+                            count=count,
                             title='Home')
 
 
