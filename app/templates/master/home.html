@@ -28,7 +28,7 @@
                               </div>
                               <div class="col-xs-8">
                                   <div class="text-right">
-                                      <h3>561,095,430 M<sup>3</sup></h3>
+                                      <h3>{{ "{:,.0f}".format(vol_potensi) }} M<sup>3</sup></h3>
                                   </div>
                               </div>
                           </div>
@@ -37,7 +37,7 @@
                                   <span>Realisasi</span>
                               </div>
                               <div class="col-xs-8 text-left">
-                                  <h3>561,095,430 M<sup>3</sup></h3>
+                                  <h3>{{ "{:,.0f}".format(real.volume) }} M<sup>3</sup></h3>
                               </div>
                           </div>
                           <div class="row container ml-2">
@@ -48,7 +48,7 @@
                               </div>
                               <div class="col-xs-8">
                                   <div class="text-right">
-                                      <h3>561,095,430 M<sup>3</sup></h3>
+                                      <h3>{{ "{:,.0f}".format(rtow.volume) }} M<sup>3</sup></h3>
                                   </div>
                               </div>
                           </div>
@@ -62,8 +62,12 @@
                             <th colspan="2" style="text-align: center; border-bottom: solid 1px #999;"><span class="huge">Total Outflow</span></th>
                         </tr>
                         <tr>
-                            <td class="text-center" style="width: 50%;border-right: solid 1px black;"><span style="z-index: -99; float: left;vertical-align: middle;" class="">RTOW</span><span class="huge"> 0.00</span> (M<sup>3</sup>/detik)</td>
-                            <td class="text-center" style="width: 50%"><span style="z-index: -99; float: left;vertical-align: middle;" class="">Realisasi</span><span class="huge">5.49</span> (M<sup>3</sup>/detik)</td>
+                            <td class="text-center" style="width: 50%;border-right: solid 1px black;"><span style="z-index: -99; float: left;vertical-align: middle;" class="">
+                                RTOW</span><span class="huge">{{ "{:,.0f}".format(rtow.outflow) }}</span> (M<sup>3</sup>/detik)
+                            </td>
+                            <td class="text-center" style="width: 50%"><span style="z-index: -99; float: left;vertical-align: middle;" class="">
+                                Realisasi</span><span class="huge">{{ "{:,.0f}".format(real.outflow) }}</span> (M<sup>3</sup>/detik)
+                            </td>
                         </tr>
                     </table>
                   </div>
@@ -75,8 +79,12 @@
                             <th colspan="2" style="text-align: center; border-bottom: solid 1px #999;"><span class="huge">Total Inflow</span></th>
                         </tr>
                         <tr>
-                            <td class="text-center" style="width: 50%;border-right: solid 1px black;"><span style="z-index: -99; float: left;vertical-align: middle;" class="">RTOW</span><span class="huge"> 0.00</span> (M<sup>3</sup>/detik)</td>
-                            <td class="text-center" style="width: 50%"><span style="z-index: -99; float: left;vertical-align: middle;" class="">Realisasi</span><span class="huge">5.49</span> (M<sup>3</sup>/detik)</td>
+                            <td class="text-center" style="width: 50%;border-right: solid 1px black;"><span style="z-index: -99; float: left;vertical-align: middle;" class="">
+                                RTOW</span><span class="huge">{{ "{:,.0f}".format(rtow.inflow) }}</span> (M<sup>3</sup>/detik)
+                            </td>
+                            <td class="text-center" style="width: 50%"><span style="z-index: -99; float: left;vertical-align: middle;" class="">
+                                Realisasi</span><span class="huge">{{ "{:,.0f}".format(real.inflow) }}</span> (M<sup>3</sup>/detik)
+                            </td>
                         </tr>
                     </table>
                   </div>
@@ -84,7 +92,7 @@
             </div>
         </div>
         <div class="col-md-6">
-            <div class="card mt-2 mb-2 mr-4 ml-4" style="background: rgba(255, 255, 255, 0.8);">
+            <!-- <div class="card mt-2 mb-2 mr-4 ml-4" style="background: rgba(255, 255, 255, 0.8);">
                 <div class="card-body row pt-1 pb-1">
                     <div class="col-md-4">
                         <h3 class="card-title">Volume Tampungan</h3>
@@ -98,33 +106,13 @@
                             </div>
                             <div class="col-xs-8">
                                 <div class="text-right">
-                                    <h3>561,095,430 M<sup>3</sup></h3>
-                                </div>
-                            </div>
-                        </div>
-                        <div class="row container ml-2">
-                            <div class="col-xs-4 text-right">
-                                <span>Realisasi</span>
-                            </div>
-                            <div class="col-xs-8 text-left">
-                                <h3>561,095,430 M<sup>3</sup></h3>
-                            </div>
-                        </div>
-                        <div class="row container ml-2">
-                            <div class="col-xs-4">
-                                <div class="text-left">
-                                    <span>RTOW</span>
-                                </div>
-                            </div>
-                            <div class="col-xs-8">
-                                <div class="text-right">
-                                    <h3>561,095,430 M<sup>3</sup></h3>
+                                    <h3>{{ vol_embung }} M<sup>3</sup></h3>
                                 </div>
                             </div>
                         </div>
                     </div>
                 </div>
-            </div>
+            </div> -->
           </div>
         </div>
     </div>

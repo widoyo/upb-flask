@@ -5,7 +5,7 @@ from flask_login import current_user, login_required, login_user, logout_user
 from sqlalchemy import desc
 
 from app import app
-from app.models import Users, Lokasi, Periodik
+from app.models import Rencana, Bendungan, Embung, ManualTma, ManualDaily
 from app.forms import LoginForm
 
 bp = Blueprint('about', __name__)
@@ -13,39 +13,56 @@ bp = Blueprint('about', __name__)
 
 @app.route('/')
 def index():
-    '''Menampilkan hujan terjadi terakhir
-    dikelompokkan hari'''
-    sejak = int(request.args.get('sejak', 90))
-    mulai = (datetime.datetime.now() - datetime.timedelta(days=sejak)).replace(hour=7, minute=0)
-    hujans = Periodik.query.filter(Periodik.sampling > mulai,
-                                   Periodik.rain > 0).order_by(
-                                       desc(Periodik.sampling))
-    hujan_list = dict()
-    # for h in hujans:
-    #     if h.sampling.hour < 7:
-    #         tg = h.sampling.date() - datetime.timedelta(days=1)
-    #     else:
-    #         tg = h.sampling.date()
-    #     if tg not in hujan_list.keys():
-    #         hujan_list[tg] = {h.device: [h.rain]}
-    #     else:
-    #         if h.device not in hujan_list[tg]:
-    #             hujan_list[tg] = {h.device: [h.rain]}
-    #         else:
-    #             hujan_list[tg][h.device].append(h.rain)
-    for h in hujans:
-        sample = h.sampling - datetime.timedelta(hours=7)
-        tg = sample.date()
-        if tg not in hujan_list:
-            hujan_list[tg] = {h.device: []}
-        if h.device not in hujan_list[tg]:
-            hujan_list[tg][h.device] = []
-        hujan_list[tg][h.device].append(h.rain)
+    ''' Index UPB '''
+    today = datetime.datetime.now()
+    sampling = f"{today.strftime('%Y-%m-%d')} 00:00:00"
 
-    print(hujan_list)
-    return render_template('index.html', hujan_list=hujan_list,
-                           hujan_sejak=sejak,
-                           title='Home')
+    all_waduk = Bendungan.query.all()
+    all_embung = Embung.query.all()
+    rencana = Rencana.query.filter(
+                                Rencana.sampling <= sampling
+                            ).first()
+    all_rencana = Rencana.query.filter(
+                                Rencana.sampling == rencana.sampling
+                            ).all()
+    all_tma = ManualTma.query.filter(
+                                ManualTma.sampling == f"{rencana.sampling.strftime('%Y-%m-%d')} 06:00:00"
+                            ).all()
+    all_daily = ManualDaily.query.filter(
+                                ManualDaily.sampling == f"{rencana.sampling.strftime('%Y-%m-%d')} 06:00:00"
+                            ).all()
+
+    vol_potensi = round(sum([w.volume if w.volume else 0 for w in all_waduk]))
+    vol_embung = round(sum([e.tampungan if e.tampungan else 0 for e in all_embung]))
+
+    real = {
+        'volume': 0,
+        'inflow': 0,
+        'outflow': 0
+    }
+    rtow = {
+        'volume': 0,
+        'inflow': 0,
+        'outflow': 0
+    }
+
+    for t in all_tma:
+        real['volume'] += t.vol if t.vol else 0
+    for d in all_daily:
+        real['inflow'] += d.inflow_vol if d.inflow_vol else 0
+        real['outflow'] += d.outflow_vol if d.outflow_vol else 0
+    for r in all_rencana:
+        rtow['volume'] += r.po_vol if r.po_vol else 0
+        rtow['inflow'] += r.po_inflow_vol if r.po_inflow_vol else 0
+        rtow['outflow'] += r.po_outflow_vol if r.po_outflow_vol else 0
+
+    return render_template('index.html',
+                            vol_potensi=vol_potensi,
+                            real=real,
+                            rtow=rtow,
+                            vol_embung=vol_embung,
+                            title='Home')
+
 
 @app.route('/map')
 @login_required
