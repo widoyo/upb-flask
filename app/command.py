@@ -33,26 +33,21 @@ logging.basicConfig(
         filename='/tmp/upbflask.log',
         level=logging.DEBUG, format='%(asctime)s [%(levelname)s] %(message)s')
 
-
-def mysql_connect():
-    mydb = mysql.connector.connect(
-        host="localhost",
-        user=os.environ['MYSQL_USER'],
-        passwd=os.environ['MYSQL_PASS'],
-        database=os.environ['MYSQL_DB']
-    )
-    mycursor = mydb.cursor()
-    return mycursor
-
-
-def mysql_close(mycursor):
-    mycursor.close()
+mydb = mysql.connector.connect(
+    host="localhost",
+    user=os.environ['MYSQL_USER'],
+    passwd=os.environ['MYSQL_PASS'],
+    database=os.environ['MYSQL_DB']
+)
+mycursor = mydb.cursor()
 
 
 @app.cli.command()
 @click.option('-s', '--sampling', default='', help='Awal waktu sampling')
-def example(sampling):
-    print("Example Command")
+def mysql_test(sampling):
+    all_waduk = custom_query(mycursor, 'agent', limit=None)
+    for waduk in all_waduk:
+        print(waduk['AgentName'])
 
 
 @app.cli.command()
@@ -186,7 +181,6 @@ def import_manual_data():
 @app.cli.command()
 def import_master():
     print("Importing Bendungan")
-    mycursor = mysql_connect()
     all_waduk = custom_query(mycursor, 'agent', limit=None)
     for waduk in all_waduk:
         try:
@@ -305,11 +299,10 @@ def import_master():
         except Exception as e:
             print(f"Error Foto : {e}")
             db.session.rollback()
-    mysql_close(mycursor)
+    mycursor.close()
 
 
 def insert_user(waduk_name, waduk_id):
-    mycursor = mysql_connect()
     user_info = custom_query(mycursor, 'passwd', {'table_name': waduk_name})
     try:
         new_user = Users(
@@ -324,11 +317,10 @@ def insert_user(waduk_name, waduk_id):
     except Exception as e:
         print(f"Error User : {e}")
         db.session.rollback()
-    mysql_close(mycursor)
+    mycursor.close()
 
 
 def insert_kerusakan(waduk_name, waduk_id):
-    mycursor = mysql_connect()
     mycursor.execute(f"SHOW columns FROM kerusakan")
     columns = [column[0] for column in mycursor.fetchall()]
 
@@ -365,11 +357,10 @@ def insert_kerusakan(waduk_name, waduk_id):
         except Exception as e:
             print(f"Error Kerusakan : {e}")
             db.session.rollback()
-    mysql_close(mycursor)
+    mycursor.close()
 
 
 def insert_kegiatan(waduk_name, waduk_id):
-    mycursor = mysql_connect()
     mycursor.execute(f"SHOW columns FROM kegiatan")
     columns = [column[0] for column in mycursor.fetchall()]
 
@@ -397,11 +388,10 @@ def insert_kegiatan(waduk_name, waduk_id):
         except Exception as e:
             print(f"Error Kegiatan : {e}")
             db.session.rollback()
-    mysql_close(mycursor)
+    mycursor.close()
 
 
 def insert_assets(waduk_name, waduk_id):
-    mycursor = mysql_connect()
     mycursor.execute(f"SHOW columns FROM asset")
     columns = [column[0] for column in mycursor.fetchall()]
 
@@ -429,7 +419,7 @@ def insert_assets(waduk_name, waduk_id):
         except Exception as e:
             print(f"Error Asset : {e}")
             db.session.rollback()
-    mysql_close(mycursor)
+    mycursor.close()
 
 
 def custom_query(cursor, table, filter=None, limit=None):
