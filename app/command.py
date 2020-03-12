@@ -55,124 +55,200 @@ def mysql_test(sampling):
 def import_manual_data():
     waduk_daily = custom_query(mycursor, 'waduk_daily', limit=None)
     for daily in waduk_daily:
-        print(f"Inserting data {daily['id']} at {daily['waktu']}")
         # Manual Daily
         try:
-            manual_daily = ManualDaily(
-                sampling=daily['waktu'],
-                ch=daily['curahhujan'],
-                inflow_vol=daily['inflow_v'],
-                inflow_deb=daily['inflow_q'],
-                outflow_vol=daily['outflow_v'],
-                outflow_deb=daily['outflow_q'],
-                spillway_vol=daily['spillway_v'],
-                spillway_deb=daily['spillway_q'],
-                bendungan_id=daily['pos_id']
-            )
-            db.session.add(manual_daily)
+            obj_dict = {
+                "sampling": daily['waktu'],
+                "ch": daily['curahhujan'],
+                "inflow_vol": daily['inflow_v'],
+                "inflow_deb": daily['inflow_q'],
+                "outflow_vol": daily['outflow_v'],
+                "outflow_deb": daily['outflow_q'],
+                "spillway_vol": daily['spillway_v'],
+                "spillway_deb": daily['spillway_q'],
+                "bendungan_id": daily['pos_id']
+            }
+            md = ManualDaily.query.filter(
+                                        ManualDaily.sampling == daily['waktu'],
+                                        ManualDaily.bendungan_id == daily['pos_id']
+                                    ).first()
+            if md:
+                print(f"Updating manual daily {daily['waktu']} for id {daily['pos_id']}")
+                for key, value in obj_dict.items():
+                    setattr(md, key, value)
+            else:
+                print(f"Inserting manual daily {daily['waktu']} for id {daily['pos_id']}")
+                manual_daily = ManualDaily(**obj_dict)
+                db.session.add(manual_daily)
             db.session.commit()
         except Exception as e:
             print(f"-- Error Daily : {type(e)}")
             db.session.rollback()
         # TMA
         try:
-            manual_tma6 = ManualTma(
-                sampling=daily['waktu'].replace(hour=6),
-                bendungan_id=daily['pos_id'],
-                tma=daily['tma6'],
-                vol=daily['vol6']
-            )
-            db.session.add(manual_tma6)
+            obj_dict = {
+                "sampling": daily['waktu'].replace(hour=6),
+                "bendungan_id": daily['pos_id'],
+                "tma": daily['tma6'],
+                "vol": daily['vol6']
+            }
+            tma6 = ManualTma.query.filter(
+                                        ManualTma.sampling == daily['waktu'].replace(hour=6),
+                                        ManualTma.bendungan_id == daily['pos_id']
+                                    ).first()
+            if tma6:
+                print(f"Updating tma6 {daily['waktu'].replace(hour=6)} for id {daily['pos_id']}")
+                for key, value in obj_dict.items():
+                    setattr(tma6, key, value)
+            else:
+                print(f"Inserting tma6 {daily['waktu'].replace(hour=6)} for id {daily['pos_id']}")
+                manual_tma6 = ManualTma(**obj_dict)
+                db.session.add(manual_tma6)
             db.session.commit()
         except Exception as e:
             print(f"-- Error TMA6 : {type(e)}")
             db.session.rollback()
         try:
-            manual_tma12 = ManualTma(
-                sampling=daily['waktu'].replace(hour=12),
-                bendungan_id=daily['pos_id'],
-                tma=daily['tma12'],
-                vol=daily['vol12']
-            )
-            db.session.add(manual_tma12)
+            obj_dict = {
+                "sampling": daily['waktu'].replace(hour=12),
+                "bendungan_id": daily['pos_id'],
+                "tma": daily['tma12'],
+                "vol": daily['vol12']
+            }
+            tma12 = ManualTma.query.filter(
+                                        ManualTma.sampling == daily['waktu'].replace(hour=12),
+                                        ManualTma.bendungan_id == daily['pos_id']
+                                    ).first()
+            if tma12:
+                print(f"Updating tma12 {daily['waktu'].replace(hour=12)} for id {daily['pos_id']}")
+                for key, value in obj_dict.items():
+                    setattr(tma12, key, value)
+            else:
+                print(f"Inserting tma12 {daily['waktu'].replace(hour=12)} for id {daily['pos_id']}")
+                manual_tma12 = ManualTma(**obj_dict)
+                db.session.add(manual_tma12)
             db.session.commit()
         except Exception as e:
             print(f"-- Error TMA12 : {type(e)}")
             db.session.rollback()
         try:
-            manual_tma18 = ManualTma(
-                sampling=daily['waktu'].replace(hour=18),
-                bendungan_id=daily['pos_id'],
-                tma=daily['tma18'],
-                vol=daily['vol18']
-            )
-            db.session.add(manual_tma18)
+            obj_dict = {
+                "sampling": daily['waktu'].replace(hour=18),
+                "bendungan_id": daily['pos_id'],
+                "tma": daily['tma18'],
+                "vol": daily['vol18']
+            }
+            tma18 = ManualTma.query.filter(
+                                        ManualTma.sampling == daily['waktu'].replace(hour=18),
+                                        ManualTma.bendungan_id == daily['pos_id']
+                                    ).first()
+            if tma18:
+                print(f"Updating tma18 {daily['waktu'].replace(hour=18)} for id {daily['pos_id']}")
+                for key, value in obj_dict.items():
+                    setattr(tma18, key, value)
+            else:
+                print(f"Inserting tma18 {daily['waktu'].replace(hour=18)} for id {daily['pos_id']}")
+                manual_tma18 = ManualTma(**obj_dict)
+                db.session.add(manual_tma18)
             db.session.commit()
         except Exception as e:
             print(f"-- Error TMA18 : {type(e)}")
             db.session.rollback()
         # VNotch
         try:
-            manual_vnotch = ManualVnotch(
-                sampling=daily['waktu'],
-                vn_tma=daily['vnotch_tin'],
-                vn_deb=daily['vnotch_q'],
-                vn1_tma=daily['vnotch_tin1'],
-                vn1_deb=daily['vnotch_q1'],
-                vn2_tma=daily['vnotch_tin2'],
-                vn2_deb=daily['vnotch_q2'],
-                vn3_tma=daily['vnotch_tin3'],
-                vn3_deb=daily['vnotch_q3'],
-                bendungan_id=daily['pos_id']
-            )
-            db.session.add(manual_vnotch)
+            obj_dict = {
+                "sampling": daily['waktu'],
+                "vn_tma": daily['vnotch_tin'],
+                "vn_deb": daily['vnotch_q'],
+                "vn1_tma": daily['vnotch_tin1'],
+                "vn1_deb": daily['vnotch_q1'],
+                "vn2_tma": daily['vnotch_tin2'],
+                "vn2_deb": daily['vnotch_q2'],
+                "vn3_tma": daily['vnotch_tin3'],
+                "vn3_deb": daily['vnotch_q3'],
+                "bendungan_id": daily['pos_id']
+            }
+            vn = ManualVnotch.query.filter(
+                                        ManualVnotch.sampling == daily['waktu'],
+                                        ManualVnotch.bendungan_id == daily['pos_id']
+                                    ).first()
+            if vn:
+                print(f"Updating manual vnotch {daily['waktu']} for id {daily['pos_id']}")
+                for key, value in obj_dict.items():
+                    setattr(vn, key, value)
+            else:
+                print(f"Inserting manual vnotch {daily['waktu']} for id {daily['pos_id']}")
+                manual_vnotch = ManualVnotch(**obj_dict)
+                db.session.add(manual_vnotch)
             db.session.commit()
         except Exception as e:
             print(f"-- Error VNotch : {type(e)}")
             db.session.rollback()
         # Piezo
         try:
-            manual_piezo = ManualPiezo(
-                sampling=daily['waktu'],
-                p1a=daily['a1'],
-                p1b=daily['b1'],
-                p1c=daily['c1'],
-                p2a=daily['a2'],
-                p2b=daily['b2'],
-                p2c=daily['c2'],
-                p3a=daily['a3'],
-                p3b=daily['b3'],
-                p3c=daily['c3'],
-                p4a=daily['a4'],
-                p4b=daily['b4'],
-                p4c=daily['c4'],
-                p5a=daily['a5'],
-                p5b=daily['b5'],
-                p5c=daily['c5'],
-                bendungan_id=daily['pos_id']
-            )
-            db.session.add(manual_piezo)
+            obj_dict = {
+                "sampling": daily['waktu'],
+                "p1a": daily['a1'],
+                "p1b": daily['b1'],
+                "p1c": daily['c1'],
+                "p2a": daily['a2'],
+                "p2b": daily['b2'],
+                "p2c": daily['c2'],
+                "p3a": daily['a3'],
+                "p3b": daily['b3'],
+                "p3c": daily['c3'],
+                "p4a": daily['a4'],
+                "p4b": daily['b4'],
+                "p4c": daily['c4'],
+                "p5a": daily['a5'],
+                "p5b": daily['b5'],
+                "p5c": daily['c5'],
+                "bendungan_id": daily['pos_id']
+            }
+            pz = ManualPiezo.query.filter(
+                                        ManualPiezo.sampling == daily['waktu'],
+                                        ManualPiezo.bendungan_id == daily['pos_id']
+                                    ).first()
+            if pz:
+                print(f"Updating manual piezo {daily['waktu']} for id {daily['pos_id']}")
+                for key, value in obj_dict.items():
+                    setattr(pz, key, value)
+            else:
+                print(f"Inserting manual piezo {daily['waktu']} for id {daily['pos_id']}")
+                manual_piezo = ManualPiezo(**obj_dict)
+                db.session.add(manual_piezo)
             db.session.commit()
         except Exception as e:
             print(f"-- Error Piezo : {type(e)}")
             db.session.rollback()
         # RTOW
         try:
-            rencana = Rencana(
-                sampling=daily['waktu'],
-                po_tma=daily['po_tma'],
-                po_vol=daily['po_vol'],
-                po_inflow_vol=daily['po_inflow_v'],
-                po_inflow_deb=daily['po_inflow_q'],
-                po_outflow_vol=daily['po_outflow_v'],
-                po_outflow_deb=daily['po_outflow_q'],
-                po_bona=daily['po_bona'],
-                po_bonb=daily['po_bonb'],
-                vol_bona=daily['vol_bona'],
-                vol_bonb=daily['vol_bonb'],
-                bendungan_id=daily['pos_id']
-            )
-            db.session.add(rencana)
+            obj_dict = {
+                "sampling": daily['waktu'],
+                "po_tma": daily['po_tma'],
+                "po_vol": daily['po_vol'],
+                "po_inflow_vol": daily['po_inflow_v'],
+                "po_inflow_deb": daily['po_inflow_q'],
+                "po_outflow_vol": daily['po_outflow_v'],
+                "po_outflow_deb": daily['po_outflow_q'],
+                "po_bona": daily['po_bona'],
+                "po_bonb": daily['po_bonb'],
+                "vol_bona": daily['vol_bona'],
+                "vol_bonb": daily['vol_bonb'],
+                "bendungan_id": daily['pos_id']
+            }
+            rc = Rencana.query.filter(
+                                    Rencana.sampling == daily['waktu'],
+                                    Rencana.bendungan_id == daily['pos_id']
+                                ).first()
+            if rc:
+                print(f"Updating rencana {daily['waktu']} for id {daily['pos_id']}")
+                for key, value in obj_dict.items():
+                    setattr(rc, key, value)
+            else:
+                print(f"Inserting rencana {daily['waktu']} for id {daily['pos_id']}")
+                rencana = Rencana(**obj_dict)
+                db.session.add(rencana)
             db.session.commit()
         except Exception as e:
             print(f"-- Error Rencana : {type(e)}")
@@ -187,40 +263,49 @@ def import_master():
     for waduk in all_waduk:
         try:
             waduk_name = waduk['AgentName'].replace('.', '_').lower()
-            print(f"Inserting data {waduk_name}")
-            new_bend = Bendungan(
-                id=waduk["AgentID"],
-                nama=waduk_name,
-                ll=waduk["ll"],
-                muka_air_min=waduk["CriticalLower"],
-                muka_air_normal=waduk["Normal"],
-                muka_air_max=waduk["SiagaUpper"],
-                sedimen=waduk["Sedimen"],
-                bts_elev_awas=waduk["bts_elev_awas"],
-                bts_elev_siaga=waduk["bts_elev_siaga"],
-                bts_elev_waspada=waduk["bts_elev_waspada"],
-                lbi=waduk["lbi"],
-                volume=waduk["volume"],
-                lengkung_kapasitas=waduk["lengkung_kapasitas"],
-                elev_puncak=waduk["elev_puncak"],
-                kab=waduk["kab"],
-                vn1_panjang_saluran=waduk["vn1_panjang_saluran"],
-                vn2_panjang_saluran=waduk["vn2_panjang_saluran"],
-                vn3_panjang_saluran=waduk["vn3_panjang_saluran"],
-                vn1_q_limit=waduk["vn_q1_limit"],
-                vn2_q_limit=waduk["vn_q2_limit"],
-                vn3_q_limit=waduk["vn_q3_limit"],
-                vn1_tin_limit=waduk["vn_tin1_limit"],
-                vn2_tin_limit=waduk["vn_tin2_limit"],
-                vn3_tin_limit=waduk["vn_tin3_limit"]
-            )
-            db.session.add(new_bend)
-            db.session.flush()
+            bend_id = waduk["AgentID"]
+            obj_dict = {
+                "id": waduk["AgentID"],
+                "nama": waduk_name,
+                "ll": waduk["ll"],
+                "muka_air_min": waduk["CriticalLower"],
+                "muka_air_normal": waduk["Normal"],
+                "muka_air_max": waduk["SiagaUpper"],
+                "sedimen": waduk["Sedimen"],
+                "bts_elev_awas": waduk["bts_elev_awas"],
+                "bts_elev_siaga": waduk["bts_elev_siaga"],
+                "bts_elev_waspada": waduk["bts_elev_waspada"],
+                "lbi": waduk["lbi"],
+                "volume": waduk["volume"],
+                "lengkung_kapasitas": waduk["lengkung_kapasitas"],
+                "elev_puncak": waduk["elev_puncak"],
+                "kab": waduk["kab"],
+                "vn1_panjang_saluran": waduk["vn1_panjang_saluran"],
+                "vn2_panjang_saluran": waduk["vn2_panjang_saluran"],
+                "vn3_panjang_saluran": waduk["vn3_panjang_saluran"],
+                "vn1_q_limit": waduk["vn_q1_limit"],
+                "vn2_q_limit": waduk["vn_q2_limit"],
+                "vn3_q_limit": waduk["vn_q3_limit"],
+                "vn1_tin_limit": waduk["vn_tin1_limit"],
+                "vn2_tin_limit": waduk["vn_tin2_limit"],
+                "vn3_tin_limit": waduk["vn_tin3_limit"]
+            }
+            bend = Bendungan.query.get(waduk['AgentID'])
+            if bend:
+                print(f"Updating bendungan {waduk_name}")
+                for key, value in obj_dict.items():
+                    setattr(bend, key, value)
+            else:
+                print(f"Inserting bendungan {waduk_name}")
+                new_bend = Bendungan(**obj_dict)
+                db.session.add(new_bend)
+                db.session.flush()
             db.session.commit()
-            insert_assets(waduk_name, new_bend.id)
-            insert_user(waduk_name, new_bend.id)
-            insert_kegiatan(waduk_name, new_bend.id)
-            insert_kerusakan(waduk_name, new_bend.id)
+
+            insert_assets(waduk_name, bend_id)
+            insert_user(waduk_name, bend_id)
+            insert_kegiatan(waduk_name, bend_id)
+            insert_kerusakan(waduk_name, bend_id)
         except Exception as e:
             print(f"Error Bendungan : {e}")
             db.session.rollback()
@@ -229,29 +314,36 @@ def import_master():
     all_embung = custom_query(mycursor, 'embung', limit=None)
     for embung in all_embung:
         try:
-            print(f"Inserting data {embung['nama']}")
-            new_emb = Embung(
-                id=embung["id"],
-                nama=embung["nama"],
-                jenis=embung["jenis"],
-                desa=embung["desa"],
-                kec=embung["kec"],
-                kab=embung["kab"],
-                ll=embung["ll"],
-                is_verified=embung['is_verified'],
-                sumber_air=embung["sumber_air"],
-                tampungan=embung["tampungan"],
-                debit=embung["debit"],
-                pipa_transmisi=embung["pipa_transmisi"],
-                saluran_transmisi=embung["saluran_transmisi"],
-                air_baku=embung["air_baku"],
-                irigasi=embung["irigasi"],
-                c_user=embung["cuser"],
-                c_date=embung["cdate"],
-                m_user=embung["muser"],
-                m_date=embung["mdate"]
-            )
-            db.session.add(new_emb)
+            obj_dict = {
+                "id": embung["id"],
+                "nama": embung["nama"],
+                "jenis": embung["jenis"],
+                "desa": embung["desa"],
+                "kec": embung["kec"],
+                "kab": embung["kab"],
+                "ll": embung["ll"],
+                "is_verified": embung['is_verified'],
+                "sumber_air": embung["sumber_air"],
+                "tampungan": embung["tampungan"],
+                "debit": embung["debit"],
+                "pipa_transmisi": embung["pipa_transmisi"],
+                "saluran_transmisi": embung["saluran_transmisi"],
+                "air_baku": embung["air_baku"],
+                "irigasi": embung["irigasi"],
+                "c_user": embung["cuser"],
+                "c_date": embung["cdate"],
+                "m_user": embung["muser"],
+                "m_date": embung["mdate"]
+            }
+            emb = Embung.query.get(embung['id'])
+            if emb:
+                print(f"Updating embung {embung['nama']}")
+                for key, value in obj_dict.items():
+                    setattr(emb, key, value)
+            else:
+                print(f"Inserting embung {embung['nama']}")
+                new_emb = Embung(**obj_dict)
+                db.session.add(new_emb)
             db.session.commit()
         except Exception as e:
             print(f"Error Embung : {e}")
@@ -269,13 +361,21 @@ def import_master():
                 role = '4'
 
             try:
-                new_user = Users(
-                    id=user['id'],
-                    username=user['username'],
-                    password=user['password'],
-                    role=role
-                )
-                db.session.add(new_user)
+                obj_dict = {
+                    "id": user['id'],
+                    "username": user['username'],
+                    "password": user['password'],
+                    "role": role
+                }
+                usr = Users.query.get(user['id'])
+                if usr:
+                    print(f"Updating user {user['id']}")
+                    for key, value in obj_dict.items():
+                        setattr(usr, key, value)
+                else:
+                    print(f"Inserting user {user['id']}")
+                    new_user = Users(**obj_dict)
+                    db.session.add(new_user)
                 db.session.commit()
             except Exception as e:
                 print(f"Error User : {e}")
@@ -285,18 +385,26 @@ def import_master():
     all_foto = custom_query(mycursor, 'foto', limit=None)
     for foto in all_foto:
         try:
-            new_foto = Foto(
-                id=foto["id"],
-                url=foto["filepath"],
-                keterangan=foto["keterangan"],
-                obj_type=foto["obj_type"],
-                obj_id=foto["obj_id"],
-                c_user=foto["cuser"],
-                c_date=foto["cdate"],
-                m_user=foto["muser"],
-                m_date=foto["mdate"]
-            )
-            db.session.add(new_foto)
+            obj_dict = {
+                "id": foto["id"],
+                "url": foto["filepath"],
+                "keterangan": foto["keterangan"],
+                "obj_type": foto["obj_type"],
+                "obj_id": foto["obj_id"],
+                "c_user": foto["cuser"],
+                "c_date": foto["cdate"],
+                "m_user": foto["muser"],
+                "m_date": foto["mdate"]
+            }
+            photo = Foto.query.get(foto["id"])
+            if photo:
+                print(f"Updating foto {foto['id']}")
+                for key, value in obj_dict.items():
+                    setattr(usr, key, value)
+            else:
+                print(f"Inserting foto {foto['id']}")
+                new_foto = Foto(**obj_dict)
+                db.session.add(new_foto)
             db.session.commit()
         except Exception as e:
             print(f"Error Foto : {e}")
@@ -307,14 +415,22 @@ def import_master():
 def insert_user(waduk_name, waduk_id):
     user_info = custom_query(mycursor, 'passwd', {'table_name': waduk_name})
     try:
-        new_user = Users(
-            id=user_info[0]['id'],
-            username=user_info[0]['username'],
-            password=user_info[0]['password'],
-            role='2',
-            bendungan_id=waduk_id
-        )
-        db.session.add(new_user)
+        obj_dict = {
+            "id": user_info[0]['id'],
+            "username": user_info[0]['username'],
+            "password": user_info[0]['password'],
+            "role": '2',
+            "bendungan_id": waduk_id
+        }
+        usr = Users.query.get(user_info[0]['id'])
+        if usr:
+            print(f"Updating user {user_info[0]['id']}")
+            for key, value in obj_dict.items():
+                setattr(usr, key, value)
+        else:
+            print(f"Inserting user {user_info[0]['id']}")
+            new_user = Users(**obj_dict)
+            db.session.add(new_user)
         db.session.commit()
     except Exception as e:
         print(f"Error User : {e}")
@@ -340,20 +456,28 @@ def insert_kerusakan(waduk_name, waduk_id):
         mycursor.execute(tanggapan_query)
         tanggapan = res2array(mycursor.fetchall(), columns)
         try:
-            new_ker = Kerusakan(
-                id=ker['id'],
-                tgl_lapor=ker['cdate'],
-                uraian=ker['uraian'],
-                kategori=ker['kategori'],
-                komponen=ker['komponen'],
-                tgl_tanggapan=tanggapan[0]['cdate'],
-                tanggapan=tanggapan[0]['uraian'],
-                bendungan_id=waduk_id,
-                asset_id=ker['asset_id'],
-                c_user=ker["cuser"],
-                c_date=ker["cdate"]
-            )
-            db.session.add(new_ker)
+            obj_dict = {
+                "id": ker['id'],
+                "tgl_lapor": ker['cdate'],
+                "uraian": ker['uraian'],
+                "kategori": ker['kategori'],
+                "komponen": ker['komponen'],
+                "tgl_tanggapan": tanggapan[0]['cdate'],
+                "tanggapan": tanggapan[0]['uraian'],
+                "bendungan_id": waduk_id,
+                "asset_id": ker['asset_id'],
+                "c_user": ker["cuser"],
+                "c_date": ker["cdate"]
+            }
+            kerusakan = Kerusakan.query.get(ker['id'])
+            if kerusakan:
+                print(f"Updating kerusakan {ker['id']}")
+                for key, value in obj_dict.items():
+                    setattr(kerusakan, key, value)
+            else:
+                print(f"Inserting kerusakan {ker['id']}")
+                new_ker = Kerusakan(**obj_dict)
+                db.session.add(new_ker)
             db.session.commit()
         except Exception as e:
             print(f"Error Kerusakan : {e}")
@@ -371,19 +495,27 @@ def insert_kegiatan(waduk_name, waduk_id):
     all_kegiatan = res2array(mycursor.fetchall(), columns)
     for keg in all_kegiatan:
         try:
-            new_keg = Kegiatan(
-                # id=keg['id'],
-                sampling=keg['sampling'],
-                petugas=keg['petugas'],
-                uraian=keg['uraian'],
-                foto_id=keg['foto_id'],
-                bendungan_id=waduk_id,
-                c_user=keg["cuser"],
-                c_date=keg["cdate"],
-                m_user=keg["muser"],
-                m_date=keg["mdate"]
-            )
-            db.session.add(new_keg)
+            obj_dict = {
+                "id": keg['id'],
+                "sampling": keg['sampling'],
+                "petugas": keg['petugas'],
+                "uraian": keg['uraian'],
+                "foto_id": keg['foto_id'],
+                "bendungan_id": waduk_id,
+                "c_user": keg["cuser"],
+                "c_date": keg["cdate"],
+                "m_user": keg["muser"],
+                "m_date": keg["mdate"]
+            }
+            kegiatan = Kegiatan.query.get(keg['id'])
+            if kegiatan:
+                print(f"Updating kegiatan {keg['id']}")
+                for key, value in obj_dict.items():
+                    setattr(kegiatan, key, value)
+            else:
+                print(f"Inserting kegiatan {keg['id']}")
+                new_keg = Kegiatan(**obj_dict)
+                db.session.add(new_keg)
             db.session.commit()
         except Exception as e:
             print(f"Error Kegiatan : {e}")
@@ -399,21 +531,28 @@ def insert_assets(waduk_name, waduk_id):
     all_asset = res2array(mycursor.fetchall(), columns)
     for asset in all_asset:
         try:
-            pprint(waduk_name)
-            new_emb = Asset(
-                id=asset['id'],
-                kategori=asset['kategori'],
-                nama=asset['nama'],
-                merk=asset['merk'],
-                model=asset['model'],
-                perolehan=asset['perolehan'],
-                nilai_perolehan=asset['nilai_perolehan'],
-                bmn=asset['bmn'],
-                bendungan_id=waduk_id,
-                c_user=asset["cuser"],
-                c_date=asset["cdate"]
-            )
-            db.session.add(new_emb)
+            obj_dict = {
+                "id": asset['id'],
+                "kategori": asset['kategori'],
+                "nama": asset['nama'],
+                "merk": asset['merk'],
+                "model": asset['model'],
+                "perolehan": asset['perolehan'],
+                "nilai_perolehan": asset['nilai_perolehan'],
+                "bmn": asset['bmn'],
+                "bendungan_id": waduk_id,
+                "c_user": asset["cuser"],
+                "c_date": asset["cdate"]
+            }
+            bend_asset = Asset.query.get(asset['id'])
+            if bend_asset:
+                print(f"Updating asset {asset['id']}")
+                for key, value in obj_dict.items():
+                    setattr(bend_asset, key, value)
+            else:
+                print(f"Inserting asset {asset['id']}")
+                new_emb = Asset(**obj_dict)
+                db.session.add(new_emb)
             db.session.commit()
         except Exception as e:
             print(f"Error Asset : {e}")
