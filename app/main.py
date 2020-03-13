@@ -3,6 +3,7 @@ from urllib.parse import urlparse, urljoin
 from flask import render_template, redirect, url_for, flash, request, abort, Blueprint
 from flask_login import current_user, login_required, login_user, logout_user
 from sqlalchemy import desc
+from pytz import timezone
 
 from app import app
 from app.models import Rencana, Bendungan, Embung, ManualTma, ManualDaily
@@ -14,7 +15,7 @@ bp = Blueprint('about', __name__)
 @app.route('/')
 def index():
     ''' Index UPB '''
-    today = datetime.datetime.now()
+    today = datetime.datetime.utcnow().astimezone(timezone("Asia/Jakarta"))
     sampling = today
     if sampling.day < 15:
         sampling = sampling - datetime.timedelta(days=today.day)

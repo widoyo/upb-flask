@@ -3,6 +3,7 @@ from app.models import Bendungan
 from app.models import ManualDaily, ManualTma, ManualVnotch, ManualPiezo, Rencana
 from sqlalchemy import and_, desc, cast, Date
 from pprint import pprint
+from pytz import timezone
 import datetime
 
 bp = Blueprint('bendungan', __name__)
@@ -13,7 +14,8 @@ def index():
     ''' Home Bendungan '''
     waduk = Bendungan.query.all()
     date = request.values.get('sampling')
-    sampling = datetime.datetime.strptime(date, "%Y-%m-%d") if date else datetime.datetime.now()
+    def_date = datetime.datetime.utcnow().astimezone(timezone("Asia/Jakarta"))
+    sampling = datetime.datetime.strptime(date, "%Y-%m-%d") if date else def_date
     end = sampling + datetime.timedelta(days=1)
 
     data = []
@@ -74,7 +76,8 @@ def index():
 @bp.route('/<lokasi_id>', methods=['GET', 'POST'])
 def tma(lokasi_id):
     date = request.values.get('sampling')
-    sampling = datetime.datetime.strptime(date, "%Y-%m-%d") if date else datetime.datetime.now()
+    def_date = datetime.datetime.utcnow().astimezone(timezone("Asia/Jakarta"))
+    sampling = datetime.datetime.strptime(date, "%Y-%m-%d") if date else def_date
     end = sampling + datetime.timedelta(days=1)
 
     pos = Bendungan.query.get(lokasi_id)
@@ -91,7 +94,8 @@ def tma(lokasi_id):
 @bp.route('/<lokasi_id>/operasi', methods=['GET', 'POST'])
 def operasi(lokasi_id):
     date = request.values.get('sampling')
-    sampling = datetime.datetime.strptime(date, "%Y") if date else datetime.datetime.now()
+    def_date = datetime.datetime.utcnow().astimezone(timezone("Asia/Jakarta"))
+    sampling = datetime.datetime.strptime(date, "%Y") if date else def_date
     end = datetime.datetime.strptime(f"{sampling.year}-11-1", "%Y-%m-%d")
     start = end - datetime.timedelta(days=356)
 
@@ -149,7 +153,8 @@ def operasi(lokasi_id):
 @bp.route('/<lokasi_id>/vnotch', methods=['GET', 'POST'])
 def vnotch(lokasi_id):
     date = request.values.get('sampling')
-    sampling = datetime.datetime.strptime(date, "%Y") if date else datetime.datetime.now()
+    def_date = datetime.datetime.utcnow().astimezone(timezone("Asia/Jakarta"))
+    sampling = datetime.datetime.strptime(date, "%Y") if date else def_date
     end = datetime.datetime.strptime(f"{sampling.year}-11-1", "%Y-%m-%d")
     start = end - datetime.timedelta(days=356)
 
@@ -216,7 +221,8 @@ def vnotch(lokasi_id):
 @bp.route('/<lokasi_id>/piezo', methods=['GET', 'POST'])
 def piezo(lokasi_id):
     date = request.values.get('sampling')
-    sampling = datetime.datetime.strptime(date, "%Y") if date else datetime.datetime.now()
+    def_date = datetime.datetime.utcnow().astimezone(timezone("Asia/Jakarta"))
+    sampling = datetime.datetime.strptime(date, "%Y") if date else def_date
     end = datetime.datetime.strptime(f"{sampling.year}-11-1", "%Y-%m-%d")
     start = end - datetime.timedelta(days=356)
 
