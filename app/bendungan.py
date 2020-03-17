@@ -14,7 +14,7 @@ def index():
     ''' Home Bendungan '''
     waduk = Bendungan.query.all()
     date = request.values.get('sampling')
-    def_date = datetime.datetime.utcnow().astimezone(timezone("Asia/Jakarta"))
+    def_date = datetime.datetime.utcnow()
     sampling = datetime.datetime.strptime(date, "%Y-%m-%d") if date else def_date
     end = sampling + datetime.timedelta(days=1)
 
@@ -76,7 +76,7 @@ def index():
 @bp.route('/<lokasi_id>', methods=['GET', 'POST'])
 def tma(lokasi_id):
     date = request.values.get('sampling')
-    def_date = datetime.datetime.utcnow().astimezone(timezone("Asia/Jakarta"))
+    def_date = datetime.datetime.utcnow()
     sampling = datetime.datetime.strptime(date, "%Y-%m-%d") if date else def_date
     end = sampling + datetime.timedelta(days=1)
 
@@ -94,7 +94,7 @@ def tma(lokasi_id):
 @bp.route('/<lokasi_id>/operasi', methods=['GET', 'POST'])
 def operasi(lokasi_id):
     date = request.values.get('sampling')
-    def_date = datetime.datetime.utcnow().astimezone(timezone("Asia/Jakarta"))
+    def_date = datetime.datetime.utcnow()
     sampling = datetime.datetime.strptime(date, "%Y") if date else def_date
     end = datetime.datetime.strptime(f"{sampling.year}-11-1", "%Y-%m-%d")
     start = end - datetime.timedelta(days=356)
@@ -153,7 +153,7 @@ def operasi(lokasi_id):
 @bp.route('/<lokasi_id>/vnotch', methods=['GET', 'POST'])
 def vnotch(lokasi_id):
     date = request.values.get('sampling')
-    def_date = datetime.datetime.utcnow().astimezone(timezone("Asia/Jakarta"))
+    def_date = datetime.datetime.utcnow()
     sampling = datetime.datetime.strptime(date, "%Y") if date else def_date
     end = datetime.datetime.strptime(f"{sampling.year}-11-1", "%Y-%m-%d")
     start = end - datetime.timedelta(days=356)
@@ -188,7 +188,7 @@ def vnotch(lokasi_id):
                     'VNotch 3': vn.vn3_deb
                 }
             }
-        filtered_vnotch[tgl]['ch'] += filtered_daily[tgl].ch
+        filtered_vnotch[tgl]['ch'] += filtered_daily[tgl].ch or 0
 
     vnotch = {
         'tanggal': "",
@@ -221,7 +221,7 @@ def vnotch(lokasi_id):
 @bp.route('/<lokasi_id>/piezo', methods=['GET', 'POST'])
 def piezo(lokasi_id):
     date = request.values.get('sampling')
-    def_date = datetime.datetime.utcnow().astimezone(timezone("Asia/Jakarta"))
+    def_date = datetime.datetime.utcnow()
     sampling = datetime.datetime.strptime(date, "%Y") if date else def_date
     end = datetime.datetime.strptime(f"{sampling.year}-11-1", "%Y-%m-%d")
     start = end - datetime.timedelta(days=356)
@@ -250,7 +250,7 @@ def piezo(lokasi_id):
             for p in profile:
                 for a in alpha:
                     val = getattr(piezo, f"p{p}{a}")
-                    val = val if val else "0"
+                    val = val or "0"
                     piezodata[p][a] += f"{val}"
             continue
 
@@ -258,9 +258,9 @@ def piezo(lokasi_id):
         for p in profile:
             for a in alpha:
                 val = getattr(piezo, f"p{p}{a}")
-                val = val if val else "0"
+                val = val or "0"
                 piezodata[p][a] += f",{val}"
-    pprint(piezodata)
+    # pprint(piezodata)
 
     return render_template('bendungan/piezo.html',
                             waduk=pos,

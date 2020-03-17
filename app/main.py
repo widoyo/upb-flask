@@ -15,12 +15,12 @@ bp = Blueprint('about', __name__)
 @app.route('/')
 def index():
     ''' Index UPB '''
-    today = datetime.datetime.utcnow().astimezone(timezone("Asia/Jakarta"))
+    today = datetime.datetime.utcnow()
     sampling = today
     if sampling.day < 15:
         sampling = sampling - datetime.timedelta(days=today.day)
     else:
-        sampling.day = 15
+        sampling.replace(day=15)
     print(sampling)
 
     all_waduk = Bendungan.query.all()
