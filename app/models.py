@@ -1,4 +1,3 @@
-import datetime
 from werkzeug.security import generate_password_hash, check_password_hash
 from flask_login import UserMixin
 
@@ -7,6 +6,8 @@ from app import db
 from sqlalchemy.dialects.postgresql import JSONB
 from sqlalchemy.orm import relationship
 from sqlalchemy import desc
+import datetime
+import hashlib
 
 
 class BaseLog(db.Model):
@@ -18,6 +19,7 @@ class BaseLog(db.Model):
 
 
 class Users(UserMixin, db.Model):
+    ''' Role {} '''
     __tablename__ = 'users'
 
     id = db.Column(db.Integer, primary_key=True)
@@ -30,7 +32,14 @@ class Users(UserMixin, db.Model):
         self.password = generate_password_hash(password)
 
     def check_password(self, password):
+        self.check_md5(password)
         return check_password_hash(self.password, password)
+
+    def check_md5(self, password):
+        passbyte = bytes(password, encoding='utf-8')
+        m = hashlib.md5(passbyte)
+        if m.hexdigest() == self.password:
+            self.set_password(password)
 
     def __repr__(self):
         return '<User %r>' % self.username
