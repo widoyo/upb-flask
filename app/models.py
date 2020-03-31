@@ -170,6 +170,7 @@ class Bendungan(BaseLog):
     lengkung_kapasitas = db.Column(db.Text)
     elev_puncak = db.Column(db.Float)
     kab = db.Column(db.Text)
+    wil_sungai = db.Column(db.String(1))
 
     vn1_panjang_saluran = db.Column(db.Float)
     vn2_panjang_saluran = db.Column(db.Float)

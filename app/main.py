@@ -6,7 +6,7 @@ from sqlalchemy import desc
 from pytz import timezone
 
 from app import app
-from app.models import Rencana, Bendungan, Embung, ManualTma, ManualDaily
+from app.models import Rencana, Bendungan, Embung, ManualTma, ManualDaily, Users
 from app.forms import LoginForm
 
 bp = Blueprint('about', __name__)
@@ -96,12 +96,26 @@ def login():
     form = LoginForm()
     if form.validate_on_submit():
         user = Users.query.filter_by(username=form.username.data).first()
-        if user is None or not user.check_password(form.password.data):
-            flash('Invalid username/Password')
+        # if user is None or not user.check_password(form.password.data):
+        #     flash('Invalid username/Password')
+        #     return redirect(url_for('index'))
+        # login_user(user, remember=form.remember_me.data)
+        # next = request.args.get('next')
+        # if not is_safe_url(next):
+        #     return abort(400)
+        # flash('Login Sukses')
+        # return redirect(url_for('index'))
+        if user:
+            # print(user.username)
+            if not user.check_password(form.password.data):
+                print(f"wrong password : {form.password.data}")
+                flash('Password keliru', 'danger')
+                return redirect(url_for('login'))
+            login_user(user)
+            flash('Login Sukses')
             return redirect(url_for('index'))
-        login_user(user, remember=form.remember_me.data)
-        next = request.args.get('next')
-        if not is_safe_url(next):
-            return abort(400)
-        return redirect(url_for('index'))
+        else:
+            print("not Found")
+            flash('User tidak ditemukan', 'danger')
+            return redirect(url_for('login'))
     return render_template('auth/login.html', title='Login', form=form)
