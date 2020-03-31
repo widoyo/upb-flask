@@ -5,7 +5,7 @@ from sqlalchemy.exc import IntegrityError
 from app.models import ManualDaily, ManualTma, ManualPiezo, ManualVnotch
 from app.models import Bendungan
 from app.forms import AddDaily, AddTma
-from app import db
+from app import db, admin_only, petugas_only
 import datetime
 
 from app.admin import bp
@@ -14,14 +14,15 @@ from app.admin import bp
 
 @bp.route('/operasi')
 @login_required
-def operasi_index():
+def operasi():
     if current_user.role == "2":
-        return redirect('operasi.bendungan', bendungan_id=current_user.bendungan_id)
+        return redirect(url_for('admin.operasi_bendungan'))
     return redirect(url_for('admin.operasi_harian'))
 
 
 @bp.route('/operasi/harian')
 @login_required
+@admin_only
 def operasi_harian():
     waduk = Bendungan.query.all()
     date = request.values.get('sampling')
@@ -91,11 +92,13 @@ def operasi_harian():
                             sampling=sampling)
 
 
-@bp.route('/operasi/<bendungan_id>')
+@bp.route('/operasi/bendungan')
 @login_required
-def operasi_bendungan(bendungan_id):
+@petugas_only
+def operasi_bendungan():
     date = request.values.get('sampling') or datetime.datetime.utcnow()
     sampling = datetime.datetime.strptime(f"{date.year}-{date.month}-01", "%Y-%m-%d")
+    bendungan_id = current_user.bendungan_id
 
     manual_daily = ManualDaily.query.filter(
                                         ManualDaily.bendungan_id == bendungan_id,
@@ -130,9 +133,10 @@ def operasi_bendungan(bendungan_id):
                             sampling=sampling)
 
 
-@bp.route('/operasi/<bendungan_id>/tma')
+@bp.route('/operasi/bendungan/tma')
 @login_required
-def operasi_tma_add(bendungan_id):
+def operasi_tma_add():
+    bendungan_id = current_user.bendungan_id
     form = AddTma()
     if form.validate_on_submit():
         try:
@@ -147,7 +151,7 @@ def operasi_tma_add(bendungan_id):
             db.session.add(tma)
             db.session.commit()
             flash('Tambah TMA berhasil !', 'success')
-            return redirect(url_for('operasi.bendungan', bendungan_id=bendungan_id))
+            return redirect(url_for('admin.operasi_bendungan'))
 
         except IntegrityError:
             db.session.rollback()
@@ -157,9 +161,9 @@ def operasi_tma_add(bendungan_id):
                             form=form)
 
 
-@bp.route('/operasi/<bendungan_id>/tma/update')
+@bp.route('/operasi/bendungan/tma/update')
 @login_required
-def operasi_tma_update(bendungan_id):
+def operasi_tma_update():
     pk = request.values.get('pk')
     attr = request.values.get('name')
     val = request.values.get('value')
@@ -175,9 +179,10 @@ def operasi_tma_update(bendungan_id):
     return jsonify(result)
 
 
-@bp.route('/operasi/<bendungan_id>/daily')
+@bp.route('/operasi/bendungan/daily')
 @login_required
-def operasi_daily_add(bendungan_id):
+def operasi_daily_add():
+    bendungan_id = current_user.bendungan_id
     form = AddDaily()
     if form.validate_on_submit():
         try:
@@ -195,7 +200,7 @@ def operasi_daily_add(bendungan_id):
             db.session.add(daily)
             db.session.commit()
             flash('Tambah Daily berhasil !', 'success')
-            return redirect(url_for('operasi.bendungan', bendungan_id=bendungan_id))
+            return redirect(url_for('admin.operasi_bendungan'))
 
         except IntegrityError:
             db.session.rollback()
@@ -207,7 +212,7 @@ def operasi_daily_add(bendungan_id):
 
 @bp.route('/operasi/daily/update', methods=['POST'])
 @login_required
-def operasi_daily_update(bendungan_id):
+def operasi_daily_update():
     pk = request.values.get('pk')
     attr = request.values.get('name')
     val = request.values.get('value')

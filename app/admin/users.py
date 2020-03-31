@@ -10,7 +10,7 @@ from app.admin import bp
 
 @bp.route('/users')
 @login_required
-def users_index():
+def users():
     users = Users.query.all()
     bends = Bendungan.query.all()
     return render_template('users/index.html',
@@ -47,7 +47,7 @@ def users_add():
         db.session.commit()
 
         flash('Tambah User berhasil !', 'success')
-        return redirect(url_for('users.index'))
+        return redirect(url_for('admin.users'))
 
     return render_template('users/index.html',
                             form=form)
@@ -63,7 +63,7 @@ def users_password(user_id):
         db.session.commit()
 
         flash('Password berhasil diubah !', 'success')
-        return redirect(url_for('users.index'))
+        return redirect(url_for('admin.users'))
     return render_template('users/password.html', user=user)
 
 
@@ -76,5 +76,5 @@ def users_delete(user_id):
         db.session.commit()
 
         flash('User dihapus !', 'success')
-        return redirect(url_for('users.index'))
+        return redirect(url_for('admin.users'))
     return render_template('users/hapus.html', user=user)

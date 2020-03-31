@@ -1,9 +1,10 @@
 import os
 import logging
-from flask import Flask
+from functools import wraps
+from flask import Flask, redirect, url_for
 from flask_sqlalchemy import SQLAlchemy
 from flask_socketio import SocketIO
-from flask_login import LoginManager
+from flask_login import LoginManager, current_user
 
 app = Flask(__name__)
 app.config.from_object(os.environ['APP_SETTINGS'])
@@ -13,6 +14,25 @@ socketio = SocketIO(app)
 db = SQLAlchemy(app)
 login = LoginManager(app)
 login.login_view = 'login'
+
+
+# decorators
+def admin_only(f):
+    @wraps(f)
+    def decorated_function(*args, **kwargs):
+        if current_user.role not in ['1', '4']:
+            return redirect(url_for('admin.operasi'))
+        return f(*args, **kwargs)
+    return decorated_function
+
+
+def petugas_only(f):
+    @wraps(f)
+    def decorated_function(*args, **kwargs):
+        if current_user.role not in ['2']:
+            return redirect(url_for('admin.operasi'))
+        return f(*args, **kwargs)
+    return decorated_function
 
 from app.api import bp as api_bp
 app.register_blueprint(api_bp, url_prefix='/api')

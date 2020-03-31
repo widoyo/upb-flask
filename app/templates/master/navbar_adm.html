@@ -1,59 +1,103 @@
-<nav class="navbar navbar-expand-lg navbar-light bg-light">
-  <div class="container">
-    <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarToogle" aria-controls="navbarToogle" aria-expanded="false" aria-label="Toggle navigation">
-      <span class="navbar-toggler-icon"></span>
-    </button>
-    <a class="navbar-brand d-none d-sm-block" href="/">
-        <span class="">
-            <img alt="Brand" src="/static/images/logo_bbws_bs.png" class="img-responsive" style="height: 2em">
-        </span>
-        <span class="">
-            <img alt="Brand" src="/static/images/bbws_bs.png" class="img-responsive" style="height: 2em">
-        </span>
-    </a>
-    <a class="navbar-brand d-block d-sm-none" href="/" style="font-size: 13pt; font-weight: bold;">
-        UPB Bendungan
-    </a>
+<nav class="navbar navbar-expand-lg navbar-dark bg-dark">
+    <div class="container">
+        {# <a href="/dashboard" class="navbar-brand">{{ env('APP_NAME', 'App') }}</a> #}
+        <!-- <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbar-main" aria-expanded="false" aria-label="Toggle navigation">
+            <span class="navbar-toggler-icon"></span>
+        </button>
+        <div class="text-right d-block d-sm-none">
+            <a class="navbar-brand" href="/"><span>BBWS Bengawan Solo</span> </a>
+        </div> -->
+        <div class="navbar-header">
+            <button class="navbar-toggler collapsed" type="button" data-toggle="collapse" data-target="#navbar-main" aria-controls="navbarToggleExternalContent" aria-expanded="false" aria-label="Toggle navigation">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+        </div>
+        <a class="navbar-brand" href="#">UPB BBWS BSOLO</a>
 
-    <div class="collapse navbar-collapse" id="navbarToogle">
-      <ul class="navbar-nav ml-auto">
-        <li class="nav-item">
-          <a class="nav-link" href="/bendungan"><b>Bendungan</b></a>
-        </li>
-        <li class="nav-item">
-          <a class="nav-link" href="/embung"><b>Embung</b></a>
-        </li>
-        <li class="nav-item dropdown">
-          <!-- <a class="nav-link dropdown" href="/admin/">Admin</a> -->
-          <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-              <b>Peta</b>
-          </a>
-            <div class="dropdown-menu" aria-labelledby="navbarDropdown">
-              <a class="dropdown-item" href="/map/bendungan">Bendungan</a>
-              <a class="dropdown-item" href="/map/embung">Embung</a>
-            </div>
-        </li>
-        <li class="nav-item dropdown">
-          <!-- <a class="nav-link dropdown" href="/admin/">Admin</a> -->
-          <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-              <b>Profile</b>
-          </a>
-            <div class="dropdown-menu" aria-labelledby="navbarDropdown">
-              <a class="dropdown-item" href="/profile/wilayah-kerja">Wilayah Kerja</a>
-              <a class="dropdown-item" href="/profile/struktur-organisasi">Struktur Organisasi</a>
-              <a class="dropdown-item" href="/profile/kontak-kami">Kontak Kami</a>
-            </div>
-        </li>
+        <div class="collapse navbar-collapse" id="navbar-main">
+            <!-- Sidebar -->
+            <ul class="nav navbar-nav navbar-center">
+                {% if user.role == "2" %}
+                    <li class="nav-item {% if title == 'Operasi' %}active{% endif %}">
+                        <a class="nav-link" href="/admin/operasi/bendungan">
+                            <!-- <i class="fas fa-home mr-2"></i> -->
+                            <span class="h4">Operasi</span>
+                            <div><small>TMA, Vol, Debit</small></div>
+                        </a>
+                    </li>
 
-        <!-- <li class="nav-item">
+                    <li class="nav-item {% if title == 'Keamanan' %}active{% endif %}">
+                        <a class="nav-link" href="/admin/keamanan/bendungan">
+                            <!-- <i class="fas fa-home mr-2"></i> -->
+                            <span class="h4">Keamanan</span>
+                            <div><small>VNotch, Piezometer</small></div>
+                        </a>
+                    </li>
 
-            <a class="nav-link" href="/login"><b>Login</b></a>
+                    <li class="nav-item {% if title == 'Kegiatan' %}active{% endif %}">
+                        <a class="nav-link" href="/admin/kegiatan/bendungan">
+                            <!-- <i class="fas fa-home mr-2"></i> -->
+                            <span class="h4">Kegiatan</span>
+                            <div><small>Foto kegiatan</small></div>
+                        </a>
+                    </li>
 
-        </li> -->
-      </ul>
+                    <li class="nav-item {% if title == 'Kinerja' %}active{% endif %}">
+                        <a class="nav-link" href="/admin/kinerja/bendungan">
+                            <!-- <i class="fas fa-home mr-2"></i> -->
+                            <span class="h4">Kinerja</span>
+                            <div><small>Kinerja Bendungan</small></div>
+                        </a>
+                    </li>
+                {% elif user.role == '1' %}
+                    <li class="nav-item {% if title == 'Users' %}active{% endif %}">
+                        <a class="nav-link" href="/admin/users">
+                            User
+                        </a>
+                    </li>
+                    <li class="nav-item {% if title == 'Operasi' %}active{% endif %}">
+                        <a class="nav-link" href="/admin/operasi/harian">
+                            Bendungan
+                        </a>
+                    </li>
+                    <li class="nav-item {% if title == 'Bendungan' %}active{% endif %}">
+                        <a class="nav-link" href="/admin/bendungan">
+                            Data Teknis
+                        </a>
+                    </li>
+                    <li class="nav-item {% if title == 'RTOW' %}active{% endif %}">
+                        <a class="nav-link" href="/admin/rtow">
+                            RTOW
+                        </a>
+                    </li>
+                    <li class="nav-item {% if title == 'Kegiatan' %}active{% endif %}">
+                        <a class="nav-link" href="/admin/kegiatan">
+                            Foto Kegiatan
+                        </a>
+                    </li>
+                    <li class="nav-item {% if title == 'Kinerja' %}active{% endif %}">
+                        <a class="nav-link" href="/admin/kinerja">
+                            Kinerja
+                        </a>
+                    </li>
+                {% endif %}
+            </ul>
+            <ul class="nav navbar-nav ml-auto">
+                <li>
+                    <a class="nav-link disabled" href="#">{{ user.username }}</a>
+                </li>
+                {% if user %}
+                    <li>
+                        <a class="nav-link" href="/logout">Logout</a>
+                    </li>
+                {% else %}
+                    <li>
+                        <a class="nav-link" href="/login"><i class="fas fa-key ml-2 mr-2"></i> Login</a>
+                    </li>
+                {% endif %}
+
+            </ul>
+            <!-- End of Sidebar -->
+        </div>
     </div>
-  </div>
 </nav>
-<div class="text-center text-light bg-primary">
-    <h3>UNIT PENGELOLA BENDUNGAN</h3>
-</div>

@@ -3,7 +3,7 @@ from flask_login import login_required, current_user
 from app.admin.kegiatan import save_image
 from app.models import Kerusakan, Bendungan, Foto
 from app.forms import LaporKerusakan
-from app import db
+from app import db, admin_only, petugas_only
 from sqlalchemy.exc import IntegrityError
 import datetime
 import base64
@@ -43,10 +43,8 @@ komponen = [
 
 @bp.route('/kinerja')
 @login_required
-def kinerja_index():
-    if current_user.role == "2":
-        return redirect(url_for('admin.kinerja_bendungan'), bendungan_id=current_user.bendungan_id)
-
+@admin_only
+def kinerja():
     kat = ['berat', 'sedang', 'ringan']
     bends = Bendungan.query.all()
     kerusakan = Kerusakan.query.order_by(Kerusakan.tgl_lapor.desc()).all()
@@ -74,9 +72,11 @@ def kinerja_index():
                             kinerja=kinerja)
 
 
-@bp.route('/kinerja/<bendungan_id>')
+@bp.route('/kinerja/bendungan')
 @login_required
-def kinerja_bendungan(bendungan_id):
+@petugas_only
+def kinerja_bendungan():
+    bendungan_id = current_user.bendungan_id
     kerusakan = Kerusakan.query.filter(
                                     Kerusakan.bendungan_id == bendungan_id
                                 ).order_by(
@@ -90,21 +90,22 @@ def kinerja_bendungan(bendungan_id):
             komponens.append(ker.komponen)
 
     foto = {}
-    fotos = Foto.query.all()
+    fotos = Foto.query.filter(Foto.obj_type == 'kinerja').all()
     for f in fotos:
         if f.obj_id in ids:
             foto[f.obj_id] = f
 
     return render_template('kinerja/bendungan.html',
-                            waduk=waduk,
                             kerusakan=kerusakan,
                             komponens=komponens,
                             foto=foto)
 
 
-@bp.route('/kinerja/<bendungan_id>/lapor', methods=['GET', 'POST'])
+@bp.route('/kinerja/bendungan/lapor', methods=['GET', 'POST'])
 @login_required
-def kinerja_lapor(bendungan_id):
+@petugas_only
+def kinerja_lapor():
+    bendungan_id = current_user.bendungan_id
     form = LaporKerusakan()
     if form.validate_on_submit():
         last_foto = Foto.query.order_by(Foto.id.desc()).first()
@@ -133,7 +134,7 @@ def kinerja_lapor(bendungan_id):
             db.session.commit()
 
             flash('Lapor Kerusakan berhasil !', 'success')
-            return redirect(url_for('kegiatan.bendungan', bendungan_id=bendungan_id))
+            return redirect(url_for('admin.kinerja_bendungan'))
         except IntegrityError:
             db.session.rollback()
             flash('Data sudah ada, mohon update untuk mengubah', 'danger')
@@ -143,9 +144,10 @@ def kinerja_lapor(bendungan_id):
                             bend=bend)
 
 
-@bp.route('/kinerja/<bendungan_id>/foto', methods=['POST'])
+@bp.route('/kinerja/bendungan/foto', methods=['POST'])
 @login_required
-def kinerja_foto(bendungan_id):
+@petugas_only
+def kinerja_foto():
     last_foto = Foto.query.order_by(Foto.id.desc()).first()
     new_id = 1 if not last_foto else (last_foto.id + 1)
     try:
@@ -156,21 +158,22 @@ def kinerja_foto(bendungan_id):
 
         foto = save_image(imageStr, filename)
         foto.keterangan = request.args.get('keterangan')
-        foto.obj_type = "kerusakan"
+        foto.obj_type = "kinerja"
         foto.obj_id = ker_id
         db.session.add(foto)
         db.session.commit()
 
         flash("Foto berhasil disimpan", 'success')
-        return redirect(url_for('kinerja.bendungan', bendungan_id=bendungan_id))
+        return redirect(url_for('admin.kinerja_bendungan'))
     except Exception as e:
         db.session.rollback()
         flash(f"Error : {e}", 'danger')
-        return redirect(url_for('kinerja.bendungan', bendungan_id=bendungan_id))
+        return redirect(url_for('admin.kinerja_bendungan'))
 
 
 @bp.route('/kinerja/<bendungan_id>/tanggapan', methods=['POST'])
 @login_required
+@admin_only
 def kinerja_tanggapan(bendungan_id):
     tang = request.args.get('tanggapan')
     ker_id = request.args.get('ker_id')
@@ -186,7 +189,7 @@ def kinerja_tanggapan(bendungan_id):
     db.session.commit()
 
     flash('Tanggapan disimpan', 'success')
-    return redirect(url_for('kinerja.bendungan', bendungan_id=bendungan_id))
+    return redirect(url_for('admin.kinerja_bendungan'))
 
 
 @bp.route('/kinerja/update', methods=['POST'])

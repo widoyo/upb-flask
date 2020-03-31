@@ -4,7 +4,7 @@ from sqlalchemy import extract
 from sqlalchemy.exc import IntegrityError
 from app.models import Kegiatan, Foto, Bendungan
 from app.forms import AddKegiatan
-from app import app, db
+from app import app, db, petugas_only
 import datetime
 import base64
 import os
@@ -24,17 +24,19 @@ petugas = [
 
 @bp.route('/kegiatan')
 @login_required
-def kegiatan_index():
+def kegiatan():
     if current_user.role == "2":
-        return redirect(url_for('admin.kegiatan_bendungan'), bendungan_id=current_user.bendungan_id)
+        return redirect(url_for('admin.kegiatan_bendungan'))
     bends = Bendungan.query.all()
     return render_template('kegiatan/index.html',
                             bends=bends)
 
 
-@bp.route('/kegiatan/<bendungan_id>')
+@bp.route('/kegiatan/bendungan')
 @login_required
-def kegiatan_bendungan(bendungan_id):
+@petugas_only
+def kegiatan_bendungan():
+    bendungan_id = current_user.bendungan_id
     date = request.values.get('sampling') or datetime.datetime.utcnow()
     sampling = datetime.datetime.strptime(f"{date.year}-{date.month}-01", "%Y-%m-%d")
     bend = Bendungan.query.get(bendungan_id)
@@ -84,9 +86,11 @@ def kegiatan_paper(bendungan_id):
                             sampling=sampling)
 
 
-@bp.route('/kegiatan/<bendungan_id>/add', methods=['GET', 'POST'])
+@bp.route('/kegiatan/bendungan/add', methods=['GET', 'POST'])
 @login_required
-def kegiatan_add(bendungan_id):
+@petugas_only
+def kegiatan_add():
+    bendungan_id = current_user.bendungan_id
     form = AddKegiatan()
     bend = Bendungan.query.get(bendungan_id)
     if form.validate_on_submit():
@@ -114,7 +118,7 @@ def kegiatan_add(bendungan_id):
             db.session.commit()
 
             flash('Tambah Kegiatan berhasil !', 'success')
-            return redirect(url_for('kegiatan.bendungan', bendungan_id=bendungan_id))
+            return redirect(url_for('admin.kegiatan_bendungan'))
         except IntegrityError:
             db.session.rollback()
             flash('Data sudah ada, mohon update untuk mengubah', 'danger')

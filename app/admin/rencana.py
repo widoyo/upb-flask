@@ -2,7 +2,7 @@ from flask import Blueprint, request, render_template, redirect, url_for, jsonif
 from flask_login import login_required
 from sqlalchemy import and_
 from app.models import Bendungan, Rencana
-from app import db
+from app import db, admin_only
 import datetime
 
 from app.admin import bp
@@ -11,7 +11,8 @@ from app.admin import bp
 
 @bp.route('/rtow')
 @login_required
-def rtow_index():
+@admin_only
+def rtow():
     sampling = request.values.get('sampling')
     sampling = datetime.datetime.strptime(sampling, "%Y-%m-%d")
     start = datetime.datetime.strptime(f"{sampling.year -1}-11-01", "%Y-%m-%d")
@@ -38,18 +39,20 @@ def rtow_index():
 
 @bp.route('/rtow/<bendungan_id>/export', methods=['GET', 'POST'])
 @login_required
+@admin_only
 def rtow_exports(bendungan_id):
     bend = Bendungan.query.get(bendungan_id)
 
     if request.method == "POST":
         pass
 
-    return render_template('rencana/export.html',
+    return render_template('rencana/import.html',
                             bend=bend)
 
 
 @bp.route('/rtow/<bendungan_id>/import')
 @login_required
+@admin_only
 def rtow_imports(bendungan_id):
     sampling = datetime.datetime.now()
     start = datetime.datetime.strptime(f"{sampling.year - 2}-11-01", "%Y-%m-%d")
@@ -62,12 +65,13 @@ def rtow_imports(bendungan_id):
                                 Rencana.sampling <= end),
                             Rencana.bendungan_id == bendungan_id).all()
 
-    return render_template('rencana/export.html',
+    return render_template('rencana/import.html',
                             bend=bend)
 
 
 @bp.route('/rtow/update', methods=['POST'])
 @login_required
+@admin_only
 def rtow_update():
     pk = request.values.get('pk')
     attr = request.values.get('name')
