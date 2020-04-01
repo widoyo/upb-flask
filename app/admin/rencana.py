@@ -69,9 +69,7 @@ def rtow_imports(bendungan_id):
                             bend=bend)
 
 
-@bp.route('/rtow/update', methods=['POST'])
-@login_required
-@admin_only
+@bp.route('/rtow/update', methods=['POST'])  # @login_required  # @admin_only
 def rtow_update():
     pk = request.values.get('pk')
     attr = request.values.get('name')

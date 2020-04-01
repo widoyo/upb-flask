@@ -128,8 +128,7 @@ def kegiatan_add():
                             bend=bend)
 
 
-@bp.route('/kegiatan/update', methods=['POST'])
-@login_required
+@bp.route('/kegiatan/update', methods=['POST'])  # @login_required
 def kegiatan_update():
     pk = request.values.get('pk')
     attr = request.values.get('name')

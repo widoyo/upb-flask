@@ -5,8 +5,9 @@ from sqlalchemy.exc import IntegrityError
 from app.models import ManualDaily, ManualTma, ManualPiezo, ManualVnotch
 from app.models import Bendungan
 from app.forms import AddDaily, AddTma
-from app import db, admin_only, petugas_only
+from app import db, admin_only, petugas_only, get_bendungan
 import datetime
+import calendar
 
 from app.admin import bp
 # bp = Blueprint('operasi', __name__)
@@ -61,16 +62,28 @@ def operasi_harian():
         # if tma:
         #     print(tma[0].sampling)
         tma_d = {
-            '6': None,
-            '12': None,
-            '18': None,
+            '6': {
+                'tma': None,
+                'vol': None
+            },
+            '12': {
+                'tma': None,
+                'vol': None
+            },
+            '18': {
+                'tma': None,
+                'vol': None
+            },
         }
         for t in tma:
-            tma_d[f"{t.sampling.hour}"] = None if not t.tma else round(t.tma/100, 1)
+            tma_d[f"{t.sampling.hour}"]['tma'] = None if not t.tma else round(t.tma, 2)
+            tma_d[f"{t.sampling.hour}"]['vol'] = None if not t.vol else round(t.tma, 2)
 
+        arr = w.nama.split('_')
+        name = f"{arr[0].title()}.{arr[1].title()}"
         data.append({
             'id': w.id,
-            'nama': w.nama,
+            'nama': name,
             'volume': w.volume,
             'lbi': w.lbi,
             'elev_puncak': w.elev_puncak,
@@ -79,26 +92,31 @@ def operasi_harian():
             'tma6': tma_d['6'],
             'tma12': tma_d['12'],
             'tma18': tma_d['18'],
-            'outflow_vol': None if not daily else daily.outflow_vol,
+            'inflow_deb': None if not daily else daily.inflow_deb,
             'outflow_deb': None if not daily else daily.outflow_deb,
             'spillway_deb': None if not daily else daily.spillway_deb,
             'curahhujan': None if not daily else daily.ch,
-            'debit': None if not vnotch else vnotch.vn_deb,
+            'tinggi': None if not vnotch else vnotch.vn1_tma,
+            'debit': None if not vnotch else vnotch.vn1_deb,
             'piezo': piezo
         })
 
     return render_template('operasi/index.html',
-                            waduk=data,
+                            bends=data,
                             sampling=sampling)
 
 
 @bp.route('/operasi/bendungan')
-@login_required
-@petugas_only
-def operasi_bendungan():
-    date = request.values.get('sampling') or datetime.datetime.utcnow()
+@login_required  # @petugas_only
+@get_bendungan
+def operasi_bendungan(bend):
+    date = request.values.get('sampling')
+    date = datetime.datetime.strptime(date, "%Y-%m-%d") if date else datetime.datetime.utcnow()
     sampling = datetime.datetime.strptime(f"{date.year}-{date.month}-01", "%Y-%m-%d")
-    bendungan_id = current_user.bendungan_id
+
+    bendungan_id = bend.id
+    arr = bend.nama.split('_')
+    name = f"{arr[0].title()}.{arr[1].title()}"
 
     manual_daily = ManualDaily.query.filter(
                                         ManualDaily.bendungan_id == bendungan_id,
@@ -110,25 +128,34 @@ def operasi_bendungan():
                                     extract('month', ManualTma.sampling) == sampling.month,
                                     extract('year', ManualTma.sampling) == sampling.year
                                 ).all()
+
+    now = datetime.datetime.now()
+    if sampling.year == now.year and sampling.month == now.month:
+        day = now.day
+    else:
+        day = calendar.monthrange(sampling.year, sampling.month)[1]
+
     periodik = {}
-    for d in manual_daily:
-        periodik[d.sampling] = {
-            'daily': d,
+    for i in range(day):
+        sampl = datetime.datetime.strptime(f"{sampling.year}-{sampling.month}-{i+1}", "%Y-%m-%d")
+        periodik[sampl] = {
+            'daily': None,
             'tma': {
-                '06': {},
-                '12': {},
-                '18': {}
+                '06': None,
+                '12': None,
+                '18': None
             }
         }
+    for d in manual_daily:
+        periodik[d.sampling]['daily'] = d
     for t in tma:
-        sampl = t.sampling.strftime("%Y-%m-%d")
+        sampl = t.sampling.replace(hour=0)
         jam = t.sampling.strftime("%H")
-        periodik[sampl]['tma'][jam] = {
-            'tma': t.tma,
-            'vol': t.vol
-        }
+        periodik[sampl]['tma'][jam] = t
 
     return render_template('operasi/bendungan.html',
+                            name=name,
+                            bend_id=bend.id,
                             periodik=periodik,
                             sampling=sampling)
 
@@ -161,12 +188,12 @@ def operasi_tma_add():
                             form=form)
 
 
-@bp.route('/operasi/bendungan/tma/update')
-@login_required
+@bp.route('/operasi/bendungan/tma/update', methods=['POST'])  # @login_required
 def operasi_tma_update():
     pk = request.values.get('pk')
     attr = request.values.get('name')
     val = request.values.get('value')
+
     row = ManualTma.query.get(pk)
     setattr(row, attr, val)
     db.session.commit()
@@ -210,12 +237,12 @@ def operasi_daily_add():
                             form=form)
 
 
-@bp.route('/operasi/daily/update', methods=['POST'])
-@login_required
+@bp.route('/operasi/daily/update', methods=['POST'])  # @login_required
 def operasi_daily_update():
     pk = request.values.get('pk')
     attr = request.values.get('name')
     val = request.values.get('value')
+
     row = ManualDaily.query.get(pk)
     setattr(row, attr, val)
     db.session.commit()

@@ -1,7 +1,7 @@
 import os
 import logging
 from functools import wraps
-from flask import Flask, redirect, url_for
+from flask import Flask, redirect, url_for, request
 from flask_sqlalchemy import SQLAlchemy
 from flask_socketio import SocketIO
 from flask_login import LoginManager, current_user
@@ -15,8 +15,10 @@ db = SQLAlchemy(app)
 login = LoginManager(app)
 login.login_view = 'login'
 
+# DECORATORS
+from app.models import Bendungan
 
-# decorators
+
 def admin_only(f):
     @wraps(f)
     def decorated_function(*args, **kwargs):
@@ -34,6 +36,24 @@ def petugas_only(f):
         return f(*args, **kwargs)
     return decorated_function
 
+
+def get_bendungan(f):
+    @wraps(f)
+    def decorated_function(*args, **kwargs):
+        bendungan_id = int(request.values.get('bend_id')) if request.values.get('bend_id') else None
+        bendungan_id = current_user.bendungan_id or bendungan_id
+
+        if bendungan_id:
+            bend = Bendungan.query.get(bendungan_id)
+            if not bend:
+                bendungan_id = None
+
+        if not bendungan_id:
+            return redirect(url_for('admin.operasi'))
+
+        return f(bend, *args, **kwargs)
+    return decorated_function
+
 from app.api import bp as api_bp
 app.register_blueprint(api_bp, url_prefix='/api')
 
@@ -45,21 +65,6 @@ app.register_blueprint(map_bp, url_prefix='/map')
 
 from app.about import bp as about_bp
 app.register_blueprint(about_bp, url_prefix='/profile')
-
-# from app.admin.operasi import bp as operasi_bp
-# app.register_blueprint(operasi_bp, url_prefix='/admin/operasi')
-#
-# from app.admin.keamanan import bp as keamanan_bp
-# app.register_blueprint(keamanan_bp, url_prefix='/admin/keamanan')
-#
-# from app.admin.kinerja import bp as kinerja_bp
-# app.register_blueprint(kinerja_bp, url_prefix='/admin/kinerja')
-#
-# from app.admin.kegiatan import bp as kegiatan_bp
-# app.register_blueprint(kegiatan_bp, url_prefix='/admin/kegiatan')
-#
-# from app.admin.users import bp as users_bp
-# app.register_blueprint(users_bp, url_prefix='/admin/users')
 
 from app.admin import bp as admin_bp
 app.register_blueprint(admin_bp, url_prefix='/admin')

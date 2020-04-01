@@ -12,11 +12,110 @@
 {% endblock %}
 
 {% block content %}
-    <div class="container">
-        <h1>Operasi Index</h1>
-    </div>
+<div>
+    <section class="content-header">
+        <h2>Bendungan</h2>
+    </section>
+    <h3>
+        <span id="datepicker" style="color: #18bc9c"><i class="fa fa-calendar"></i> {{ sampling.strftime('%d %B %Y') }}</span>
+    </h3>
+    <table class="table table-hover table-bordered">
+        <thead>
+            <tr class="table-active">
+                <th rowspan="2" class="text-center align-middle">No</th>
+                <th rowspan="2" class="text-center align-middle">Nama</th>
+                <th rowspan="2" class="text-center align-middle">CH</th>
+                <th colspan="2" class="text-center align-middle">Pagi</th>
+                <th colspan="2" class="text-center align-middle">Siang</th>
+                <th colspan="2" class="text-center align-middle">Sore</th>
+                <th rowspan="2" class="text-center align-middle">Q Inflow</th>
+                <th colspan="2" class="text-center align-middle">Q Outflow</th>
+                <th colspan="2" class="text-center align-middle">VNotch</th>
+                <th colspan="15" class="text-center align-middle">Piezometer</th>
+            </tr>
+            <tr class="table-active">
+                <th class="text-center align-middle">TMA</th>
+                <th class="text-center align-middle">Vol</th>
+                <th class="text-center align-middle">TMA</th>
+                <th class="text-center align-middle">Vol</th>
+                <th class="text-center align-middle">TMA</th>
+                <th class="text-center align-middle">Vol</th>
+                <th class="text-center align-middle">Intake</th>
+                <th class="text-center align-middle">Spillway</th>
+                <th class="text-center align-middle">Tinggi</th>
+                <th class="text-center align-middle">Debit</th>
+                <th class="text-center align-middle">1A</th>
+                <th class="text-center align-middle">1B</th>
+                <th class="text-center align-middle">1C</th>
+                <th class="text-center align-middle">2A</th>
+                <th class="text-center align-middle">2B</th>
+                <th class="text-center align-middle">2C</th>
+                <th class="text-center align-middle">3A</th>
+                <th class="text-center align-middle">3B</th>
+                <th class="text-center align-middle">3C</th>
+                <th class="text-center align-middle">4A</th>
+                <th class="text-center align-middle">4B</th>
+                <th class="text-center align-middle">4C</th>
+                <th class="text-center align-middle">5A</th>
+                <th class="text-center align-middle">5B</th>
+                <th class="text-center align-middle">5C</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for bend in bends %}
+                <tr>
+                    <td>{{ loop.index }}</td>
+                    <td><a href="{{ url_for('admin.operasi_bendungan') }}?bend_id={{ bend.id }}">{{ bend.nama }}</a></td>
+                    <td class="text-right">{{ bend.tma6.tma if bend.tma6.tma != None }}</td>
+                    <td class="text-right">{{ bend.tma6.vol if bend.tma6.vol != None }}</td>
+                    <td class="text-right">{{ bend.tma12.tma if bend.tma12.tma != None }}</td>
+                    <td class="text-right">{{ bend.tma12.vol if bend.tma12.vol != None }}</td>
+                    <td class="text-right">{{ bend.tma18.tma if bend.tma18.tma != None }}</td>
+                    <td class="text-right">{{ bend.tma18.vol if bend.tma18.vol != None }}</td>
+                    <td class="text-right">{{ bend.tma6.tma if bend.tma6.tma != None }}</td>
+                    <td class="text-right">{{ bend.inflow_deb if bend.inflow_deb != None }}</td>
+                    <td class="text-right">{{ bend.outflow_deb if bend.outflow_deb != None }}</td>
+                    <td class="text-right">{{ bend.spillway_deb if bend.spillway_deb != None }}</td>
+                    <td class="text-right">{{ bend.tinggi if bend.tinggi != None }}</td>
+                    <td class="text-right">{{ bend.debit if bend.debit != None }}</td>
+                    <td class="text-right">{{ bend.piezo.p1a if bend.piezo.p1a != None }}</td>
+                    <td class="text-right">{{ bend.piezo.p1b if bend.piezo.p1b != None }}</td>
+                    <td class="text-right">{{ bend.piezo.p1c if bend.piezo.p1c != None }}</td>
+                    <td class="text-right">{{ bend.piezo.p2a if bend.piezo.p2a != None }}</td>
+                    <td class="text-right">{{ bend.piezo.p2b if bend.piezo.p2b != None }}</td>
+                    <td class="text-right">{{ bend.piezo.p2c if bend.piezo.p2c != None }}</td>
+                    <td class="text-right">{{ bend.piezo.p3a if bend.piezo.p3a != None }}</td>
+                    <td class="text-right">{{ bend.piezo.p3b if bend.piezo.p3b != None }}</td>
+                    <td class="text-right">{{ bend.piezo.p3c if bend.piezo.p3c != None }}</td>
+                    <td class="text-right">{{ bend.piezo.p4a if bend.piezo.p4a != None }}</td>
+                    <td class="text-right">{{ bend.piezo.p4b if bend.piezo.p4b != None }}</td>
+                    <td class="text-right">{{ bend.piezo.p4c if bend.piezo.p4c != None }}</td>
+                    <td class="text-right">{{ bend.piezo.p5a if bend.piezo.p5a != None }}</td>
+                    <td class="text-right">{{ bend.piezo.p5b if bend.piezo.p5b != None }}</td>
+                    <td class="text-right">{{ bend.piezo.p5c if bend.piezo.p5c != None }}</td>
+                </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</div>
 {% endblock %}
 
 {% block js %}
+<script src="{{ url_for('static', filename='js/bootstrap-datepicker.min.js') }}"></script>
+<script>
+    $(document).ready(function() {
+        // resolve package confict
+        // let datepicker = $.fn.datepicker.noConflict();
+        // $.fn.bootstrapDP = datepicker;
 
+        $('#datepicker').datepicker({
+          todayHighlight: true,
+          autoclose: true,
+          format: 'yyyy-mm-dd'
+        });
+        $('#datepicker').on('changeDate', function () {
+          window.location = "{{ url_for('admin.operasi_harian') }}?sampling=" + $('#datepicker').datepicker('getFormattedDate')
+        });
+    });
+</script>
 {% endblock %}

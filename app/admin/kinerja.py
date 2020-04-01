@@ -192,8 +192,7 @@ def kinerja_tanggapan(bendungan_id):
     return redirect(url_for('admin.kinerja_bendungan'))
 
 
-@bp.route('/kinerja/update', methods=['POST'])
-@login_required
+@bp.route('/kinerja/update', methods=['POST'])  # @login_required
 def kinerja_update():
     pk = request.values.get('pk')
     attr = request.values.get('name')

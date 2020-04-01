@@ -83,8 +83,7 @@ def keamanan_vnotch():
                             form=form)
 
 
-@bp.route('/keamanan/vnotch/update', methods=['POST'])
-@login_required
+@bp.route('/keamanan/vnotch/update', methods=['POST'])  # @login_required
 def keamanan_vnotch_update():
     pk = request.values.get('pk')
     attr = request.values.get('name')
@@ -140,8 +139,7 @@ def keamanan_piezo():
                             form=form)
 
 
-@bp.route('/keamanan/piezo/update', methods=['POST'])
-@login_required
+@bp.route('/keamanan/piezo/update', methods=['POST'])  # @login_required
 def keamanan_piezo_update():
     pk = request.values.get('pk')
     attr = request.values.get('name')

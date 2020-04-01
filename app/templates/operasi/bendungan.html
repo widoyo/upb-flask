@@ -7,16 +7,413 @@
 <style>
     .datepicker {
         z-index: 10000 !important;
+        display: inherit;
     }
 </style>
+<link href="{{ url_for('static', filename='css/bootstrap-editable.css') }}" rel="stylesheet"/>
 {% endblock %}
 
 {% block content %}
-    <div class="container">
-        <h1>Operasi Bendungan</h1>
+    <div>
+        <h1>{{ name }}</h1>
+        <div class="forms">
+            <div class="row">
+                <div class="col-md-4">
+                    <h5>
+                      <a data-toggle="collapse" href="#tmapagi" role="button" aria-expanded="false" aria-controls="tmapagi">
+                        Form Data Pagi <small><i class="fas fa-play"></i></small>
+                      </a>
+                    </h5>
+                    <hr>
+                    <div class="collapse" id="tmapagi">
+                      <div>
+                          <div class="form-group">
+                              <label class="form-text" for="sampling"><b>Tanggal</b></label>
+                              <input class="form-control" type="text" name="sampling" id="datepicker-pagi" hidden required value="{{ sampling }}">
+                              <p class="ml-2" id="sampling-pagi">{{ sampling.strftime('%d %B %Y') }}</p>
+                          </div>
+                      </div>
+                    </div>
+                </div>
+                <div class="col-md-4">
+                    <h5>
+                      <a data-toggle="collapse" href="#tmasiang" role="button" aria-expanded="false" aria-controls="tmasiang">
+                        Form Data Siang <small><i class="fas fa-play"></i></small>
+                      </a>
+                    </h5>
+                    <hr>
+                    <div class="collapse" id="tmasiang">
+                      <div>
+                          <div class="form-group">
+                              <label class="form-text" for="sampling"><b>Tanggal</b></label>
+                              <input class="form-control" type="text" name="sampling" id="datepicker-siang" hidden required value="{{ sampling }}">
+                              <p class="ml-2" id="sampling-siang">{{ sampling.strftime('%d %B %Y') }}</p>
+                          </div>
+                      </div>
+                    </div>
+                </div>
+                <div class="col-md-4">
+                    <h5>
+                      <a data-toggle="collapse" href="#tmasore" role="button" aria-expanded="false" aria-controls="tmasore">
+                        Form Data Sore <small><i class="fas fa-play"></i></small>
+                      </a>
+                    </h5>
+                    <hr>
+                    <div class="collapse" id="tmasore">
+                      <div>
+                          <div class="form-group">
+                              <label class="form-text" for="sampling"><b>Tanggal</b></label>
+                              <input class="form-control" type="text" name="sampling" id="datepicker-sore" hidden required value="{{ sampling }}">
+                              <p class="ml-2" id="sampling-sore">{{ sampling.strftime('%d %B %Y') }}</p>
+                          </div>
+                      </div>
+                    </div>
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-md-4">
+                    <h5>
+                      <a data-toggle="collapse" href="#vnotch" role="button" aria-expanded="false" aria-controls="vnotch">
+                        VNotch <small><i class="fas fa-play"></i></small>
+                      </a>
+                    </h5>
+                    <hr>
+                    <div class="collapse" id="vnotch">
+                      <div>
+                          <div class="form-group">
+                              <label class="form-text" for="sampling"><b>Tanggal</b></label>
+                              <input class="form-control" type="text" name="sampling" id="datepicker-vn" hidden required value="{{ sampling }}">
+                              <p class="ml-2" id="sampling-vn">{{ sampling.strftime('%d %B %Y') }}</p>
+                          </div>
+                      </div>
+                    </div>
+                </div>
+                <div class="col-md-4">
+                    <h5>
+                      <a data-toggle="collapse" href="#piezo" role="button" aria-expanded="false" aria-controls="piezo">
+                        Piezometer <small><i class="fas fa-play"></i></small>
+                      </a>
+                    </h5>
+                    <hr>
+                    <div class="collapse" id="piezo">
+                      <div>
+                          <div class="form-group">
+                              <label class="form-text" for="sampling"><b>Tanggal</b></label>
+                              <input class="form-control" type="text" name="sampling" id="datepicker-piezo" hidden required value="{{ sampling }}">
+                              <p class="ml-2" id="sampling-piezo">{{ sampling.strftime('%d %B %Y') }}</p>
+                          </div>
+                      </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <h3>
+            Data Harian <span id="datepicker" style="color: #18bc9c"><i class="fa fa-calendar"></i> {{ sampling.strftime('%B %Y') }}</span> <a href="#">CSV</a>
+        </h3>
+        <table class="table table-hover table-bordered">
+            <thead>
+                <tr class="table-active">
+                    <th rowspan="2" class="text-center align-middle">Tanggal</th>
+                    <th rowspan="2" class="text-center align-middle">Curah Hujan</th>
+                    <th colspan="2" class="text-center align-middle">Jam 6</th>
+                    <th colspan="2" class="text-center align-middle">Jam 12</th>
+                    <th colspan="2" class="text-center align-middle">Jam 18</th>
+                    <th colspan="2" class="text-center align-middle">Inflow</th>
+                    <th colspan="4" class="text-center align-middle">Outflow</th>
+                </tr>
+                <tr class="table-active">
+                    <th class="text-center align-middle">TMA</th>
+                    <th class="text-center align-middle">Vol</th>
+                    <th class="text-center align-middle">TMA</th>
+                    <th class="text-center align-middle">Vol</th>
+                    <th class="text-center align-middle">TMA</th>
+                    <th class="text-center align-middle">Vol</th>
+                    <th class="text-center align-middle">Debit</th>
+                    <th class="text-center align-middle">Volume</th>
+                    <th class="text-center align-middle">Q Intake</th>
+                    <th class="text-center align-middle">V Intake</th>
+                    <th class="text-center align-middle">Q Spillway</th>
+                    <th class="text-center align-middle">V Spillway</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for date, per in periodik.items() %}
+                    <tr>
+                        <td id="tgl">{{ date.strftime("%Y-%m-%d") }}</td>
+                        <td class="text-right">
+                            <a data-url="{{ url_for('admin.operasi_daily_update') }}"
+                                class="editable"
+                                data-name="ch"
+                                data-type="number"
+                                data-title="Curah Hujan"
+                                data-step=".01"
+                                data-pk="{{ per.daily.id }}">
+                                {% if per.daily %}
+                                <span style="color: blue">{{ per.daily.ch }}</span>
+                                {% else %}<span style="color: red">Empty</span>{% endif %}
+                            </a>
+                        </td>
+                        <td class="text-right">
+                            <a data-url="{{ url_for('admin.operasi_tma_update') }}"
+                                class="editable"
+                                data-name="tma"
+                                data-type="number"
+                                data-title="TMA Pagi"
+                                data-step=".01"
+                                data-pk="{{ per.tma['06'].id }}">
+                                {% if per.tma['06'] %}
+                                <span style="color: blue">{{ per.tma['06'].tma }}</span>
+                                {% else %}<span style="color: red">Empty</span>{% endif %}
+                            </a>
+                        </td>
+                        <td class="text-right">
+                            <a data-url="{{ url_for('admin.operasi_tma_update') }}"
+                                class="editable"
+                                data-name="vol"
+                                data-type="number"
+                                data-title="Vol Pagi"
+                                data-step=".01"
+                                data-pk="{{ per.tma['06'].id }}">
+                                {% if per.tma['06'] %}
+                                <span style="color: blue">{{ per.tma['06'].vol }}</span>
+                                {% else %}<span style="color: red">Empty</span>{% endif %}
+                            </a>
+                        </td>
+                        <td class="text-right">
+                            <a data-url="{{ url_for('admin.operasi_tma_update') }}"
+                                class="editable"
+                                data-name="tma"
+                                data-type="number"
+                                data-title="TMA Siang"
+                                data-step=".01"
+                                data-pk="{{ per.tma['12'].id }}">
+                                {% if per.tma['12'] %}
+                                <span style="color: blue">{{ per.tma['12'].tma }}</span>
+                                {% else %}<span style="color: red">Empty</span>{% endif %}
+                            </a>
+                        </td>
+                        <td class="text-right">
+                            <a data-url="{{ url_for('admin.operasi_tma_update') }}"
+                                class="editable"
+                                data-name="vol"
+                                data-type="number"
+                                data-title="Vol Siang"
+                                data-step=".01"
+                                data-pk="{{ per.tma['12'].id }}">
+                                {% if per.tma['12'] %}
+                                <span style="color: blue">{{ per.tma['12'].vol }}</span>
+                                {% else %}<span style="color: red">Empty</span>{% endif %}
+                            </a>
+                        </td>
+                        <td class="text-right">
+                            <a data-url="{{ url_for('admin.operasi_tma_update') }}"
+                                class="editable"
+                                data-name="tma"
+                                data-type="number"
+                                data-title="TMA Sore"
+                                data-step=".01"
+                                data-pk="{{ per.tma['18'].id }}">
+                                {% if per.tma['18'] %}
+                                <span style="color: blue">{{ per.tma['18'].tma }}</span>
+                                {% else %}<span style="color: red">Empty</span>{% endif %}
+                            </a>
+                        </td>
+                        <td class="text-right">
+                            <a data-url="{{ url_for('admin.operasi_tma_update') }}"
+                                class="editable"
+                                data-name="vol"
+                                data-type="number"
+                                data-title="Vol Sore"
+                                data-step=".01"
+                                data-pk="{{ per.tma['18'].id }}">
+                                {% if per.tma['18'] %}
+                                <span style="color: blue">{{ per.tma['18'].vol }}</span>
+                                {% else %}<span style="color: red">Empty</span>{% endif %}
+                            </a>
+                        </td>
+                        <td class="text-right">
+                            <a data-url="{{ url_for('admin.operasi_daily_update') }}"
+                                class="editable"
+                                data-name="inflow_deb"
+                                data-type="number"
+                                data-title="Q Inflow"
+                                data-step=".01"
+                                data-pk="{{ per.daily.id }}">
+                                {% if per.daily %}
+                                <span style="color: blue">{{ per.daily.inflow_deb }}</span>
+                                {% else %}<span style="color: red">Empty</span>{% endif %}
+                            </a>
+                        </td>
+                        <td class="text-right">
+                            <a data-url="{{ url_for('admin.operasi_daily_update') }}"
+                                class="editable"
+                                data-name="inflow_vol"
+                                data-type="number"
+                                data-title="V Inflow"
+                                data-step=".01"
+                                data-pk="{{ per.daily.id }}">
+                                {% if per.daily %}
+                                <span style="color: blue">{{ per.daily.inflow_vol }}</span>
+                                {% else %}<span style="color: red">Empty</span>{% endif %}
+                            </a>
+                        </td>
+                        <td class="text-right">
+                            <a data-url="{{ url_for('admin.operasi_daily_update') }}"
+                                class="editable"
+                                data-name="outflow_deb"
+                                data-type="number"
+                                data-title="Q Intake"
+                                data-step=".01"
+                                data-pk="{{ per.daily.id }}">
+                                {% if per.daily %}
+                                <span style="color: blue">{{ per.daily.outflow_deb }}</span>
+                                {% else %}<span style="color: red">Empty</span>{% endif %}
+                            </a>
+                        </td>
+                        <td class="text-right">
+                            <a data-url="{{ url_for('admin.operasi_daily_update') }}"
+                                class="editable"
+                                data-name="outflow_vol"
+                                data-type="number"
+                                data-title="V Intake"
+                                data-step=".01"
+                                data-pk="{{ per.daily.id }}">
+                                {% if per.daily %}
+                                <span style="color: blue">{{ per.daily.outflow_vol }}</span>
+                                {% else %}<span style="color: red">Empty</span>{% endif %}
+                            </a>
+                        </td>
+                        <td class="text-right">
+                            <a data-url="{{ url_for('admin.operasi_daily_update') }}"
+                                class="editable"
+                                data-name="spillway_deb"
+                                data-type="number"
+                                data-title="Q Spillway"
+                                data-step=".01"
+                                data-pk="{{ per.daily.id }}">
+                                {% if per.daily %}
+                                <span style="color: blue">{{ per.daily.spillway_deb }}</span>
+                                {% else %}<span style="color: red">Empty</span>{% endif %}
+                            </a>
+                        </td>
+                        <td class="text-right">
+                            <a data-url="{{ url_for('admin.operasi_daily_update') }}"
+                                class="editable"
+                                data-name="spillway_vol"
+                                data-type="number"
+                                data-title="V Spillway"
+                                data-step=".01"
+                                data-pk="{{ per.daily.id }}">
+                                {% if per.daily %}
+                                <span style="color: blue">{{ per.daily.spillway_vol }}</span>
+                                {% else %}<span style="color: red">Empty</span>{% endif %}
+                            </a>
+                        </td>
+                    </tr>
+                {% endfor %}
+            </tbody>
+        </table>
     </div>
 {% endblock %}
 
 {% block js %}
+<script src="{{ url_for('static', filename='js/moment.min.js') }}"></script>
+<script src="{{ url_for('static', filename='js/id.js') }}"></script>
+<script src="{{ url_for('static', filename='js/bootstrap-editable.min.js') }}"></script>
+<script src="{{ url_for('static', filename='js/bootstrap-datepicker.min.js') }}"></script>
+<script>
+    $(document).ready(function() {
+        // resolve package confict
+        let datepicker = $.fn.datepicker.noConflict();
+        $.fn.bootstrapDP = datepicker;
 
+        $('#datepicker').datepicker({
+            autoclose: true,
+            format: 'yyyy-mm-dd',
+            startView: "months",
+            minViewMode: "months"
+        });
+        $('#datepicker').on('changeDate', function () {
+            window.location = "{{ url_for('admin.operasi_bendungan') }}?bend_id={{ bend_id }}&sampling=" + $('#datepicker').datepicker('getFormattedDate')
+        });
+
+        $('#sampling-pagi').datepicker({
+            todayHighlight: true,
+            autoclose: true,
+            format:  'yyyy-mm-dd'
+        });
+        $('#sampling-pagi').on('changeDate', function () {
+            let date = $('#sampling-pagi').datepicker('getFormattedDate');
+            $('#sampling-pagi').text(moment(date).format('DD MMMM YYYY'));
+            $('#datepicker-pagi').text(date);
+            $('.datepicker').hide();
+        });
+
+        $('#sampling-siang').datepicker({
+            todayHighlight: true,
+            autoclose: true,
+            format:  'yyyy-mm-dd'
+        });
+        $('#sampling-siang').on('changeDate', function () {
+            let date = $('#sampling-siang').datepicker('getFormattedDate');
+            $('#sampling-siang').text(moment(date).format('DD MMMM YYYY'));
+            $('#datepicker-siang').text(date);
+            $('.datepicker').hide();
+        });
+
+        $('#sampling-sore').datepicker({
+            todayHighlight: true,
+            autoclose: true,
+            format:  'yyyy-mm-dd'
+        });
+        $('#sampling-sore').on('changeDate', function () {
+            let date = $('#sampling-sore').datepicker('getFormattedDate');
+            $('#sampling-sore').text(moment(date).format('DD MMMM YYYY'));
+            $('#datepicker-sore').text(date);
+            $('.datepicker').hide();
+        });
+
+        $('#sampling-vn').datepicker({
+            todayHighlight: true,
+            autoclose: true,
+            format:  'yyyy-mm-dd'
+        });
+        $('#sampling-vn').on('changeDate', function () {
+            let date = $('#sampling-vn').datepicker('getFormattedDate');
+            $('#sampling-vn').text(moment(date).format('DD MMMM YYYY'));
+            $('#datepicker-vn').text(date);
+            $('.datepicker').hide();
+        });
+
+        $('#sampling-piezo').datepicker({
+            todayHighlight: true,
+            autoclose: true,
+            format:  'yyyy-mm-dd'
+        });
+        $('#sampling-piezo').on('changeDate', function () {
+            let date = $('#sampling-piezo').datepicker('getFormattedDate');
+            $('#sampling-piezo').text(moment(date).format('DD MMMM YYYY'));
+            $('#datepicker-piezo').text(date);
+            $('.datepicker').hide();
+        });
+
+        let tgls = document.querySelectorAll("#tgl");
+        tgls.forEach(function(el){
+            console.log(el.innerText);
+            el.innerText = moment(el.innerText).format('ddd, D');
+        });
+
+        //turn to popup mode
+        $.fn.editable.defaults.mode = 'popup';
+        $(document).ready(function() {
+            $('.editable').editable({
+                error: function(response, newValue) {
+                    if(response.status === 500) {
+                        return 'Tidak bisa update, Tambah data pakai form.';
+                    }
+                 },
+            });
+        });
+    });
+</script>
 {% endblock %}

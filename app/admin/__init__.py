@@ -22,8 +22,7 @@ def bendungan():
                             bends=bends)
 
 
-@bp.route('/bendungan/update')
-@login_required
+@bp.route('/bendungan/update', methods=['POST'])  # @login_required
 def bend_update():
     pk = request.values.get('pk')
     attr = request.values.get('name')
