@@ -1,11 +1,12 @@
 from flask import Blueprint, request, render_template, redirect, url_for, jsonify, flash
 from flask_login import login_required, current_user
+from flask_wtf.csrf import generate_csrf
 from sqlalchemy import and_, extract
 from sqlalchemy.exc import IntegrityError
 from app.models import ManualDaily, ManualTma, ManualPiezo, ManualVnotch
 from app.models import Bendungan
 from app.forms import AddDaily, AddTma
-from app import db, admin_only, petugas_only, get_bendungan
+from app import app, db, admin_only, petugas_only, get_bendungan
 import datetime
 import calendar
 
@@ -154,38 +155,48 @@ def operasi_bendungan(bend):
         periodik[sampl]['tma'][jam] = t
 
     return render_template('operasi/bendungan.html',
+                            csrf=generate_csrf(),
                             name=name,
                             bend_id=bend.id,
                             periodik=periodik,
-                            sampling=sampling)
+                            sampling=datetime.datetime.today())
 
 
-@bp.route('/operasi/bendungan/tma')
+@bp.route('/operasi/bendungan/tma', methods=['GET', 'POST'])
 @login_required
-def operasi_tma_add():
-    bendungan_id = current_user.bendungan_id
+@get_bendungan
+def operasi_tma_add(bend):
     form = AddTma()
     if form.validate_on_submit():
         try:
-            s_string = f"{form.values.get('hari')} {form.values.get('jam')}:00:00"
-            sampling = datetime.datetime.strptime(s_string, "%Y-%m-%d %H:%M:%S")
-            tma = ManualTma(
-                sampling=sampling,
-                tma=form.values.get('tma'),
-                vol=form.values.get('volume'),
-                bendungan_id=bendungan_id
+            insert_tma(
+                bend_id=bend.id,
+                hari=form.hari.data,
+                jam=form.jam.data,
+                tma=form.tma.data,
+                vol=form.vol.data
             )
-            db.session.add(tma)
-            db.session.commit()
-            flash('Tambah TMA berhasil !', 'success')
-            return redirect(url_for('admin.operasi_bendungan'))
+            flash('TMA berhasil ditambahkan !', 'success')
+            return redirect(url_for('admin.operasi_bendungan', bend_id=bend.id))
 
         except IntegrityError:
             db.session.rollback()
-            flash('Data sudah ada, mohon update untuk mengubah', 'danger')
+            flash('Data TMA sudah ada, mohon update untuk mengubah', 'danger')
 
-    return render_template('operasi/tma_add.html',
-                            form=form)
+    return redirect(url_for('admin.operasi_bendungan', bend_id=bend.id))
+
+
+def insert_tma(bend_id, hari, jam, tma, vol):
+    s_string = f"{hari} {jam}:00:00"
+    sampling = datetime.datetime.strptime(s_string, "%Y-%m-%d %H:%M:%S")
+    tma = ManualTma(
+        sampling=sampling,
+        tma=tma,
+        vol=vol,
+        bendungan_id=bend_id
+    )
+    db.session.add(tma)
+    db.session.commit()
 
 
 @bp.route('/operasi/bendungan/tma/update', methods=['POST'])  # @login_required
@@ -206,35 +217,50 @@ def operasi_tma_update():
     return jsonify(result)
 
 
-@bp.route('/operasi/bendungan/daily')
+@bp.route('/operasi/bendungan/daily', methods=['GET', 'POST'])
 @login_required
-def operasi_daily_add():
-    bendungan_id = current_user.bendungan_id
+@get_bendungan
+def operasi_daily_add(bend):
     form = AddDaily()
     if form.validate_on_submit():
+        # insert tma
+        try:
+            insert_tma(
+                bend_id=bend.id,
+                hari=form.sampling.data,
+                jam=form.jam.data,
+                tma=form.tma.data,
+                vol=form.vol.data
+            )
+            flash('TMA berhasil ditambahkan !', 'success')
+
+        except IntegrityError:
+            db.session.rollback()
+            flash('Data TMA sudah ada, mohon update untuk mengubah', 'danger')
+
+        # insert daily
         try:
             daily = ManualDaily(
-                sampling=form.values.get('sampling'),
-                curahhujan=form.values.get('curahhujan'),
-                inflow_deb=form.values.get('inflow_deb'),
-                inflow_vol=form.values.get('inflow_vol'),
-                outflow_deb=form.values.get('outflow_deb'),
-                outflow_vol=form.values.get('outflow_vol'),
-                spillway_deb=form.values.get('spillway_deb'),
-                spillway_vol=form.values.get('spillway_vol'),
-                bendungan_id=bendungan_id
+                sampling=form.sampling.data,
+                ch=form.curahhujan.data,
+                inflow_deb=form.inflow_deb.data,
+                inflow_vol=form.inflow_vol.data,
+                outflow_deb=form.outflow_deb.data,
+                outflow_vol=form.outflow_vol.data,
+                spillway_deb=form.spillway_deb.data,
+                spillway_vol=form.spillway_vol.data,
+                bendungan_id=bend.id
             )
             db.session.add(daily)
             db.session.commit()
-            flash('Tambah Daily berhasil !', 'success')
-            return redirect(url_for('admin.operasi_bendungan'))
+            flash('Data Harian berhasil ditambahkan !', 'success')
+            return redirect(url_for('admin.operasi_bendungan', bend_id=bend.id))
 
         except IntegrityError:
             db.session.rollback()
             flash('Data sudah ada, mohon update untuk mengubah', 'danger')
 
-    return render_template('operasi/daily_add.html',
-                            form=form)
+    return redirect(url_for('admin.operasi_bendungan', bend_id=bend.id))
 
 
 @bp.route('/operasi/daily/update', methods=['POST'])  # @login_required

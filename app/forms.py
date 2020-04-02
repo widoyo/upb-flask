@@ -86,6 +86,9 @@ class AddDaily(FlaskForm):
     outflow_vol = DecimalField('Outflow Volume')
     spillway_deb = DecimalField('Spillway Debit')
     spillway_vol = DecimalField('Spillway Volume')
+    jam = SelectField("Jam", choices=jam, validators=[DataRequired()], default=jam[0][0])
+    tma = DecimalField('TMA')
+    vol = DecimalField('Volume')
     submit = SubmitField('Tambah')
 
 
@@ -93,8 +96,8 @@ class AddTma(FlaskForm):
     hari = DateField("Hari", default=datetime.datetime.today())
     jam = SelectField("Jam", choices=jam, validators=[DataRequired()], default=jam[0][0])
     tma = DecimalField('TMA')
-    volume = DecimalField('Volume')
-    submit = SubmitField('Tambah')
+    vol = DecimalField('Volume')
+    submit = SubmitField('Kirim')
 
 
 class AddVnotch(FlaskForm):

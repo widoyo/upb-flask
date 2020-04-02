@@ -25,15 +25,80 @@
                       </a>
                     </h5>
                     <hr>
-                    <div class="collapse" id="tmapagi">
-                      <div>
-                          <div class="form-group">
-                              <label class="form-text" for="sampling"><b>Tanggal</b></label>
-                              <input class="form-control" type="text" name="sampling" id="datepicker-pagi" hidden required value="{{ sampling }}">
-                              <p class="ml-2" id="sampling-pagi">{{ sampling.strftime('%d %B %Y') }}</p>
+                    <form action="{{ url_for('admin.operasi_daily_add') }}?bend_id={{ bend_id }}" method="POST">
+                        <input id="csrf_token" name="csrf_token" type="hidden" value="{{ csrf }}">
+                        <div class="collapse" id="tmapagi">
+                          <div>
+                              <div class="form-group">
+                                  <label class="form-text" for="sampling"><b>Tanggal</b></label>
+                                  <input class="form-control" type="text" name="sampling" id="datepicker_pagi" hidden required value="{{ sampling.strftime('%Y-%m-%d') }}">
+                                  <p class="ml-2" id="sampling-pagi">{{ sampling.strftime('%d %B %Y') }}</p>
+                                  <input class="form-control" type="text" name="jam" hidden required value="06">
+                              </div>
                           </div>
-                      </div>
-                    </div>
+                          <div>
+                              <div class="form-group">
+                                  <label class="form-text" for="ch-pagi"><b>Curah Hujan</b></label>
+                                  <input class="form-control" type="number" name="curahhujan" id="ch-pagi" required value="0" step="0.01" aria-describedby="chpagihelp">
+                                  <small id="chpagihelp" class="form-text text-muted">mm(wajib diisi)</small>
+                              </div>
+                          </div>
+                          <div class="row">
+                              <div class="col-md-6 form-group">
+                                  <label class="form-text" for="tma-pagi"><b>TMA</b></label>
+                                  <input class="form-control" type="number" name="tma" id="tma-pagi" required value="0" step="0.01" aria-describedby="tmapagihelp">
+                                  <small id="tmapagihelp" class="form-text text-muted">m(wajib diisi)</small>
+                              </div>
+                              <div class="col-md-6 form-group">
+                                  <label class="form-text" for="vol-pagi"><b>Volume</b></label>
+                                  <input class="form-control" type="number" name="vol" id="vol-pagi" required value="0" step="1" aria-describedby="volpagihelp">
+                                  <small id="volpagihelp" class="form-text text-muted">m<sup>3</sup>(wajib diisi)</small>
+                              </div>
+                          </div>
+                          <h5>Inflow</h5>
+                          <div class="row">
+                              <div class="col-md-6 form-group">
+                                  <label class="form-text" for="in-deb-pagi"><b>Debit</b></label>
+                                  <input class="form-control" type="number" name="inflow_deb" id="in-deb-pagi" required value="0" step="1" aria-describedby="in-debpagihelp">
+                                  <small id="in-debpagihelp" class="form-text text-muted">m<sup>3</sup>/detik(wajib diisi)</small>
+                              </div>
+                              <div class="col-md-6 form-group">
+                                  <label class="form-text" for="in-vol-pagi"><b>Volume</b></label>
+                                  <input class="form-control" type="number" name="inflow_vol" id="in-vol-pagi" required value="0" step="1" aria-describedby="in-volpagihelp">
+                                  <small id="in-volpagihelp" class="form-text text-muted">m<sup>3</sup>(wajib diisi)</small>
+                              </div>
+                          </div>
+                          <h5>Outflow</h5>
+                          <div class="row">
+                              <div class="col-md-6 form-group">
+                                  <label class="form-text" for="out-deb-pagi"><b>Intake Debit</b></label>
+                                  <input class="form-control" type="number" name="outflow_deb" id="out-deb-pagi" required value="0" step="1" aria-describedby="out-debpagihelp">
+                                  <small id="out-debpagihelp" class="form-text text-muted">m<sup>3</sup>/detik(wajib diisi)</small>
+                              </div>
+                              <div class="col-md-6 form-group">
+                                  <label class="form-text" for="out-vol-pagi"><b>Intake Volume</b></label>
+                                  <input class="form-control" type="number" name="outflow_vol" id="out-vol-pagi" required value="0" step="1" aria-describedby="out-volpagihelp">
+                                  <small id="out-volpagihelp" class="form-text text-muted">m<sup>3</sup>(wajib diisi)</small>
+                              </div>
+                          </div>
+                          <div class="row">
+                              <div class="col-md-6 form-group">
+                                  <label class="form-text" for="spill-deb-pagi"><b>Spillway Debit</b></label>
+                                  <input class="form-control" type="number" name="spillway_deb" id="spill-deb-pagi" required value="0" step="1" aria-describedby="spill-debpagihelp">
+                                  <small id="spill-debpagihelp" class="form-text text-muted">m<sup>3</sup>/detik(wajib diisi)</small>
+                              </div>
+                              <div class="col-md-6 form-group">
+                                  <label class="form-text" for="spill-vol-pagi"><b>Spillway Volume</b></label>
+                                  <input class="form-control" type="number" name="spillway_vol" id="spill-vol-pagi" required value="0" step="1" aria-describedby="spill-volpagihelp">
+                                  <small id="spill-volpagihelp" class="form-text text-muted">m<sup>3</sup>(wajib diisi)</small>
+                              </div>
+                          </div>
+                          <div>
+                              <button type="submit" name="submit" class="btn btn-primary my-1 mr-2">Kirim</button>
+                              <a data-toggle="collapse" href="#tmapagi" role="button" aria-expanded="false" aria-controls="tmapagi">batal</a>
+                          </div>
+                        </div>
+                    </form>
                 </div>
                 <div class="col-md-4">
                     <h5>
@@ -42,15 +107,35 @@
                       </a>
                     </h5>
                     <hr>
-                    <div class="collapse" id="tmasiang">
-                      <div>
-                          <div class="form-group">
-                              <label class="form-text" for="sampling"><b>Tanggal</b></label>
-                              <input class="form-control" type="text" name="sampling" id="datepicker-siang" hidden required value="{{ sampling }}">
-                              <p class="ml-2" id="sampling-siang">{{ sampling.strftime('%d %B %Y') }}</p>
+                    <form action="{{ url_for('admin.operasi_tma_add') }}?bend_id={{ bend_id }}" method="POST">
+                        <input id="csrf_token" name="csrf_token" type="hidden" value="{{ csrf }}">
+                        <div class="collapse" id="tmasiang">
+                          <div>
+                              <div class="form-group">
+                                  <label class="form-text" for="datepicker-siang"><b>Tanggal</b></label>
+                                  <input class="form-control" type="text" name="hari" id="datepicker-siang" hidden required value="{{ sampling.strftime('%Y-%m-%d') }}">
+                                  <p class="ml-2" id="sampling-siang">{{ sampling.strftime('%d %B %Y') }}</p>
+                                  <input class="form-control" type="text" name="jam" hidden required value="12">
+                              </div>
                           </div>
-                      </div>
-                    </div>
+                          <div class="row">
+                              <div class="col-md-6 form-group">
+                                  <label class="form-text" for="tma-sore"><b>TMA</b></label>
+                                  <input class="form-control" type="number" name="tma" id="tma-siang" required value="0" step="0.01" aria-describedby="tmasianghelp">
+                                  <small id="tmasianghelp" class="form-text text-muted">m(wajib diisi)</small>
+                              </div>
+                              <div class="col-md-6 form-group">
+                                  <label class="form-text" for="vol-sore"><b>Volume</b></label>
+                                  <input class="form-control" type="number" name="vol" id="vol-siang" required value="0" step="1" aria-describedby="volsianghelp">
+                                  <small id="volsianghelp" class="form-text text-muted">m<sup>3</sup>(wajib diisi)</small>
+                              </div>
+                          </div>
+                          <div>
+                              <button type="submit" name="submit" class="btn btn-primary my-1 mr-2">Kirim</button>
+                              <a data-toggle="collapse" href="#tmasiang" role="button" aria-expanded="false" aria-controls="tmasiang">batal</a>
+                          </div>
+                        </div>
+                    </form>
                 </div>
                 <div class="col-md-4">
                     <h5>
@@ -59,17 +144,38 @@
                       </a>
                     </h5>
                     <hr>
-                    <div class="collapse" id="tmasore">
-                      <div>
-                          <div class="form-group">
-                              <label class="form-text" for="sampling"><b>Tanggal</b></label>
-                              <input class="form-control" type="text" name="sampling" id="datepicker-sore" hidden required value="{{ sampling }}">
-                              <p class="ml-2" id="sampling-sore">{{ sampling.strftime('%d %B %Y') }}</p>
+                    <form action="{{ url_for('admin.operasi_tma_add') }}?bend_id={{ bend_id }}" method="POST">
+                        <input id="csrf_token" name="csrf_token" type="hidden" value="{{ csrf }}">
+                        <div class="collapse" id="tmasore">
+                          <div>
+                              <div class="form-group">
+                                  <label class="form-text" for="datepicker-sore"><b>Tanggal</b></label>
+                                  <input class="form-control" type="text" name="hari" id="datepicker-sore" hidden required value="{{ sampling.strftime('%Y-%m-%d') }}">
+                                  <p class="ml-2" id="sampling-sore">{{ sampling.strftime('%d %B %Y') }}</p>
+                                  <input class="form-control" type="text" name="jam" hidden required value="18">
+                              </div>
                           </div>
-                      </div>
-                    </div>
+                          <div class="row">
+                              <div class="col-md-6 form-group">
+                                  <label class="form-text" for="tma-sore"><b>TMA</b></label>
+                                  <input class="form-control" type="number" name="tma" id="tma-sore" required value="0" step="0.01" aria-describedby="tmasorehelp">
+                                  <small id="tmasorehelp" class="form-text text-muted">(wajib diisi)</small>
+                              </div>
+                              <div class="col-md-6 form-group">
+                                  <label class="form-text" for="vol-sore"><b>Volume</b></label>
+                                  <input class="form-control" type="number" name="vol" id="vol-sore" required value="0" step="1" aria-describedby="volsorehelp">
+                                  <small id="volsorehelp" class="form-text text-muted">(wajib diisi)</small>
+                              </div>
+                          </div>
+                          <div>
+                              <button type="submit" name="submit" class="btn btn-primary my-1 mr-2">Kirim</button>
+                              <a data-toggle="collapse" href="#tmasore" role="button" aria-expanded="false" aria-controls="tmasore">batal</a>
+                          </div>
+                        </div>
+                    </form>
                 </div>
             </div>
+            <br>
             <div class="row">
                 <div class="col-md-4">
                     <h5>
@@ -83,7 +189,7 @@
                           <div class="form-group">
                               <label class="form-text" for="sampling"><b>Tanggal</b></label>
                               <input class="form-control" type="text" name="sampling" id="datepicker-vn" hidden required value="{{ sampling }}">
-                              <p class="ml-2" id="sampling-vn">{{ sampling.strftime('%d %B %Y') }}</p>
+                              <p class="ml-2" id="sampling-vn"><i class="fas fa-calendar"></i> {{ sampling.strftime('%d %B %Y') }}</p>
                           </div>
                       </div>
                     </div>
@@ -100,7 +206,17 @@
                           <div class="form-group">
                               <label class="form-text" for="sampling"><b>Tanggal</b></label>
                               <input class="form-control" type="text" name="sampling" id="datepicker-piezo" hidden required value="{{ sampling }}">
-                              <p class="ml-2" id="sampling-piezo">{{ sampling.strftime('%d %B %Y') }}</p>
+                              <p class="ml-2" id="sampling-piezo"><i class="fas fa-calendar"></i> {{ sampling.strftime('%d %B %Y') }}</p>
+                          </div>
+                          <div class="row">
+                              <div class="col-md-6 form-group">
+                                  <label class="form-text" for="sampling"><b>Tanggal</b></label>
+                                  <input class="form-control" type="number" name="sampling" id="vol-piezo" required value="0" step="0.01">
+                              </div>
+                              <div class="col-md-6 form-group">
+                                  <label class="form-text" for="sampling"><b>Tanggal</b></label>
+                                  <input class="form-control" type="number" name="sampling" id="datepicker-piezo" required value="0" step="0.01">
+                              </div>
                           </div>
                       </div>
                     </div>
@@ -345,7 +461,7 @@
         $('#sampling-pagi').on('changeDate', function () {
             let date = $('#sampling-pagi').datepicker('getFormattedDate');
             $('#sampling-pagi').text(moment(date).format('DD MMMM YYYY'));
-            $('#datepicker-pagi').text(date);
+            $('#datepicker_pagi').attr('value', moment(date).format('YYYY-MM-DD'));
             $('.datepicker').hide();
         });
 
@@ -357,7 +473,7 @@
         $('#sampling-siang').on('changeDate', function () {
             let date = $('#sampling-siang').datepicker('getFormattedDate');
             $('#sampling-siang').text(moment(date).format('DD MMMM YYYY'));
-            $('#datepicker-siang').text(date);
+            $('#datepicker-siang').attr('value', moment(date).format('YYYY-MM-DD'));
             $('.datepicker').hide();
         });
 
@@ -369,7 +485,7 @@
         $('#sampling-sore').on('changeDate', function () {
             let date = $('#sampling-sore').datepicker('getFormattedDate');
             $('#sampling-sore').text(moment(date).format('DD MMMM YYYY'));
-            $('#datepicker-sore').text(date);
+            $('#datepicker-sore').attr('value', moment(date).format('YYYY-MM-DD'));
             $('.datepicker').hide();
         });
 
@@ -381,7 +497,7 @@
         $('#sampling-vn').on('changeDate', function () {
             let date = $('#sampling-vn').datepicker('getFormattedDate');
             $('#sampling-vn').text(moment(date).format('DD MMMM YYYY'));
-            $('#datepicker-vn').text(date);
+            $('#datepicker-vn').attr('value', moment(date).format('YYYY-MM-DD'));
             $('.datepicker').hide();
         });
 
@@ -393,13 +509,13 @@
         $('#sampling-piezo').on('changeDate', function () {
             let date = $('#sampling-piezo').datepicker('getFormattedDate');
             $('#sampling-piezo').text(moment(date).format('DD MMMM YYYY'));
-            $('#datepicker-piezo').text(date);
+            $('#datepicker-piezo').attr('value', moment(date).format('YYYY-MM-DD'));
             $('.datepicker').hide();
         });
 
         let tgls = document.querySelectorAll("#tgl");
         tgls.forEach(function(el){
-            console.log(el.innerText);
+            console.log(el.value);
             el.innerText = moment(el.innerText).format('ddd, D');
         });
 
