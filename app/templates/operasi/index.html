@@ -62,9 +62,84 @@
             </tr>
         </thead>
         <tbody>
-            {% for bend in bends %}
+            <tr>
+                <td colspan="29" class="text-center"><b>Hulu</b></td>
+            </tr>
+            {% for bend in bends['1'] %}
                 <tr>
-                    <td>{{ loop.index }}</td>
+                    <td>{{ bend.no }}</td>
+                    <td><a href="{{ url_for('admin.operasi_bendungan') }}?bend_id={{ bend.id }}">{{ bend.nama }}</a></td>
+                    <td class="text-right">{{ bend.tma6.tma if bend.tma6.tma != None }}</td>
+                    <td class="text-right">{{ bend.tma6.vol if bend.tma6.vol != None }}</td>
+                    <td class="text-right">{{ bend.tma12.tma if bend.tma12.tma != None }}</td>
+                    <td class="text-right">{{ bend.tma12.vol if bend.tma12.vol != None }}</td>
+                    <td class="text-right">{{ bend.tma18.tma if bend.tma18.tma != None }}</td>
+                    <td class="text-right">{{ bend.tma18.vol if bend.tma18.vol != None }}</td>
+                    <td class="text-right">{{ bend.tma6.tma if bend.tma6.tma != None }}</td>
+                    <td class="text-right">{{ bend.inflow_deb if bend.inflow_deb != None }}</td>
+                    <td class="text-right">{{ bend.outflow_deb if bend.outflow_deb != None }}</td>
+                    <td class="text-right">{{ bend.spillway_deb if bend.spillway_deb != None }}</td>
+                    <td class="text-right">{{ bend.tinggi if bend.tinggi != None }}</td>
+                    <td class="text-right">{{ bend.debit if bend.debit != None }}</td>
+                    <td class="text-right">{{ bend.piezo.p1a if bend.piezo.p1a != None }}</td>
+                    <td class="text-right">{{ bend.piezo.p1b if bend.piezo.p1b != None }}</td>
+                    <td class="text-right">{{ bend.piezo.p1c if bend.piezo.p1c != None }}</td>
+                    <td class="text-right">{{ bend.piezo.p2a if bend.piezo.p2a != None }}</td>
+                    <td class="text-right">{{ bend.piezo.p2b if bend.piezo.p2b != None }}</td>
+                    <td class="text-right">{{ bend.piezo.p2c if bend.piezo.p2c != None }}</td>
+                    <td class="text-right">{{ bend.piezo.p3a if bend.piezo.p3a != None }}</td>
+                    <td class="text-right">{{ bend.piezo.p3b if bend.piezo.p3b != None }}</td>
+                    <td class="text-right">{{ bend.piezo.p3c if bend.piezo.p3c != None }}</td>
+                    <td class="text-right">{{ bend.piezo.p4a if bend.piezo.p4a != None }}</td>
+                    <td class="text-right">{{ bend.piezo.p4b if bend.piezo.p4b != None }}</td>
+                    <td class="text-right">{{ bend.piezo.p4c if bend.piezo.p4c != None }}</td>
+                    <td class="text-right">{{ bend.piezo.p5a if bend.piezo.p5a != None }}</td>
+                    <td class="text-right">{{ bend.piezo.p5b if bend.piezo.p5b != None }}</td>
+                    <td class="text-right">{{ bend.piezo.p5c if bend.piezo.p5c != None }}</td>
+                </tr>
+            {% endfor %}
+            <tr>
+                <td colspan="29" class="text-center"><b>Madiun</b></td>
+            </tr>
+            {% for bend in bends['2'] %}
+                <tr>
+                    <td>{{ bend.no }}</td>
+                    <td><a href="{{ url_for('admin.operasi_bendungan') }}?bend_id={{ bend.id }}">{{ bend.nama }}</a></td>
+                    <td class="text-right">{{ bend.tma6.tma if bend.tma6.tma != None }}</td>
+                    <td class="text-right">{{ bend.tma6.vol if bend.tma6.vol != None }}</td>
+                    <td class="text-right">{{ bend.tma12.tma if bend.tma12.tma != None }}</td>
+                    <td class="text-right">{{ bend.tma12.vol if bend.tma12.vol != None }}</td>
+                    <td class="text-right">{{ bend.tma18.tma if bend.tma18.tma != None }}</td>
+                    <td class="text-right">{{ bend.tma18.vol if bend.tma18.vol != None }}</td>
+                    <td class="text-right">{{ bend.tma6.tma if bend.tma6.tma != None }}</td>
+                    <td class="text-right">{{ bend.inflow_deb if bend.inflow_deb != None }}</td>
+                    <td class="text-right">{{ bend.outflow_deb if bend.outflow_deb != None }}</td>
+                    <td class="text-right">{{ bend.spillway_deb if bend.spillway_deb != None }}</td>
+                    <td class="text-right">{{ bend.tinggi if bend.tinggi != None }}</td>
+                    <td class="text-right">{{ bend.debit if bend.debit != None }}</td>
+                    <td class="text-right">{{ bend.piezo.p1a if bend.piezo.p1a != None }}</td>
+                    <td class="text-right">{{ bend.piezo.p1b if bend.piezo.p1b != None }}</td>
+                    <td class="text-right">{{ bend.piezo.p1c if bend.piezo.p1c != None }}</td>
+                    <td class="text-right">{{ bend.piezo.p2a if bend.piezo.p2a != None }}</td>
+                    <td class="text-right">{{ bend.piezo.p2b if bend.piezo.p2b != None }}</td>
+                    <td class="text-right">{{ bend.piezo.p2c if bend.piezo.p2c != None }}</td>
+                    <td class="text-right">{{ bend.piezo.p3a if bend.piezo.p3a != None }}</td>
+                    <td class="text-right">{{ bend.piezo.p3b if bend.piezo.p3b != None }}</td>
+                    <td class="text-right">{{ bend.piezo.p3c if bend.piezo.p3c != None }}</td>
+                    <td class="text-right">{{ bend.piezo.p4a if bend.piezo.p4a != None }}</td>
+                    <td class="text-right">{{ bend.piezo.p4b if bend.piezo.p4b != None }}</td>
+                    <td class="text-right">{{ bend.piezo.p4c if bend.piezo.p4c != None }}</td>
+                    <td class="text-right">{{ bend.piezo.p5a if bend.piezo.p5a != None }}</td>
+                    <td class="text-right">{{ bend.piezo.p5b if bend.piezo.p5b != None }}</td>
+                    <td class="text-right">{{ bend.piezo.p5c if bend.piezo.p5c != None }}</td>
+                </tr>
+            {% endfor %}
+            <tr>
+                <td colspan="29" class="text-center"><b>Hilir</b></td>
+            </tr>
+            {% for bend in bends['3'] %}
+                <tr>
+                    <td>{{ bend.no }}</td>
                     <td><a href="{{ url_for('admin.operasi_bendungan') }}?bend_id={{ bend.id }}">{{ bend.nama }}</a></td>
                     <td class="text-right">{{ bend.tma6.tma if bend.tma6.tma != None }}</td>
                     <td class="text-right">{{ bend.tma6.vol if bend.tma6.vol != None }}</td>

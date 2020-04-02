@@ -9,6 +9,12 @@ from sqlalchemy import desc
 import datetime
 import hashlib
 
+wil_sungai = {
+    '1': "Hulu",
+    '2': "Madiun",
+    '3': "Hilir",
+}
+
 
 class BaseLog(db.Model):
     __abstract__ = True
@@ -19,7 +25,7 @@ class BaseLog(db.Model):
 
 
 class Users(UserMixin, db.Model):
-    ''' Role {} '''
+    ''' Role { 2:petugas bendungan, 1,4:admin balai} '''
     __tablename__ = 'users'
 
     id = db.Column(db.Integer, primary_key=True)

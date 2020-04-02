@@ -26,13 +26,18 @@ def operasi():
 @login_required
 @admin_only
 def operasi_harian():
-    waduk = Bendungan.query.all()
+    waduk = Bendungan.query.order_by(Bendungan.wil_sungai, Bendungan.id).all()
     date = request.values.get('sampling')
-    def_date = datetime.datetime.utcnow()
-    sampling = datetime.datetime.strptime(date, "%Y-%m-%d") if date else def_date
+    def_date = date if date else datetime.datetime.now().strftime("%Y-%m-%d")
+    sampling = datetime.datetime.strptime(def_date, "%Y-%m-%d")
     end = sampling + datetime.timedelta(days=1)
 
-    data = []
+    data = {
+        '1': [],
+        '2': [],
+        '3': []
+    }
+    count = 1
     for w in waduk:
         daily = ManualDaily.query.filter(
                                     and_(
@@ -58,10 +63,7 @@ def operasi_harian():
                                         ManualPiezo.sampling <= end),
                                     ManualPiezo.bendungan_id == w.id
                                     ).all()
-        # if daily:
-        #     print(daily.sampling)
-        # if tma:
-        #     print(tma[0].sampling)
+
         tma_d = {
             '6': {
                 'tma': None,
@@ -78,11 +80,12 @@ def operasi_harian():
         }
         for t in tma:
             tma_d[f"{t.sampling.hour}"]['tma'] = None if not t.tma else round(t.tma, 2)
-            tma_d[f"{t.sampling.hour}"]['vol'] = None if not t.vol else round(t.tma, 2)
+            tma_d[f"{t.sampling.hour}"]['vol'] = None if not t.vol else round(t.vol, 2)
 
         arr = w.nama.split('_')
         name = f"{arr[0].title()}.{arr[1].title()}"
-        data.append({
+        data[w.wil_sungai].append({
+            'no': count,
             'id': w.id,
             'nama': name,
             'volume': w.volume,
@@ -101,6 +104,7 @@ def operasi_harian():
             'debit': None if not vnotch else vnotch.vn1_deb,
             'piezo': piezo
         })
+        count += 1
 
     return render_template('operasi/index.html',
                             bends=data,
