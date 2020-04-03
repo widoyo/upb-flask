@@ -1,7 +1,7 @@
 from flask import Blueprint, jsonify, request, render_template, redirect, url_for
 from flask_login import login_required
-from app.models import Bendungan, ManualDaily, ManualTma, ManualVnotch
-from app import db
+from upb_app.models import Bendungan, ManualDaily, ManualTma, ManualVnotch
+from upb_app import db
 from sqlalchemy import and_
 import datetime
 
@@ -38,9 +38,9 @@ def bend_update():
     }
     return jsonify(result)
 
-import app.admin.keamanan
-import app.admin.kegiatan
-import app.admin.kinerja
-import app.admin.operasi
-import app.admin.rencana
-import app.admin.users
+import upb_app.admin.keamanan
+import upb_app.admin.kegiatan
+import upb_app.admin.kinerja
+import upb_app.admin.operasi
+import upb_app.admin.rencana
+import upb_app.admin.users

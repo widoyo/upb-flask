@@ -1,6 +1,6 @@
 from flask import Blueprint, render_template, request
-from app.models import Bendungan
-from app.models import ManualDaily, ManualTma, ManualVnotch, ManualPiezo, Rencana
+from upb_app.models import Bendungan
+from upb_app.models import ManualDaily, ManualTma, ManualVnotch, ManualPiezo, Rencana
 from sqlalchemy import and_, desc, cast, Date
 from pprint import pprint
 from pytz import timezone

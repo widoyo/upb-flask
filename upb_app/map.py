@@ -1,5 +1,5 @@
 from flask import Blueprint, render_template
-from app.models import Bendungan, Embung
+from upb_app.models import Bendungan, Embung
 
 bp = Blueprint('map', __name__)
 

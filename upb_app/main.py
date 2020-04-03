@@ -5,9 +5,9 @@ from flask_login import current_user, login_required, login_user, logout_user
 from sqlalchemy import desc
 from pytz import timezone
 
-from app import app
-from app.models import Rencana, Bendungan, Embung, ManualTma, ManualDaily, Users
-from app.forms import LoginForm
+from upb_app import app
+from upb_app.models import Rencana, Bendungan, Embung, ManualTma, ManualDaily, Users
+from upb_app.forms import LoginForm
 
 bp = Blueprint('about', __name__)
 
