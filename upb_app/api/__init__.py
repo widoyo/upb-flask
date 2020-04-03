@@ -1,5 +1,5 @@
 from flask import Blueprint, jsonify, request
-from app.models import Bendungan
+from upb_app.models import Bendungan
 from sqlalchemy import or_
 
 

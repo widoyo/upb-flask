@@ -15,10 +15,10 @@ from sqlalchemy.exc import IntegrityError
 
 from telegram import Bot
 
-from app import app, db
-from app.models import Bendungan, Embung, Rencana, Users, Asset
-from app.models import Kerusakan, Kegiatan, Foto
-from app.models import ManualDaily, ManualTma, ManualVnotch, ManualPiezo
+from upb_app import app, db
+from upb_app.models import Bendungan, Embung, Rencana, Users, Asset
+from upb_app.models import Kerusakan, Kegiatan, Foto
+from upb_app.models import ManualDaily, ManualTma, ManualVnotch, ManualPiezo
 
 upbbendungan = ("upbuser", "upbsecret")
 

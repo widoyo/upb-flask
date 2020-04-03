@@ -1,11 +1,11 @@
 from flask import Blueprint, request, render_template, redirect, url_for, jsonify
 from flask_login import login_required
 from sqlalchemy import and_
-from app.models import Bendungan, Rencana
-from app import db, admin_only
+from upb_app.models import Bendungan, Rencana
+from upb_app import db, admin_only
 import datetime
 
-from app.admin import bp
+from upb_app.admin import bp
 # bp = Blueprint('rtow', __name__)
 
 
