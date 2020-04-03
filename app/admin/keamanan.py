@@ -1,11 +1,13 @@
 from flask import Blueprint, request, render_template, redirect, url_for, jsonify, flash
 from flask_login import login_required, current_user
+from flask_wtf.csrf import generate_csrf
 from sqlalchemy import extract, and_
 from sqlalchemy.exc import IntegrityError
 from app.models import ManualVnotch, ManualPiezo, Bendungan
 from app.forms import AddVnotch, AddPiezo
-from app import db, petugas_only
+from app import db, petugas_only, get_bendungan
 import datetime
+import calendar
 
 from app.admin import bp
 # bp = Blueprint('keamanan', __name__)
@@ -20,12 +22,16 @@ def keamanan():
 
 
 @bp.route('/keamanan/bendungan')
-@login_required
-@petugas_only
-def keamanan_bendungan():
-    bendungan_id = current_user.bendungan_id
-    date = request.values.get('sampling') or datetime.datetime.utcnow()
+@login_required  # @petugas_only
+@get_bendungan
+def keamanan_bendungan(bend):
+    date = request.values.get('sampling')
+    date = datetime.datetime.strptime(date, "%Y-%m-%d") if date else datetime.datetime.utcnow()
     sampling = datetime.datetime.strptime(f"{date.year}-{date.month}-01", "%Y-%m-%d")
+
+    bendungan_id = bend.id
+    arr = bend.nama.split('_')
+    name = f"{arr[0].title()}.{arr[1].title()}"
 
     vnotch = ManualVnotch.query.filter(
                                         ManualVnotch.bendungan_id == bendungan_id,
@@ -37,8 +43,19 @@ def keamanan_bendungan():
                                     extract('month', ManualPiezo.sampling) == sampling.month,
                                     extract('year', ManualPiezo.sampling) == sampling.year
                                 ).all()
-    bend = Bendungan.query.get(bendungan_id)
+    now = datetime.datetime.now()
+    if sampling.year == now.year and sampling.month == now.month:
+        day = now.day
+    else:
+        day = calendar.monthrange(sampling.year, sampling.month)[1]
+
     periodik = {}
+    for i in range(day, 0, -1):
+        sampl = datetime.datetime.strptime(f"{sampling.year}-{sampling.month}-{i}", "%Y-%m-%d")
+        periodik[sampl] = {
+            'vnotch': None,
+            'piezo': None
+        }
     for v in vnotch:
         periodik[v.sampling] = {
             'vnotch': v,
@@ -48,27 +65,29 @@ def keamanan_bendungan():
         periodik[p.sampling]['piezo'] = p
 
     return render_template('keamanan/bendungan.html',
-                            bend=bend,
+                            name=name,
+                            csrf=generate_csrf(),
+                            bend_id=bend.id,
                             periodik=periodik,
-                            sampling=sampling)
+                            sampling=datetime.datetime.today())
 
 
-@bp.route('/keamanan/bendungan/vnotch', methods=['GET', 'POST'])
-@login_required
-@petugas_only
-def keamanan_vnotch():
-    bendungan_id = current_user.bendungan_id
+@bp.route('/keamanan/bendungan/vnotch', methods=['POST'])
+@login_required  # @petugas_only
+@get_bendungan
+def keamanan_vnotch(bend):
+    bendungan_id = bend.id
     form = AddVnotch()
     if form.validate_on_submit():
         try:
             vnotch = ManualVnotch(
-                sampling=form.values.get('sampling'),
-                vn1_tma=form.values.get('vn1_tma'),
-                vn1_deb=form.values.get('vn1_deb'),
-                vn2_tma=form.values.get('vn2_tma'),
-                vn2_deb=form.values.get('vn2_deb'),
-                vn3_tma=form.values.get('vn3_tma'),
-                vn3_deb=form.values.get('vn3_deb'),
+                sampling=form.sampling.data,
+                vn1_tma=form.vn1_tma.data,
+                vn1_deb=form.vn1_deb.data,
+                vn2_tma=form.vn2_tma.data,
+                vn2_deb=form.vn2_deb.data,
+                vn3_tma=form.vn3_tma.data,
+                vn3_deb=form.vn3_deb.data,
                 bendungan_id=bendungan_id
             )
             db.session.add(vnotch)
@@ -79,8 +98,7 @@ def keamanan_vnotch():
             db.session.rollback()
             flash('Data sudah ada, mohon update untuk mengubah', 'danger')
 
-    return render_template('keamanan/vnotch_add.html',
-                            form=form)
+    return redirect(url_for('admin.keamanan_bendungan'))
 
 
 @bp.route('/keamanan/vnotch/update', methods=['POST'])  # @login_required
@@ -100,31 +118,33 @@ def keamanan_vnotch_update():
     return jsonify(result)
 
 
-@bp.route('/keamanan/bendungan/piezo', methods=['GET', 'POST'])
-@login_required
-@petugas_only
-def keamanan_piezo():
-    bendungan_id = current_user.bendungan_id
+@bp.route('/keamanan/bendungan/piezo', methods=['POST'])
+@login_required  # @petugas_only
+@get_bendungan
+def keamanan_piezo(bend):
+    bendungan_id = bend.id
     form = AddPiezo()
+    print(form.validate_on_submit())
+    print(form.sampling.data)
     if form.validate_on_submit():
         try:
             piezo = ManualPiezo(
-                sampling=form.values.get('sampling'),
-                p1a=form.values.get('p1a'),
-                p1b=form.values.get('p1b'),
-                p1c=form.values.get('p1c'),
-                p2a=form.values.get('p2a'),
-                p2b=form.values.get('p2b'),
-                p2c=form.values.get('p2c'),
-                p3a=form.values.get('p3a'),
-                p3b=form.values.get('p3b'),
-                p3c=form.values.get('p3c'),
-                p4a=form.values.get('p4a'),
-                p4b=form.values.get('p4b'),
-                p4c=form.values.get('p4c'),
-                p5a=form.values.get('p5a'),
-                p5b=form.values.get('p5b'),
-                p5c=form.values.get('p5c'),
+                sampling=form.sampling.data,
+                p1a=form.p1a.data,
+                p1b=form.p1b.data,
+                p1c=form.p1c.data,
+                p2a=form.p2a.data,
+                p2b=form.p2b.data,
+                p2c=form.p2c.data,
+                p3a=form.p3a.data,
+                p3b=form.p3b.data,
+                p3c=form.p3c.data,
+                p4a=form.p4a.data,
+                p4b=form.p4b.data,
+                p4c=form.p4c.data,
+                p5a=form.p5a.data,
+                p5b=form.p5b.data,
+                p5c=form.p5c.data,
                 bendungan_id=bendungan_id
             )
             db.session.add(piezo)
@@ -135,8 +155,7 @@ def keamanan_piezo():
             db.session.rollback()
             flash('Data sudah ada, mohon update untuk mengubah', 'danger')
 
-    return render_template('keamanan/piezo_add.html',
-                            form=form)
+    return redirect(url_for('admin.keamanan_bendungan'))
 
 
 @bp.route('/keamanan/piezo/update', methods=['POST'])  # @login_required
