@@ -1,8 +1,8 @@
 from werkzeug.security import generate_password_hash, check_password_hash
 from flask_login import UserMixin
 
-from app import login
-from app import db
+from upb_app import login
+from upb_app import db
 from sqlalchemy.dialects.postgresql import JSONB
 from sqlalchemy.orm import relationship
 from sqlalchemy import desc
@@ -167,6 +167,17 @@ class Embung(BaseLog):
     is_verified = db.Column(db.String(1))
 
 
+class Petugas(BaseLog):
+    __tablename__ = 'petugas'
+
+    id = db.Column(db.Integer, primary_key=True)
+    nama = nama = db.Column(db.Text)
+    tugas = db.Column(db.Text)
+    bendungan_id = bendungan_id = db.Column(db.Integer, db.ForeignKey('bendungan.id'), nullable=True)
+
+    bendungan = relationship('Bendungan', back_populates='petugas')
+
+
 class Bendungan(BaseLog):
     __tablename__ = 'bendungan'
 
@@ -196,6 +207,8 @@ class Bendungan(BaseLog):
     vn1_tin_limit = db.Column(db.Float)
     vn2_tin_limit = db.Column(db.Float)
     vn3_tin_limit = db.Column(db.Float)
+
+    petugas = relationship('Petugas', back_populates='bendungan')
 
 
 class Foto(BaseLog):

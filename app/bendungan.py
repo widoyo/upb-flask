@@ -1,6 +1,6 @@
 from flask import Blueprint, render_template, request
-from app.models import Bendungan
-from app.models import ManualDaily, ManualTma, ManualVnotch, ManualPiezo, Rencana
+from upb_app.models import Bendungan, Petugas
+from upb_app.models import ManualDaily, ManualTma, ManualVnotch, ManualPiezo, Rencana
 from sqlalchemy import and_, desc, cast, Date
 from pprint import pprint
 from pytz import timezone
@@ -267,3 +267,27 @@ def piezo(lokasi_id):
                             sampling=sampling,
                             tgl_labels=tgl_labels,
                             piezodata=piezodata)
+
+
+@bp.route('/petugas')
+def petugas():
+    ''' Home Bendungan '''
+    waduk = Bendungan.query.all()
+    petugas = Petugas.query.all()
+
+    data = {}
+    for w in waduk:
+        arr = w.nama.split('_')
+        name = f"{arr[0].title()}.{arr[1].title()}"
+        data[w.id] = {
+            'nama': name,
+            'petugas': []
+        }
+    for p in petugas:
+        data[p.bendungan.id]['petugas'].append({
+            'nama': p.nama,
+            'tugas': p.tugas
+        })
+
+    return render_template('bendungan/petugas.html',
+                            data=data)
