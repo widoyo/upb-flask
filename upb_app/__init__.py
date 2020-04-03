@@ -16,7 +16,7 @@ login = LoginManager(app)
 login.login_view = 'login'
 
 # DECORATORS
-from app.models import Bendungan
+from upb_app.models import Bendungan
 
 
 def admin_only(f):
@@ -54,28 +54,28 @@ def get_bendungan(f):
         return f(bend, *args, **kwargs)
     return decorated_function
 
-from app.api import bp as api_bp
+from upb_app.api import bp as api_bp
 app.register_blueprint(api_bp, url_prefix='/api')
 
-from app.main import bp as main_bp
+from upb_app.main import bp as main_bp
 app.register_blueprint(main_bp, url_prefix='')
 
-from app.map import bp as map_bp
+from upb_app.map import bp as map_bp
 app.register_blueprint(map_bp, url_prefix='/map')
 
-from app.about import bp as about_bp
+from upb_app.about import bp as about_bp
 app.register_blueprint(about_bp, url_prefix='/profile')
 
-from app.admin import bp as admin_bp
+from upb_app.admin import bp as admin_bp
 app.register_blueprint(admin_bp, url_prefix='/admin')
 
-from app.bendungan import bp as bendungan_bp
+from upb_app.bendungan import bp as bendungan_bp
 app.register_blueprint(bendungan_bp, url_prefix='/bendungan')
 
-from app.embung import bp as embung_bp
+from upb_app.embung import bp as embung_bp
 app.register_blueprint(embung_bp, url_prefix='/embung')
 
-from app import main, models, command
+from upb_app import main, models, command
 
 if __name__ == '__main__':
     gunicorn_logger = logging.getLogger('gunicorn.error')

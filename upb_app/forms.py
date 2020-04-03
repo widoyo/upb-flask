@@ -2,7 +2,7 @@ from flask_wtf import FlaskForm
 from wtforms import StringField, PasswordField, DecimalField, DateField
 from wtforms import BooleanField, SubmitField, SelectField, RadioField, FileField
 from wtforms.validators import DataRequired
-from app.models import Bendungan
+from upb_app.models import Bendungan
 import datetime
 
 bends = [(b.id, b.nama) for b in Bendungan.query.all()]

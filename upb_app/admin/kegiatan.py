@@ -2,14 +2,14 @@ from flask import Blueprint, request, render_template, redirect, url_for, jsonif
 from flask_login import login_required, current_user
 from sqlalchemy import extract
 from sqlalchemy.exc import IntegrityError
-from app.models import Kegiatan, Foto, Bendungan
-from app.forms import AddKegiatan
-from app import app, db, petugas_only
+from upb_app.models import Kegiatan, Foto, Bendungan
+from upb_app.forms import AddKegiatan
+from upb_app import app, db, petugas_only
 import datetime
 import base64
 import os
 
-from app.admin import bp
+from upb_app.admin import bp
 # bp = Blueprint('kegiatan', __name__)
 
 petugas = [

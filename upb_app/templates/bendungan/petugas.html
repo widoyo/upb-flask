@@ -1,0 +1,48 @@
+{% extends 'master/base.html' %}
+
+{% set title = "Bendungan" %}
+
+{% block css %}
+
+{% endblock %}
+
+{% block content %}
+    <div class="container">
+        <table class="table table-bordered">
+            <thead>
+                <tr>
+                    <th class="text-center align-middle">No</th>
+                    <th class="text-center align-middle">Nama Bendungan</th>
+                    <th class="text-center align-middle">Nama Petugas</th>
+                    <th class="text-center align-middle">Penugasan</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for id, d in data.items() %}
+                    <tr>
+                        <td rowspan="{{ d.petugas|length or 1 }}">{{ loop.index }}</td>
+                        <td rowspan="{{ d.petugas|length or 1 }}"><a href="{{ url_for('bendungan.tma', lokasi_id=id) }}">{{ d.nama }}</a></td>
+                        {% if d.petugas %}
+                            <td>{{ d.petugas.0.nama }}</td>
+                            <td>{{ d.petugas.0.tugas }}</td>
+                        {% else %}
+                            <td colspan="2"><span style="color: red;">Belum Ada Data</span></td>
+                        {% endif %}
+                    </tr>
+                    {% for p in d.petugas %}
+                        {% if loop.index > 1 %}
+                            <tr>
+                                <td>{{ p.nama }}</td>
+                                <td>{{ p.tugas }}</td>
+                            </tr>
+                        {% endif %}
+                    {% endfor %}
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+{% endblock %}
+
+{% block js %}
+
+{% endblock %}

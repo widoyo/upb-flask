@@ -3,14 +3,14 @@ from flask_login import login_required, current_user
 from flask_wtf.csrf import generate_csrf
 from sqlalchemy import and_, extract
 from sqlalchemy.exc import IntegrityError
-from app.models import ManualDaily, ManualTma, ManualPiezo, ManualVnotch
-from app.models import Bendungan
-from app.forms import AddDaily, AddTma
-from app import app, db, admin_only, petugas_only, get_bendungan
+from upb_app.models import ManualDaily, ManualTma, ManualPiezo, ManualVnotch
+from upb_app.models import Bendungan
+from upb_app.forms import AddDaily, AddTma
+from upb_app import app, db, admin_only, petugas_only, get_bendungan
 import datetime
 import calendar
 
-from app.admin import bp
+from upb_app.admin import bp
 # bp = Blueprint('operasi', __name__)
 
 

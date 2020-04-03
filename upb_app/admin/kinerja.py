@@ -1,14 +1,14 @@
 from flask import Blueprint, request, render_template, redirect, url_for, jsonify, flash
 from flask_login import login_required, current_user
-from app.admin.kegiatan import save_image
-from app.models import Kerusakan, Bendungan, Foto
-from app.forms import LaporKerusakan
-from app import db, admin_only, petugas_only
+from upb_app.admin.kegiatan import save_image
+from upb_app.models import Kerusakan, Bendungan, Foto
+from upb_app.forms import LaporKerusakan
+from upb_app import db, admin_only, petugas_only
 from sqlalchemy.exc import IntegrityError
 import datetime
 import base64
 
-from app.admin import bp
+from upb_app.admin import bp
 # bp = Blueprint('kinerja', __name__)
 
 komponen = [

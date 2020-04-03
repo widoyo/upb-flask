@@ -1,5 +1,5 @@
 from flask import Blueprint, render_template
-from app.models import Embung
+from upb_app.models import Embung
 
 bp = Blueprint('embung', __name__)
 

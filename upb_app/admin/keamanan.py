@@ -3,13 +3,13 @@ from flask_login import login_required, current_user
 from flask_wtf.csrf import generate_csrf
 from sqlalchemy import extract, and_
 from sqlalchemy.exc import IntegrityError
-from app.models import ManualVnotch, ManualPiezo, Bendungan
-from app.forms import AddVnotch, AddPiezo
-from app import db, petugas_only, get_bendungan
+from upb_app.models import ManualVnotch, ManualPiezo, Bendungan
+from upb_app.forms import AddVnotch, AddPiezo
+from upb_app import db, petugas_only, get_bendungan
 import datetime
 import calendar
 
-from app.admin import bp
+from upb_app.admin import bp
 # bp = Blueprint('keamanan', __name__)
 
 

@@ -1,10 +1,10 @@
 from flask import Blueprint, request, render_template, redirect, url_for, flash
 from flask_login import login_required
-from app.models import Users, Bendungan
-from app.forms import AddUser
-from app import db
+from upb_app.models import Users, Bendungan
+from upb_app.forms import AddUser
+from upb_app import db
 
-from app.admin import bp
+from upb_app.admin import bp
 # bp = Blueprint('users', __name__)
 
 
