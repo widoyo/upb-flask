@@ -1,4 +1,4 @@
-{% extends 'master/base.html' %}
+{% extends 'master/base_temp.html' %}
 
 {% set title = "Profile" %}
 
@@ -8,6 +8,9 @@
 {% block content %}
 <div class="container">
     <h3>Struktur Organisasi</h3>
+    <div>
+        <img src="{{ url_for('static', filename='images/struktur_org.png') }}" width="100%" alt="Struktur Organisasi">
+    </div>
 </div>
 {% endblock %}
 

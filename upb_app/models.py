@@ -173,6 +173,10 @@ class Petugas(BaseLog):
     id = db.Column(db.Integer, primary_key=True)
     nama = nama = db.Column(db.Text)
     tugas = db.Column(db.Text)
+    tgl_lahir = db.Column(db.DateTime)
+    alamat = db.Column(db.Text)
+    kab = db.Column(db.Text)
+    pendidikan = db.Column(db.Text)
     bendungan_id = bendungan_id = db.Column(db.Integer, db.ForeignKey('bendungan.id'), nullable=True)
 
     bendungan = relationship('Bendungan', back_populates='petugas')

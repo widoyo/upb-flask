@@ -1,4 +1,4 @@
-{% extends 'master/base.html' %}
+{% extends 'master/base_temp.html' %}
 
 {% set title = "Bendungan" %}
 
@@ -23,8 +23,8 @@
                         <td rowspan="{{ d.petugas|length or 1 }}">{{ loop.index }}</td>
                         <td rowspan="{{ d.petugas|length or 1 }}"><a href="{{ url_for('bendungan.tma', lokasi_id=id) }}">{{ d.nama }}</a></td>
                         {% if d.petugas %}
-                            <td>{{ d.petugas.0.nama }}</td>
-                            <td>{{ d.petugas.0.tugas }}</td>
+                            <td><b>{{ d.petugas.0.nama }}</b></td>
+                            <td><b>{{ d.petugas.0.tugas }}</b></td>
                         {% else %}
                             <td colspan="2"><span style="color: red;">Belum Ada Data</span></td>
                         {% endif %}
