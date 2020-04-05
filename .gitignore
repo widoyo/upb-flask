@@ -1,5 +1,6 @@
-*~
-venv
+.git
 __pycache__
+*/__pycache__
 .env
-
+venv
+upb_app/static/images/struktur_org.png
