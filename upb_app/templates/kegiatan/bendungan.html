@@ -1,22 +1,211 @@
 {% extends 'master/base_adm.html' %}
 
-{% set title = "Kegiatan" %}
+{% set title = "Operasi" %}
 
 {% block css %}
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-datepicker/1.9.0/css/bootstrap-datepicker.css">
 <style>
     .datepicker {
         z-index: 10000 !important;
+        display: inherit;
     }
 </style>
+<link href="{{ url_for('static', filename='css/bootstrap-editable.css') }}" rel="stylesheet"/>
 {% endblock %}
 
 {% block content %}
-    <div class="container">
-        <h1>Kegiatan Bendungan</h1>
+    <div>
+        <h1>{{ name }}
+            <a data-toggle="collapse" href="#addkeg" class="btn btn-primary" role="button" aria-expanded="false" aria-controls="tmapagi">
+              Tambah Laporan Kegiatan
+            </a>
+        </h1>
+        <div class="forms">
+            <div class="container">
+                <form action="?bend_id={{ bend_id }}" method="POST">
+                    <input id="csrf_token" name="csrf_token" type="hidden" value="{{ csrf }}">
+                    <div class="collapse" id="addkeg">
+                      <div class="row">
+                          <div class="col-md-6">
+                              <div class="form-group">
+                                  <label class="form-text" for="sampling"><b>Tanggal</b></label>
+                                  <input class="form-control" type="text" name="sampling" id="datepicker_kegiatan" hidden required value="{{ sampling.strftime('%Y-%m-%d') }}">
+                                  <p class="ml-2" id="sampling-kegiatan">{{ sampling.strftime('%d %B %Y') }}</p>
+                                  <input class="form-control" type="text" name="jam" hidden required value="06">
+                              </div>
+                              <div class="form-group">
+                                  <label class="form-text" for="petugas"><b>Petugas Kegiatan</b></label>
+                                  <select id="petugas" class="form-control">
+                                    <option selected>-</option>
+                                    <option>Koordinator</option>
+                                    <option>Keamanan</option>
+                                    <option>Pemantauan</option>
+                                    <option>Operasi</option>
+                                    <option>Pemeliharaan</option>
+                                  </select>
+                              </div>
+                              <div class="form-group">
+                                  <label for="foto"><b>Foto</b></label>
+                                  <input type="file" class="form-control-file" id="foto">
+                                  <div>
+                                      <img src="{{ url_for('static', filename='images/null.jpg') }}" alt="gambar disini">
+                                  </div>
+                              </div>
+                              <div class="form-group">
+                                  <label class="form-text" for="keterangan"><b>Keterangan</b></label>
+                                  <input type="text" name="keterangan" class="form-control" required placeholder="Kegiatan Babat Rumput = 80%">
+                              </div>
+                              <div>
+                                  <button type="submit" name="submit" class="btn btn-primary my-1 mr-2">Kirim</button>
+                                  <a data-toggle="collapse" href="#addkeg" role="button" aria-expanded="false" aria-controls="tmapagi">batal</a>
+                              </div>
+                          </div>
+                          <div class="col-md-6 form-group">
+                                <h3>Laporan Kegiatan Petugas</h3>
+                                <p>Pilih foto, bisa juga langsung dari kamera Handphone</p>
+                                <p>Berikan keterangan tentang foto</p>
+                                <p>Tanggal aktifitas berlangsung</p>
+                                <p>Pilih petugas yang melakukan kegiatan pada foto</p>
+                          </div>
+                      </div>
+                    </div>
+                </form>
+            </div>
+        </div>
+        <br>
+        <h3>
+            Bulan <span id="datepicker" style="color: #18bc9c"><i class="fa fa-calendar"></i> {{ sampling.strftime('%B %Y') }}</span>
+        </h3>
+        <table class="table table-hover table-bordered">
+            <thead>
+                <tr class="table-active">
+                    <th class="text-center align-middle">Tanggal</th>
+                    <th class="text-center align-middle">Koordinator</th>
+                    <th class="text-center align-middle">Keamanan</th>
+                    <th class="text-center align-middle">Pemantauan</th>
+                    <th class="text-center align-middle">Operasi</th>
+                    <th class="text-center align-middle">Pemeliharaan</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for date, keg in kegiatan.items() %}
+                    <tr>
+                        <td>
+                            <span id="tgl">{{ date.strftime("%Y-%m-%d") }}</span>
+                            <a href="#" class="text-right"><i class="fa fa-print"></i></a>
+                        </td>
+                        <td>
+                            {% if keg.koordinator %}
+                            <ul>
+                                {% for k in keg.koordinator %}
+                                    <li>{{ k }}</li>
+                                {% endfor %}
+                            </ul>
+                            {% else %}
+                                <i>Tidak Ada</i>
+                            {% endif %}
+                        </td>
+                        <td>
+                            {% if keg.keamanan %}
+                            <ul>
+                                {% for k in keg.koordinator %}
+                                    <li>{{ k }}</li>
+                                {% endfor %}
+                            </ul>
+                            {% else %}
+                                <i>Tidak Ada</i>
+                            {% endif %}
+                        </td>
+                        <td>
+                            {% if keg.pemantauan %}
+                            <ul>
+                                {% for k in keg.koordinator %}
+                                    <li>{{ k }}</li>
+                                {% endfor %}
+                            </ul>
+                            {% else %}
+                                <i>Tidak Ada</i>
+                            {% endif %}
+                        </td>
+                        <td>
+                            {% if keg.operasi %}
+                            <ul>
+                                {% for k in keg.koordinator %}
+                                    <li>{{ k }}</li>
+                                {% endfor %}
+                            </ul>
+                            {% else %}
+                                <i>Tidak Ada</i>
+                            {% endif %}
+                        </td>
+                        <td>
+                            {% if keg.pemeliharaan %}
+                            <ul>
+                                {% for k in keg.koordinator %}
+                                    <li>{{ k }}</li>
+                                {% endfor %}
+                            </ul>
+                            {% else %}
+                                <i>Tidak Ada</i>
+                            {% endif %}
+                        </td>
+                    </tr>
+                {% endfor %}
+            </tbody>
+        </table>
     </div>
 {% endblock %}
 
 {% block js %}
+<script src="{{ url_for('static', filename='js/moment.min.js') }}"></script>
+<script src="{{ url_for('static', filename='js/id.js') }}"></script>
+<script src="{{ url_for('static', filename='js/bootstrap-editable.min.js') }}"></script>
+<script src="{{ url_for('static', filename='js/bootstrap-datepicker.min.js') }}"></script>
+<script>
+    $(document).ready(function() {
+        // resolve package confict
+        let datepicker = $.fn.datepicker.noConflict();
+        $.fn.bootstrapDP = datepicker;
 
+        $('#datepicker').datepicker({
+            autoclose: true,
+            format: 'yyyy-mm-dd',
+            startView: "months",
+            minViewMode: "months"
+        });
+        $('#datepicker').on('changeDate', function () {
+            window.location = "{{ url_for('admin.kegiatan_bendungan') }}?bend_id={{ bend_id }}&sampling=" + $('#datepicker').datepicker('getFormattedDate')
+        });
+
+        $('#sampling-kegiatan').datepicker({
+            todayHighlight: true,
+            autoclose: true,
+            format:  'yyyy-mm-dd'
+        });
+        $('#sampling-kegiatan').on('changeDate', function () {
+            let date = $('#sampling-kegiatan').datepicker('getFormattedDate');
+            $('#sampling-kegiatan').text(moment(date).format('DD MMMM YYYY'));
+            $('#datepicker_kegiatan').attr('value', moment(date).format('YYYY-MM-DD'));
+            $('.datepicker').hide();
+        });
+
+        let tgls = document.querySelectorAll("#tgl");
+        tgls.forEach(function(el){
+            console.log(el.value);
+            el.innerText = moment(el.innerText).format('ddd, D');
+        });
+
+        //turn to popup mode
+        $.fn.editable.defaults.mode = 'popup';
+        $(document).ready(function() {
+            $('.editable').editable({
+                error: function(response, newValue) {
+                    if(response.status === 500) {
+                        return 'Tidak bisa update, Tambah data pakai form.';
+                    }
+                 },
+            });
+        });
+    });
+</script>
 {% endblock %}

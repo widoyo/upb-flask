@@ -4,8 +4,9 @@ from sqlalchemy import extract
 from sqlalchemy.exc import IntegrityError
 from upb_app.models import Kegiatan, Foto, Bendungan
 from upb_app.forms import AddKegiatan
-from upb_app import app, db, petugas_only
+from upb_app import app, db, petugas_only, get_bendungan
 import datetime
+import calendar
 import base64
 import os
 
@@ -34,12 +35,15 @@ def kegiatan():
 
 @bp.route('/kegiatan/bendungan')
 @login_required
-@petugas_only
-def kegiatan_bendungan():
-    bendungan_id = current_user.bendungan_id
-    date = request.values.get('sampling') or datetime.datetime.utcnow()
+@get_bendungan
+def kegiatan_bendungan(bend):
+    date = request.values.get('sampling')
+    date = datetime.datetime.strptime(date, "%Y-%m-%d") if date else datetime.datetime.utcnow()
     sampling = datetime.datetime.strptime(f"{date.year}-{date.month}-01", "%Y-%m-%d")
-    bend = Bendungan.query.get(bendungan_id)
+
+    bendungan_id = bend.id
+    arr = bend.nama.split('_')
+    name = f"{arr[0].title()}.{arr[1].title()}"
 
     all_kegiatan = Kegiatan.query.filter(
                                     Kegiatan.bendungan_id == bendungan_id,
@@ -47,6 +51,22 @@ def kegiatan_bendungan():
                                     extract('year', Kegiatan.sampling) == sampling.year
                                 ).all()
     kegiatan = {}
+    now = datetime.datetime.now()
+    if sampling.year == now.year and sampling.month == now.month:
+        day = now.day
+    else:
+        day = calendar.monthrange(sampling.year, sampling.month)[1]
+    for i in range(day, 0, -1):
+        sampl = datetime.datetime.strptime(f"{sampling.year}-{sampling.month}-{i}", "%Y-%m-%d")
+        kegiatan[sampl] = {
+            'id': 0,
+            'koordinator': [],
+            'keamanan': [],
+            'pemantauan': [],
+            'operasi': [],
+            'pemeliharaan': []
+        }
+
     for keg in all_kegiatan:
         if keg.sampling not in kegiatan:
             kegiatan[keg.sampling] = {
@@ -61,10 +81,11 @@ def kegiatan_bendungan():
         kegiatan[keg.sampling][keg.petugas.lower()].append(keg.uraian)
 
     return render_template('kegiatan/bendungan.html',
-                            bend=bend,
+                            bend_id=bend.id,
+                            name=name,
                             petugas=petugas,
                             kegiatan=kegiatan,
-                            sampling=sampling)
+                            sampling=datetime.datetime.today())
 
 
 @bp.route('/kegiatan/<bendungan_id>/paper')

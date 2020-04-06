@@ -13,7 +13,19 @@
 
 {% block content %}
     <div class="container">
-        <h1>Kegiatan Index</h1>
+        <h1>Foto Kegiatan</h1>
+        <table class="table table-bordered">
+            <thead>
+                <th class="text-center">Bendungan</th>
+            </thead>
+            <tbody>
+                {% for bend in bends %}
+                    <tr>
+                        <td><a href="{{ url_for('admin.kegiatan_bendungan') }}?bend_id={{ bend.id }}">{{ bend.nama }}</a></td>
+                    </tr>
+                {% endfor %}
+            </tbody>
+        </table>
     </div>
 {% endblock %}
 
