@@ -307,7 +307,7 @@ def import_master():
             insert_kegiatan(waduk_name, bend_id)
             insert_kerusakan(waduk_name, bend_id)
         except Exception as e:
-            print(f"Error Bendungan : {e}")
+            print(f"--Error Bendungan : {e}")
             db.session.rollback()
 
     print("Importing Embung")
@@ -346,7 +346,7 @@ def import_master():
                 db.session.add(new_emb)
             db.session.commit()
         except Exception as e:
-            print(f"Error Embung : {e}")
+            print(f"--Error Embung : {e}")
             db.session.rollback()
 
     print("Importing User")
@@ -378,7 +378,7 @@ def import_master():
                     db.session.add(new_user)
                 db.session.commit()
             except Exception as e:
-                print(f"Error User : {e}")
+                print(f"--Error User : {e}")
                 db.session.rollback()
 
     print("Importing Foto")
@@ -398,21 +398,22 @@ def import_master():
             }
             photo = Foto.query.get(foto["id"])
             if photo:
-                print(f"Updating foto {foto['id']}")
+                # print(f"Updating foto {foto['id']}")
                 for key, value in obj_dict.items():
-                    setattr(usr, key, value)
+                    setattr(photo, key, value)
             else:
-                print(f"Inserting foto {foto['id']}")
+                # print(f"Inserting foto {foto['id']}")
                 new_foto = Foto(**obj_dict)
                 db.session.add(new_foto)
             db.session.commit()
         except Exception as e:
-            print(f"Error Foto : {e}")
+            print(f"--Error Foto : {e}")
             db.session.rollback()
     mycursor.close()
 
 
 def insert_user(waduk_name, waduk_id):
+    print("Importing User")
     user_info = custom_query(mycursor, 'passwd', {'table_name': waduk_name})
     try:
         obj_dict = {
@@ -424,67 +425,75 @@ def insert_user(waduk_name, waduk_id):
         }
         usr = Users.query.get(user_info[0]['id'])
         if usr:
-            print(f"Updating user {user_info[0]['id']}")
+            # print(f"Updating user {user_info[0]['id']}")
             for key, value in obj_dict.items():
                 setattr(usr, key, value)
         else:
-            print(f"Inserting user {user_info[0]['id']}")
+            # print(f"Inserting user {user_info[0]['id']}")
             new_user = Users(**obj_dict)
             db.session.add(new_user)
         db.session.commit()
     except Exception as e:
-        print(f"Error User : {e}")
+        print(f"--Error User : {e}")
         db.session.rollback()
 
 
 def insert_kerusakan(waduk_name, waduk_id):
+    print("Importing Kerusakan")
     mycursor.execute(f"SHOW columns FROM kerusakan")
     columns = [column[0] for column in mycursor.fetchall()]
 
-    kerusakan_query = """SELECT kerusakan.*,
-                            asset.kategori AS komponen
-                        FROM kerusakan
-                            LEFT JOIN asset ON kerusakan.asset_id=asset.id"""
+    kerusakan_query = """SELECT * FROM kerusakan"""
     mycursor.execute(kerusakan_query + f" WHERE kerusakan.table_name='{waduk_name}'")
 
     all_kerusakan = res2array(mycursor.fetchall(), columns)
     for ker in all_kerusakan:
         mycursor.execute(f"SHOW columns FROM tanggapan1")
         columns = [column[0] for column in mycursor.fetchall()]
+        mycursor.execute(f"SHOW columns FROM asset")
+        ass_columns = [column[0] for column in mycursor.fetchall()]
 
         tanggapan_query = f"SELECT * FROM tanggapan1 WHERE kerusakan_id={ker['id']} ORDER BY id DESC LIMIT 1"
         mycursor.execute(tanggapan_query)
         tanggapan = res2array(mycursor.fetchall(), columns)
+
+        asset_query = f"SELECT * FROM asset WHERE id={ker['asset_id']}"
+        mycursor.execute(asset_query)
+        asset = res2array(mycursor.fetchall(), ass_columns)
         try:
             obj_dict = {
                 "id": ker['id'],
                 "tgl_lapor": ker['cdate'],
                 "uraian": ker['uraian'],
                 "kategori": ker['kategori'],
-                "komponen": ker['komponen'],
-                "tgl_tanggapan": tanggapan[0]['cdate'],
-                "tanggapan": tanggapan[0]['uraian'],
                 "bendungan_id": waduk_id,
                 "asset_id": ker['asset_id'],
                 "c_user": ker["cuser"],
                 "c_date": ker["cdate"]
             }
+            if tanggapan:
+                obj_dict["tgl_tanggapan"] = tanggapan[0]['cdate']
+                obj_dict["tanggapan"] = tanggapan[0]['uraian']
+            if asset:
+                obj_dict["komponen"] = asset[0]['kategori']
+
             kerusakan = Kerusakan.query.get(ker['id'])
             if kerusakan:
-                print(f"Updating kerusakan {ker['id']}")
+                # print(f"Updating kerusakan {ker['id']}")
                 for key, value in obj_dict.items():
                     setattr(kerusakan, key, value)
             else:
-                print(f"Inserting kerusakan {ker['id']}")
+                # print(f"Inserting kerusakan {ker['id']}")
                 new_ker = Kerusakan(**obj_dict)
                 db.session.add(new_ker)
             db.session.commit()
         except Exception as e:
-            print(f"Error Kerusakan : {e}")
+            print(f"--Error Kerusakan : {e}")
             db.session.rollback()
 
 
 def insert_kegiatan(waduk_name, waduk_id):
+    print("Importing Kegiatan")
     mycursor.execute(f"SHOW columns FROM kegiatan")
     columns = [column[0] for column in mycursor.fetchall()]
 
@@ -509,20 +518,21 @@ def insert_kegiatan(waduk_name, waduk_id):
             }
             kegiatan = Kegiatan.query.get(keg['id'])
             if kegiatan:
-                print(f"Updating kegiatan {keg['id']}")
+                # print(f"Updating kegiatan {keg['id']}")
                 for key, value in obj_dict.items():
                     setattr(kegiatan, key, value)
             else:
-                print(f"Inserting kegiatan {keg['id']}")
+                # print(f"Inserting kegiatan {keg['id']}")
                 new_keg = Kegiatan(**obj_dict)
                 db.session.add(new_keg)
             db.session.commit()
         except Exception as e:
-            print(f"Error Kegiatan : {e}")
+            print(f"--Error Kegiatan : {e}")
             db.session.rollback()
 
 
 def insert_assets(waduk_name, waduk_id):
+    print("Importing Assets")
     mycursor.execute(f"SHOW columns FROM asset")
     columns = [column[0] for column in mycursor.fetchall()]
 
@@ -546,16 +556,16 @@ def insert_assets(waduk_name, waduk_id):
             }
             bend_asset = Asset.query.get(asset['id'])
             if bend_asset:
-                print(f"Updating asset {asset['id']}")
+                # print(f"Updating asset {asset['id']}")
                 for key, value in obj_dict.items():
                     setattr(bend_asset, key, value)
             else:
-                print(f"Inserting asset {asset['id']}")
+                # print(f"Inserting asset {asset['id']}")
                 new_emb = Asset(**obj_dict)
                 db.session.add(new_emb)
             db.session.commit()
         except Exception as e:
-            print(f"Error Asset : {e}")
+            print(f"--Error Asset : {e}")
             db.session.rollback()
 
 
