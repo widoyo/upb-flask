@@ -66,25 +66,15 @@
                     id: {{ l.id }},
                     nama: '{{ l.nama }}',
                     ll: [ {{ l.ll }} ],
-                    devices: [
-                                {% for d in l.devices %}
-                                    '{{ d.sn }}'
-                                {% endfor %}
-                            ],
-                    type:
-                        {% if l.jenis == '2' %}
-                            'awlr'
-                        {% else %}
-                            'arr'
-                        {% endif %}
+                    vol: {{ l.volume }}
                 },
             {% endfor %}
         ];
         lokasi.forEach(e => {
             var m = L.marker(e.ll);
-            m.bindTooltip(`${e.nama},\n${e.volume} m3`);
+            m.bindTooltip(`${e.nama},\n${e.vol} m3`);
             m.setIcon(defIcon);
-            // m.bindPopup("<b><a href=/"+ e.id + ">" + e.nama + "</a></b>");
+            m.bindPopup("<b><a href=/"+ e.id + ">" + e.nama + "</a></b>");
             m.addTo(mymap);
         });
     </script>

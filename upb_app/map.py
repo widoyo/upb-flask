@@ -14,5 +14,5 @@ def bendungan():
 @bp.route('/embung')
 def embung():
     ''' Map Embung '''
-    embung = Embung.query.all()
+    embung = Embung.query.filter(Embung.is_verified == '1').all()
     return render_template('map/embung.html', embung=embung)

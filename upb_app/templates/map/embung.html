@@ -61,30 +61,21 @@
             shadowUrl: "{{ url_for('static', filename='images/marker/marker-shadow.png') }}"
         });
         var lokasi = [
-            {% for l in embung %}
+            {% for e in embung %}{% if e.ll %}
                 {
-                    id: {{ l.id }},
-                    nama: '{{ l.nama }}',
-                    ll: [ {{ l.ll }} ],
-                    devices: [
-                                {% for d in l.devices %}
-                                    '{{ d.sn }}'
-                                {% endfor %}
-                            ],
-                    type:
-                        {% if l.jenis == '2' %}
-                            'awlr'
-                        {% else %}
-                            'arr'
-                        {% endif %}
+                    id: {{ e.id }},
+                    nama: '{{ e.nama }}',
+                    ll: [ {{ e.ll }} ],
+                    vol: {{ e.tampungan }}
                 },
-            {% endfor %}
+            {% endif %}{% endfor %}
         ];
         lokasi.forEach(e => {
-            var m = L.marker(e.ll);
-            m.bindTooltip(`${e.nama},\n${e.volume} m3`);
+            console.log(e.ll);
+            let m = L.marker(e.ll);
+            m.bindTooltip(`${e.nama},\n${e.vol} m3`);
             m.setIcon(defIcon);
-            // m.bindPopup("<b><a href=/"+ e.id + ">" + e.nama + "</a></b>");
+            m.bindPopup("<b><a href=/"+ e.id + ">" + e.nama + "</a></b>");
             m.addTo(mymap);
         });
     </script>
