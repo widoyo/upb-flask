@@ -139,10 +139,20 @@ class AddKegiatan(FlaskForm):
     submit = SubmitField('Tambah')
 
 
+class AddAsset(FlaskForm):
+    nama = StringField('Nama', validators=[DataRequired()])
+    kategori = SelectField("Komponen", choices=komponen, validators=[DataRequired()], default=komponen[0][0])
+    merk = StringField('Merk')
+    model = StringField('Model')
+    tanggal = DateField("Tanggal Perolehan")
+    nilai = StringField('Nilai Perolehan')
+    bmn = StringField('No. BMN')
+
+
 class LaporKerusakan(FlaskForm):
-    uraian = StringField('Uraian', validators=[DataRequired()]),
-    kategori = SelectField("kategori", choices=kategori, validators=[DataRequired()], default=kategori[0][0]),
-    foto = FileField("Foto"),
+    uraian = StringField('Uraian', validators=[DataRequired()])
+    kategori = SelectField("kategori", choices=kategori, validators=[DataRequired()], default=kategori[0][0])
+    foto = FileField("Foto")
     komponen = SelectField("Komponen", choices=komponen, validators=[DataRequired()], default=komponen[0][0])
     keterangan = StringField('Keterangan', validators=[DataRequired()])
     submit = SubmitField('Lapor')

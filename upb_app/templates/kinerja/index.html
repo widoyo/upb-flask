@@ -8,15 +8,145 @@
     .datepicker {
         z-index: 10000 !important;
     }
+    .thumbnail {
+       /* box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.5); */
+       transition: 0.3s;
+       min-width: 40%;
+       border-radius: 5px;
+     }
+
+     .thumbnail-description {
+       min-height: 40px;
+     }
+
+     /* .thumbnail:hover {
+       cursor: pointer;
+       box-shadow: 0 8px 16px 0 rgba(0, 0, 0, 1);
+     } */
+     .btn-outline-primary {
+         color: #007bff;
+         background-color: transparent;
+         background-image: none;
+         border-color: #007bff;
+     }
+     .btn-outline-primary:hover {
+         color: #fff;
+         background-color: #007bff;
+         text-decoration: none;
+     }
+     .border-red {
+          border: 1px solid red;
+          padding: 20px;
+     }
+     .border-orange {
+          border: 1px solid orange;
+          padding: 20px;
+     }
+     .border-yellow {
+          border: 1px solid yellow;
+          padding: 20px;
+     }
+     .border-grey {
+          border: 1px solid grey;
+          padding: 20px;
+     }
+     .border-blue {
+          border: 1px solid blue;
+          padding: 20px;
+     }
 </style>
 {% endblock %}
 
 {% block content %}
     <div class="container">
         <h1>Kinerja Index</h1>
+        {% for i, k in kinerja.items() %}
+            <div class="thumbnail border-{% if k.kerusakan %}red{% else %}grey{% endif %}">
+                <div class="row caption">
+                    <div class="col-md-3">
+                        <a href="{{ url_for('admin.kinerja_bendungan') }}?bend_id={{ k.bendungan.id }}">
+                            {{ k.bendungan.nama }}
+                        </a>
+                    </div>
+                    <div class="col-md-7">
+                        {% if k.kerusakan %}
+                            <a href="{{ url_for('admin.kinerja_bendungan') }}?bend_id={{ k.bendungan.id }}">
+                                {{ k.kerusakan.0.komponen }}
+                                (<span class="hari" data-tgl="{{ k.kerusakan.0.tgl_lapor }}"></span>)
+                                {% if k.kerusakan|length - 1 != 0 %}
+                                    dan {{ k.kerusakan|length - 1 }} kerusakan lainnya . . .
+                                {% endif %}
+                            </a>
+                        {% else %}
+                            Tidak Ada Kerusakan
+                        {% endif %}
+                    </div>
+                    <div class="col-md-2">
+                        <div class="text-center">
+                            <span class="">
+                                {% if k.kategori.berat %}
+                                    <a href="#" data-toggle="tooltip" title="{{ k.kategori.berat }} Kerusakan Berat">
+                                        <span class="badge badge-danger">{{ k.kategori.berat }}</span>
+                                    </a>
+                                {% else %}
+                                    <a href="#" data-toggle="tooltip" title="0 Kerusakan Berat">
+                                        <span class="badge badge-danger">0</span>
+                                    </a>
+                                {% endif %}
+                            </span>
+                            <span class="">
+                                {% if k.kategori.sedang %}
+                                    <a href="#" data-toggle="tooltip" title="{{ k.kategori.sedang }} Kerusakan Sedang">
+                                        <span class="badge badge-warning">{{ k.kategori.sedang }}</span>
+                                    </a>
+                                {% else %}
+                                    <a href="#" data-toggle="tooltip" title="0 Kerusakan Sedang">
+                                        <span class="badge badge-warning">0</span>
+                                    </a>
+                                {% endif %}
+                            </span>
+                            <span class="">
+                                {% if k.kategori.ringan %}
+                                    <a href="#" data-toggle="tooltip" title="{{ k.kategori.ringan }} Kerusakan Ringan">
+                                        <span class="badge badge-secondary">{{ k.kategori.ringan }}</span>
+                                    </a>
+                                {% else %}
+                                    <a href="#" data-toggle="tooltip" title="0 Kerusakan Ringan">
+                                        <span class="badge badge-secondary">0</span>
+                                    </a>
+                                {% endif %}
+                            </span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        {% endfor %}
     </div>
 {% endblock %}
 
 {% block js %}
+<script src="{{ url_for('static', filename='js/moment.min.js') }}"></script>
+<script src="{{ url_for('static', filename='js/id.js') }}"></script>
+<script>
+    //turn to popup mode
+    // $.fn.editable.defaults.mode = 'popup';
+    // $(document).ready(function() {
+    //     $('.editable').editable();
+    // });
 
+    $(document).ready(function(){
+      $('[data-toggle="tooltip"]').tooltip();
+    });
+
+    $(document).ready(function(){
+      $('[data-toggle="popover"]').popover();
+    });
+
+    $(document).ready(function() {
+	  moment.locale('id');
+      $('.hari').each(function (i, e) {
+        console.log($(e).prepend(moment($(e).data('tgl')).fromNow()));
+      });
+    });
+</script>
 {% endblock %}
