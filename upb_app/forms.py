@@ -134,8 +134,9 @@ class AddPiezo(FlaskForm):
 class AddKegiatan(FlaskForm):
     sampling = DateField("Hari", default=datetime.datetime.today())
     foto = FileField("Foto")
+    filename = StringField('Filename')
     petugas = SelectField("Petugas", choices=petugas, validators=[DataRequired()], default=petugas[0][0])
-    uraian = StringField('Keterangan', validators=[DataRequired()])
+    keterangan = StringField('Keterangan', validators=[DataRequired()])
     submit = SubmitField('Tambah')
 
 

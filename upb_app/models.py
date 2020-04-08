@@ -248,7 +248,7 @@ class Kegiatan(BaseLog):
     __tablename__ = 'kegiatan'
 
     id = db.Column(db.Integer, primary_key=True)
-    sampling = db.Column(db.DateTime, index=True)
+    sampling = db.Column(db.DateTime)
     petugas = db.Column(db.Text)
     uraian = db.Column(db.Text)
     foto_id = db.Column(db.Integer)

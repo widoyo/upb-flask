@@ -8,6 +8,8 @@ from flask_login import LoginManager, current_user
 
 app = Flask(__name__)
 app.config.from_object(os.environ['APP_SETTINGS'])
+app.config['UPLOAD_FOLDER'] = f"static/img/foto"
+app.config['SAVE_DIR'] = f"{os.getcwd()}/upb_app/"
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 socketio = SocketIO(app)
 

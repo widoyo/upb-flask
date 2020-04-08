@@ -22,8 +22,7 @@
         </h1>
         <div class="forms">
             <div class="container">
-                <form action="?bend_id={{ bend_id }}" method="POST">
-                    <input id="csrf_token" name="csrf_token" type="hidden" value="{{ csrf }}">
+                <!-- <form method="POST"> -->
                     <div class="collapse" id="addkeg">
                       <div class="row">
                           <div class="col-md-6">
@@ -31,11 +30,10 @@
                                   <label class="form-text" for="sampling"><b>Tanggal</b></label>
                                   <input class="form-control" type="text" name="sampling" id="datepicker_kegiatan" hidden required value="{{ sampling.strftime('%Y-%m-%d') }}">
                                   <p class="ml-2" id="sampling-kegiatan">{{ sampling.strftime('%d %B %Y') }}</p>
-                                  <input class="form-control" type="text" name="jam" hidden required value="06">
                               </div>
                               <div class="form-group">
                                   <label class="form-text" for="petugas"><b>Petugas Kegiatan</b></label>
-                                  <select id="petugas" class="form-control">
+                                  <select id="petugas" name="petugas" class="form-control">
                                     <option selected>-</option>
                                     <option>Koordinator</option>
                                     <option>Keamanan</option>
@@ -46,9 +44,9 @@
                               </div>
                               <div class="form-group">
                                   <label for="foto"><b>Foto</b></label>
-                                  <input type="file" class="form-control-file" id="foto">
+                                  <input type="file" class="form-control-file" id="foto" name="foto">
                                   <div>
-                                      <img src="{{ url_for('static', filename='images/null.jpg') }}" alt="gambar disini">
+                                      <img id="blah" src="{{ url_for('static', filename='images/null.jpg') }}" alt="gambar disini">
                                   </div>
                               </div>
                               <div class="form-group">
@@ -56,8 +54,8 @@
                                   <input type="text" name="keterangan" class="form-control" required placeholder="Kegiatan Babat Rumput = 80%">
                               </div>
                               <div>
-                                  <button type="submit" name="submit" class="btn btn-primary my-1 mr-2">Kirim</button>
-                                  <a data-toggle="collapse" href="#addkeg" role="button" aria-expanded="false" aria-controls="addkeg">batal</a>
+                                  <button class="btn btn-primary my-1 mr-2" onclick="go_upload()">Kirim</button>
+                                  <a data-toggle="collapse" href="#addkeg" role="button" aria-expanded="false" aria-controls="addkeg" onclick="srcnull()">batal</a>
                               </div>
                           </div>
                           <div class="col-md-6 form-group">
@@ -69,7 +67,7 @@
                           </div>
                       </div>
                     </div>
-                </form>
+                <!-- </form> -->
             </div>
         </div>
         <br>
@@ -108,7 +106,7 @@
                         <td>
                             {% if keg.keamanan %}
                             <ul>
-                                {% for k in keg.koordinator %}
+                                {% for k in keg.keamanan %}
                                     <li>{{ k }}</li>
                                 {% endfor %}
                             </ul>
@@ -119,7 +117,7 @@
                         <td>
                             {% if keg.pemantauan %}
                             <ul>
-                                {% for k in keg.koordinator %}
+                                {% for k in keg.pemantauan %}
                                     <li>{{ k }}</li>
                                 {% endfor %}
                             </ul>
@@ -130,7 +128,7 @@
                         <td>
                             {% if keg.operasi %}
                             <ul>
-                                {% for k in keg.koordinator %}
+                                {% for k in keg.operasi %}
                                     <li>{{ k }}</li>
                                 {% endfor %}
                             </ul>
@@ -141,7 +139,7 @@
                         <td>
                             {% if keg.pemeliharaan %}
                             <ul>
-                                {% for k in keg.koordinator %}
+                                {% for k in keg.pemeliharaan %}
                                     <li>{{ k }}</li>
                                 {% endfor %}
                             </ul>
@@ -161,6 +159,7 @@
 <script src="{{ url_for('static', filename='js/id.js') }}"></script>
 <script src="{{ url_for('static', filename='js/bootstrap-editable.min.js') }}"></script>
 <script src="{{ url_for('static', filename='js/bootstrap-datepicker.min.js') }}"></script>
+<script type="text/javascript" src="{{ url_for('static', filename='js/MinifyJpegAsync.js') }}"></script>
 <script>
     $(document).ready(function() {
         // resolve package confict
@@ -206,6 +205,77 @@
                  },
             });
         });
+
+        $('select[name="petugas"]').change(function () {
+            if ($('input#foto')[0].files && ($('input#foto')[0].files.length > 0)) {
+                $('input[name="submit"]').removeClass('disabled');
+            };
+            console.log(this.value);
+        });
+
+        $('#foto').on('change', function(event) {
+            console.log("Input Change Detected");
+            readURL(event);
+        });
     });
+
+    let enc_img = '';
+	let file_name = '';
+	function readURL(event) {
+        let f = event.target.files[0];
+		file_name = f.name;
+        let reader = new FileReader();
+
+        reader.onloadend = function(e){
+            console.log(`onload function called, parameter : ${e}`);
+			MinifyJpegAsync.minify(e.target.result, 1280, function(data) {
+				enc_img = "data:image/jpeg;base64," + btoa(data);
+				let img = new Image();
+				img.src = enc_img;
+
+				document.getElementById('blah').src = enc_img;
+				console.log('Hasil proses minify') ;
+			});
+        };  // (function(theFile))(f)
+		reader.readAsDataURL(f);
+    };
+
+    function go_upload() {
+        if($('select[name="petugas"]').val() == 'Tidak Ada'){
+            alert('Pilih petugas');
+            $('select[name="petugas"]').focus();
+        } else if ($('#blah').attr('src') == "{{ url_for('static', filename='img/null.jpg') }}"){
+            alert('Pilih foto terlebih dahulu');
+        } else if ($('input[name="keterangan"]').val() == ''){
+            alert('Harap masukkan keterangan foto kegiatan');
+            $('input[name="keterangan"]').focus();
+        } else {
+            let fields = 'keterangan_waktu'.split('_');
+            let formData = {
+                csrf_token: '{{ csrf }}',
+                foto: enc_img,
+                filename: file_name,
+                keterangan: $('input[name="keterangan"]').val(),
+                sampling: $('input[name="sampling"]').val(),
+                petugas: $('select[name="petugas"]').val().toLowerCase()
+            };
+            console.log("Posting Photo");
+            console.log(formData);
+            $.post("{{ url_for('admin.kegiatan_add') }}?bend_id={{ bend_id }}", formData,
+                function (res) {
+                    console.log(res);
+                    location.reload();
+                }
+            );
+        }
+    }
+
+    function srcnull(){
+    	$('#fotoFile').val('');
+    	$('#blah').attr('src', "{{ url_for('static', filename='img/null.jpg') }}");
+    	$('input[name="keterangan"]').val('');
+    	$('select[name="petugas"]').val("Tidak Ada").change();
+    	$('#form-kegiatan').collapse('hide');
+    }
 </script>
 {% endblock %}

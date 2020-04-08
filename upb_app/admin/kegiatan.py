@@ -1,5 +1,6 @@
 from flask import Blueprint, request, render_template, redirect, url_for, jsonify, flash
 from flask_login import login_required, current_user
+from flask_wtf.csrf import generate_csrf
 from sqlalchemy import extract
 from sqlalchemy.exc import IntegrityError
 from upb_app.models import Kegiatan, Foto, Bendungan
@@ -81,6 +82,7 @@ def kegiatan_bendungan(bend):
         kegiatan[keg.sampling][keg.petugas.lower()].append(keg.uraian)
 
     return render_template('kegiatan/bendungan.html',
+                            csrf=generate_csrf(),
                             bend_id=bend.id,
                             name=name,
                             petugas=petugas,
@@ -107,29 +109,31 @@ def kegiatan_paper(bendungan_id):
                             sampling=sampling)
 
 
-@bp.route('/kegiatan/bendungan/add', methods=['GET', 'POST'])
+@bp.route('/kegiatan/bendungan/add', methods=['POST'])
 @login_required
-@petugas_only
-def kegiatan_add():
-    bendungan_id = current_user.bendungan_id
+@get_bendungan
+def kegiatan_add(bend):
+    bendungan_id = bend.id
     form = AddKegiatan()
-    bend = Bendungan.query.get(bendungan_id)
     if form.validate_on_submit():
         last_foto = Foto.query.order_by(Foto.id.desc()).first()
         new_id = 1 if not last_foto else (last_foto.id + 1)
+        print(new_id)
         try:
-            raw = request.foto.data
-            imageStr = base64.b64encode(raw).decode('ascii')
-            filename = f"kegiatan_{new_id}_{request.foto.data.filename}"
+            raw = form.foto.data
+            # imageStr = base64.b64encode(raw).decode('ascii')
+            imageStr = raw.split(',')[1]
+            filename = f"kegiatan_{new_id}_{form.filename.data}"
             foto = save_image(imageStr, filename)
-            foto.keterangan = form.values.get("uraian")
+            foto.keterangan = form.keterangan.data
 
             kegiatan = Kegiatan(
-                sampling=form.values.get("sampling"),
-                petugas=form.values.get("petugas"),
-                uraian=form.values.get("uraian"),
+                sampling=form.sampling.data,
+                petugas=form.petugas.data,
+                uraian=form.keterangan.data,
                 bendungan_id=bendungan_id
             )
+            print("saving kegiatan")
             db.session.add(kegiatan)
             db.session.add(foto)
             db.session.commit()
@@ -139,14 +143,13 @@ def kegiatan_add():
             db.session.commit()
 
             flash('Tambah Kegiatan berhasil !', 'success')
-            return redirect(url_for('admin.kegiatan_bendungan'))
-        except IntegrityError:
+            return redirect(url_for('admin.kegiatan_bendungan', bend_id=bend.id))
+        except Exception as e:
             db.session.rollback()
-            flash('Data sudah ada, mohon update untuk mengubah', 'danger')
+            print(e)
+            flash(f"Terjadi Error saat menyimpan data Kegiatan", 'danger')
 
-    return render_template('kegiatan/add.html',
-                            form=form,
-                            bend=bend)
+    return redirect(url_for('admin.kegiatan_bendungan', bend_id=bend.id))
 
 
 @bp.route('/kegiatan/update', methods=['POST'])  # @login_required
@@ -169,11 +172,12 @@ def kegiatan_update():
 def save_image(imageStr, filename):
     # print(file_name)
     img_file = os.path.join(app.config['UPLOAD_FOLDER'], filename)
+    save_file = os.path.join(app.config['SAVE_DIR'], img_file)
 
     # convert base64 into image file and then save it
     imgdata = base64.b64decode(imageStr)
     # print(imgdata)
-    with open(img_file, 'wb') as f:
+    with open(save_file, 'wb') as f:
         f.write(imgdata)
 
     print("saving image !")
