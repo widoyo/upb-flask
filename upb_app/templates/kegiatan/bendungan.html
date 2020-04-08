@@ -90,7 +90,7 @@
                     <tr>
                         <td>
                             <span id="tgl">{{ date.strftime("%Y-%m-%d") }}</span>
-                            <a href="#" class="text-right"><i class="fa fa-print"></i></a>
+                            <a href="{{ url_for('admin.kegiatan_paper') }}?bend_id={{ bend_id }}" class="text-right"><i class="fa fa-print"></i></a>
                         </td>
                         <td>
                             {% if keg.koordinator %}

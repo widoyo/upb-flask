@@ -1,10 +1,116 @@
-<!DOCTYPE html>
-<html lang="en" dir="ltr">
+<html>
     <head>
-        <meta charset="utf-8">
-        <title></title>
+        <style>
+            @media print{
+              #no-print{
+                display: none;
+              }
+            }
+            .btn {
+                border-width: 2px;
+            }
+            .btn-group-sm>.btn, .btn-sm {
+                padding: 6px 9px;
+                font-size: 13px;
+                line-height: 1.5;
+                border-radius: 3px;
+            }
+            .btn-danger {
+                color: #fff;
+                background-color: #e74c3c;
+                border-color: #e74c3c;
+            }
+            .btn {
+                display: inline-block;
+                margin-bottom: 0;
+                font-weight: 400;
+                text-align: center;
+                vertical-align: middle;
+                touch-action: manipulation;
+                cursor: pointer;
+                border: 1px solid transparent;
+                white-space: nowrap;
+                padding: 10px 15px;
+                font-size: 15px;
+                line-height: 1.42857143;
+                border-radius: 4px;
+                -webkit-user-select: none;
+                -moz-user-select: none;
+                -ms-user-select: none;
+                user-select: none;
+            }
+            html { font-family: helvetica;}
+            .logo { float: left; padding: 0px; }
+            .header { padding: 0px;margin-top: 0px; }
+            .header p { margin-top: 0;margin-bottom: 0; text-transform: uppercase; text-align: center; }
+            p.bbws { font-weight: bold; font-size: 18px; }
+            p.tiny { font-size: 9px;}
+            h3 { line-height: 90%; text-align: center; }
+            .table-bordered { border: solid 2px black; border-collapse: collapse; border-spacing: 0; }
+            .table-bordered th { padding: 4px; border: solid 1px black; }
+            th, td { margin: 0; padding: 4px; border: solid 1px black;}
+            td { font-size: 12px; }
+            .text-right { text-align: right; }
+            .jam { font-size: 10px;}
+            .text-center { text-align: center; }
+            .mengetahui { width: 33%; float: left; font-size: 12px;}
+        </style>
     </head>
     <body>
+        <section>
+        <div class="container">
+            <div class="logo">
+            <img src="/static/images/logo_pu.png" height=80 width=80 alt="Logo PUPR">
+        </div>
+        <div class="header">
+            <p>Kementerian Pekerjaan Umum dan Perumahan Rakyat</p>
+            <p>Direktorat Jenderal Sumber Daya Air</p>
+            <p class="bbws">Balai Besar Wilayah Sungai Bengawan Solo</p>
+            <p class="tiny">Jl. Solo - Kartasura Km. 7 PO BOX 267 Telp/Fax (0271) 716071, Pabelan, Kartasura, Sukoharjo 57162</p>
+        </div>
+        <h3 class="c">
+            LAPORAN KEGIATAN PETUGAS
+            <br>
+        	BENDUNGAN {{ bend.nama.split('_')[1].upper() }}
+            <br>
+        	Tanggal: {{ sampling.strftime('%d %B %Y') }}
+        </h3>
+          <table class="table table-bordered boldtable">
+              {% for keg in kegiatan %}
+                <tr>
+                    <td>
+                        {% if user.bendungan_id == bend.id %}
+                            <!-- delete button -->
+                            <!-- <button id="no-print" class="btn btn-danger btn-sm" style="float: right;" onclick="del_ft(${keg.kegiatan.get('kid')},${keg.kegiatan.get('fid')},'${keg.kegiatan.get('f')}');">Hapus</button> -->
+                        {% endif %}
+                        <img src="{{ url_for('static', filename=keg.foto.url[7:]) }}" style="width: 50%; height: auto;">
+                        <div style="vertical-align: top">{{ keg.kegiatan.uraian }}, {{ keg.kegiatan.petugas.title() }}</div>
+                    </td>
+                </tr>
+              {% endfor %}
+          </table>
+    	  <p style="font-size: 11px;"></p>
+            <div class="text-center">
+            <div class="mengetahui kiri">&nbsp;</div>
+            <div class="mengetahui tengah">&nbsp;</div>
+            <div class="mengetahui kanan">a.n. Kepala Satker O & P SDA
+            <br>
+            PPK O & P SDA 1
+            <br><br><br><br>
+            ttd
+            <br><br>
+            <span style="text-decoration: underline;">
+                Santoso ST, MT
+            </span>
+            <br>
+            NIP. 19680604 199502 1 001
+            </div>
+        </div>
+        </section>
 
+        <script>
+          // delete function
+        </script>
+        <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.12.4/jquery.min.js"></script>
     </body>
 </html>

@@ -90,22 +90,31 @@ def kegiatan_bendungan(bend):
                             sampling=datetime.datetime.today())
 
 
-@bp.route('/kegiatan/<bendungan_id>/paper')
+@bp.route('/kegiatan/paper')
 @login_required
-def kegiatan_paper(bendungan_id):
-    date = request.values.get('sampling') or datetime.datetime.utcnow()
-    sampling = datetime.datetime.strptime(f"{date.year}-{date.month}-{date.day}", "%Y-%m-%d")
-    bend = Bendungan.query.get(bendungan_id)
+@get_bendungan
+def kegiatan_paper(bend):
+    date = request.values.get('sampling')
+    sampling = datetime.datetime.strptime(date, "%Y-%m-%d") if date else datetime.datetime.utcnow()
+
+    bendungan_id = bend.id
 
     kegiatan = Kegiatan.query.filter(
                                     Kegiatan.bendungan_id == bendungan_id,
+                                    extract('day', Kegiatan.sampling) == sampling.day,
                                     extract('month', Kegiatan.sampling) == sampling.month,
                                     extract('year', Kegiatan.sampling) == sampling.year
                                 ).all()
+    data = []
+    for keg in kegiatan:
+        data.append({
+            'kegiatan': keg,
+            'foto': Foto.query.get(keg.foto_id)
+        })
 
-    return render_template('kegiatan/bendungan.html',
+    return render_template('kegiatan/paper.html',
                             bend=bend,
-                            kegiatan=kegiatan,
+                            kegiatan=data,
                             sampling=sampling)
 
 
