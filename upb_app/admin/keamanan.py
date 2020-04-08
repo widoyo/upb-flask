@@ -29,25 +29,25 @@ def keamanan_bendungan(bend):
     date = datetime.datetime.strptime(date, "%Y-%m-%d") if date else datetime.datetime.utcnow()
     sampling = datetime.datetime.strptime(f"{date.year}-{date.month}-01", "%Y-%m-%d")
 
+    now = datetime.datetime.now()
+    if sampling.year == now.year and sampling.month == now.month:
+        day = now.day
+    else:
+        day = calendar.monthrange(sampling.year, sampling.month)[1]
+    end = datetime.datetime.strptime(f"{date.year}-{date.month}-{day} 23:59:59", "%Y-%m-%d %H:%M:%S")
+
     bendungan_id = bend.id
     arr = bend.nama.split('_')
     name = f"{arr[0].title()}.{arr[1].title()}"
 
     vnotch = ManualVnotch.query.filter(
                                         ManualVnotch.bendungan_id == bendungan_id,
-                                        extract('month', ManualVnotch.sampling) == sampling.month,
-                                        extract('year', ManualVnotch.sampling) == sampling.year
+                                        ManualVnotch.sampling.between(sampling, end)
                                     ).all()
     piezo = ManualPiezo.query.filter(
                                     ManualPiezo.bendungan_id == bendungan_id,
-                                    extract('month', ManualPiezo.sampling) == sampling.month,
-                                    extract('year', ManualPiezo.sampling) == sampling.year
+                                    ManualPiezo.sampling.between(sampling, end)
                                 ).all()
-    now = datetime.datetime.now()
-    if sampling.year == now.year and sampling.month == now.month:
-        day = now.day
-    else:
-        day = calendar.monthrange(sampling.year, sampling.month)[1]
 
     periodik = {}
     for i in range(day, 0, -1):
@@ -57,10 +57,7 @@ def keamanan_bendungan(bend):
             'piezo': None
         }
     for v in vnotch:
-        periodik[v.sampling] = {
-            'vnotch': v,
-            'piezo': None
-        }
+        periodik[v.sampling]['vnotch'] = v
     for p in piezo:
         periodik[p.sampling]['piezo'] = p
 
@@ -98,7 +95,7 @@ def keamanan_vnotch(bend):
             db.session.rollback()
             flash('Data sudah ada, mohon update untuk mengubah', 'danger')
 
-    return redirect(url_for('admin.keamanan_bendungan'))
+    return redirect(url_for('admin.keamanan_bendungan', bend_id=bend.id))
 
 
 @bp.route('/keamanan/vnotch/update', methods=['POST'])  # @login_required
@@ -124,8 +121,6 @@ def keamanan_vnotch_update():
 def keamanan_piezo(bend):
     bendungan_id = bend.id
     form = AddPiezo()
-    print(form.validate_on_submit())
-    print(form.sampling.data)
     if form.validate_on_submit():
         try:
             piezo = ManualPiezo(
@@ -155,7 +150,7 @@ def keamanan_piezo(bend):
             db.session.rollback()
             flash('Data sudah ada, mohon update untuk mengubah', 'danger')
 
-    return redirect(url_for('admin.keamanan_bendungan'))
+    return redirect(url_for('admin.keamanan_bendungan', bend_id=bend.id))
 
 
 @bp.route('/keamanan/piezo/update', methods=['POST'])  # @login_required

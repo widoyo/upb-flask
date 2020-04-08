@@ -1,4 +1,5 @@
-from flask import Blueprint, request, render_template, redirect, url_for, jsonify, flash
+from flask import Blueprint, request, render_template, redirect
+from flask import url_for, jsonify, flash, Response
 from flask_login import login_required, current_user
 from flask_wtf.csrf import generate_csrf
 from sqlalchemy import and_, extract
@@ -9,6 +10,8 @@ from upb_app.forms import AddDaily, AddTma
 from upb_app import app, db, admin_only, petugas_only, get_bendungan
 import datetime
 import calendar
+import csv
+import io
 
 from upb_app.admin import bp
 # bp = Blueprint('operasi', __name__)
@@ -30,7 +33,7 @@ def operasi_harian():
     date = request.values.get('sampling')
     def_date = date if date else datetime.datetime.now().strftime("%Y-%m-%d")
     sampling = datetime.datetime.strptime(def_date, "%Y-%m-%d")
-    end = sampling + datetime.timedelta(days=1)
+    end = sampling + datetime.timedelta(hours=23, minutes=55)
 
     data = {
         '1': [],
@@ -62,7 +65,7 @@ def operasi_harian():
                                         ManualPiezo.sampling >= sampling,
                                         ManualPiezo.sampling <= end),
                                     ManualPiezo.bendungan_id == w.id
-                                    ).all()
+                                    ).first()
 
         tma_d = {
             '6': {
@@ -119,26 +122,25 @@ def operasi_bendungan(bend):
     date = datetime.datetime.strptime(date, "%Y-%m-%d") if date else datetime.datetime.utcnow()
     sampling = datetime.datetime.strptime(f"{date.year}-{date.month}-01", "%Y-%m-%d")
 
+    now = datetime.datetime.now()
+    if sampling.year == now.year and sampling.month == now.month:
+        day = now.day
+    else:
+        day = calendar.monthrange(sampling.year, sampling.month)[1]
+    end = datetime.datetime.strptime(f"{date.year}-{date.month}-{day} 23:59:59", "%Y-%m-%d %H:%M:%S")
+
     bendungan_id = bend.id
     arr = bend.nama.split('_')
     name = f"{arr[0].title()}.{arr[1].title()}"
 
     manual_daily = ManualDaily.query.filter(
                                         ManualDaily.bendungan_id == bendungan_id,
-                                        extract('month', ManualDaily.sampling) == sampling.month,
-                                        extract('year', ManualDaily.sampling) == sampling.year
+                                        ManualDaily.sampling.between(sampling, end)
                                     ).all()
     tma = ManualTma.query.filter(
                                     ManualTma.bendungan_id == bendungan_id,
-                                    extract('month', ManualTma.sampling) == sampling.month,
-                                    extract('year', ManualTma.sampling) == sampling.year
+                                    ManualTma.sampling.between(sampling, end)
                                 ).all()
-
-    now = datetime.datetime.now()
-    if sampling.year == now.year and sampling.month == now.month:
-        day = now.day
-    else:
-        day = calendar.monthrange(sampling.year, sampling.month)[1]
 
     periodik = {}
     for i in range(day, 0, -1):
@@ -163,7 +165,8 @@ def operasi_bendungan(bend):
                             name=name,
                             bend_id=bend.id,
                             periodik=periodik,
-                            sampling=datetime.datetime.today())
+                            sampling=datetime.datetime.now(),
+                            sampling_dt=sampling)
 
 
 @bp.route('/operasi/bendungan/tma', methods=['GET', 'POST'])
@@ -283,3 +286,131 @@ def operasi_daily_update():
         "value": val
     }
     return jsonify(result)
+
+
+@bp.route('/operasi/bendungan/csv', methods=['GET'])
+@login_required
+@get_bendungan
+def operasi_csv(bend):
+    date = request.values.get('sampling')
+    date = datetime.datetime.strptime(date, "%Y-%m-%d") if date else datetime.datetime.utcnow()
+    sampling = datetime.datetime.strptime(f"{date.year}-{date.month}-01", "%Y-%m-%d")
+
+    now = datetime.datetime.now()
+    if sampling.year == now.year and sampling.month == now.month:
+        day = now.day
+    else:
+        day = calendar.monthrange(sampling.year, sampling.month)[1]
+    end = datetime.datetime.strptime(f"{date.year}-{date.month}-{day} 23:59:59", "%Y-%m-%d %H:%M:%S")
+
+    bendungan_id = bend.id
+    arr = bend.nama.split('_')
+    name = f"{arr[0].title()}.{arr[1].title()}"
+
+    manual_daily = ManualDaily.query.filter(
+                                        ManualDaily.bendungan_id == bendungan_id,
+                                        ManualDaily.sampling.between(sampling, end),
+                                        # extract('month', ManualDaily.sampling) == sampling.month,
+                                        # extract('year', ManualDaily.sampling) == sampling.year
+                                    ).all()
+    tma = ManualTma.query.filter(
+                                    ManualTma.bendungan_id == bendungan_id,
+                                    ManualTma.sampling.between(sampling, end),
+                                    # extract('month', ManualTma.sampling) == sampling.month,
+                                    # extract('year', ManualTma.sampling) == sampling.year
+                                ).all()
+    vnotch = ManualVnotch.query.filter(
+                                    ManualVnotch.bendungan_id == bendungan_id,
+                                    ManualVnotch.sampling.between(sampling, end),
+                                    # extract('month', ManualTma.sampling) == sampling.month,
+                                    # extract('year', ManualTma.sampling) == sampling.year
+                                ).all()
+    piezo = ManualPiezo.query.filter(
+                                    ManualPiezo.bendungan_id == bendungan_id,
+                                    ManualPiezo.sampling.between(sampling, end),
+                                    # extract('month', ManualTma.sampling) == sampling.month,
+                                    # extract('year', ManualTma.sampling) == sampling.year
+                                ).all()
+
+    periodik = {}
+    for i in range(day):
+        sampl = datetime.datetime.strptime(f"{sampling.year}-{sampling.month}-{i+1}", "%Y-%m-%d")
+        periodik[sampl] = {
+            'daily': None,
+            'tma': {
+                '06': None,
+                '12': None,
+                '18': None
+            },
+            'vnotch': None,
+            'piezo': None
+        }
+    for d in manual_daily:
+        periodik[d.sampling]['daily'] = d
+    for t in tma:
+        sampl = t.sampling.replace(hour=0)
+        jam = t.sampling.strftime("%H")
+        periodik[sampl]['tma'][jam] = t
+    for v in vnotch:
+        periodik[d.sampling]['vnotch'] = v
+    for p in piezo:
+        periodik[d.sampling]['piezo'] = p
+
+    pre_csv = []
+    pre_csv.append([
+        'waktu','curahhujan','tma6','vol6','tma12','vol12','tma18','vol18',
+        'inflow_q','inflow_v','intake_q','intake_v','outflow_q','outflow_v','spillway_q','spillway_v',
+        'vnotch_tin1','vnotch_q1','vnotch_tin2','vnotch_q2','vnotch_tin3','vnotch_q3',
+        'a1','a2','a3','a4','a5','b1','b2','b3','b4','b5','c1','c2','c3','c4','c5'
+    ])
+    for sampl, data in periodik.items():
+        pre_csv.append([
+            sampl.strftime('%Y-%m-%d %H:%M:%S'),
+            data['daily'].ch if data['daily'] else None,
+            data['tma']['06'].tma if data['tma']['06'] else None,
+            data['tma']['06'].vol if data['tma']['06'] else None,
+            data['tma']['12'].tma if data['tma']['12'] else None,
+            data['tma']['12'].vol if data['tma']['12'] else None,
+            data['tma']['18'].tma if data['tma']['18'] else None,
+            data['tma']['18'].vol if data['tma']['18'] else None,
+            data['daily'].inflow_deb if data['daily'] else None,
+            data['daily'].inflow_vol if data['daily'] else None,
+            data['daily'].outflow_deb if data['daily'] else None,
+            data['daily'].outflow_vol if data['daily'] else None,
+            data['daily'].outflow_deb if data['daily'] else None,
+            data['daily'].outflow_vol if data['daily'] else None,
+            data['daily'].spillway_deb if data['daily'] else None,
+            data['daily'].spillway_vol if data['daily'] else None,
+            data['vnotch'].vn1_tma if data['vnotch'] else None,
+            data['vnotch'].vn1_deb if data['vnotch'] else None,
+            data['vnotch'].vn2_tma if data['vnotch'] else None,
+            data['vnotch'].vn2_deb if data['vnotch'] else None,
+            data['vnotch'].vn3_tma if data['vnotch'] else None,
+            data['vnotch'].vn3_deb if data['vnotch'] else None,
+            data['piezo'].p1a if data['piezo'] else None,
+            data['piezo'].p2a if data['piezo'] else None,
+            data['piezo'].p3a if data['piezo'] else None,
+            data['piezo'].p4a if data['piezo'] else None,
+            data['piezo'].p5a if data['piezo'] else None,
+            data['piezo'].p1b if data['piezo'] else None,
+            data['piezo'].p2b if data['piezo'] else None,
+            data['piezo'].p3b if data['piezo'] else None,
+            data['piezo'].p4b if data['piezo'] else None,
+            data['piezo'].p5b if data['piezo'] else None,
+            data['piezo'].p1c if data['piezo'] else None,
+            data['piezo'].p2c if data['piezo'] else None,
+            data['piezo'].p3c if data['piezo'] else None,
+            data['piezo'].p4c if data['piezo'] else None,
+            data['piezo'].p5c if data['piezo'] else None
+        ])
+    output = io.StringIO()
+    writer = csv.writer(output)
+    for l in pre_csv:
+        writer.writerow(l)
+    output.seek(0)
+
+    return Response(output,
+                    mimetype="text/csv",
+                    headers={
+                        "Content-Disposition": f"attachment;filename={bend.nama}-{sampling.strftime('%d %B %Y')}.csv"
+                    })
