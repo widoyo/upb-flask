@@ -69,13 +69,16 @@
                     vol: '{{ l.vol }} m<sup>3</sup>',
                     wil: '{{ l.wil }}',
                     kab: '{{ l.kab }}',
-                    lbi: '{{ l.lbi }} Ha'
+                    lbi: '{{ l.lbi }} Ha',
+                    latest: {{ 'false' if not l.latest else 'true' }},
+                    latest_vol: '{{ l.latest.vol }} m<sup>3</sup> ({{ l.latest.hour }}:00)',
+                    latest_tma: '{{ l.latest.tma }} m ({{ l.latest.hour }}:00)',
                 },
             {% endfor %}
         ];
         lokasi.forEach(e => {
             var m = L.marker(e.ll);
-            m.bindTooltip(`${e.nama},\n${e.vol} m3`);
+            // m.bindTooltip(`${e.nama},\n${e.vol} m3`);
             m.setIcon(defIcon);
             m.bindPopup('<h6> <a href="/bendungan/' + e.id + '">' + e.nama + '</a></h6>' + (
                       e ? '<b>Kab. ' + e.kab + ' (' + e.wil + ')</b>'
@@ -84,8 +87,8 @@
                       + 'Irigasi : ' + e.lbi + '<br>'
                       // + '<br>'
                       + '<b>Data Hari ini</b><br />'
-                      + 'Volume : ' + e.vol + '<br>'
-                      + 'TMA : ' + e.lbi + '<br>'
+                      + 'Volume : ' + ((e.latest) ? e.latest_vol : '-') + '<br>'
+                      + 'TMA : ' + ((e.latest) ? e.latest_tma : '-') + '<br>'
                       : 'Pilih Bendungan'
                   )
               );

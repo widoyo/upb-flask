@@ -1,5 +1,7 @@
 from flask import Blueprint, render_template
-from upb_app.models import Bendungan, Embung, wil_sungai
+from sqlalchemy import and_
+from upb_app.models import Bendungan, Embung, ManualTma, wil_sungai
+import datetime
 
 bp = Blueprint('map', __name__)
 
@@ -10,6 +12,23 @@ def bendungan():
     bendungan = Bendungan.query.all()
     data = []
     for b in bendungan:
+        now = datetime.datetime.now()
+        now = datetime.datetime.strptime("2020-01-01", "%Y-%m-%d")
+        sampling = datetime.datetime.strptime(f"{now.year}-{now.month}-{now.day} 00:00:00", "%Y-%m-%d %H:%M:%S")
+        end = datetime.datetime.strptime(f"{now.year}-{now.month}-{now.day} 23:59:59", "%Y-%m-%d %H:%M:%S")
+        tma = ManualTma.query.filter(
+                                    and_(
+                                        ManualTma.sampling >= sampling,
+                                        ManualTma.sampling <= end),
+                                    ManualTma.bendungan_id == b.id
+                                    ).order_by(ManualTma.sampling.desc()).first()
+        latest = None
+        if tma:
+            latest = {
+                'hour': tma.sampling.hour or "-",
+                'vol': "{:,.0f}".format(tma.vol) if tma.vol else "-",
+                'tma': "{:,.2f}".format(tma.tma) if tma.tma else "-",
+            }
         arr = b.nama.split('_')
         name = f"{arr[0].title()}.{arr[1].title()}"
         data.append({
@@ -20,6 +39,7 @@ def bendungan():
             'wil': wil_sungai[b.wil_sungai],
             'vol': "{:,.0f}".format(b.volume),
             'lbi': "{:,.0f}".format(b.lbi),
+            'latest': latest or None,
             'bend': b
         })
     return render_template('map/bendungan.html', bendungan=data)

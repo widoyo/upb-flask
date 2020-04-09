@@ -77,7 +77,7 @@
         lokasi.forEach(e => {
             console.log(e.ll);
             let m = L.marker(e.ll);
-            m.bindTooltip(`${e.nama},\n${e.vol} m3`);
+            // m.bindTooltip(`${e.nama},\n${e.vol} m3`);
             m.setIcon(defIcon);
             m.bindPopup('<h6> <a href="/embung">' + e.nama + '</a></h6>' + (
                       e ? '<b>Desa ' + e.desa + ', ' + e.kec + ', ' + e.kab + '</b>'
