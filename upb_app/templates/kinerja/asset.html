@@ -23,57 +23,61 @@
     <br>
     <div class="row container">
         <div id="addasset" class="collapse col-md-6">
-            <div class="form-group row">
-                <label for="nama" class="col-sm-2 col-form-label">Nama</label>
-                <div class="col-sm-10">
-                  <input class="form-control" type="text" name="nama" id="nama" required placeholder="Masukkan nama Asset">
+            <form class="" action="{{ url_for('admin.asset_add') }}" method="post">
+                <input id="csrf_token" name="csrf_token" type="hidden" value="{{ csrf }}">
+                <div class="form-group row">
+                    <label for="nama" class="col-sm-2 col-form-label">Nama</label>
+                    <div class="col-sm-10">
+                      <input class="form-control" type="text" name="nama" id="nama" required placeholder="Masukkan nama Asset">
+                    </div>
                 </div>
-            </div>
-            <div class="form-group row">
-                <label class="col-sm-2 col-form-labelt" for="petugas">Kategori</label>
-                <div class="col-sm-10">
-                    <select id="petugas" class="form-control">
-                      <option selected>Pilih Kategori</option>
-                      {% for k in kategori %}
-                        <option>{{ k }}</option>
-                      {% endfor %}
-                    </select>
+                <div class="form-group row">
+                    <label class="col-sm-2 col-form-labelt" for="petugas">Kategori</label>
+                    <div class="col-sm-10">
+                        <select id="kategori" nama="kategori" class="form-control">
+                          <option value="" selected>Pilih Kategori</option>
+                          {% for k in kategori %}
+                            <option value="{{ k }}">{{ k }}</option>
+                          {% endfor %}
+                        </select>
+                    </div>
                 </div>
-            </div>
-            <div class="form-group row">
-                <label for="merk" class="col-sm-2 col-form-label">Merk</label>
-                <div class="col-sm-10">
-                  <input class="form-control" type="text" name="merk" id="merk">
+                <div class="form-group row">
+                    <label for="merk" class="col-sm-2 col-form-label">Merk</label>
+                    <div class="col-sm-10">
+                      <input class="form-control" type="text" name="merk" id="merk">
+                    </div>
                 </div>
-            </div>
-            <div class="form-group row">
-                <label for="model" class="col-sm-2 col-form-label">Model</label>
-                <div class="col-sm-10">
-                  <input class="form-control" type="text" name="model" id="model">
+                <div class="form-group row">
+                    <label for="model" class="col-sm-2 col-form-label">Model</label>
+                    <div class="col-sm-10">
+                      <input class="form-control" type="text" name="model" id="model">
+                    </div>
                 </div>
-            </div>
-            <div class="form-group row">
-                <label for="tanggal" class="col-sm-2 col-form-label">Tanggal Perolehan</label>
-                <div class="col-sm-10">
-                    <input class="form-control" type="text" name="tanggal" id="tanggal" value="">
+                <div class="form-group row">
+                    <label for="tanggal" class="col-sm-2 col-form-label">Tanggal Perolehan</label>
+                    <div class="col-sm-10">
+                        <input class="form-control" type="text" name="tanggal" id="tanggal">
+                        <!-- <input class="form-control" type="text" name="tgl" id="tgl" value=""> -->
+                    </div>
                 </div>
-            </div>
-            <div class="form-group row">
-                <label for="nilai" class="col-sm-2 col-form-label">Nilai Perolehan</label>
-                <div class="col-sm-10">
-                  <input class="form-control" type="text" name="nilai" id="nilai">
+                <div class="form-group row">
+                    <label for="nilai" class="col-sm-2 col-form-label">Nilai Perolehan</label>
+                    <div class="col-sm-10">
+                      <input class="form-control" type="text" name="nilai" id="nilai">
+                    </div>
                 </div>
-            </div>
-            <div class="form-group row">
-                <label for="bmn" class="col-sm-2 col-form-label">No. BMN</label>
-                <div class="col-sm-10">
-                  <input class="form-control" type="text" name="bmn" id="bmn">
+                <div class="form-group row">
+                    <label for="bmn" class="col-sm-2 col-form-label">No. BMN</label>
+                    <div class="col-sm-10">
+                      <input class="form-control" type="text" name="bmn" id="bmn">
+                    </div>
                 </div>
-            </div>
-            <div class="form-group">
-                <button type="submit" name="submit" class="btn btn-primary my-1 mr-2">Kirim</button>
-                <a data-toggle="collapse" href="#addasset" role="button" aria-expanded="false" aria-controls="addasset">batal</a>
-            </div>
+                <div class="form-group">
+                    <button type="submit" name="submit" class="btn btn-primary my-1 mr-2">Kirim</button>
+                    <a data-toggle="collapse" href="#addasset" role="button" aria-expanded="false" aria-controls="addasset">batal</a>
+                </div>
+            </form>
         </div>
     </div>
     <br>
@@ -99,7 +103,7 @@
                             {% if as.status %}
                             <button class="btn btn-sm btn-outline-secondary" disabled>Lapor Rusak</button>
                             {% else %}
-                            <a class="btn btn-sm btn-outline-secondary" href="#">Lapor Rusak</a>
+                            <a class="btn btn-sm btn-outline-secondary" href="{{ url_for('admin.kinerja_lapor', asset_id=as.id) }}">Lapor Rusak</a>
                             {% endif %}
                         </td>
                     </tr>
@@ -129,6 +133,7 @@
         $('#tanggal').on('changeDate', function () {
             let date = $('#tanggal').datepicker('getFormattedDate');
             $('#tanggal').attr('value', moment(date).format('YYYY-MM-DD'));
+            // $('#tgl').attr('value', moment(date).format('YYYY-MM-DD'));
             $('.datepicker').hide();
         });
 

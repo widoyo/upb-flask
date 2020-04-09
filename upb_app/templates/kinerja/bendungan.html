@@ -68,8 +68,8 @@
                     <hr class="d-none d-md-block d-lg-none">
                 </div>
                 <div class="col-md-3">
-                    {% if k.tanggapan_upb %}
-                        <p>{{ k.tanggapan_upb }}</p>
+                    {% if k.tanggapan %}
+                        <p>{{ k.tanggapan }}</p>
                         <p><small>(<span class="hari" data-tgl="{{ k.tgl_tanggapan }}"></span>)</small></p>
                     {% else %}
                         <p>UPB Belum Menanggapi</p>
@@ -166,7 +166,7 @@
                               <input type="file" class="custom-file-input" id="fotoFile-{{ k.id }}">
                               <label class="custom-file-label" for="customFile">Choose file</label>
                               <div>
-                                  <img id="blah-{{ k.id }}" src="{{ url_for('static', filename='img/null.jpg') }}" class="img-responsive" style="width: 100%;border: solid 1px #ccc" alt=" pra tinjau gambar">
+                                  <img id="blah-{{ k.id }}" src="{{ url_for('static', filename='images/null.jpg') }}" class="img-responsive" style="width: 100%;border: solid 1px #ccc" alt=" pra tinjau gambar">
                               </div>
                           </div>
                       </div>
@@ -176,7 +176,7 @@
                       </div>
                   </div>
                   <div class="modal-footer">
-                      <input type="button" value="Tambah" onclick="upload_foto({{ bend_id.id }}, {{ k.id }})" class="btn btn-primary">
+                      <input type="button" value="Tambah" onclick="upload_foto({{ bend_id }}, {{ k.id }})" class="btn btn-primary">
                       <button type="button" class="btn btn-danger" data-dismiss="modal">Batal</button>
                   </div>
                 </form>
@@ -188,7 +188,7 @@
         <div class="modal fade" id="form-tanggapan-{{ k.id }}" tabindex="-1" role="dialog" aria-labelledby="modalTanggapan" aria-hidden="true">
           <div class="modal-dialog" role="document">
             <div class="modal-content">
-                <form method="POST" action="">
+                <form method="POST" action="{{ url_for('admin.kinerja_tanggapan', ker_id=k.id) }}">
                   <div class="modal-header">
                     <h5 class="modal-title" id="modalTanggapan">Tanggapan UPB</h5>
                     <button type="button" class="close" data-dismiss="modal" aria-label="Close">
@@ -198,11 +198,11 @@
                   <div class="modal-body">
                       <div class="form-group">
                           <label class="form-text" for="tanggapan-{{ k.id }}">Tanggapan UPB</label>
-                          <textarea class="form-control" name="tanggapan-{{ k.id }}" id="tanggapan-{{ k.id }}" required value=""></textarea>
+                          <textarea class="form-control" name="tanggapan" id="tanggapan-{{ k.id }}" required value=""></textarea>
                       </div>
                       <div class="form-group">
                           <label class="form-text" for="kategori-{{ k.id }}">Kategori Kerusakan</label>
-                          <select class="form-control" name="kategori-{{ k.id }}" id="kategori-{{ k.id }}">
+                          <select class="form-control" name="kategori" id="kategori-{{ k.id }}">
                             <option value="tidak rusak" {% if k.kategori == 'tidak rusak' %}selected{% endif %}>Tidak Rusak</option>
                             <option value="ringan" {% if k.kategori == 'ringan' %}selected{% endif %}>Ringan</option>
                             <option value="sedang" {% if k.kategori == 'sedang' %}selected{% endif %}>Sedang</option>
@@ -211,7 +211,8 @@
                       </div>
                   </div>
                   <div class="modal-footer">
-                      <input type="button" value="Tanggapi" onclick="tanggapan_upb({{ k.id }})" class="btn btn-primary">
+                      <!-- <input type="button" value="Tanggapi" onclick="tanggapan_upb({{ k.id }})" class="btn btn-primary"> -->
+                      <input type="submit" name="submit" value="Tanggapi" class="btn btn-primary">
                       <button type="button" class="btn btn-danger" data-dismiss="modal">Batal</button>
                   </div>
                 </form>
@@ -282,17 +283,18 @@
         if ($(`input[name="keterangan-${kerusakan_id}"]`).val() == ''){
             alert('Harap masukkan keterangan foto kegiatan');
             $(`input[name="keterangan-${kerusakan_id}"]`).focus();
-        } else if ($(`#blah-${kerusakan_id}`).attr('src') == "{{ url_for('static', filename='img/null.jpg') }}"){
+        } else if ($(`#blah-${kerusakan_id}`).attr('src') == "{{ url_for('static', filename='images/null.jpg') }}"){
             alert('Pilih foto terlebih dahulu');
         } else {
             let formData = {
-                data: enc_img,
+                foto: enc_img,
                 filename: file_name,
                 keterangan: $(`input[name="keterangan-${kerusakan_id}"]`).val(),
                 kerusakan_id: kerusakan_id
             };
             console.log("Posting Photo");
-            $.post(`/kinerja/${waduk_id}/foto`, formData,
+            console.log(formData)
+            $.post(`{{ url_for('admin.kinerja_foto') }}`, formData,
                 function (res) {
                     console.log(res);
                     location.reload();

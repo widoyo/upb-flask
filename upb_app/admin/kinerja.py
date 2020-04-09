@@ -1,8 +1,9 @@
 from flask import Blueprint, request, render_template, redirect, url_for, jsonify, flash
 from flask_login import login_required, current_user
+from flask_wtf.csrf import generate_csrf
 from upb_app.admin.kegiatan import save_image
 from upb_app.models import Kerusakan, Bendungan, Asset, Foto
-from upb_app.forms import LaporKerusakan
+from upb_app.forms import LaporKerusakan, AddAsset
 from upb_app import db, admin_only, petugas_only, get_bendungan
 from sqlalchemy.exc import IntegrityError
 import datetime
@@ -88,6 +89,7 @@ def kinerja_bendungan(bend):
     kerusakan = Kerusakan.query.filter(
                                     Kerusakan.bendungan_id == bendungan_id
                                 ).order_by(
+                                    Kerusakan.kategori,
                                     Kerusakan.tgl_lapor.desc()
                                 ).all()
     ids = []
@@ -98,10 +100,16 @@ def kinerja_bendungan(bend):
             komponens.append(ker.komponen)
 
     foto = {}
-    fotos = Foto.query.filter(Foto.obj_type == 'kinerja').all()
+    fotos = Foto.query.filter(Foto.obj_type == 'kerusakan').all()
     for f in fotos:
-        if f.obj_id in ids:
-            foto[f.obj_id] = f
+        fid = f.obj_id
+        if fid in ids:
+            if fid not in foto:
+                foto[fid] = []
+            foto[fid].append({
+                'url': f.url[7:],
+                'keterangan': f.keterangan
+            })
 
     return render_template('kinerja/bendungan.html',
                             name=name,
@@ -129,6 +137,7 @@ def asset():
             rusak.append(ker.asset_id)
     for asset in assets:
         ass.append({
+            'id': asset.id,
             'asset': asset,
             'status': asset.id in rusak
         })
@@ -137,6 +146,7 @@ def asset():
                             name=name,
                             bend_id=bend.id,
                             assets=ass,
+                            csrf=generate_csrf(),
                             kategori=komponen)
 
 
@@ -145,66 +155,62 @@ def asset():
 @petugas_only
 def asset_add():
     bendungan_id = current_user.bendungan_id
-    form = AddAsset(
-        merk="null",
-        model="null",
-        tanggal="null",
-        nilai="null",
-        bmn="null"
-    )
-    if form.validate_on_submit():
-        try:
-            new_asset = Asset(
-                nama=request.nama.data,
-                kategori=request.kategori.data,
-                bendungan_id=bendungan_id
-            )
-            if request.merk.data != "null":
-                new_asset.merk = request.merk.data
-            if request.model.data != "null":
-                new_asset.model = request.model.data
-            if request.perolehan.data != "null":
-                new_asset.perolehan = request.perolehan.data
-            if request.nilai_perolehan.data != "null":
-                new_asset.nilai_perolehan = request.nilai_perolehan.data
-            if request.bmn.data != "null":
-                new_asset.bmn = request.bmn.data
+    form = AddAsset()
+    try:
+        new_asset = Asset(
+            nama=form.nama.data,
+            kategori=form.kategori.data,
+            bendungan_id=bendungan_id
+        )
+        if form.merk.data:
+            new_asset.merk = form.merk.data
+        if form.model.data:
+            new_asset.model = form.model.data
+        if form.tanggal.data:
+            new_asset.perolehan = form.tanggal.data
+        if form.nilai.data:
+            new_asset.nilai_perolehan = form.nilai.data
+        if form.bmn.data:
+            new_asset.bmn = form.bmn.data
 
-            db.session.add(new_asset)
-            db.session.commit()
+        db.session.add(new_asset)
+        db.session.commit()
 
-            flash(f"Asset berhasil ditambahkan", 'success')
-            return redirect(url_for('admin.asset'))
-        except Exception as e:
-            db.session.rollback()
-            flash(f"Error {e}", 'danger')
+        flash(f"Asset berhasil ditambahkan", 'success')
+        return redirect(url_for('admin.asset'))
+    except Exception as e:
+        db.session.rollback()
+        flash(f"Error {e}", 'danger')
 
     return redirect(url_for('admin.asset'))
 
 
-@bp.route('/kinerja/bendungan/lapor', methods=['POST'])
+@bp.route('/kinerja/asset/<asset_id>/lapor', methods=['GET', 'POST'])
 @login_required
 @petugas_only
-def kinerja_lapor():
+def kinerja_lapor(asset_id):
     bendungan_id = current_user.bendungan_id
+    asset = Asset.query.get(asset_id)
+
     form = LaporKerusakan()
     if form.validate_on_submit():
         last_foto = Foto.query.order_by(Foto.id.desc()).first()
         new_id = 1 if not last_foto else (last_foto.id + 1)
         try:
-            raw = request.foto.data
-            imageStr = base64.b64encode(raw).decode('ascii')
-            filename = f"kegiatan_{new_id}_{request.foto.data.filename}"
+            raw = form.foto.data
+            imageStr = raw.split(',')[1]
+            filename = f"kerusakan_{new_id}_{form.filename.data}"
             foto = save_image(imageStr, filename)
-            foto.keterangan = form.values.get("keterangan")
+            foto.keterangan = form.keterangan.data
             foto.obj_type = "kerusakan"
 
             kerusakan = Kerusakan(
                 tgl_lapor=datetime.datetime.now(),
-                uraian=form.values.get("uraian"),
-                kategori=form.values.get("kategori"),
-                komponen=form.values.get("komponen"),
-                bendungan_id=bendungan_id
+                uraian=form.uraian.data,
+                kategori=form.kategori.data,
+                komponen=asset.kategori,
+                bendungan_id=bendungan_id,
+                asset_id=asset.id
             )
             db.session.add(kerusakan)
             db.session.add(foto)
@@ -216,11 +222,15 @@ def kinerja_lapor():
 
             flash('Lapor Kerusakan berhasil !', 'success')
             return redirect(url_for('admin.kinerja_bendungan'))
-        except IntegrityError:
+        except Exception as e:
             db.session.rollback()
-            flash('Data sudah ada, mohon update untuk mengubah', 'danger')
+            print(e)
+            flash(f"Terjadi Error saat menyimpan data Kegiatan", 'danger')
 
-    return redirect(url_for('admin.kinerja_bendungan'))
+    return render_template('kinerja/lapor.html',
+                            bend_id=bendungan_id,
+                            asset=asset,
+                            csrf=generate_csrf())
 
 
 @bp.route('/kinerja/bendungan/foto', methods=['POST'])
@@ -230,15 +240,16 @@ def kinerja_foto():
     last_foto = Foto.query.order_by(Foto.id.desc()).first()
     new_id = 1 if not last_foto else (last_foto.id + 1)
     try:
-        ker_id = request.args.get('kerusakan_id')
-        raw = request.foto.data
-        imageStr = base64.b64encode(raw).decode('ascii')
-        filename = f"kerusakan_{new_id}_{request.foto.data.filename}"
+        ker_id = request.form.get('kerusakan_id')
+        raw = request.form.get('foto')
+        imageStr = raw.split(',')[1]
+        filename = f"kerusakan_{new_id}_{request.form.get('filename')}"
 
         foto = save_image(imageStr, filename)
-        foto.keterangan = request.args.get('keterangan')
-        foto.obj_type = "kinerja"
+        foto.keterangan = request.form.get('keterangan')
+        foto.obj_type = "kerusakan"
         foto.obj_id = ker_id
+
         db.session.add(foto)
         db.session.commit()
 
@@ -246,29 +257,34 @@ def kinerja_foto():
         return redirect(url_for('admin.kinerja_bendungan'))
     except Exception as e:
         db.session.rollback()
+        print(e)
         flash(f"Error : {e}", 'danger')
         return redirect(url_for('admin.kinerja_bendungan'))
 
 
-@bp.route('/kinerja/<bendungan_id>/tanggapan', methods=['POST'])
+@bp.route('/kinerja/<ker_id>/tanggapan', methods=['POST'])
 @login_required
 @admin_only
-def kinerja_tanggapan(bendungan_id):
-    tang = request.args.get('tanggapan')
-    ker_id = request.args.get('ker_id')
-    kat = request.args.get('kategori', 'tidak rusak')
+def kinerja_tanggapan(ker_id):
+    tang = request.form.get('tanggapan')
+    kat = request.form.get('kategori', 'tidak rusak')
 
     ker = Kerusakan.query.get(int(ker_id))
 
-    ker.tanggapan_upb = tang
-    ker.kategori = kat
-    ker.tgl_tanggapan = datetime.datetime.now()
-    ker.upb_id = current_user.id
+    try:
+        ker.tanggapan = tang
+        ker.kategori = kat
+        ker.tgl_tanggapan = datetime.datetime.now()
+        ker.upb_id = current_user.id
 
-    db.session.commit()
+        db.session.commit()
+        flash('Tanggapan disimpan', 'success')
+    except Exception as e:
+        db.session.rollback()
+        print(e)
+        flash('Tanggapan gagal disimpan', 'danger')
 
-    flash('Tanggapan disimpan', 'success')
-    return redirect(url_for('admin.kinerja_bendungan'))
+    return redirect(url_for('admin.kinerja_bendungan', bend_id=ker.bendungan_id))
 
 
 @bp.route('/kinerja/update', methods=['POST'])  # @login_required

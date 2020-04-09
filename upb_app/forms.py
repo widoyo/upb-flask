@@ -154,6 +154,7 @@ class LaporKerusakan(FlaskForm):
     uraian = StringField('Uraian', validators=[DataRequired()])
     kategori = SelectField("kategori", choices=kategori, validators=[DataRequired()], default=kategori[0][0])
     foto = FileField("Foto")
+    filename = StringField('Filename')
     komponen = SelectField("Komponen", choices=komponen, validators=[DataRequired()], default=komponen[0][0])
     keterangan = StringField('Keterangan', validators=[DataRequired()])
     submit = SubmitField('Lapor')
