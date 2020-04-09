@@ -66,7 +66,10 @@
                     id: {{ l.id }},
                     nama: '{{ l.nama }}',
                     ll: [ {{ l.ll }} ],
-                    vol: {{ l.volume }}
+                    vol: '{{ l.vol }} m<sup>3</sup>',
+                    wil: '{{ l.wil }}',
+                    kab: '{{ l.kab }}',
+                    lbi: '{{ l.lbi }} Ha'
                 },
             {% endfor %}
         ];
@@ -74,7 +77,18 @@
             var m = L.marker(e.ll);
             m.bindTooltip(`${e.nama},\n${e.vol} m3`);
             m.setIcon(defIcon);
-            m.bindPopup("<b><a href=/"+ e.id + ">" + e.nama + "</a></b>");
+            m.bindPopup('<h6> <a href="/bendungan/' + e.id + '">' + e.nama + '</a></h6>' + (
+                      e ? '<b>Kab. ' + e.kab + ' (' + e.wil + ')</b>'
+                      + '<br>'
+                      + 'Kapasitas : ' + e.vol + '<br>'
+                      + 'Irigasi : ' + e.lbi + '<br>'
+                      // + '<br>'
+                      + '<b>Data Hari ini</b><br />'
+                      + 'Volume : ' + e.vol + '<br>'
+                      + 'TMA : ' + e.lbi + '<br>'
+                      : 'Pilih Bendungan'
+                  )
+              );
             m.addTo(mymap);
         });
     </script>

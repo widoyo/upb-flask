@@ -61,12 +61,16 @@
             shadowUrl: "{{ url_for('static', filename='images/marker/marker-shadow.png') }}"
         });
         var lokasi = [
-            {% for e in embung %}{% if e.ll %}
+            {% for e in embung %}{% if e.emb.ll %}
                 {
-                    id: {{ e.id }},
-                    nama: '{{ e.nama }}',
-                    ll: [ {{ e.ll }} ],
-                    vol: {{ e.tampungan }}
+                    id: {{ e.emb.id }},
+                    nama: '{{ e.emb.nama }}',
+                    desa: '{{ e.emb.desa }}',
+                    kec: '{{ e.emb.kec }}',
+                    kab: '{{ e.emb.kab }}',
+                    ll: [ {{ e.emb.ll }} ],
+                    vol: '{{ e.vol }} m<sup>3</sup>',
+                    lbi: '{{ e.lbi }} Ha'
                 },
             {% endif %}{% endfor %}
         ];
@@ -75,7 +79,14 @@
             let m = L.marker(e.ll);
             m.bindTooltip(`${e.nama},\n${e.vol} m3`);
             m.setIcon(defIcon);
-            m.bindPopup("<b><a href=/"+ e.id + ">" + e.nama + "</a></b>");
+            m.bindPopup('<h6> <a href="/embung">' + e.nama + '</a></h6>' + (
+                      e ? '<b>Desa ' + e.desa + ', ' + e.kec + ', ' + e.kab + '</b>'
+                      + '<br>'
+                      + 'Kapasitas : ' + e.vol + '<br>'
+                      + 'Irigasi : ' + e.lbi + '<br>'
+                      : 'Pilih Bendungan'
+                  )
+              );
             m.addTo(mymap);
         });
     </script>

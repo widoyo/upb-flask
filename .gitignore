@@ -4,3 +4,4 @@ __pycache__
 .env
 venv
 upb_app/static/images/struktur_org.png
+upb_app/static/img/foto/*
