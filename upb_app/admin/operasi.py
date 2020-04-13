@@ -404,7 +404,7 @@ def operasi_csv(bend):
             data['piezo'].p5c if data['piezo'] else None
         ])
     output = io.StringIO()
-    writer = csv.writer(output)
+    writer = csv.writer(output, delimiter='\t')
     for l in pre_csv:
         writer.writerow(l)
     output.seek(0)

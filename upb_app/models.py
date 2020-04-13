@@ -214,6 +214,11 @@ class Bendungan(BaseLog):
 
     petugas = relationship('Petugas', back_populates='bendungan')
 
+    @property
+    def name(self):
+        arr = self.nama.split('_')
+        return f"{arr[0].title()}.{arr[1].title()}"
+
 
 class Foto(BaseLog):
     __tablename__ = 'foto'

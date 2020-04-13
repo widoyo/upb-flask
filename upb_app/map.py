@@ -13,7 +13,7 @@ def bendungan():
     data = []
     for b in bendungan:
         now = datetime.datetime.now()
-        now = datetime.datetime.strptime("2020-01-01", "%Y-%m-%d")
+        # now = datetime.datetime.strptime("2020-01-01", "%Y-%m-%d")
         sampling = datetime.datetime.strptime(f"{now.year}-{now.month}-{now.day} 00:00:00", "%Y-%m-%d %H:%M:%S")
         end = datetime.datetime.strptime(f"{now.year}-{now.month}-{now.day} 23:59:59", "%Y-%m-%d %H:%M:%S")
         tma = ManualTma.query.filter(

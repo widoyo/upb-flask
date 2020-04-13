@@ -1,9 +1,13 @@
-from flask import Blueprint, request, render_template, redirect, url_for, jsonify
+from flask import Blueprint, request, render_template, redirect
+from flask import Response, url_for, jsonify
 from flask_login import login_required
 from sqlalchemy import and_
 from upb_app.models import Bendungan, Rencana
 from upb_app import db, admin_only
 import datetime
+import calendar
+import csv
+import io
 
 from upb_app.admin import bp
 # bp = Blueprint('rtow', __name__)
@@ -14,7 +18,7 @@ from upb_app.admin import bp
 @admin_only
 def rtow():
     sampling = request.values.get('sampling')
-    sampling = datetime.datetime.strptime(sampling, "%Y-%m-%d")
+    sampling = datetime.datetime.strptime(sampling, "%Y-%m-%d") if sampling else datetime.datetime.now()
     start = datetime.datetime.strptime(f"{sampling.year -1}-11-01", "%Y-%m-%d")
     end = datetime.datetime.strptime(f"{sampling.year}-10-31", "%Y-%m-%d")
 
@@ -22,35 +26,83 @@ def rtow():
     rencana = Rencana.query.filter(
                             and_(
                                 Rencana.sampling >= start,
-                                Rencana.sampling <= end)).all()
+                                Rencana.sampling <= end)
+                            ).order_by(Rencana.sampling).all()
+
     rtow = {}
+    date_list = []
     for bend in bends:
         rtow[bend.id] = {
-            "bend": bend
+            "bend": bend,
+            "data": {}
         }
     for ren in rencana:
-        if ren.sampling.day in [1, 15]:
-            rtow[ren.bendungan_id][ren.sampling.day] = ren
+        index = ren.sampling.strftime('%d %b %y')
+        if sampling.year <= 2018 and ren.sampling.day in [1, 16]:
+            rtow[ren.bendungan_id]['data'][index] = ren
+            if index not in date_list:
+                date_list.append(index)
+        elif sampling.year >= 2019:
+            if ren.sampling.day == 15 or ren.sampling.day == calendar.monthrange(ren.sampling.year, ren.sampling.month)[1]:
+                rtow[ren.bendungan_id]['data'][index] = ren
+                if index not in date_list:
+                    date_list.append(index)
 
     return render_template('rencana/index.html',
                             sampling=sampling,
-                            rtow=rtow)
+                            rtow=rtow,
+                            date_list=date_list)
 
 
-@bp.route('/rtow/<bendungan_id>/export', methods=['GET', 'POST'])
+@bp.route('/rtow/<bendungan_id>/export', methods=['GET'])
 @login_required
 @admin_only
 def rtow_exports(bendungan_id):
+    sampling = datetime.datetime.strptime("2019-01-01", "%Y-%m-%d")
+    start = datetime.datetime.strptime(f"{sampling.year -1}-11-01", "%Y-%m-%d")
+    end = datetime.datetime.strptime(f"{sampling.year}-10-31", "%Y-%m-%d")
+
     bend = Bendungan.query.get(bendungan_id)
+    rencana = Rencana.query.filter(
+                            and_(
+                                Rencana.sampling >= start,
+                                Rencana.sampling <= end),
+                            Rencana.bendungan_id == bendungan_id
+                            ).order_by(Rencana.sampling).all()
 
-    if request.method == "POST":
-        pass
+    data = []
+    for ren in rencana:
+        # index = ren.sampling.strftime('%d %b %y')
+        if ren.sampling.day == 15 or ren.sampling.day == calendar.monthrange(ren.sampling.year, ren.sampling.month)[1]:
+            data.append(ren)
+    pre_csv = [[bend.nama]]
+    pre_csv.append(['waktu', 'po_tma', 'po_vol', 'po_outflow_q', 'po_inflow_q', 'po_bona', 'po_bonb', 'vol_bona', 'vol_bonb'])
+    for d in data:
+        pre_csv.append([
+            d.sampling.strftime("%Y-%m-%d"),
+            d.po_tma or None,
+            d.po_vol or None,
+            d.po_outflow_deb or None,
+            d.po_inflow_deb or None,
+            d.po_bona or None,
+            d.po_bonb or None,
+            d.vol_bona or None,
+            d.vol_bonb or None
+        ])
+    output = io.StringIO()
+    writer = csv.writer(output, delimiter='\t')
+    for l in pre_csv:
+        writer.writerow(l)
+    output.seek(0)
 
-    return render_template('rencana/import.html',
-                            bend=bend)
+    return Response(output,
+                    mimetype="text/csv",
+                    headers={
+                        "Content-Disposition": f"attachment;filename={bend.nama}.csv"
+                    })
 
 
-@bp.route('/rtow/<bendungan_id>/import')
+@bp.route('/rtow/<bendungan_id>/import', methods=['GET', 'POST'])
 @login_required
 @admin_only
 def rtow_imports(bendungan_id):

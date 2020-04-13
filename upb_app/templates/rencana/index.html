@@ -9,14 +9,169 @@
         z-index: 10000 !important;
     }
 </style>
+<link href="{{ url_for('static', filename='css/bootstrap-editable.css') }}" rel="stylesheet"/>
+
 {% endblock %}
 
 {% block content %}
     <div class="container">
-        <h1>Rencana Index</h1>
+        <h1>
+            RTOW Pola : Basah Periode
+            <span id="datepicker" style="color: #18bc9c">
+                {{ sampling.strftime('%Y') }}
+            </span>
+        </h1>
+        <table class="table table-hover table-bordered">
+            <thead>
+                <tr>
+                    <th>Bendungan</th>
+                    {% for date in date_list %}
+                        <th>{{ date[3:] }}</th>
+                    {% endfor %}
+                </tr>
+            </thead>
+            <tbody>
+                {% for i, r in rtow.items() %}
+                    <tr>
+                        <td>
+                            {{ r.bend.name }}<br>
+                            <a href="{{ url_for('admin.rtow_exports', bendungan_id=r.bend.id) }}">Exp</a> | <a href="#">Imp</a>
+                        </td>
+                        {% for date in date_list %}
+                            {% if r.data[date] %}
+                            <td>
+                                T: <a data-url="{{ url_for('admin.rtow_update') }}"
+                                    class="editable"
+                                    data-name="po_tma"
+                                    data-type="number"
+                                    data-title="RTOW TMA"
+                                    data-step=".01"
+                                    data-pk="{{ r.data[date].id }}">
+                                    {% if r.data[date].po_tma %}
+                                    <span style="color: blue">{{ r.data[date].po_tma }}</span>
+                                    {% else %}<span style="color: red">Empty</span>{% endif %}
+                                </a>
+                                <br>
+                                V: <a data-url="{{ url_for('admin.rtow_update') }}"
+                                    class="editable"
+                                    data-name="po_vol"
+                                    data-type="number"
+                                    data-title="RTOW Vol"
+                                    data-step=".01"
+                                    data-pk="{{ r.data[date].id }}">
+                                    {% if r.data[date].po_vol %}
+                                    <span style="color: blue">{{ r.data[date].po_vol }}</span>
+                                    {% else %}<span style="color: red">Empty</span>{% endif %}
+                                </a>
+                                <br>
+                                Q: <a data-url="{{ url_for('admin.rtow_update') }}"
+                                    class="editable"
+                                    data-name="po_inflow_deb"
+                                    data-type="number"
+                                    data-title="RTOW Vol"
+                                    data-step=".01"
+                                    data-pk="{{ r.data[date].id }}">
+                                    {% if r.data[date].po_inflow_deb %}
+                                    <span style="color: blue">{{ r.data[date].po_inflow_deb }}</span>
+                                    {% else %}<span style="color: red">Empty</span>{% endif %}
+                                </a>
+                                <br>
+                                BonA: <a data-url="{{ url_for('admin.rtow_update') }}"
+                                    class="editable"
+                                    data-name="po_bona"
+                                    data-type="number"
+                                    data-title="RTOW Vol"
+                                    data-step=".01"
+                                    data-pk="{{ r.data[date].id }}">
+                                    {% if r.data[date].po_bona %}
+                                    <span style="color: blue">{{ r.data[date].po_bona }}</span>
+                                    {% else %}<span style="color: red">Empty</span>{% endif %}
+                                </a>
+                                <br>
+                                BonB: <a data-url="{{ url_for('admin.rtow_update') }}"
+                                    class="editable"
+                                    data-name="po_bonb"
+                                    data-type="number"
+                                    data-title="RTOW Vol"
+                                    data-step=".01"
+                                    data-pk="{{ r.data[date].id }}">
+                                    {% if r.data[date].po_bonb %}
+                                    <span style="color: blue">{{ r.data[date].po_bonb }}</span>
+                                    {% else %}<span style="color: red">Empty</span>{% endif %}
+                                </a>
+                                <br>
+                                VolBonA: <a data-url="{{ url_for('admin.rtow_update') }}"
+                                    class="editable"
+                                    data-name="vol_bona"
+                                    data-type="number"
+                                    data-title="RTOW Vol"
+                                    data-step=".01"
+                                    data-pk="{{ r.data[date].id }}">
+                                    {% if r.data[date].vol_bona %}
+                                    <span style="color: blue">{{ r.data[date].vol_bona }}</span>
+                                    {% else %}<span style="color: red">Empty</span>{% endif %}
+                                </a>
+                                <br>
+                                VolBonB: <a data-url="{{ url_for('admin.rtow_update') }}"
+                                    class="editable"
+                                    data-name="vol_bonb"
+                                    data-type="number"
+                                    data-title="RTOW Vol"
+                                    data-step=".01"
+                                    data-pk="{{ r.data[date].id }}">
+                                    {% if r.data[date].vol_bonb %}
+                                    <span style="color: blue">{{ r.data[date].vol_bonb }}</span>
+                                    {% else %}<span style="color: red">Empty</span>{% endif %}
+                                </a>
+                                <br>
+                            </td>
+                            {% else %}
+                            <td>-</td>
+                            {% endif %}
+                        {% endfor %}
+                    </tr>
+                {% endfor %}
+            </tbody>
+        </table>
     </div>
 {% endblock %}
 
 {% block js %}
+<script src="{{ url_for('static', filename='js/bootstrap-editable.min.js') }}"></script>
+<script src="{{ url_for('static', filename='js/bootstrap-datepicker.min.js') }}"></script>
+<script>
+    $(document).ready(function() {
+        // resolve package confict
+        let datepicker = $.fn.datepicker.noConflict();
+        $.fn.bootstrapDP = datepicker;
 
+        $('#datepicker').datepicker({
+            autoclose: true,
+            format: 'yyyy-mm-dd',
+            startView: "years",
+            minViewMode: "years"
+        });
+        $('#datepicker').on('changeDate', function () {
+            window.location = "{{ url_for('admin.rtow') }}?sampling=" + $('#datepicker').datepicker('getFormattedDate')
+        });
+
+        let tgls = document.querySelectorAll("#tgl");
+        tgls.forEach(function(el){
+            console.log(el.value);
+            el.innerText = moment(el.innerText).format('ddd, D');
+        });
+
+        //turn to popup mode
+        $.fn.editable.defaults.mode = 'popup';
+        $(document).ready(function() {
+            $('.editable').editable({
+                error: function(response, newValue) {
+                    if(response.status === 500) {
+                        return 'Tidak bisa update, Tambah data pakai form.';
+                    }
+                 },
+            });
+        });
+    });
+</script>
 {% endblock %}
