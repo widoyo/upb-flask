@@ -35,7 +35,7 @@
                     <tr>
                         <td>
                             {{ r.bend.name }}<br>
-                            <a href="{{ url_for('admin.rtow_exports', bendungan_id=r.bend.id) }}">Exp</a> | <a href="#">Imp</a>
+                            <a href="{{ url_for('admin.rtow_exports', bendungan_id=r.bend.id) }}">Exp</a> | <a href="{{ url_for('admin.rtow_imports', bendungan_id=r.bend.id) }}">Imp</a>
                         </td>
                         {% for date in date_list %}
                             {% if r.data[date] %}

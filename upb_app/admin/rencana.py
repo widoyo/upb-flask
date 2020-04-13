@@ -1,4 +1,4 @@
-from flask import Blueprint, request, render_template, redirect
+from flask import Blueprint, request, render_template, redirect, flash
 from flask import Response, url_for, jsonify
 from flask_login import login_required
 from sqlalchemy import and_
@@ -106,16 +106,22 @@ def rtow_exports(bendungan_id):
 @login_required
 @admin_only
 def rtow_imports(bendungan_id):
-    sampling = datetime.datetime.now()
-    start = datetime.datetime.strptime(f"{sampling.year - 2}-11-01", "%Y-%m-%d")
-    end = datetime.datetime.strptime(f"{sampling.year - 1}-10-31", "%Y-%m-%d")
-
     bend = Bendungan.query.get(bendungan_id)
-    rencana = Rencana.query.filter(
-                            and_(
-                                Rencana.sampling >= start,
-                                Rencana.sampling <= end),
-                            Rencana.bendungan_id == bendungan_id).all()
+
+    if request.method == "POST":
+        upload = request.files['upload'].read().decode("utf-8")
+        print(upload)
+        raw = upload.split('\r\n')
+        data = []
+        for r in raw[:len(raw)-1]:
+            data.append(r.split('\t'))
+
+        if not data:
+            flash(f"File Kosong", 'danger')
+            return redirect(url_for('admin.rtow_imports', bendungan_id=bendungan_id))
+
+        rtow_upload(data, bendungan_id)
+        return redirect(url_for('admin.rtow'))
 
     return render_template('rencana/import.html',
                             bend=bend)
@@ -136,3 +142,28 @@ def rtow_update():
         "value": val
     }
     return jsonify(result)
+
+
+def rtow_upload(data, bend_id):
+    for row in data[2:]:
+        columns = ['sampling', 'po_tma', 'po_vol', 'po_outflow_deb', 'po_inflow_deb', 'po_bona', 'po_bonb', 'vol_bona', 'vol_bonb']
+        sampling = datetime.datetime.strptime(row[0], "%Y-%m-%d")
+        rencana = Rencana.query.filter(
+                                    Rencana.sampling == sampling,
+                                    Rencana.bendungan_id == bend_id
+                                ).first()
+        if not rencana:
+            rencana = Rencana(sampling=sampling, bendungan_id=bend_id)
+            db.session.add(rencana)
+
+        for i, col in enumerate(columns[1:]):
+            if row[i+1]:
+                setattr(rencana, col, float(row[i+1]))
+
+    try:
+        db.session.commit()
+        flash('RTOW berhasil ditambahkan !', 'success')
+    except Exception as e:
+        db.session.rollback()
+        print(e)
+        flash(f"RTOW gagal ditambahkan", 'danger')

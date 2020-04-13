@@ -14,6 +14,26 @@
 {% block content %}
     <div class="container">
         <h1>Rencana Export</h1>
+        <div>
+            <h3>{{ bend.nama }}</h3>
+            <form action="{{ url_for('admin.rtow_imports', bendungan_id=bend.id) }}" method="POST" enctype="multipart/form-data">
+                <p>File berformat TAB separated value. Contoh file data <strong>bd_nawangan</strong> dapat diambil <a href="{{ url_for('admin.rtow_imports', bendungan_id=bend.id) }}">di sini</a>.</p>
+                <p>Ketentuan file:</p>
+                <ol>
+                    <li>Teks file</li>
+                    <li>Baris pertama nama unik bendungan</li>
+                    <li>Baris kedua nama-nama kolom</li>
+                    <li>Baris ketiga hingga 24 baris berikutnya berisi data</li>
+                </ol>
+                <div class="form-group" style="padding-bottom: 5px;">
+                    <input type="file" name="upload" id="upload">
+                    <!-- <label class="custom-file-label" for="customFile">Choose file</label> -->
+                </div>
+                <div class="form-group">
+                    <input class="btn btn-sm btn-primary" type="submit" name="submit" value="Import">
+                </div>
+            </form>
+        </div>
     </div>
 {% endblock %}
 
