@@ -14,7 +14,7 @@
     <div class="container">
         <div class="row">
             <div class="col-md-6">
-                <form method="POST"> <!-- action="{{ url_for('admin.kinerja_lapor', asset_id=asset.id) }}"> -->
+                <form method="POST">
                     <div class="form-group">
                         <div class="custom-file" style="height: 100%;">
                             <input type="file" class="custom-file-input" id="fotoFile">
@@ -132,10 +132,10 @@
                 };
                 console.log("Posting Photo");
                 console.log(formData);
-                $.post("{{ url_for('admin.kinerja_lapor', asset_id=asset.id) }}", formData,
+                $.post("{{ url_for('admin.kinerja_lapor', bendungan_id=bend_id, asset_id=asset.id) }}", formData,
                     function (res) {
                         console.log(res);
-                        window.location.href = "{{ url_for('admin.kinerja_bendungan') }}";
+                        window.location.href = "{{ url_for('admin.kinerja_bendungan', bendungan_id=bend_id) }}";
                     }
                 );
             }

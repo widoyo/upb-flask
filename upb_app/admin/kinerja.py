@@ -4,7 +4,7 @@ from flask_wtf.csrf import generate_csrf
 from upb_app.admin.kegiatan import save_image
 from upb_app.models import Kerusakan, Bendungan, Asset, Foto
 from upb_app.forms import LaporKerusakan, AddAsset
-from upb_app import db, admin_only, petugas_only, get_bendungan
+from upb_app import db, admin_only, petugas_only, role_check
 from sqlalchemy.exc import IntegrityError
 import datetime
 import base64
@@ -79,13 +79,12 @@ def kinerja():
                             kinerja=kinerja)
 
 
-@bp.route('/kinerja/bendungan')
+@bp.route('/bendungan/kinerja/<bendungan_id>')
 @login_required
-@get_bendungan
-def kinerja_bendungan(bend):
-    bendungan_id = bend.id
-    arr = bend.nama.split('_')
-    name = f"{arr[0].title()}.{arr[1].title()}"
+@role_check
+def kinerja_bendungan(bendungan_id):
+    bend = Bendungan.query.get(bendungan_id)
+
     kerusakan = Kerusakan.query.filter(
                                     Kerusakan.bendungan_id == bendungan_id
                                 ).order_by(
@@ -112,20 +111,18 @@ def kinerja_bendungan(bend):
             })
 
     return render_template('kinerja/bendungan.html',
-                            name=name,
+                            name=bend.name,
                             bend_id=bend.id,
                             kerusakan=kerusakan,
                             komponens=komponens,
                             foto=foto)
 
 
-@bp.route('/kinerja/bendungan/asset', methods=['GET'])
+@bp.route('/bendungan/kinerja/<bendungan_id>/asset', methods=['GET'])
 @login_required
 @petugas_only
-def asset():
-    bend = Bendungan.query.get(current_user.bendungan_id)
-    arr = bend.nama.split('_')
-    name = f"{arr[0].title()}.{arr[1].title()}"
+def asset(bendungan_id):
+    bend = Bendungan.query.get(bendungan_id)
 
     assets = Asset.query.filter(Asset.bendungan_id == bend.id).all()
     kerusakan = Kerusakan.query.filter(Kerusakan.bendungan_id == bend.id).all()
@@ -143,18 +140,17 @@ def asset():
         })
 
     return render_template('kinerja/asset.html',
-                            name=name,
+                            name=bend.name,
                             bend_id=bend.id,
                             assets=ass,
                             csrf=generate_csrf(),
                             kategori=komponen)
 
 
-@bp.route('/kinerja/bendungan/asset', methods=['POST'])
+@bp.route('/bendungan/kinerja/<bendungan_id>/asset/add', methods=['POST'])
 @login_required
 @petugas_only
-def asset_add():
-    bendungan_id = current_user.bendungan_id
+def asset_add(bendungan_id):
     form = AddAsset()
     try:
         new_asset = Asset(
@@ -177,19 +173,18 @@ def asset_add():
         db.session.commit()
 
         flash(f"Asset berhasil ditambahkan", 'success')
-        return redirect(url_for('admin.asset'))
+        return redirect(url_for('admin.asset', bendungan_id=bendungan_id))
     except Exception as e:
         db.session.rollback()
         flash(f"Error {e}", 'danger')
 
-    return redirect(url_for('admin.asset'))
+    return redirect(url_for('admin.asset', bendungan_id=bendungan_id))
 
 
-@bp.route('/kinerja/asset/<asset_id>/lapor', methods=['GET', 'POST'])
+@bp.route('/bendungan/kinerja/<bendungan_id>/asset/<asset_id>/lapor', methods=['GET', 'POST'])
 @login_required
 @petugas_only
-def kinerja_lapor(asset_id):
-    bendungan_id = current_user.bendungan_id
+def kinerja_lapor(bendungan_id, asset_id):
     asset = Asset.query.get(asset_id)
 
     form = LaporKerusakan()
@@ -221,7 +216,7 @@ def kinerja_lapor(asset_id):
             db.session.commit()
 
             flash('Lapor Kerusakan berhasil !', 'success')
-            return redirect(url_for('admin.kinerja_bendungan'))
+            return redirect(url_for('admin.kinerja_bendungan', bendungan_id=bendungan_id))
         except Exception as e:
             db.session.rollback()
             print(e)
@@ -233,10 +228,10 @@ def kinerja_lapor(asset_id):
                             csrf=generate_csrf())
 
 
-@bp.route('/kinerja/bendungan/foto', methods=['POST'])
+@bp.route('/bendungan/kinerja/<bendungan_id>/foto', methods=['POST'])
 @login_required
 @petugas_only
-def kinerja_foto():
+def kinerja_foto(bendungan_id):
     last_foto = Foto.query.order_by(Foto.id.desc()).first()
     new_id = 1 if not last_foto else (last_foto.id + 1)
     try:
@@ -254,15 +249,15 @@ def kinerja_foto():
         db.session.commit()
 
         flash("Foto berhasil disimpan", 'success')
-        return redirect(url_for('admin.kinerja_bendungan'))
+        return redirect(url_for('admin.kinerja_bendungan', bendungan_id=bendungan_id))
     except Exception as e:
         db.session.rollback()
         print(e)
         flash(f"Error : {e}", 'danger')
-        return redirect(url_for('admin.kinerja_bendungan'))
+        return redirect(url_for('admin.kinerja_bendungan', bendungan_id=bendungan_id))
 
 
-@bp.route('/kinerja/<ker_id>/tanggapan', methods=['POST'])
+@bp.route('/bendungan/kinerja/<ker_id>/tanggapan', methods=['POST'])
 @login_required
 @admin_only
 def kinerja_tanggapan(ker_id):
@@ -284,10 +279,10 @@ def kinerja_tanggapan(ker_id):
         print(e)
         flash('Tanggapan gagal disimpan', 'danger')
 
-    return redirect(url_for('admin.kinerja_bendungan', bend_id=ker.bendungan_id))
+    return redirect(url_for('admin.kinerja_bendungan', bendungan_id=ker.bendungan_id))
 
 
-@bp.route('/kinerja/update', methods=['POST'])  # @login_required
+@bp.route('/bendungan/kinerja/update', methods=['POST'])  # @login_required
 def kinerja_update():
     pk = request.values.get('pk')
     attr = request.values.get('name')

@@ -25,7 +25,7 @@
                       </a>
                     </h5>
                     <hr>
-                    <form action="{{ url_for('admin.keamanan_vnotch') }}?bend_id={{ bend_id }}" method="POST">
+                    <form action="{{ url_for('admin.keamanan_vnotch', bendungan_id=bend_id) }}" method="POST">
                         <input id="csrf_token" name="csrf_token" type="hidden" value="{{ csrf }}">
                         <div class="collapse" id="vnotch">
                           <div>
@@ -107,7 +107,7 @@
                       </a>
                     </h5>
                     <hr>
-                    <form action="{{ url_for('admin.keamanan_piezo') }}?bend_id={{ bend_id }}" method="POST">
+                    <form action="{{ url_for('admin.keamanan_piezo', bendungan_id=bend_id) }}" method="POST">
                         <input id="csrf_token" name="csrf_token" type="hidden" value="{{ csrf }}">
                         <div class="collapse" id="piezo">
                           <div>
@@ -483,7 +483,7 @@
             minViewMode: "months"
         });
         $('#datepicker').on('changeDate', function () {
-            window.location = "{{ url_for('admin.keamanan_bendungan') }}?bend_id={{ bend_id }}&sampling=" + $('#datepicker').datepicker('getFormattedDate')
+            window.location = "{{ url_for('admin.keamanan_bendungan', bendungan_id=bendungan_id) }}?&sampling=" + $('#datepicker').datepicker('getFormattedDate')
         });
 
         $('#sampling-vn').datepicker({

@@ -5,7 +5,7 @@ from sqlalchemy import extract
 from sqlalchemy.exc import IntegrityError
 from upb_app.models import Kegiatan, Foto, Bendungan
 from upb_app.forms import AddKegiatan
-from upb_app import app, db, petugas_only, get_bendungan
+from upb_app import app, db, petugas_only, role_check
 import datetime
 import calendar
 import base64
@@ -28,23 +28,21 @@ petugas = [
 @login_required
 def kegiatan():
     if current_user.role == "2":
-        return redirect(url_for('admin.kegiatan_bendungan'))
+        return redirect(url_for('admin.kegiatan_bendungan', bendungan_id=current_user.bendungan_id))
     bends = Bendungan.query.all()
     return render_template('kegiatan/index.html',
                             bends=bends)
 
 
-@bp.route('/kegiatan/bendungan')
+@bp.route('/bendungan/kegiatan/<bendungan_id>')
 @login_required
-@get_bendungan
-def kegiatan_bendungan(bend):
+@role_check
+def kegiatan_bendungan(bendungan_id):
+    bend = Bendungan.query.get(bendungan_id)
+
     date = request.values.get('sampling')
     date = datetime.datetime.strptime(date, "%Y-%m-%d") if date else datetime.datetime.utcnow()
     sampling = datetime.datetime.strptime(f"{date.year}-{date.month}-01", "%Y-%m-%d")
-
-    bendungan_id = bend.id
-    arr = bend.nama.split('_')
-    name = f"{arr[0].title()}.{arr[1].title()}"
 
     all_kegiatan = Kegiatan.query.filter(
                                     Kegiatan.bendungan_id == bendungan_id,
@@ -84,16 +82,19 @@ def kegiatan_bendungan(bend):
     return render_template('kegiatan/bendungan.html',
                             csrf=generate_csrf(),
                             bend_id=bend.id,
-                            name=name,
+                            name=bend.name,
                             petugas=petugas,
                             kegiatan=kegiatan,
-                            sampling=datetime.datetime.today())
+                            sampling=datetime.datetime.today(),
+                            sampling_dt=sampling)
 
 
-@bp.route('/kegiatan/paper')
+@bp.route('/bendungan/kegiatan/<bendungan_id>/paper')
 @login_required
-@get_bendungan
-def kegiatan_paper(bend):
+@role_check
+def kegiatan_paper(bendungan_id):
+    bend = Bendungan.query.get(bendungan_id)
+
     date = request.values.get('sampling')
     sampling = datetime.datetime.strptime(date, "%Y-%m-%d") if date else datetime.datetime.utcnow()
 
@@ -118,11 +119,12 @@ def kegiatan_paper(bend):
                             sampling=sampling)
 
 
-@bp.route('/kegiatan/bendungan/add', methods=['POST'])
+@bp.route('/bendungan/kegiatan/<bendungan_id>/add', methods=['POST'])
 @login_required
-@get_bendungan
-def kegiatan_add(bend):
-    bendungan_id = bend.id
+@role_check
+def kegiatan_add(bendungan_id):
+    bend = Bendungan.query.get(bendungan_id)
+
     form = AddKegiatan()
     if form.validate_on_submit():
         last_foto = Foto.query.order_by(Foto.id.desc()).first()
@@ -152,16 +154,16 @@ def kegiatan_add(bend):
             db.session.commit()
 
             flash('Tambah Kegiatan berhasil !', 'success')
-            return redirect(url_for('admin.kegiatan_bendungan', bend_id=bend.id))
+            return redirect(url_for('admin.kegiatan_bendungan', bendungan_id=bend.id))
         except Exception as e:
             db.session.rollback()
             print(e)
             flash(f"Terjadi Error saat menyimpan data Kegiatan", 'danger')
 
-    return redirect(url_for('admin.kegiatan_bendungan', bend_id=bend.id))
+    return redirect(url_for('admin.kegiatan_bendungan', bendungan_id=bend.id))
 
 
-@bp.route('/kegiatan/update', methods=['POST'])  # @login_required
+@bp.route('/bendungan/kegiatan/update', methods=['POST'])  # @login_required
 def kegiatan_update():
     pk = request.values.get('pk')
     attr = request.values.get('name')

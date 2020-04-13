@@ -5,7 +5,7 @@ from sqlalchemy import extract, and_
 from sqlalchemy.exc import IntegrityError
 from upb_app.models import ManualVnotch, ManualPiezo, Bendungan
 from upb_app.forms import AddVnotch, AddPiezo
-from upb_app import db, petugas_only, get_bendungan
+from upb_app import db, petugas_only, role_check
 import datetime
 import calendar
 
@@ -17,14 +17,16 @@ from upb_app.admin import bp
 @login_required
 def keamanan():
     if current_user.role == "2":
-        return redirect(url_for('admin.keamanan_bendungan'))
+        return redirect(url_for('admin.keamanan_bendungan', bendungan_id=current_user.bendungan_id))
     return redirect(url_for('admin.operasi_harian'))
 
 
-@bp.route('/keamanan/bendungan')
+@bp.route('/bendungan/keamanan/<bendungan_id>')
 @login_required  # @petugas_only
-@get_bendungan
-def keamanan_bendungan(bend):
+@role_check
+def keamanan_bendungan(bendungan_id):
+    bend = Bendungan.query.get(bendungan_id)
+
     date = request.values.get('sampling')
     date = datetime.datetime.strptime(date, "%Y-%m-%d") if date else datetime.datetime.utcnow()
     sampling = datetime.datetime.strptime(f"{date.year}-{date.month}-01", "%Y-%m-%d")
@@ -35,10 +37,6 @@ def keamanan_bendungan(bend):
     else:
         day = calendar.monthrange(sampling.year, sampling.month)[1]
     end = datetime.datetime.strptime(f"{date.year}-{date.month}-{day} 23:59:59", "%Y-%m-%d %H:%M:%S")
-
-    bendungan_id = bend.id
-    arr = bend.nama.split('_')
-    name = f"{arr[0].title()}.{arr[1].title()}"
 
     vnotch = ManualVnotch.query.filter(
                                         ManualVnotch.bendungan_id == bendungan_id,
@@ -62,18 +60,18 @@ def keamanan_bendungan(bend):
         periodik[p.sampling]['piezo'] = p
 
     return render_template('keamanan/bendungan.html',
-                            name=name,
+                            name=bend.name,
                             csrf=generate_csrf(),
                             bend_id=bend.id,
                             periodik=periodik,
                             sampling=datetime.datetime.today())
 
 
-@bp.route('/keamanan/bendungan/vnotch', methods=['POST'])
+@bp.route('/bendungan/keamanan/<bendungan_id>/vnotch', methods=['POST'])
 @login_required  # @petugas_only
-@get_bendungan
-def keamanan_vnotch(bend):
-    bendungan_id = bend.id
+@role_check
+def keamanan_vnotch(bendungan_id):
+    bend = Bendungan.query.get(bendungan_id)
     form = AddVnotch()
     if form.validate_on_submit():
         try:
@@ -90,15 +88,15 @@ def keamanan_vnotch(bend):
             db.session.add(vnotch)
             db.session.commit()
             flash('Tambah Vnotch berhasil !', 'success')
-            return redirect(url_for('admin.keamanan_bendungan'))
+            return redirect(url_for('admin.keamanan_bendungan', bendungan_id=bendungan_id))
         except IntegrityError:
             db.session.rollback()
             flash('Data sudah ada, mohon update untuk mengubah', 'danger')
 
-    return redirect(url_for('admin.keamanan_bendungan', bend_id=bend.id))
+    return redirect(url_for('admin.keamanan_bendungan', bendungan_id=bendungan_id))
 
 
-@bp.route('/keamanan/vnotch/update', methods=['POST'])  # @login_required
+@bp.route('/bendungan/keamanan/vnotch/update', methods=['POST'])  # @login_required
 def keamanan_vnotch_update():
     pk = request.values.get('pk')
     attr = request.values.get('name')
@@ -115,11 +113,11 @@ def keamanan_vnotch_update():
     return jsonify(result)
 
 
-@bp.route('/keamanan/bendungan/piezo', methods=['POST'])
+@bp.route('/bendungan/keamanan/<bendungan_id>/piezo', methods=['POST'])
 @login_required  # @petugas_only
-@get_bendungan
-def keamanan_piezo(bend):
-    bendungan_id = bend.id
+@role_check
+def keamanan_piezo(bendungan_id):
+    bend = Bendungan.query.get(bendungan_id)
     form = AddPiezo()
     if form.validate_on_submit():
         try:
@@ -145,15 +143,15 @@ def keamanan_piezo(bend):
             db.session.add(piezo)
             db.session.commit()
             flash('Tambah Piezo berhasil !', 'success')
-            return redirect(url_for('admin.keamanan_bendungan'))
+            return redirect(url_for('admin.keamanan_bendungan', bendungan_id=bendungan_id))
         except IntegrityError:
             db.session.rollback()
             flash('Data sudah ada, mohon update untuk mengubah', 'danger')
 
-    return redirect(url_for('admin.keamanan_bendungan', bend_id=bend.id))
+    return redirect(url_for('admin.keamanan_bendungan', bendungan_id=bendungan_id))
 
 
-@bp.route('/keamanan/piezo/update', methods=['POST'])  # @login_required
+@bp.route('/bendungan/keamanan/piezo/update', methods=['POST'])  # @login_required
 def keamanan_piezo_update():
     pk = request.values.get('pk')
     attr = request.values.get('name')

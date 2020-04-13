@@ -25,7 +25,7 @@
                       </a>
                     </h5>
                     <hr>
-                    <form action="{{ url_for('admin.operasi_daily_add') }}?bend_id={{ bend_id }}" method="POST">
+                    <form action="{{ url_for('admin.operasi_daily_add', bendungan_id=bend_id) }}" method="POST">
                         <input id="csrf_token" name="csrf_token" type="hidden" value="{{ csrf }}">
                         <div class="collapse" id="tmapagi">
                           <div>
@@ -107,7 +107,7 @@
                       </a>
                     </h5>
                     <hr>
-                    <form action="{{ url_for('admin.operasi_tma_add') }}?bend_id={{ bend_id }}" method="POST">
+                    <form action="{{ url_for('admin.operasi_tma_add', bendungan_id=bend_id) }}" method="POST">
                         <input id="csrf_token" name="csrf_token" type="hidden" value="{{ csrf }}">
                         <div class="collapse" id="tmasiang">
                           <div>
@@ -144,7 +144,7 @@
                       </a>
                     </h5>
                     <hr>
-                    <form action="{{ url_for('admin.operasi_tma_add') }}?bend_id={{ bend_id }}" method="POST">
+                    <form action="{{ url_for('admin.operasi_tma_add', bendungan_id=bend_id) }}" method="POST">
                         <input id="csrf_token" name="csrf_token" type="hidden" value="{{ csrf }}">
                         <div class="collapse" id="tmasore">
                           <div>
@@ -184,7 +184,7 @@
                       </a>
                     </h5>
                     <hr>
-                    <form action="{{ url_for('admin.keamanan_vnotch') }}?bend_id={{ bend_id }}" method="POST">
+                    <form action="{{ url_for('admin.keamanan_vnotch', bendungan_id=bend_id) }}" method="POST">
                         <input id="csrf_token" name="csrf_token" type="hidden" value="{{ csrf }}">
                         <div class="collapse" id="vnotch">
                           <div>
@@ -266,7 +266,7 @@
                       </a>
                     </h5>
                     <hr>
-                    <form action="{{ url_for('admin.keamanan_piezo') }}?bend_id={{ bend_id }}" method="POST">
+                    <form action="{{ url_for('admin.keamanan_piezo', bendungan_id=bend_id) }}" method="POST">
                         <input id="csrf_token" name="csrf_token" type="hidden" value="{{ csrf }}">
                         <div class="collapse" id="piezo">
                           <div>
@@ -322,7 +322,7 @@
             <span id="datepicker" style="color: #18bc9c">
                 <i class="fa fa-calendar"></i> {{ sampling_dt.strftime('%B %Y') }}
             </span>
-            <a href="{{ url_for('admin.operasi_csv') }}?bend_id={{ bend_id }}&sampling={{ sampling.strftime('%Y-%m-%d') }}">CSV</a>
+            <a href="{{ url_for('admin.operasi_csv', bendungan_id=bend_id) }}?sampling={{ sampling.strftime('%Y-%m-%d') }}">CSV</a>
         </h3>
         <table class="table table-hover table-bordered">
             <thead>
@@ -548,7 +548,7 @@
             minViewMode: "months"
         });
         $('#datepicker').on('changeDate', function () {
-            window.location = "{{ url_for('admin.operasi_bendungan') }}?bend_id={{ bend_id }}&sampling=" + $('#datepicker').datepicker('getFormattedDate')
+            window.location = "{{ url_for('admin.operasi_bendungan', bendungan_id=bend_id) }}?sampling=" + $('#datepicker').datepicker('getFormattedDate')
         });
 
         $('#sampling-pagi').datepicker({

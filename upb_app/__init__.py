@@ -32,29 +32,22 @@ def admin_only(f):
 
 def petugas_only(f):
     @wraps(f)
-    def decorated_function(*args, **kwargs):
-        if current_user.role not in ['2']:
+    def decorated_function(bendungan_id, *args, **kwargs):
+        if current_user.role not in ['2'] or current_user.bendungan_id != int(bendungan_id):
             return redirect(url_for('admin.operasi'))
-        return f(*args, **kwargs)
+        return f(bendungan_id, *args, **kwargs)
     return decorated_function
 
 
-def get_bendungan(f):
+def role_check(f):
     @wraps(f)
-    def decorated_function(*args, **kwargs):
-        bendungan_id = int(request.values.get('bend_id')) if request.values.get('bend_id') else None
-        bendungan_id = current_user.bendungan_id or bendungan_id
-
-        if bendungan_id:
-            bend = Bendungan.query.get(bendungan_id)
-            if not bend:
-                bendungan_id = None
-
-        if not bendungan_id:
+    def decorated_function(bendungan_id, *args, **kwargs):
+        if current_user.role in ['2'] and current_user.bendungan_id != int(bendungan_id):
             return redirect(url_for('admin.operasi'))
 
-        return f(bend, *args, **kwargs)
+        return f(bendungan_id, *args, **kwargs)
     return decorated_function
+
 
 from upb_app.api import bp as api_bp
 app.register_blueprint(api_bp, url_prefix='/api')

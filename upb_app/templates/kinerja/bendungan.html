@@ -294,7 +294,7 @@
             };
             console.log("Posting Photo");
             console.log(formData)
-            $.post(`{{ url_for('admin.kinerja_foto') }}`, formData,
+            $.post(`{{ url_for('admin.kinerja_foto', bendungan_id=bend_id) }}`, formData,
                 function (res) {
                     console.log(res);
                     location.reload();
@@ -314,7 +314,7 @@
                 kategori: $(`select[name="kategori-${kerusakan_id}"]`).val()
             };
             console.log(formData);
-            $.post(`/kinerja/{{ bend_id }}/tanggapan`, formData,
+            $.post(`/bendungan/kinerja/${kerusakan_id}/tanggapan`, formData,
                 function (res) {
                     // console.log(res);
                     location.reload();

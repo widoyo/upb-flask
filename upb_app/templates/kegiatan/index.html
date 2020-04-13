@@ -21,7 +21,7 @@
             <tbody>
                 {% for bend in bends %}
                     <tr>
-                        <td><a href="{{ url_for('admin.kegiatan_bendungan') }}?bend_id={{ bend.id }}">{{ bend.nama }}</a></td>
+                        <td><a href="{{ url_for('admin.kegiatan_bendungan', bendungan_id=bend.id) }}">{{ bend.nama }}</a></td>
                     </tr>
                 {% endfor %}
             </tbody>

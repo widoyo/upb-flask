@@ -54,7 +54,7 @@ def rtow():
                             date_list=date_list)
 
 
-@bp.route('/rtow/<bendungan_id>/export', methods=['GET'])
+@bp.route('/bendungan/rtow/<bendungan_id>/export', methods=['GET'])
 @login_required
 @admin_only
 def rtow_exports(bendungan_id):
@@ -102,7 +102,7 @@ def rtow_exports(bendungan_id):
                     })
 
 
-@bp.route('/rtow/<bendungan_id>/import', methods=['GET', 'POST'])
+@bp.route('/bendungan/rtow/<bendungan_id>/import', methods=['GET', 'POST'])
 @login_required
 @admin_only
 def rtow_imports(bendungan_id):
@@ -127,7 +127,7 @@ def rtow_imports(bendungan_id):
                             bend=bend)
 
 
-@bp.route('/rtow/update', methods=['POST'])  # @login_required  # @admin_only
+@bp.route('/bendungan/rtow/update', methods=['POST'])  # @login_required  # @admin_only
 def rtow_update():
     pk = request.values.get('pk')
     attr = request.values.get('name')

@@ -68,7 +68,7 @@
             {% for bend in bends['1'] %}
                 <tr>
                     <td>{{ bend.no }}</td>
-                    <td><a href="{{ url_for('admin.operasi_bendungan') }}?bend_id={{ bend.id }}">{{ bend.nama }}</a></td>
+                    <td><a href="{{ url_for('admin.operasi_bendungan', bendungan_id=bend.id) }}">{{ bend.nama }}</a></td>
                     <td class="text-right">{{ bend.tma6.tma if bend.tma6.tma != None }}</td>
                     <td class="text-right">{{ bend.tma6.vol if bend.tma6.vol != None }}</td>
                     <td class="text-right">{{ bend.tma12.tma if bend.tma12.tma != None }}</td>
@@ -104,7 +104,7 @@
             {% for bend in bends['2'] %}
                 <tr>
                     <td>{{ bend.no }}</td>
-                    <td><a href="{{ url_for('admin.operasi_bendungan') }}?bend_id={{ bend.id }}">{{ bend.nama }}</a></td>
+                    <td><a href="{{ url_for('admin.operasi_bendungan', bendungan_id=bend.id) }}">{{ bend.nama }}</a></td>
                     <td class="text-right">{{ bend.tma6.tma if bend.tma6.tma != None }}</td>
                     <td class="text-right">{{ bend.tma6.vol if bend.tma6.vol != None }}</td>
                     <td class="text-right">{{ bend.tma12.tma if bend.tma12.tma != None }}</td>
@@ -140,7 +140,7 @@
             {% for bend in bends['3'] %}
                 <tr>
                     <td>{{ bend.no }}</td>
-                    <td><a href="{{ url_for('admin.operasi_bendungan') }}?bend_id={{ bend.id }}">{{ bend.nama }}</a></td>
+                    <td><a href="{{ url_for('admin.operasi_bendungan', bendungan_id=bend.id) }}">{{ bend.nama }}</a></td>
                     <td class="text-right">{{ bend.tma6.tma if bend.tma6.tma != None }}</td>
                     <td class="text-right">{{ bend.tma6.vol if bend.tma6.vol != None }}</td>
                     <td class="text-right">{{ bend.tma12.tma if bend.tma12.tma != None }}</td>

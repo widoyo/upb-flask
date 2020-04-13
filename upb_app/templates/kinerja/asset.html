@@ -17,13 +17,13 @@
 <div class="container">
     <h1>
         Asset {{ name }} ({{ assets|length }})
-        <a class="btn btn-outline-primary" href="{{ url_for('admin.kinerja_bendungan') }}">Daftar Kerusakan</a>
+        <a class="btn btn-outline-primary" href="{{ url_for('admin.kinerja_bendungan', bendungan_id=bend_id) }}">Daftar Kerusakan</a>
         <a class="btn btn-outline-info" data-toggle="collapse" href="#addasset" role="button" aria-expanded="false" aria-controls="addasset">Tambah Asset</a>
     </h1>
     <br>
     <div class="row container">
         <div id="addasset" class="collapse col-md-6">
-            <form class="" action="{{ url_for('admin.asset_add') }}" method="post">
+            <form class="" action="{{ url_for('admin.asset_add', bendungan_id=bend_id) }}" method="post">
                 <input id="csrf_token" name="csrf_token" type="hidden" value="{{ csrf }}">
                 <div class="form-group row">
                     <label for="nama" class="col-sm-2 col-form-label">Nama</label>
@@ -74,7 +74,7 @@
                     </div>
                 </div>
                 <div class="form-group">
-                    <button type="submit" name="submit" class="btn btn-primary my-1 mr-2">Kirim</button>
+                    <button type="submit" name="submit" class="btn btn-primary my-1 mr-2">Tambah</button>
                     <a data-toggle="collapse" href="#addasset" role="button" aria-expanded="false" aria-controls="addasset">batal</a>
                 </div>
             </form>
@@ -103,7 +103,7 @@
                             {% if as.status %}
                             <button class="btn btn-sm btn-outline-secondary" disabled>Lapor Rusak</button>
                             {% else %}
-                            <a class="btn btn-sm btn-outline-secondary" href="{{ url_for('admin.kinerja_lapor', asset_id=as.id) }}">Lapor Rusak</a>
+                            <a class="btn btn-sm btn-outline-secondary" href="{{ url_for('admin.kinerja_lapor', bendungan_id=bend_id, asset_id=as.id) }}">Lapor Rusak</a>
                             {% endif %}
                         </td>
                     </tr>

@@ -72,7 +72,7 @@
         </div>
         <br>
         <h3>
-            Bulan <span id="datepicker" style="color: #18bc9c"><i class="fa fa-calendar"></i> {{ sampling.strftime('%B %Y') }}</span>
+            Bulan <span id="datepicker" style="color: #18bc9c"><i class="fa fa-calendar"></i> {{ sampling_dt.strftime('%B %Y') }}</span>
         </h3>
         <table class="table table-hover table-bordered">
             <thead>
@@ -90,7 +90,7 @@
                     <tr>
                         <td>
                             <span id="tgl">{{ date.strftime("%Y-%m-%d") }}</span>
-                            <a href="{{ url_for('admin.kegiatan_paper') }}?bend_id={{ bend_id }}" class="text-right"><i class="fa fa-print"></i></a>
+                            <a href="{{ url_for('admin.kegiatan_paper', bendungan_id=bend_id) }}?sampling={{ date.strftime("%Y-%m-%d") }}" class="text-right"><i class="fa fa-print"></i></a>
                         </td>
                         <td>
                             {% if keg.koordinator %}
@@ -173,7 +173,7 @@
             minViewMode: "months"
         });
         $('#datepicker').on('changeDate', function () {
-            window.location = "{{ url_for('admin.kegiatan_bendungan') }}?bend_id={{ bend_id }}&sampling=" + $('#datepicker').datepicker('getFormattedDate')
+            window.location = "{{ url_for('admin.kegiatan_bendungan', bendungan_id=bend_id) }}?sampling=" + $('#datepicker').datepicker('getFormattedDate')
         });
 
         $('#sampling-kegiatan').datepicker({
@@ -261,7 +261,7 @@
             };
             console.log("Posting Photo");
             console.log(formData);
-            $.post("{{ url_for('admin.kegiatan_add') }}?bend_id={{ bend_id }}", formData,
+            $.post("{{ url_for('admin.kegiatan_add', bendungan_id=bend_id) }}", formData,
                 function (res) {
                     console.log(res);
                     location.reload();

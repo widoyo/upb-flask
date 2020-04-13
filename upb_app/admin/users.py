@@ -18,7 +18,7 @@ def users():
                             bends=bends)
 
 
-@bp.route('/users/add', methods=['GET', 'POST'])
+@bp.route('/user/add', methods=['GET', 'POST'])
 @login_required
 def users_add():
     form = AddUser()
@@ -53,7 +53,7 @@ def users_add():
                             form=form)
 
 
-@bp.route('/users/password', methods=['GET', 'POST'])
+@bp.route('/user/<user_id>/password', methods=['GET', 'POST'])
 @login_required
 def users_password(user_id):
     user = Users.query.get(user_id)
@@ -67,7 +67,7 @@ def users_password(user_id):
     return render_template('users/password.html', user=user)
 
 
-@bp.route('/users/delete', methods=['GET', 'POST'])
+@bp.route('/user/<user_id>/delete', methods=['GET', 'POST'])
 @login_required
 def users_delete(user_id):
     user = Users.query.get(user_id)

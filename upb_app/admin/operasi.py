@@ -7,7 +7,7 @@ from sqlalchemy.exc import IntegrityError
 from upb_app.models import ManualDaily, ManualTma, ManualPiezo, ManualVnotch
 from upb_app.models import Bendungan
 from upb_app.forms import AddDaily, AddTma
-from upb_app import app, db, admin_only, petugas_only, get_bendungan
+from upb_app import app, db, admin_only, petugas_only, role_check
 import datetime
 import calendar
 import csv
@@ -21,7 +21,7 @@ from upb_app.admin import bp
 @login_required
 def operasi():
     if current_user.role == "2":
-        return redirect(url_for('admin.operasi_bendungan'))
+        return redirect(url_for('admin.operasi_bendungan', bendungan_id=current_user.bendungan_id))
     return redirect(url_for('admin.operasi_harian'))
 
 
@@ -114,10 +114,12 @@ def operasi_harian():
                             sampling=sampling)
 
 
-@bp.route('/operasi/bendungan')
+@bp.route('/bendungan/operasi/<bendungan_id>')
 @login_required  # @petugas_only
-@get_bendungan
-def operasi_bendungan(bend):
+@role_check
+def operasi_bendungan(bendungan_id):
+    bend = Bendungan.query.get(bendungan_id)
+
     date = request.values.get('sampling')
     date = datetime.datetime.strptime(date, "%Y-%m-%d") if date else datetime.datetime.utcnow()
     sampling = datetime.datetime.strptime(f"{date.year}-{date.month}-01", "%Y-%m-%d")
@@ -129,7 +131,6 @@ def operasi_bendungan(bend):
         day = calendar.monthrange(sampling.year, sampling.month)[1]
     end = datetime.datetime.strptime(f"{date.year}-{date.month}-{day} 23:59:59", "%Y-%m-%d %H:%M:%S")
 
-    bendungan_id = bend.id
     arr = bend.nama.split('_')
     name = f"{arr[0].title()}.{arr[1].title()}"
 
@@ -169,10 +170,11 @@ def operasi_bendungan(bend):
                             sampling_dt=sampling)
 
 
-@bp.route('/operasi/bendungan/tma', methods=['GET', 'POST'])
+@bp.route('/bendungan/operasi/<bendungan_id>/tma', methods=['GET', 'POST'])
 @login_required
-@get_bendungan
-def operasi_tma_add(bend):
+@role_check
+def operasi_tma_add(bendungan_id):
+    bend = Bendungan.query.get(bendungan_id)
     form = AddTma()
     if form.validate_on_submit():
         try:
@@ -184,13 +186,13 @@ def operasi_tma_add(bend):
                 vol=form.vol.data
             )
             flash('TMA berhasil ditambahkan !', 'success')
-            return redirect(url_for('admin.operasi_bendungan', bend_id=bend.id))
+            return redirect(url_for('admin.operasi_bendungan', bendungan_id=bend.id))
 
         except IntegrityError:
             db.session.rollback()
             flash('Data TMA sudah ada, mohon update untuk mengubah', 'danger')
 
-    return redirect(url_for('admin.operasi_bendungan', bend_id=bend.id))
+    return redirect(url_for('admin.operasi_bendungan', bendungan_id=bend.id))
 
 
 def insert_tma(bend_id, hari, jam, tma, vol):
@@ -206,7 +208,7 @@ def insert_tma(bend_id, hari, jam, tma, vol):
     db.session.commit()
 
 
-@bp.route('/operasi/bendungan/tma/update', methods=['POST'])  # @login_required
+@bp.route('/bendungan/operasi/tma/update', methods=['POST'])  # @login_required
 def operasi_tma_update():
     pk = request.values.get('pk')
     attr = request.values.get('name')
@@ -224,10 +226,11 @@ def operasi_tma_update():
     return jsonify(result)
 
 
-@bp.route('/operasi/bendungan/daily', methods=['GET', 'POST'])
+@bp.route('/bendungan/operasi/<bendungan_id>/daily', methods=['GET', 'POST'])
 @login_required
-@get_bendungan
-def operasi_daily_add(bend):
+@role_check
+def operasi_daily_add(bendungan_id):
+    bend = Bendungan.query.get(bendungan_id)
     form = AddDaily()
     if form.validate_on_submit():
         # insert tma
@@ -261,16 +264,16 @@ def operasi_daily_add(bend):
             db.session.add(daily)
             db.session.commit()
             flash('Data Harian berhasil ditambahkan !', 'success')
-            return redirect(url_for('admin.operasi_bendungan', bend_id=bend.id))
+            return redirect(url_for('admin.operasi_bendungan', bendungan_id=bend.id))
 
         except IntegrityError:
             db.session.rollback()
             flash('Data sudah ada, mohon update untuk mengubah', 'danger')
 
-    return redirect(url_for('admin.operasi_bendungan', bend_id=bend.id))
+    return redirect(url_for('admin.operasi_bendungan', bendungan_id=bend.id))
 
 
-@bp.route('/operasi/daily/update', methods=['POST'])  # @login_required
+@bp.route('/bendungan/operasi/daily/update', methods=['POST'])  # @login_required
 def operasi_daily_update():
     pk = request.values.get('pk')
     attr = request.values.get('name')
@@ -288,10 +291,12 @@ def operasi_daily_update():
     return jsonify(result)
 
 
-@bp.route('/operasi/bendungan/csv', methods=['GET'])
+@bp.route('/bendungan/operasi/<bendungan_id>/csv', methods=['GET'])
 @login_required
-@get_bendungan
-def operasi_csv(bend):
+@role_check
+def operasi_csv(bendungan_id):
+    bend = Bendungan.query.get(bendungan_id)
+
     date = request.values.get('sampling')
     date = datetime.datetime.strptime(date, "%Y-%m-%d") if date else datetime.datetime.utcnow()
     sampling = datetime.datetime.strptime(f"{date.year}-{date.month}-01", "%Y-%m-%d")
@@ -302,10 +307,6 @@ def operasi_csv(bend):
     else:
         day = calendar.monthrange(sampling.year, sampling.month)[1]
     end = datetime.datetime.strptime(f"{date.year}-{date.month}-{day} 23:59:59", "%Y-%m-%d %H:%M:%S")
-
-    bendungan_id = bend.id
-    arr = bend.nama.split('_')
-    name = f"{arr[0].title()}.{arr[1].title()}"
 
     manual_daily = ManualDaily.query.filter(
                                         ManualDaily.bendungan_id == bendungan_id,
