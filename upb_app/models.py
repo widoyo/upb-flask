@@ -108,6 +108,9 @@ class ManualTma(BaseLog):
     __table_args__ = (db.UniqueConstraint('bendungan_id', 'sampling',
                                           name='manualtma_bendungan_sampling'),)
 
+    def local_cdate(self):
+        return self.c_date + datetime.timedelta(hours=7)
+
 
 class ManualPiezo(BaseLog):
     __tablename__ = 'manual_piezo'

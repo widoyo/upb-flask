@@ -1,17 +1,19 @@
 
-<div style="height: 100vh; background-size: auto;; background-image: url({{ url_for('static', filename='images/bd_cengklik_1.jpg') }})">
+<div style="height: 100vh; width: 100%; background-size: inherit; background-image: url({{ url_for('static', filename='images/bd_cengklik_1.jpg') }})">
     <div style="background-color: rgba(255,255,255,0.5);">
         <div class="container text-left pb-2 pt-2">
             <h1>
                 <span style="color: white; text-shadow: 2px 2px 5px #666;">
-                    Ringkasan {{ count.waduk }} Bendungan dan {{ count.embung }} Embung
-                    <br>
-                    Status: {{ tgl.strftime('%d %b %Y') }}
+                    <!-- <a href="{{ url_for('bendungan.index') }}"> -->
+                        Ringkasan {{ count.waduk }} Bendungan <!-- dan {{ count.embung }} Embung -->
+                        <br>
+                        Status: {{ tgl.strftime('%d %b %Y') }}
+                    <!-- </a> -->
                 </span>
             </h1>
         </div>
     </div>
-    <div class="row">
+    <div class="row mr-1">
         <div class="col-md-6">
             <div class="container">
                 <div class="card mt-2 mb-2 mr-4 ml-4" style="background: rgba(255, 255, 255, 0.8);">
@@ -117,3 +119,7 @@
         </div>
     </div>
 </div>
+
+<script>
+
+</script>

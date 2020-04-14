@@ -13,14 +13,21 @@
 
 {% block content %}
     <div class="container">
-        <h1>
-            Kegiatan Petugas Bendungan
-            <!-- <i class="fa fa-calendar"></i> -->
-            <span id="datepicker" style="color: #18bc9c">
-                {{ sampling.strftime('%Y-%m-%d') }}
-            </span>
-            <small><span class="badge badge-secondary">12</span></small>
-        </h1>
+        <ul class="list-inline">
+            <h1 class="list-inline-item">
+                Kegiatan Petugas Bendungan
+                <!-- <i class="fa fa-calendar"></i> -->
+                <span id="datepicker" style="color: #18bc9c">
+                    {{ sampling.strftime('%Y-%m-%d') }}
+                </span>
+            </h1>
+            <h5 class="list-inline-item">
+                <span class="badge badge-pill badge-secondary" id="num_bd"
+                        title="Petugas Bendungan yang telah Melaporkan">
+                    {{ data|length }}
+                <span>
+            </h5>
+        </ul>
         {% for id, d in data.items() %}
             <h3 style="margin-top: 50px;" class="bd_name">
                 <i class="fa fa-map-marker text-primary"></i>

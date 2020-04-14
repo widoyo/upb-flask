@@ -20,8 +20,9 @@ def always_on():
 @app.route('/')
 def index():
     ''' Index UPB '''
-    today = datetime.datetime.utcnow()
-    sampling = today
+    date = request.values.get('sampling')
+    today = datetime.datetime.now()
+    sampling = today  # if not date else datetime.datetime.strptime(date, "%Y-%m-%d")
     if sampling.day < 15:
         sampling = sampling - datetime.timedelta(days=today.day)
     else:

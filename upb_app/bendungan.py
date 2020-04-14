@@ -1,8 +1,8 @@
 from flask import Blueprint, render_template, request
 from upb_app.models import Bendungan, Petugas
 from upb_app.models import ManualDaily, ManualTma, ManualVnotch, ManualPiezo
-from upb_app.models import Kegiatan, Rencana
-from sqlalchemy import and_, desc, cast, Date
+from upb_app.models import Kegiatan, Rencana, wil_sungai
+from sqlalchemy import and_, desc, cast, Date, extract
 from pprint import pprint
 from pytz import timezone
 import datetime
@@ -13,52 +13,69 @@ bp = Blueprint('bendungan', __name__)
 @bp.route('/')
 def index():
     ''' Home Bendungan '''
-    waduk = Bendungan.query.all()
+    waduk = Bendungan.query.order_by(Bendungan.wil_sungai, Bendungan.id).all()
     date = request.values.get('sampling')
-    def_date = datetime.datetime.utcnow()
+    def_date = datetime.datetime.now()
     sampling = datetime.datetime.strptime(date, "%Y-%m-%d") if date else def_date
     end = sampling + datetime.timedelta(days=1)
 
-    data = []
+    data = {
+        '1': [],
+        '2': [],
+        '3': []
+    }
+    count = 1
     for w in waduk:
         daily = ManualDaily.query.filter(
                                     and_(
-                                        ManualDaily.sampling >= sampling,
-                                        ManualDaily.sampling <= end),
+                                        extract('month', ManualDaily.sampling) == sampling.month,
+                                        extract('year', ManualDaily.sampling) == sampling.year,
+                                        extract('day', ManualDaily.sampling) == sampling.day),
                                     ManualDaily.bendungan_id == w.id
                                     ).first()
         vnotch = ManualVnotch.query.filter(
                                     and_(
-                                        ManualVnotch.sampling >= sampling,
-                                        ManualVnotch.sampling <= end),
+                                        extract('month', ManualVnotch.sampling) == sampling.month,
+                                        extract('year', ManualVnotch.sampling) == sampling.year,
+                                        extract('day', ManualVnotch.sampling) == sampling.day),
                                     ManualVnotch.bendungan_id == w.id
                                     ).first()
         tma = ManualTma.query.filter(
                                     and_(
-                                        ManualTma.sampling >= sampling,
-                                        ManualTma.sampling <= end),
+                                        extract('month', ManualTma.sampling) == sampling.month,
+                                        extract('year', ManualTma.sampling) == sampling.year,
+                                        extract('day', ManualTma.sampling) == sampling.day),
                                     ManualTma.bendungan_id == w.id
                                     ).all()
-        # if daily:
-        #     print(daily.sampling)
-        # if tma:
-        #     print(tma[0].sampling)
+
         tma_d = {
             '6': None,
             '12': None,
             '18': None,
         }
+        kondisi = ""
+        flood = 0
+        time = ""
         for t in tma:
-            tma_d[f"{t.sampling.hour}"] = None if not t.tma else round(t.tma/100, 1)
+            print(t.sampling)
+            if t.tma and t.tma - w.muka_air_max > flood:
+                flood = t.tma - w.muka_air_max
+                time = t.local_cdate().strftime("%H:%M")
+            tma_d[f"{t.sampling.hour}"] = None if not t.tma else "{:,.2f}".format(t.tma)
 
-        data.append({
+        if round(flood, 2) > 0:
+            kondisi = f"<b>Overflow</b><br><span style='color: red'>+{round(flood, 3)}</span> ({time})"
+
+        data[w.wil_sungai].append({
             'id': w.id,
-            'nama': w.nama,
-            'volume': w.volume,
-            'lbi': w.lbi,
-            'elev_puncak': w.elev_puncak,
-            'muka_air_max': w.muka_air_max,
-            'muka_air_min': w.muka_air_min,
+            'no': count,
+            'nama': w.name,
+            'kab': w.kab,
+            'volume': "{:,.2f}".format(w.volume/1000000),
+            'lbi': "{:,.2f}".format(w.lbi),
+            'elev_puncak': "{:,.2f}".format(w.elev_puncak),
+            'muka_air_max': "{:,.2f}".format(w.muka_air_max),
+            'muka_air_min': "{:,.2f}".format(w.muka_air_min),
             'tma6': tma_d['6'],
             'tma12': tma_d['12'],
             'tma18': tma_d['18'],
@@ -66,11 +83,14 @@ def index():
             'outflow_deb': None if not daily else daily.outflow_deb,
             'spillway_deb': None if not daily else daily.spillway_deb,
             'curahhujan': None if not daily else daily.ch,
-            'debit': None if not vnotch else vnotch.vn_deb
+            'debit': None if not vnotch else vnotch.vn1_deb,
+            'kondisi': kondisi or "Normal"
         })
+        count += 1
 
     return render_template('bendungan/index.html',
                             waduk=data,
+                            wil_sungai=wil_sungai,
                             sampling=sampling)
 
 

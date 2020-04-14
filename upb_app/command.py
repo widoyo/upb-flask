@@ -90,7 +90,8 @@ def import_manual_data():
                 "sampling": daily['waktu'].replace(hour=6),
                 "bendungan_id": daily['pos_id'],
                 "tma": daily['tma6'],
-                "vol": daily['vol6']
+                "vol": daily['vol6'],
+                "c_date": daily['waktu'].replace(hour=6)
             }
             tma6 = ManualTma.query.filter(
                                         ManualTma.sampling == daily['waktu'].replace(hour=6),
@@ -113,7 +114,8 @@ def import_manual_data():
                 "sampling": daily['waktu'].replace(hour=12),
                 "bendungan_id": daily['pos_id'],
                 "tma": daily['tma12'],
-                "vol": daily['vol12']
+                "vol": daily['vol12'],
+                "c_date": daily['waktu'].replace(hour=12)
             }
             tma12 = ManualTma.query.filter(
                                         ManualTma.sampling == daily['waktu'].replace(hour=12),
@@ -136,7 +138,8 @@ def import_manual_data():
                 "sampling": daily['waktu'].replace(hour=18),
                 "bendungan_id": daily['pos_id'],
                 "tma": daily['tma18'],
-                "vol": daily['vol18']
+                "vol": daily['vol18'],
+                "c_date": daily['waktu'].replace(hour=18)
             }
             tma18 = ManualTma.query.filter(
                                         ManualTma.sampling == daily['waktu'].replace(hour=18),
@@ -321,7 +324,7 @@ def import_master():
                 "desa": embung["desa"],
                 "kec": embung["kec"],
                 "kab": embung["kab"],
-                "ll": embung["ll"],
+                # "ll": embung["ll"],
                 "is_verified": embung['is_verified'],
                 "sumber_air": embung["sumber_air"],
                 "tampungan": embung["tampungan"],
