@@ -1,7 +1,7 @@
 from flask_wtf import FlaskForm
 from wtforms import StringField, PasswordField, DecimalField, DateField
 from wtforms import BooleanField, SubmitField, SelectField, RadioField, FileField
-from wtforms.validators import DataRequired
+from wtforms.validators import DataRequired, Optional
 from upb_app.models import Bendungan
 import datetime
 
@@ -72,7 +72,7 @@ class LoginForm(FlaskForm):
 class AddUser(FlaskForm):
     username = StringField('Username', validators=[DataRequired()])
     password = PasswordField('Password', validators=[DataRequired()])
-    bendungan = SelectField("Bendungan", choices=bends, validators=[DataRequired()], default=bends[0][0], coerce=int)
+    bendungan = SelectField("Bendungan", choices=bends, validators=[Optional()], default=bends[0][0], coerce=int)
     role = SelectField("Role", choices=roles, validators=[DataRequired()], default=roles[0][0])
     submit = SubmitField('Tambah')
 

@@ -34,6 +34,8 @@ class Users(UserMixin, db.Model):
     role = db.Column(db.String(1))
     bendungan_id = db.Column(db.Integer, db.ForeignKey('bendungan.id'), nullable=True)
 
+    bendungan = relationship('Bendungan', back_populates='users')
+
     def set_password(self, password):
         self.password = generate_password_hash(password)
 
@@ -213,6 +215,7 @@ class Bendungan(BaseLog):
     vn3_tin_limit = db.Column(db.Float)
 
     petugas = relationship('Petugas', back_populates='bendungan')
+    users = relationship('Users', back_populates='bendungan')
 
     @property
     def name(self):

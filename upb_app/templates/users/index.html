@@ -13,7 +13,78 @@
 
 {% block content %}
     <div class="container">
-        <h1>Users Index</h1>
+        <h1>
+            Users Index
+            <a data-toggle="collapse" href="#adduser" role="button" class="btn btn-sm btn-outline-primary" aria-expanded="false" aria-controls="adduser">Tambah</a>
+        </h1>
+        <div class="row container">
+            <div class="collapse col-md-6" id="adduser">
+                <form class="" action="{{ url_for('admin.user_add') }}" method="POST">
+                    <input id="csrf_token" name="csrf_token" type="hidden" value="{{ csrf }}">
+                    <div class="form-group">
+                        <label class="form-text" for="username"><b>Username</b></label>
+                        <input class="form-control" type="text"
+                              name="username" id="username">
+                    </div>
+                    <div class="form-group">
+                        <label class="form-text" for="password"><b>Password</b></label>
+                        <input class="form-control" type="text"
+                              name="password" id="password">
+                    </div>
+                    <div class="form-group">
+                        <label class="form-text" for="role"><b>Unit</b></label>
+                        <select id="role" name="role" class="form-control">
+                          <option value="1" selected>Balai Sungai</option>
+                          <!-- <option value="2">Bendungan</option> -->
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <!-- <label class="form-text" for="role"><b>Unit</b></label> -->
+                        <select id="bendungan" name="bendungan" class="form-control" hidden>
+                          <option value="" selected>Tidak Ada</option>
+                          <!-- <option value="2">Bendungan</option> -->
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <button type="submit" name="submit" class="btn btn-primary my-1 mr-2">Tambah</button>
+                        <a data-toggle="collapse" href="#adduser" role="button" aria-expanded="false" aria-controls="adduser">batal</a>
+                    </div>
+                </form>
+            </div>
+        </div>
+        <br>
+        <table class="table table-hover table-bordered">
+            <thead>
+                <tr>
+                    <th>No</th>
+                    <th>Username</th>
+                    <th>Unit</th>
+                    <th>Pos</th>
+                    <th></th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for u in users %}
+                    <tr>
+                        <td>{{ loop.index }}</td>
+                        <td>{{ u.username }}</td>
+                        <td>
+                            {% if u.role == '2' %}
+                                Bendungan
+                            {% elif u.role in ['1', '4'] %}
+                                Balai Sungai
+                            {% endif %}
+                        </td>
+                        <td>
+                            {% if u.bendungan_id %}
+                                {{ u.bendungan.name }}
+                            {% endif %}
+                        </td>
+                        <td class="text-center"><a href="#"><i class="fa fa-pen"></i></a></td>
+                    </tr>
+                {% endfor %}
+            </tbody>
+        </table>
     </div>
 {% endblock %}
 

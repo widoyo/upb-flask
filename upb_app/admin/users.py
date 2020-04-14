@@ -1,5 +1,6 @@
 from flask import Blueprint, request, render_template, redirect, url_for, flash
 from flask_login import login_required
+from flask_wtf.csrf import generate_csrf
 from upb_app.models import Users, Bendungan
 from upb_app.forms import AddUser
 from upb_app import db
@@ -15,12 +16,13 @@ def users():
     bends = Bendungan.query.all()
     return render_template('users/index.html',
                             users=users,
-                            bends=bends)
+                            bends=bends,
+                            csrf=generate_csrf())
 
 
-@bp.route('/user/add', methods=['GET', 'POST'])
+@bp.route('/user/add', methods=['POST'])
 @login_required
-def users_add():
+def user_add():
     form = AddUser()
     if form.validate_on_submit():
         username = request.values.get('username')
@@ -36,26 +38,26 @@ def users_add():
         # save new user data
         new_user = Users(
             username=username,
-            bendungan_id=bendungan_id,
             role=role
         )
         # hash password as md5
         new_user.set_password(password)
+
+        if bendungan_id:
+            new_user.bendungan_id = bendungan_id
 
         db.session.add(new_user)
         db.session.flush()
         db.session.commit()
 
         flash('Tambah User berhasil !', 'success')
-        return redirect(url_for('admin.users'))
 
-    return render_template('users/index.html',
-                            form=form)
+    return redirect(url_for('admin.users'))
 
 
 @bp.route('/user/<user_id>/password', methods=['GET', 'POST'])
 @login_required
-def users_password(user_id):
+def user_password(user_id):
     user = Users.query.get(user_id)
     if request.method == 'POST':
         password = request.values.get('password')
@@ -69,7 +71,7 @@ def users_password(user_id):
 
 @bp.route('/user/<user_id>/delete', methods=['GET', 'POST'])
 @login_required
-def users_delete(user_id):
+def user_delete(user_id):
     user = Users.query.get(user_id)
     if request.method == 'POST':
         db.session.delete(user)
