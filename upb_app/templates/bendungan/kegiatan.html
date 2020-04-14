@@ -35,12 +35,12 @@
                     <b>{{ petugas }}</b><br>
                     {% for k in keg %}
                       <div class="row">
-                          <div class="col-md-2">
-                              <span class="text-muted" style="padding-left: 10px;">
-                                  {{ k.sampling.strftime("%H:%M:%S") }}
+                          <div class="col-md-3">
+                              <span id="waktu" class="text-muted" style="padding-left: 10px;">
+                                  {{ k.get_hms() }}
                               </span>
                           </div>
-                          <div class="col-md-10">
+                          <div class="col-md-9">
                               {{ k.uraian }}
                           </div>
                       </div>
@@ -49,6 +49,7 @@
                 </div>
             {% endfor %}
         {% endfor %}
+        <br>
     </div>
 {% endblock %}
 
@@ -69,10 +70,10 @@
         });
         $('#datepicker').text(moment($('#datepicker').text()).format('ddd, D MMM YYYY'));
 
-        let tgls = document.querySelectorAll("#tgl");
+        let tgls = document.querySelectorAll("#waktu");
         tgls.forEach(function(el){
             console.log(el.value);
-            el.innerText = moment(el.innerText).format('ddd, D');
+            el.innerText = `${moment(el.innerText).format('dddd')}, ${moment(el.innerText).format('ll')}, ${moment(el.innerText).format('LT')}`;
         });
     });
 </script>

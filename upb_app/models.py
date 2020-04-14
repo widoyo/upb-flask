@@ -265,6 +265,9 @@ class Kegiatan(BaseLog):
 
     bendungan = relationship('Bendungan', back_populates='kegiatan')
 
+    def get_hms(self):
+        return self.c_date + datetime.timedelta(hours=7)
+
 
 class Rencana(BaseLog):
     __tablename__ = 'rencana'

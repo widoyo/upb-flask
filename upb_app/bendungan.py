@@ -304,7 +304,7 @@ def kegiatan():
                                 and_(
                                     Kegiatan.sampling >= sampling,
                                     Kegiatan.sampling <= end)
-                                ).all()
+                                ).order_by(Kegiatan.c_date).all()
     data = {}
     for keg in kegiatan:
         if keg.bendungan_id not in data:
