@@ -1,0 +1,79 @@
+{% extends 'master/base_adm.html' %}
+
+{% set title = "Bendungan" %}
+
+{% block css %}
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-datepicker/1.9.0/css/bootstrap-datepicker.css">
+<style>
+    .datepicker {
+        z-index: 10000 !important;
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+    <div class="container">
+        <h1>
+            Kegiatan Petugas Bendungan
+            <!-- <i class="fa fa-calendar"></i> -->
+            <span id="datepicker" style="color: #18bc9c">
+                {{ sampling.strftime('%Y-%m-%d') }}
+            </span>
+            <small><span class="badge badge-secondary">12</span></small>
+        </h1>
+        {% for id, d in data.items() %}
+            <h3 style="margin-top: 50px;" class="bd_name">
+                <i class="fa fa-map-marker text-primary"></i>
+                {{ d.bend.name }}
+            </h3>
+            <hr>
+            {% for petugas, keg in d.kegiatan.items() %}
+                <div class="row" style="padding-top: 10px;">
+                    <div class="col-md-1">&nbsp;</div>
+                    <div class="col-md-11">
+                    <i class="fa fa-user"></i>
+                    <b>{{ petugas }}</b><br>
+                    {% for k in keg %}
+                      <div class="row">
+                          <div class="col-md-2">
+                              <span class="text-muted" style="padding-left: 10px;">
+                                  {{ k.sampling.strftime("%H:%M:%S") }}
+                              </span>
+                          </div>
+                          <div class="col-md-10">
+                              {{ k.uraian }}
+                          </div>
+                      </div>
+                    {% endfor %}
+                    </div>
+                </div>
+            {% endfor %}
+        {% endfor %}
+    </div>
+{% endblock %}
+
+{% block js %}
+<script src="{{ url_for('static', filename='js/moment.min.js') }}"></script>
+<script src="{{ url_for('static', filename='js/id.js') }}"></script>
+<script src="{{ url_for('static', filename='js/bootstrap-datepicker.min.js') }}"></script>
+<script>
+    $(document).ready(function() {
+        $('#datepicker').datepicker({
+            autoclose: true,
+            format: 'yyyy-mm-dd',
+            startView: "days",
+            minViewMode: "days"
+        });
+        $('#datepicker').on('changeDate', function () {
+            window.location = "{{ url_for('bendungan.kegiatan') }}?sampling=" + $('#datepicker').datepicker('getFormattedDate')
+        });
+        $('#datepicker').text(moment($('#datepicker').text()).format('ddd, D MMM YYYY'));
+
+        let tgls = document.querySelectorAll("#tgl");
+        tgls.forEach(function(el){
+            console.log(el.value);
+            el.innerText = moment(el.innerText).format('ddd, D');
+        });
+    });
+</script>
+{% endblock %}

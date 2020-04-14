@@ -1,6 +1,7 @@
 from flask import Blueprint, render_template, request
 from upb_app.models import Bendungan, Petugas
-from upb_app.models import ManualDaily, ManualTma, ManualVnotch, ManualPiezo, Rencana
+from upb_app.models import ManualDaily, ManualTma, ManualVnotch, ManualPiezo
+from upb_app.models import Kegiatan, Rencana
 from sqlalchemy import and_, desc, cast, Date
 from pprint import pprint
 from pytz import timezone
@@ -271,7 +272,6 @@ def piezo(lokasi_id):
 
 @bp.route('/petugas')
 def petugas():
-    ''' Home Bendungan '''
     waduk = Bendungan.query.all()
     petugas = Petugas.query.all()
 
@@ -291,3 +291,35 @@ def petugas():
 
     return render_template('bendungan/petugas.html',
                             data=data)
+
+
+@bp.route('/kegiatan')
+def kegiatan():
+    date = request.values.get('sampling')
+    def_date = date if date else datetime.datetime.now().strftime("%Y-%m-%d")
+    sampling = datetime.datetime.strptime(def_date, "%Y-%m-%d")
+    end = sampling + datetime.timedelta(hours=23, minutes=55)
+
+    kegiatan = Kegiatan.query.filter(
+                                and_(
+                                    Kegiatan.sampling >= sampling,
+                                    Kegiatan.sampling <= end)
+                                ).all()
+    data = {}
+    for keg in kegiatan:
+        if keg.bendungan_id not in data:
+            data[keg.bendungan_id] = {
+                'bend': keg.bendungan,
+                'kegiatan': {
+
+                }
+            }
+
+        if keg.petugas not in data[keg.bendungan_id]['kegiatan']:
+            data[keg.bendungan_id]['kegiatan'][keg.petugas] = []
+
+        data[keg.bendungan_id]['kegiatan'][keg.petugas].append(keg)
+
+    return render_template('bendungan/kegiatan.html',
+                            data=data,
+                            sampling=sampling)

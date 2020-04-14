@@ -1,6 +1,6 @@
 from flask import Blueprint, jsonify, request, render_template, redirect, url_for
 from flask_login import login_required
-from upb_app.models import Bendungan, ManualDaily, ManualTma, ManualVnotch
+from upb_app.models import Bendungan, ManualDaily, ManualTma, ManualVnotch, wil_sungai
 from upb_app import db
 from sqlalchemy import and_
 import datetime
@@ -12,14 +12,19 @@ bp = Blueprint('admin', __name__)
 @login_required
 def bendungan():
     ''' Home Bendungan '''
-    waduk = Bendungan.query.all()
-    bends = {}
+    waduk = Bendungan.query.order_by(Bendungan.wil_sungai, Bendungan.id).all()
+    bends = {
+        '1': {},
+        '2': {},
+        '3': {}
+    }
+    count = 1
     for w in waduk:
-        arr = w.nama.split('_')
-        name = f"{arr[0].title()}.{arr[1].title()}"
-        bends[name] = w
+        bends[w.wil_sungai][count] = w
+        count += 1
     return render_template('bendungan/admin.html',
-                            bends=bends)
+                            bends=bends,
+                            wil_sungai=wil_sungai)
 
 
 @bp.route('/bendungan/update', methods=['POST'])  # @login_required

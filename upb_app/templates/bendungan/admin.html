@@ -33,164 +33,169 @@
                 </tr>
             </thead>
             <tbody>
-                {% for nama, bend in bends.items() %}
+                {% for wil_s, data in bends.items() %}
                     <tr>
-                        <td>{{ loop.index }}</td>
-                        <td>{{ nama }}</td>
-                        <td>
-                            <a data-url="/admin/bendungan/update"
-                                class="editable"
-                                data-name="kab"
-                                data-type="text"
-                                data-title="{{ nama }}, Kab"
-                                data-pk="{{ bend.id }}">
-                                <span style="color: blue">{{ bend.kab }}</span>
-                            </a>
-                        </td>
-                        <td class="text-right">
-                            <a data-url="/admin/bendungan/update"
-                                class="editable"
-                                data-name="volume"
-                                data-type="number"
-                                data-title="{{ nama }}, Tampungan"
-                                data-step=".01"
-                                data-pk="{{ bend.id }}">
-                                {% if bend.volume %}
-                                <span style="color: blue">{{ bend.volume }}</span>
-                                {% else %}<span style="color: red">Empty</span>{% endif %}
-                            </a>
-                        </td>
-                        <td class="text-right">
-                            <a data-url="/admin/bendungan/update"
-                                class="editable"
-                                data-name="lbi"
-                                data-type="number"
-                                data-title="{{ nama }}, Irigasi"
-                                data-step=".01"
-                                data-pk="{{ bend.id }}">
-                                {% if bend.lbi %}
-                                <span style="color: blue">{{ bend.lbi }}</span>
-                                {% else %}<span style="color: red">Empty</span>{% endif %}
-                            </a>
-                        </td>
-                        <td class="text-right">
-                            <a data-url="/admin/bendungan/update"
-                                class="editable"
-                                data-name="elev_puncak"
-                                data-type="number"
-                                data-title="{{ nama }}, Elev Puncak"
-                                data-step=".01"
-                                data-pk="{{ bend.id }}">
-                                {% if bend.elev_puncak %}
-                                <span style="color: blue">{{ bend.elev_puncak }}</span>
-                                {% else %}<span style="color: red">Empty</span>{% endif %}
-                            </a>
-                        </td>
-                        <td class="text-right">
-                            <a data-url="/admin/bendungan/update"
-                                class="editable"
-                                data-name="muka_air_max"
-                                data-type="number"
-                                data-title="{{ nama }}, MAB"
-                                data-step=".01"
-                                data-pk="{{ bend.id }}">
-                                {% if bend.muka_air_max %}
-                                <span style="color: blue">{{ bend.muka_air_max }}</span>
-                                {% else %}<span style="color: red">Empty</span>{% endif %}
-                            </a>
-                        </td>
-                        <td class="text-right">
-                            <a data-url="/admin/bendungan/update"
-                                class="editable"
-                                data-name="muka_air_normal"
-                                data-type="number"
-                                data-title="{{ nama }}, MAN"
-                                data-step=".01"
-                                data-pk="{{ bend.id }}">
-                                {% if bend.muka_air_normal %}
-                                <span style="color: blue">{{ bend.muka_air_normal }}</span>
-                                {% else %}<span style="color: red">Empty</span>{% endif %}
-                            </a>
-                        </td>
-                        <td class="text-right">
-                            <a data-url="/admin/bendungan/update"
-                                class="editable"
-                                data-name="muka_air_min"
-                                data-type="number"
-                                data-title="{{ nama }}, MAMin"
-                                data-step=".01"
-                                data-pk="{{ bend.id }}">
-                                {% if bend.muka_air_min %}
-                                <span style="color: blue">{{ bend.muka_air_min }}</span>
-                                {% else %}<span style="color: red">Empty</span>{% endif %}
-                            </a>
-                        </td>
-                        <td class="text-right">
-                            <a data-url="/admin/bendungan/update"
-                                class="editable"
-                                data-name="bts_elev_awas"
-                                data-type="number"
-                                data-title="{{ nama }}, Elev Awas"
-                                data-step=".01"
-                                data-pk="{{ bend.id }}">
-                                {% if bend.bts_elev_awas %}
-                                <span style="color: blue">{{ bend.bts_elev_awas }}</span>
-                                {% else %}<span style="color: red">Empty</span>{% endif %}
-                            </a>
-                        </td>
-                        <td class="text-right">
-                            <a data-url="/admin/bendungan/update"
-                                class="editable"
-                                data-name="bts_elev_siaga"
-                                data-type="number"
-                                data-title="{{ nama }}, Elev Siaga"
-                                data-step=".01"
-                                data-pk="{{ bend.id }}">
-                                {% if bend.bts_elev_siaga %}
-                                <span style="color: blue">{{ bend.bts_elev_siaga }}</span>
-                                {% else %}<span style="color: red">Empty</span>{% endif %}
-                            </a>
-                        </td>
-                        <td class="text-right">
-                            <a data-url="/admin/bendungan/update"
-                                class="editable"
-                                data-name="bts_elev_waspada"
-                                data-type="number"
-                                data-title="{{ nama }}, Elev Waspada"
-                                data-step=".01"
-                                data-pk="{{ bend.id }}">
-                                {% if bend.bts_elev_waspada %}
-                                <span style="color: blue">{{ bend.bts_elev_waspada }}</span>
-                                {% else %}<span style="color: red">Empty</span>{% endif %}
-                            </a>
-                        </td>
-                        <td class="text-right">
-                            <a data-url="/admin/bendungan/update"
-                                class="editable"
-                                data-name="vn1_panjang_saluran"
-                                data-type="number"
-                                data-title="{{ nama }}, Panjang Saluran"
-                                data-step=".01"
-                                data-pk="{{ bend.id }}">
-                                {% if bend.vn1_panjang_saluran %}
-                                <span style="color: blue">{{ bend.vn1_panjang_saluran }}</span>
-                                {% else %}<span style="color: red">Empty</span>{% endif %}
-                            </a>
-                        </td>
-                        <td class="text-right">
-                            <a data-url="/admin/bendungan/update"
-                                class="editable"
-                                data-name="vn1_q_limit"
-                                data-type="number"
-                                data-title="{{ nama }}, Batas Rembesan"
-                                data-step=".01"
-                                data-pk="{{ bend.id }}">
-                                {% if bend.vn1_q_limit %}
-                                <span style="color: blue">{{ bend.vn1_q_limit }}</span>
-                                {% else %}<span style="color: red">Empty</span>{% endif %}
-                            </a>
-                        </td>
+                        <td colspan="14" class="text-center"><b>{{ wil_sungai[wil_s] }}</b></td>
                     </tr>
+                    {% for i, bend in data.items() %}
+                        <tr>
+                            <td>{{ i }}</td>
+                            <td>{{ bend.name }}</td>
+                            <td>
+                                <a data-url="/admin/bendungan/update"
+                                    class="editable"
+                                    data-name="kab"
+                                    data-type="text"
+                                    data-title="{{ nama }}, Kab"
+                                    data-pk="{{ bend.id }}">
+                                    <span style="color: blue">{{ bend.kab }}</span>
+                                </a>
+                            </td>
+                            <td class="text-right">
+                                <a data-url="/admin/bendungan/update"
+                                    class="editable"
+                                    data-name="volume"
+                                    data-type="number"
+                                    data-title="{{ nama }}, Tampungan"
+                                    data-step=".01"
+                                    data-pk="{{ bend.id }}">
+                                    {% if bend.volume %}
+                                    <span style="color: blue">{{ bend.volume }}</span>
+                                    {% else %}<span style="color: red">Empty</span>{% endif %}
+                                </a>
+                            </td>
+                            <td class="text-right">
+                                <a data-url="/admin/bendungan/update"
+                                    class="editable"
+                                    data-name="lbi"
+                                    data-type="number"
+                                    data-title="{{ nama }}, Irigasi"
+                                    data-step=".01"
+                                    data-pk="{{ bend.id }}">
+                                    {% if bend.lbi %}
+                                    <span style="color: blue">{{ bend.lbi }}</span>
+                                    {% else %}<span style="color: red">Empty</span>{% endif %}
+                                </a>
+                            </td>
+                            <td class="text-right">
+                                <a data-url="/admin/bendungan/update"
+                                    class="editable"
+                                    data-name="elev_puncak"
+                                    data-type="number"
+                                    data-title="{{ nama }}, Elev Puncak"
+                                    data-step=".01"
+                                    data-pk="{{ bend.id }}">
+                                    {% if bend.elev_puncak %}
+                                    <span style="color: blue">{{ bend.elev_puncak }}</span>
+                                    {% else %}<span style="color: red">Empty</span>{% endif %}
+                                </a>
+                            </td>
+                            <td class="text-right">
+                                <a data-url="/admin/bendungan/update"
+                                    class="editable"
+                                    data-name="muka_air_max"
+                                    data-type="number"
+                                    data-title="{{ nama }}, MAB"
+                                    data-step=".01"
+                                    data-pk="{{ bend.id }}">
+                                    {% if bend.muka_air_max %}
+                                    <span style="color: blue">{{ bend.muka_air_max }}</span>
+                                    {% else %}<span style="color: red">Empty</span>{% endif %}
+                                </a>
+                            </td>
+                            <td class="text-right">
+                                <a data-url="/admin/bendungan/update"
+                                    class="editable"
+                                    data-name="muka_air_normal"
+                                    data-type="number"
+                                    data-title="{{ nama }}, MAN"
+                                    data-step=".01"
+                                    data-pk="{{ bend.id }}">
+                                    {% if bend.muka_air_normal %}
+                                    <span style="color: blue">{{ bend.muka_air_normal }}</span>
+                                    {% else %}<span style="color: red">Empty</span>{% endif %}
+                                </a>
+                            </td>
+                            <td class="text-right">
+                                <a data-url="/admin/bendungan/update"
+                                    class="editable"
+                                    data-name="muka_air_min"
+                                    data-type="number"
+                                    data-title="{{ nama }}, MAMin"
+                                    data-step=".01"
+                                    data-pk="{{ bend.id }}">
+                                    {% if bend.muka_air_min %}
+                                    <span style="color: blue">{{ bend.muka_air_min }}</span>
+                                    {% else %}<span style="color: red">Empty</span>{% endif %}
+                                </a>
+                            </td>
+                            <td class="text-right">
+                                <a data-url="/admin/bendungan/update"
+                                    class="editable"
+                                    data-name="bts_elev_awas"
+                                    data-type="number"
+                                    data-title="{{ nama }}, Elev Awas"
+                                    data-step=".01"
+                                    data-pk="{{ bend.id }}">
+                                    {% if bend.bts_elev_awas %}
+                                    <span style="color: blue">{{ bend.bts_elev_awas }}</span>
+                                    {% else %}<span style="color: red">Empty</span>{% endif %}
+                                </a>
+                            </td>
+                            <td class="text-right">
+                                <a data-url="/admin/bendungan/update"
+                                    class="editable"
+                                    data-name="bts_elev_siaga"
+                                    data-type="number"
+                                    data-title="{{ nama }}, Elev Siaga"
+                                    data-step=".01"
+                                    data-pk="{{ bend.id }}">
+                                    {% if bend.bts_elev_siaga %}
+                                    <span style="color: blue">{{ bend.bts_elev_siaga }}</span>
+                                    {% else %}<span style="color: red">Empty</span>{% endif %}
+                                </a>
+                            </td>
+                            <td class="text-right">
+                                <a data-url="/admin/bendungan/update"
+                                    class="editable"
+                                    data-name="bts_elev_waspada"
+                                    data-type="number"
+                                    data-title="{{ nama }}, Elev Waspada"
+                                    data-step=".01"
+                                    data-pk="{{ bend.id }}">
+                                    {% if bend.bts_elev_waspada %}
+                                    <span style="color: blue">{{ bend.bts_elev_waspada }}</span>
+                                    {% else %}<span style="color: red">Empty</span>{% endif %}
+                                </a>
+                            </td>
+                            <td class="text-right">
+                                <a data-url="/admin/bendungan/update"
+                                    class="editable"
+                                    data-name="vn1_panjang_saluran"
+                                    data-type="number"
+                                    data-title="{{ nama }}, Panjang Saluran"
+                                    data-step=".01"
+                                    data-pk="{{ bend.id }}">
+                                    {% if bend.vn1_panjang_saluran %}
+                                    <span style="color: blue">{{ bend.vn1_panjang_saluran }}</span>
+                                    {% else %}<span style="color: red">Empty</span>{% endif %}
+                                </a>
+                            </td>
+                            <td class="text-right">
+                                <a data-url="/admin/bendungan/update"
+                                    class="editable"
+                                    data-name="vn1_q_limit"
+                                    data-type="number"
+                                    data-title="{{ nama }}, Batas Rembesan"
+                                    data-step=".01"
+                                    data-pk="{{ bend.id }}">
+                                    {% if bend.vn1_q_limit %}
+                                    <span style="color: blue">{{ bend.vn1_q_limit }}</span>
+                                    {% else %}<span style="color: red">Empty</span>{% endif %}
+                                </a>
+                            </td>
+                        </tr>
+                    {% endfor %}
                 {% endfor %}
             </tbody>
         </table>

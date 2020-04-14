@@ -216,6 +216,7 @@ class Bendungan(BaseLog):
 
     petugas = relationship('Petugas', back_populates='bendungan')
     users = relationship('Users', back_populates='bendungan')
+    kegiatan = relationship('Kegiatan', back_populates='bendungan')
 
     @property
     def name(self):
@@ -261,6 +262,8 @@ class Kegiatan(BaseLog):
     uraian = db.Column(db.Text)
     foto_id = db.Column(db.Integer)
     bendungan_id = db.Column(db.Integer, db.ForeignKey('bendungan.id'), nullable=True)
+
+    bendungan = relationship('Bendungan', back_populates='kegiatan')
 
 
 class Rencana(BaseLog):
