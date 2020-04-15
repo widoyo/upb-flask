@@ -5,8 +5,8 @@ from flask_wtf.csrf import generate_csrf
 from sqlalchemy import and_, extract
 from sqlalchemy.exc import IntegrityError
 from upb_app.models import ManualDaily, ManualTma, ManualPiezo, ManualVnotch
-from upb_app.models import Bendungan
-from upb_app.forms import AddDaily, AddTma
+from upb_app.models import Bendungan, BendungAlert
+from upb_app.forms import AddDaily, AddTma, LaporBanjir
 from upb_app import app, db, admin_only, petugas_only, role_check
 import datetime
 import calendar
@@ -289,6 +289,33 @@ def operasi_daily_update():
         "value": val
     }
     return jsonify(result)
+
+
+@bp.route('/bendungan/operasi/<bendungan_id>/banjir', methods=['POST'])
+@login_required
+@role_check
+def banjir_add(bendungan_id):
+    form = LaporBanjir()
+    if form.validate_on_submit():
+        try:
+            tgl = form.tanggal.data
+            jam = form.jam.data.replace('.', ':')
+            sampling = datetime.datetime.strptime(f"{tgl} {jam}", "%Y-%m-%d %H:%M:%S")
+            alert = BendungAlert(
+                sampling=sampling,
+                tma=form.tma.data,
+                spillway_deb=form.spillway_deb.data,
+                bendungan_id=bendungan_id
+            )
+            db.session.add(alert)
+            db.session.commit()
+            flash('Laporan Banjir berhasil ditambahkan !', 'success')
+
+        except IntegrityError:
+            db.session.rollback()
+            flash('Data Laporan Banjir sudah ada, mohon update untuk mengubah', 'danger')
+
+    return redirect(url_for('admin.operasi_bendungan', bendungan_id=bendungan_id))
 
 
 @bp.route('/bendungan/operasi/<bendungan_id>/csv', methods=['GET'])

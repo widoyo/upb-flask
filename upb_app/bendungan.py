@@ -1,7 +1,7 @@
 from flask import Blueprint, render_template, request
 from upb_app.models import Bendungan, Petugas
 from upb_app.models import ManualDaily, ManualTma, ManualVnotch, ManualPiezo
-from upb_app.models import Kegiatan, Rencana, wil_sungai
+from upb_app.models import Kegiatan, Rencana, BendungAlert, wil_sungai
 from sqlalchemy import and_, desc, cast, Date, extract
 from pprint import pprint
 from pytz import timezone
@@ -47,6 +47,12 @@ def index():
                                         extract('day', ManualTma.sampling) == sampling.day),
                                     ManualTma.bendungan_id == w.id
                                     ).all()
+        alert = BendungAlert.query.filter(and_(
+                                        extract('month', BendungAlert.sampling) == sampling.month,
+                                        extract('year', BendungAlert.sampling) == sampling.year,
+                                        extract('day', BendungAlert.sampling) == sampling.day),
+                                    BendungAlert.bendungan_id == w.id
+                                    ).all()
 
         tma_d = {
             '6': None,
@@ -57,14 +63,21 @@ def index():
         flood = 0
         time = ""
         for t in tma:
-            print(t.sampling)
-            if t.tma and t.tma - w.muka_air_max > flood:
-                flood = t.tma - w.muka_air_max
-                time = t.local_cdate().strftime("%H:%M")
+            if t.tma:
+                spill = t.tma - w.muka_air_max
+                if spill > flood:
+                    flood = spill
+                    time = t.sampling.strftime("%H:%M")
             tma_d[f"{t.sampling.hour}"] = None if not t.tma else "{:,.2f}".format(t.tma)
 
+        for al in alert:
+            spill = al.tma - w.muka_air_max
+            if spill > flood:
+                flood = spill
+                time = al.sampling.strftime("%H:%M:%S")
+
         if round(flood, 2) > 0:
-            kondisi = f"<b>Overflow</b><br><span style='color: red'>+{round(flood, 3)}</span> ({time})"
+            kondisi = f"<b>Overflow</b><br><span style='color: red'>+{round(flood, 3)}</span> <small><i>{time}</i></small>"
 
         data[w.wil_sungai].append({
             'id': w.id,

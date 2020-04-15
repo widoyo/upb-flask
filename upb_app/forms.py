@@ -1,6 +1,6 @@
 from flask_wtf import FlaskForm
 from wtforms import StringField, PasswordField, DecimalField, DateField
-from wtforms import BooleanField, SubmitField, SelectField, RadioField, FileField
+from wtforms import BooleanField, SubmitField, SelectField, RadioField, FileField, TimeField
 from wtforms.validators import DataRequired, Optional
 from upb_app.models import Bendungan
 import datetime
@@ -100,34 +100,42 @@ class AddTma(FlaskForm):
     submit = SubmitField('Kirim')
 
 
+class LaporBanjir(FlaskForm):
+    tanggal = DateField("Tanggal", default=datetime.datetime.today())
+    jam = StringField("Jam")
+    tma = DecimalField('TMA')
+    spillway_deb = DecimalField('Spillway Debit', validators=[Optional()])
+    submit = SubmitField('Kirim')
+
+
 class AddVnotch(FlaskForm):
     sampling = DateField("Hari", default=datetime.datetime.today())
-    vn1_tma = DecimalField('Vnotch 1 TMA', default=0)
-    vn1_deb = DecimalField('Vnotch 1 Debit', default=0)
-    vn2_tma = DecimalField('Vnotch 2 TMA', default=0)
-    vn2_deb = DecimalField('Vnotch 2 Debit', default=0)
-    vn3_tma = DecimalField('Vnotch 3 TMA', default=0)
-    vn3_deb = DecimalField('Vnotch 3 Debit', default=0)
+    vn1_tma = DecimalField('Vnotch 1 TMA', validators=[Optional()])
+    vn1_deb = DecimalField('Vnotch 1 Debit', validators=[Optional()])
+    vn2_tma = DecimalField('Vnotch 2 TMA', validators=[Optional()])
+    vn2_deb = DecimalField('Vnotch 2 Debit', validators=[Optional()])
+    vn3_tma = DecimalField('Vnotch 3 TMA', validators=[Optional()])
+    vn3_deb = DecimalField('Vnotch 3 Debit', validators=[Optional()])
     submit = SubmitField('Kirim')
 
 
 class AddPiezo(FlaskForm):
     sampling = DateField("Hari", default=datetime.datetime.today())
-    p1a = DecimalField('Piezo 1A', default=0)
-    p1b = DecimalField('Piezo 1B', default=0)
-    p1c = DecimalField('Piezo 1C', default=0)
-    p2a = DecimalField('Piezo 2A', default=0)
-    p2b = DecimalField('Piezo 2B', default=0)
-    p2c = DecimalField('Piezo 2C', default=0)
-    p3a = DecimalField('Piezo 3A', default=0)
-    p3b = DecimalField('Piezo 3B', default=0)
-    p3c = DecimalField('Piezo 3C', default=0)
-    p4a = DecimalField('Piezo 4A', default=0)
-    p4b = DecimalField('Piezo 4B', default=0)
-    p4c = DecimalField('Piezo 4C', default=0)
-    p5a = DecimalField('Piezo 5A', default=0)
-    p5b = DecimalField('Piezo 5B', default=0)
-    p5c = DecimalField('Piezo 5C', default=0)
+    p1a = DecimalField('Piezo 1A', validators=[Optional()])
+    p1b = DecimalField('Piezo 1B', validators=[Optional()])
+    p1c = DecimalField('Piezo 1C', validators=[Optional()])
+    p2a = DecimalField('Piezo 2A', validators=[Optional()])
+    p2b = DecimalField('Piezo 2B', validators=[Optional()])
+    p2c = DecimalField('Piezo 2C', validators=[Optional()])
+    p3a = DecimalField('Piezo 3A', validators=[Optional()])
+    p3b = DecimalField('Piezo 3B', validators=[Optional()])
+    p3c = DecimalField('Piezo 3C', validators=[Optional()])
+    p4a = DecimalField('Piezo 4A', validators=[Optional()])
+    p4b = DecimalField('Piezo 4B', validators=[Optional()])
+    p4c = DecimalField('Piezo 4C', validators=[Optional()])
+    p5a = DecimalField('Piezo 5A', validators=[Optional()])
+    p5b = DecimalField('Piezo 5B', validators=[Optional()])
+    p5c = DecimalField('Piezo 5C', validators=[Optional()])
     submit = SubmitField('Kirim')
 
 

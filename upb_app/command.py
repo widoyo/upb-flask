@@ -17,7 +17,7 @@ from telegram import Bot
 
 from upb_app import app, db
 from upb_app.models import Bendungan, Embung, Rencana, Users, Asset
-from upb_app.models import Kerusakan, Kegiatan, Foto
+from upb_app.models import Kerusakan, Kegiatan, Foto, BendungAlert
 from upb_app.models import ManualDaily, ManualTma, ManualVnotch, ManualPiezo
 
 upbbendungan = ("upbuser", "upbsecret")
@@ -309,6 +309,7 @@ def import_master():
             insert_user(waduk_name, bend_id)
             insert_kegiatan(waduk_name, bend_id)
             insert_kerusakan(waduk_name, bend_id)
+            insert_alert(bend_id)
         except Exception as e:
             print(f"--Error Bendungan : {e}")
             db.session.rollback()
@@ -566,6 +567,42 @@ def insert_assets(waduk_name, waduk_id):
                 # print(f"Inserting asset {asset['id']}")
                 new_emb = Asset(**obj_dict)
                 db.session.add(new_emb)
+            db.session.commit()
+        except Exception as e:
+            print(f"--Error Asset : {e}")
+            db.session.rollback()
+
+
+def insert_alert(bend_id):
+    print("Importing Bendungan Alert")
+    mycursor.execute(f"SHOW columns FROM bendung_alert")
+    columns = [column[0] for column in mycursor.fetchall()]
+
+    kerusakan_query = """SELECT * FROM bendung_alert"""
+    mycursor.execute(kerusakan_query + f" WHERE bendungan_id='{bend_id}'")
+    all_alert = res2array(mycursor.fetchall(), columns)
+    for alert in all_alert:
+        try:
+            tanggal = alert['tanggall'].strftime("%Y-%m-%d")
+            jam = str(alert['jam'])
+            sampling = datetime.datetime.strptime(f"{tanggal} {jam}", "%Y-%m-%d %H:%M:%S")
+
+            obj_dict = {
+                "id": alert['id'],
+                "sampling": sampling,
+                "tma": alert['tmab'],
+                "spillway_deb": alert['spillwayb_q'],
+                "bendungan_id": bend_id
+            }
+            bend_alert = BendungAlert.query.get(alert['id'])
+            if bend_alert:
+                # print(f"Updating asset {asset['id']}")
+                for key, value in obj_dict.items():
+                    setattr(bend_alert, key, value)
+            else:
+                # print(f"Inserting asset {asset['id']}")
+                new_alert = BendungAlert(**obj_dict)
+                db.session.add(new_alert)
             db.session.commit()
         except Exception as e:
             print(f"--Error Asset : {e}")

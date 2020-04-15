@@ -138,6 +138,18 @@ class ManualPiezo(BaseLog):
                                           name='manualpiezo_bendungan_sampling'),)
 
 
+class BendungAlert(BaseLog):
+    '''TMA / Kondisi banjir Waduk'''
+    __tablename__ = 'bendung_alert'
+
+    id = db.Column(db.Integer, primary_key=True)
+    sampling = db.Column(db.DateTime, index=True)
+    tma = db.Column(db.Float)
+    spillway_deb = db.Column(db.Float, nullable=True)
+
+    bendungan_id = db.Column(db.Integer, db.ForeignKey('bendungan.id'), nullable=True)
+
+
 class Asset(BaseLog):
     __tablename__ = 'asset'
 

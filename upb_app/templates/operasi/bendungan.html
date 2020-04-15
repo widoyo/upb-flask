@@ -11,6 +11,7 @@
     }
 </style>
 <link href="{{ url_for('static', filename='css/bootstrap-editable.css') }}" rel="stylesheet"/>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/tempusdominus-bootstrap-4/5.0.1/css/tempusdominus-bootstrap-4.min.css" />
 {% endblock %}
 
 {% block content %}
@@ -32,7 +33,7 @@
                               <div class="form-group">
                                   <label class="form-text" for="sampling"><b>Tanggal</b></label>
                                   <input class="form-control" type="text" name="sampling" id="datepicker_pagi" hidden required value="{{ sampling.strftime('%Y-%m-%d') }}">
-                                  <p class="ml-2" id="sampling-pagi">{{ sampling.strftime('%d %B %Y') }}</p>
+                                  <p class="ml-2" id="sampling-pagi"><i class="fas fa-calendar"></i> {{ sampling.strftime('%d %B %Y') }}</p>
                                   <input class="form-control" type="text" name="jam" hidden required value="06">
                               </div>
                           </div>
@@ -114,7 +115,7 @@
                               <div class="form-group">
                                   <label class="form-text" for="datepicker-siang"><b>Tanggal</b></label>
                                   <input class="form-control" type="text" name="hari" id="datepicker-siang" hidden required value="{{ sampling.strftime('%Y-%m-%d') }}">
-                                  <p class="ml-2" id="sampling-siang">{{ sampling.strftime('%d %B %Y') }}</p>
+                                  <p class="ml-2" id="sampling-siang"><i class="fas fa-calendar"></i> {{ sampling.strftime('%d %B %Y') }}</p>
                                   <input class="form-control" type="text" name="jam" hidden required value="12">
                               </div>
                           </div>
@@ -151,7 +152,7 @@
                               <div class="form-group">
                                   <label class="form-text" for="datepicker-sore"><b>Tanggal</b></label>
                                   <input class="form-control" type="text" name="hari" id="datepicker-sore" hidden required value="{{ sampling.strftime('%Y-%m-%d') }}">
-                                  <p class="ml-2" id="sampling-sore">{{ sampling.strftime('%d %B %Y') }}</p>
+                                  <p class="ml-2" id="sampling-sore"><i class="fas fa-calendar"></i> {{ sampling.strftime('%d %B %Y') }}</p>
                                   <input class="form-control" type="text" name="jam" hidden required value="18">
                               </div>
                           </div>
@@ -310,6 +311,49 @@
                                   <button type="submit" name="submit" class="btn btn-primary my-1 mr-2">Kirim</button>
                                   <a data-toggle="collapse" href="#piezo" role="button" aria-expanded="false" aria-controls="piezo">batal</a>
                               </div>
+                          </div>
+                        </div>
+                    </form>
+                </div>
+                <div class="col-md-4">
+                    <h5>
+                      <a data-toggle="collapse" href="#banjir" role="button" aria-expanded="false" aria-controls="banjir">
+                        Kondisi Banjir <small><i class="fas fa-play"></i></small>
+                      </a>
+                    </h5>
+                    <hr>
+                    <form action="{{ url_for('admin.banjir_add', bendungan_id=bend_id) }}" method="POST">
+                        <input id="csrf_token" name="csrf_token" type="hidden" value="{{ csrf }}">
+                        <div class="collapse" id="banjir">
+                          <div class="form-group">
+                              <label class="form-text" for="sampling"><b>Tanggal</b></label>
+                              <input class="form-control" type="text" name="tanggal" id="datepicker-banjir" hidden required value="{{ sampling.strftime('%Y-%m-%d') }}">
+                              <p class="ml-2" id="sampling-banjir"><i class="fas fa-calendar"></i> {{ sampling.strftime('%d %B %Y') }}</p>
+                          </div>
+                          <div class="form-group">
+                              <label class="form-text" for="jam"><b>Jam</b></label>
+                              <div class="input-group date" id="timepicker" data-target-input="nearest">
+                                  <input type="text" class="form-control datetimepicker-input" name="timepicker" data-target="#timepicker"/>
+                                  <input type="text" name="jam" hidden>
+                                  <div class="input-group-append" data-target="#timepicker" data-toggle="datetimepicker">
+                                    <div class="input-group-text"><i class="fa fa-clock"></i></div>
+                                  </div>
+                              </div>
+                          </div>
+                          <div class="row">
+                              <div class="col-md-6 form-group">
+                                  <label class="form-text" for="tma-banjir"><b>TMA</b></label>
+                                  <input class="form-control" type="number" name="tma" id="tma-banjir" placeholder="contoh:123.45" step="0.01" aria-describedby="tmabanjirhelp">
+                                  <small id="tmabanjirhelp" class="form-text text-muted">(wajib diisi)</small>
+                              </div>
+                              <div class="col-md-6 form-group">
+                                  <label class="form-text" for="spillway_deb-banjir"><b>Debit Spillway</b></label>
+                                  <input class="form-control" type="number" name="spillway_deb" id="spillway_deb-banjir" placeholder="contoh:15.56" step="0.01">
+                              </div>
+                          </div>
+                          <div>
+                              <button type="submit" name="submit" class="btn btn-primary my-1 mr-2">Kirim</button>
+                              <a data-toggle="collapse" href="#banjir" role="button" aria-expanded="false" aria-controls="banjir">batal</a>
                           </div>
                         </div>
                     </form>
@@ -535,6 +579,7 @@
 <script src="{{ url_for('static', filename='js/id.js') }}"></script>
 <script src="{{ url_for('static', filename='js/bootstrap-editable.min.js') }}"></script>
 <script src="{{ url_for('static', filename='js/bootstrap-datepicker.min.js') }}"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/tempusdominus-bootstrap-4/5.0.1/js/tempusdominus-bootstrap-4.min.js"></script>
 <script>
     $(document).ready(function() {
         // resolve package confict
@@ -609,6 +654,29 @@
             $('#sampling-piezo').text(moment(date).format('DD MMMM YYYY'));
             $('#datepicker-piezo').attr('value', moment(date).format('YYYY-MM-DD'));
             $('.datepicker').hide();
+        });
+
+        $('#sampling-banjir').datepicker({
+            todayHighlight: true,
+            autoclose: true,
+            format:  'yyyy-mm-dd'
+        });
+        $('#sampling-banjir').on('changeDate', function () {
+            let date = $('#sampling-banjir').datepicker('getFormattedDate');
+            $('#sampling-banjir').text(moment(date).format('DD MMMM YYYY'));
+            $('#datepicker-banjir').attr('value', moment(date).format('YYYY-MM-DD'));
+            $('.datepicker').hide();
+        });
+        $(function () {
+            $('#timepicker').datetimepicker({
+                format: 'LTS',
+                locale: 'id'
+            });
+        });
+        $("#timepicker").on("change.datetimepicker", function (e) {
+            let time = e.date.format('LTS');
+            // console.log(time)
+            $('#jam').attr('value', time);
         });
 
         let tgls = document.querySelectorAll("#tgl");
