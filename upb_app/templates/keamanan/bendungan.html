@@ -43,14 +43,14 @@
                               <div class="col-md-6 form-group">
                                   <label class="form-text" for="vn1_tma"><b>Tinggi Muka Air</b></label>
                                   <input class="form-control" type="number"
-                                        name="vn1_tma" id="vn1_tma" value="0"
+                                        name="vn1_tma" id="vn1_tma" placeholder="contoh: 0.45"
                                         step="0.01" aria-describedby="vn1_tma_help">
                                   <small id="vn1_tma_help" class="form-text text-muted">cm</small>
                               </div>
                               <div class="col-md-6 form-group">
                                   <label class="form-text" for="vn1_deb"><b>Debit</b></label>
                                   <input class="form-control" type="number"
-                                        name="vn1_deb" id="vn1_deb" value="0"
+                                        name="vn1_deb" id="vn1_deb" placeholder="12.34"
                                         step="0.01" aria-describedby="vn1_deb_help">
                                   <small id="vn1_deb_help" class="form-text text-muted">L/det</small>
                               </div>
@@ -62,14 +62,14 @@
                               <div class="col-md-6 form-group">
                                   <label class="form-text" for="vn2_tma"><b>Tinggi Muka Air</b></label>
                                   <input class="form-control" type="number"
-                                        name="vn2_tma" id="vn2_tma" value="0"
+                                        name="vn2_tma" id="vn2_tma" placeholder="contoh: 0.45"
                                         step="0.01" aria-describedby="vn2_tma_help">
                                   <small id="vn2_tma_help" class="form-text text-muted">cm</small>
                               </div>
                               <div class="col-md-6 form-group">
                                   <label class="form-text" for="vn2_deb"><b>Debit</b></label>
                                   <input class="form-control" type="number"
-                                        name="vn2_deb" id="vn2_deb" value="0"
+                                        name="vn2_deb" id="vn2_deb" placeholder="12.34"
                                         step="0.01" aria-describedby="vn2_deb_help">
                                   <small id="vn2_deb_help" class="form-text text-muted">L/det</small>
                               </div>
@@ -81,14 +81,14 @@
                               <div class="col-md-6 form-group">
                                   <label class="form-text" for="vn3_tma"><b>Tinggi Muka Air</b></label>
                                   <input class="form-control" type="number"
-                                        name="vn3_tma" id="vn3_tma" value="0"
+                                        name="vn3_tma" id="vn3_tma" placeholder="contoh: 0.45"
                                         step="0.01" aria-describedby="vn3_tma_help">
                                   <small id="vn3_tma_help" class="form-text text-muted">cm</small>
                               </div>
                               <div class="col-md-6 form-group">
                                   <label class="form-text" for="vn3_deb"><b>Debit</b></label>
                                   <input class="form-control" type="number"
-                                        name="vn3_deb" id="vn3_deb" value="0"
+                                        name="vn3_deb" id="vn3_deb" placeholder="12.34"
                                         step="0.01" aria-describedby="vn3_deb_help">
                                   <small id="vn3_deb_help" class="form-text text-muted">L/det</small>
                               </div>
@@ -126,7 +126,7 @@
                                                   <b>{{ i }}{{ a|upper }}</b>
                                                   <input class="form-control"
                                                         type="number" name="p{{ i }}{{ a }}" id="p{{ i }}{{ a }}"
-                                                        value="0" step="0.01">
+                                                        placeholder="12.34" step="0.01">
                                               </div>
                                           {% endfor %}
                                       </div>
@@ -141,7 +141,7 @@
                                                   <b>{{ i }}{{ a|upper }}</b>
                                                   <input class="form-control"
                                                         type="number" name="p{{ i }}{{ a }}" id="p{{ i }}{{ a }}"
-                                                        value="0" step="0.01">
+                                                        placeholder="12.34" step="0.01">
                                               </div>
                                           {% endfor %}
                                       </div>
@@ -197,7 +197,7 @@
                                 data-title="Tinggi VNotch"
                                 data-step=".01"
                                 data-pk="{{ per.vnotch.id }}">
-                                {% if per.vnotch and per.vnotch.vn1_tma > 0 %}
+                                {% if per.vnotch and per.vnotch.vn1_tma %}
                                 <span style="color: blue">{{ per.vnotch.vn1_tma }}</span>
                                 {% else %}<span style="color: red">Empty</span>{% endif %}
                             </a>
@@ -209,7 +209,7 @@
                                 data-title="Tinggi VNotch"
                                 data-step=".01"
                                 data-pk="{{ per.vnotch.id }}">
-                                {% if per.vnotch and per.vnotch.vn2_tma > 0 %}
+                                {% if per.vnotch and per.vnotch.vn2_tma %}
                                 <span style="color: blue">{{ per.vnotch.vn2_tma }}</span>
                                 {% else %}<span style="color: red">Empty</span>{% endif %}
                             </a>
@@ -221,7 +221,7 @@
                                 data-title="Tinggi VNotch"
                                 data-step=".01"
                                 data-pk="{{ per.vnotch.id }}">
-                                {% if per.vnotch and per.vnotch.vn3_tma > 0 %}
+                                {% if per.vnotch and per.vnotch.vn3_tma %}
                                 <span style="color: blue">{{ per.vnotch.vn3_tma }}</span>
                                 {% else %}<span style="color: red">Empty</span>{% endif %}
                             </a>
@@ -234,7 +234,7 @@
                                 data-title="Debit VNotch"
                                 data-step=".01"
                                 data-pk="{{ per.vnotch.id }}">
-                                {% if per.vnotch and per.vnotch.vn1_deb > 0 %}
+                                {% if per.vnotch and per.vnotch.vn1_deb %}
                                 <span style="color: blue">{{ per.vnotch.vn1_deb }}</span>
                                 {% else %}<span style="color: red">Empty</span>{% endif %}
                             </a>
@@ -246,7 +246,7 @@
                                 data-title="Debit VNotch"
                                 data-step=".01"
                                 data-pk="{{ per.vnotch.id }}">
-                                {% if per.vnotch and per.vnotch.vn2_deb > 0 %}
+                                {% if per.vnotch and per.vnotch.vn2_deb %}
                                 <span style="color: blue">{{ per.vnotch.vn2_deb }}</span>
                                 {% else %}<span style="color: red">Empty</span>{% endif %}
                             </a>
@@ -258,7 +258,7 @@
                                 data-title="Debit VNotch"
                                 data-step=".01"
                                 data-pk="{{ per.vnotch.id }}">
-                                {% if per.vnotch and per.vnotch.vn3_deb > 0 %}
+                                {% if per.vnotch and per.vnotch.vn3_deb %}
                                 <span style="color: blue">{{ per.vnotch.vn3_deb }}</span>
                                 {% else %}<span style="color: red">Empty</span>{% endif %}
                             </a>
@@ -271,7 +271,7 @@
                                 data-title="Piezo 1A"
                                 data-step=".01"
                                 data-pk="{{ per.piezo.id }}">
-                                {% if per.piezo and per.piezo.p1a > 0 %}
+                                {% if per.piezo and per.piezo.p1a %}
                                 <span style="color: blue">{{ per.piezo.p1a }}</span>
                                 {% else %}<span style="color: red">Empty</span>{% endif %}
                             </a>
@@ -284,7 +284,7 @@
                                 data-title="Piezo 1B"
                                 data-step=".01"
                                 data-pk="{{ per.piezo.id }}">
-                                {% if per.piezo and per.piezo.p1b > 0 %}
+                                {% if per.piezo and per.piezo.p1b %}
                                 <span style="color: blue">{{ per.piezo.p1b }}</span>
                                 {% else %}<span style="color: red">Empty</span>{% endif %}
                             </a>
@@ -297,7 +297,7 @@
                                 data-title="Piezo 1C"
                                 data-step=".01"
                                 data-pk="{{ per.piezo.id }}">
-                                {% if per.piezo and per.piezo.p1c > 0 %}
+                                {% if per.piezo and per.piezo.p1c %}
                                 <span style="color: blue">{{ per.piezo.p1c }}</span>
                                 {% else %}<span style="color: red">Empty</span>{% endif %}
                             </a>
@@ -310,7 +310,7 @@
                                 data-title="Piezo 2A"
                                 data-step=".01"
                                 data-pk="{{ per.piezo.id }}">
-                                {% if per.piezo and per.piezo.p2a > 0 %}
+                                {% if per.piezo and per.piezo.p2a %}
                                 <span style="color: blue">{{ per.piezo.p2a }}</span>
                                 {% else %}<span style="color: red">Empty</span>{% endif %}
                             </a>
@@ -323,7 +323,7 @@
                                 data-title="Piezo 2B"
                                 data-step=".01"
                                 data-pk="{{ per.piezo.id }}">
-                                {% if per.piezo and per.piezo.p2b > 0 %}
+                                {% if per.piezo and per.piezo.p2b %}
                                 <span style="color: blue">{{ per.piezo.p2b }}</span>
                                 {% else %}<span style="color: red">Empty</span>{% endif %}
                             </a>
@@ -336,7 +336,7 @@
                                 data-title="Piezo 2C"
                                 data-step=".01"
                                 data-pk="{{ per.piezo.id }}">
-                                {% if per.piezo and per.piezo.p2c > 0 %}
+                                {% if per.piezo and per.piezo.p2c %}
                                 <span style="color: blue">{{ per.piezo.p2c }}</span>
                                 {% else %}<span style="color: red">Empty</span>{% endif %}
                             </a>
@@ -349,7 +349,7 @@
                                 data-title="Piezo 3A"
                                 data-step=".01"
                                 data-pk="{{ per.piezo.id }}">
-                                {% if per.piezo and per.piezo.p3a > 0 %}
+                                {% if per.piezo and per.piezo.p3a %}
                                 <span style="color: blue">{{ per.piezo.p3a }}</span>
                                 {% else %}<span style="color: red">Empty</span>{% endif %}
                             </a>
@@ -362,7 +362,7 @@
                                 data-title="Piezo 3B"
                                 data-step=".01"
                                 data-pk="{{ per.piezo.id }}">
-                                {% if per.piezo and per.piezo.p3b > 0 %}
+                                {% if per.piezo and per.piezo.p3b %}
                                 <span style="color: blue">{{ per.piezo.p3b }}</span>
                                 {% else %}<span style="color: red">Empty</span>{% endif %}
                             </a>
@@ -375,7 +375,7 @@
                                 data-title="Piezo 3C"
                                 data-step=".01"
                                 data-pk="{{ per.piezo.id }}">
-                                {% if per.piezo and per.piezo.p3c > 0 %}
+                                {% if per.piezo and per.piezo.p3c %}
                                 <span style="color: blue">{{ per.piezo.p3c }}</span>
                                 {% else %}<span style="color: red">Empty</span>{% endif %}
                             </a>
@@ -388,7 +388,7 @@
                                 data-title="Piezo 4A"
                                 data-step=".01"
                                 data-pk="{{ per.piezo.id }}">
-                                {% if per.piezo and per.piezo.p4a > 0 %}
+                                {% if per.piezo and per.piezo.p4a %}
                                 <span style="color: blue">{{ per.piezo.p4a }}</span>
                                 {% else %}<span style="color: red">Empty</span>{% endif %}
                             </a>
@@ -401,7 +401,7 @@
                                 data-title="Piezo 4B"
                                 data-step=".01"
                                 data-pk="{{ per.piezo.id }}">
-                                {% if per.piezo and per.piezo.p4b > 0 %}
+                                {% if per.piezo and per.piezo.p4b %}
                                 <span style="color: blue">{{ per.piezo.p4b }}</span>
                                 {% else %}<span style="color: red">Empty</span>{% endif %}
                             </a>
@@ -414,7 +414,7 @@
                                 data-title="Piezo 4C"
                                 data-step=".01"
                                 data-pk="{{ per.piezo.id }}">
-                                {% if per.piezo and per.piezo.p4c > 0 %}
+                                {% if per.piezo and per.piezo.p4c %}
                                 <span style="color: blue">{{ per.piezo.p4c }}</span>
                                 {% else %}<span style="color: red">Empty</span>{% endif %}
                             </a>
@@ -427,7 +427,7 @@
                                 data-title="Piezo 1A"
                                 data-step=".01"
                                 data-pk="{{ per.piezo.id }}">
-                                {% if per.piezo and per.piezo.p5a > 0 %}
+                                {% if per.piezo and per.piezo.p5a %}
                                 <span style="color: blue">{{ per.piezo.p5a }}</span>
                                 {% else %}<span style="color: red">Empty</span>{% endif %}
                             </a>
@@ -440,7 +440,7 @@
                                 data-title="Piezo 1B"
                                 data-step=".01"
                                 data-pk="{{ per.piezo.id }}">
-                                {% if per.piezo and per.piezo.p5b > 0 %}
+                                {% if per.piezo and per.piezo.p5b %}
                                 <span style="color: blue">{{ per.piezo.p5b }}</span>
                                 {% else %}<span style="color: red">Empty</span>{% endif %}
                             </a>
@@ -453,7 +453,7 @@
                                 data-title="Piezo 1C"
                                 data-step=".01"
                                 data-pk="{{ per.piezo.id }}">
-                                {% if per.piezo and per.piezo.p5c > 0 %}
+                                {% if per.piezo and per.piezo.p5c %}
                                 <span style="color: blue">{{ per.piezo.p15c }}</span>
                                 {% else %}<span style="color: red">Empty</span>{% endif %}
                             </a>

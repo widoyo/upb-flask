@@ -177,20 +177,13 @@ def operasi_tma_add(bendungan_id):
     bend = Bendungan.query.get(bendungan_id)
     form = AddTma()
     if form.validate_on_submit():
-        try:
-            insert_tma(
-                bend_id=bend.id,
-                hari=form.hari.data,
-                jam=form.jam.data,
-                tma=form.tma.data,
-                vol=form.vol.data
-            )
-            flash('TMA berhasil ditambahkan !', 'success')
-            return redirect(url_for('admin.operasi_bendungan', bendungan_id=bend.id))
-
-        except IntegrityError:
-            db.session.rollback()
-            flash('Data TMA sudah ada, mohon update untuk mengubah', 'danger')
+        insert_tma(
+            bend_id=bend.id,
+            hari=form.hari.data,
+            jam=form.jam.data,
+            tma=form.tma.data,
+            vol=form.vol.data
+        )
 
     return redirect(url_for('admin.operasi_bendungan', bendungan_id=bend.id))
 
@@ -198,14 +191,29 @@ def operasi_tma_add(bendungan_id):
 def insert_tma(bend_id, hari, jam, tma, vol):
     s_string = f"{hari} {jam}:00:00"
     sampling = datetime.datetime.strptime(s_string, "%Y-%m-%d %H:%M:%S")
-    tma = ManualTma(
-        sampling=sampling,
-        tma=tma,
-        vol=vol,
-        bendungan_id=bend_id
-    )
-    db.session.add(tma)
-    db.session.commit()
+    try:
+        obj_dict = {
+            "sampling": sampling,
+            "tma": tma,
+            "vol": vol,
+            "bendungan_id": bend_id
+        }
+        row = ManualTma.query.filter(
+                                    ManualTma.sampling == obj_dict['sampling'],
+                                    ManualTma.bendungan_id == obj_dict['bendungan_id']
+                                ).first()
+        if row:
+            for key, value in obj_dict.items():
+                setattr(row, key, value)
+        else:
+            tma = ManualTma(**obj_dict)
+            db.session.add(tma)
+        db.session.commit()
+        flash('TMA berhasil ditambahkan !', 'success')
+    except Exception as e:
+        db.session.rollback()
+        print(f"TMA Manual Error : {e.__class__.__name__}")
+        flash(f"Terjadi kesalahan saat mencoba menyimpan data", 'danger')
 
 
 @bp.route('/bendungan/operasi/tma/update', methods=['POST'])  # @login_required
@@ -234,41 +242,44 @@ def operasi_daily_add(bendungan_id):
     form = AddDaily()
     if form.validate_on_submit():
         # insert tma
-        try:
-            insert_tma(
-                bend_id=bend.id,
-                hari=form.sampling.data,
-                jam=form.jam.data,
-                tma=form.tma.data,
-                vol=form.vol.data
-            )
-            flash('TMA berhasil ditambahkan !', 'success')
-
-        except IntegrityError:
-            db.session.rollback()
-            flash('Data TMA sudah ada, mohon update untuk mengubah', 'danger')
-
+        insert_tma(
+            bend_id=bend.id,
+            hari=form.sampling.data,
+            jam=form.jam.data,
+            tma=form.tma.data,
+            vol=form.vol.data
+        )
         # insert daily
         try:
-            daily = ManualDaily(
-                sampling=form.sampling.data,
-                ch=form.curahhujan.data,
-                inflow_deb=form.inflow_deb.data,
-                inflow_vol=form.inflow_vol.data,
-                outflow_deb=form.outflow_deb.data,
-                outflow_vol=form.outflow_vol.data,
-                spillway_deb=form.spillway_deb.data,
-                spillway_vol=form.spillway_vol.data,
-                bendungan_id=bend.id
-            )
-            db.session.add(daily)
+            obj_dict = {
+                "sampling": form.sampling.data,
+                "ch": form.curahhujan.data,
+                "inflow_deb": form.inflow_deb.data,
+                "inflow_vol": form.inflow_vol.data,
+                "outflow_deb": form.outflow_deb.data,
+                "outflow_vol": form.outflow_vol.data,
+                "spillway_deb": form.spillway_deb.data,
+                "spillway_vol": form.spillway_vol.data,
+                "bendungan_id": bend.id
+            }
+            row = ManualDaily.query.filter(
+                                        ManualDaily.sampling == obj_dict['sampling'],
+                                        ManualDaily.bendungan_id == obj_dict['bendungan_id']
+                                    ).first()
+            if row:
+                for key, value in obj_dict.items():
+                    setattr(row, key, value)
+            else:
+                daily = ManualDaily(**obj_dict)
+                db.session.add(daily)
             db.session.commit()
             flash('Data Harian berhasil ditambahkan !', 'success')
             return redirect(url_for('admin.operasi_bendungan', bendungan_id=bend.id))
 
-        except IntegrityError:
+        except Exception as e:
             db.session.rollback()
-            flash('Data sudah ada, mohon update untuk mengubah', 'danger')
+            print(f"Daily Manual Error : {e.__class__.__name__}")
+            flash(f"Terjadi kesalahan saat mencoba menyimpan data", 'danger')
 
     return redirect(url_for('admin.operasi_bendungan', bendungan_id=bend.id))
 

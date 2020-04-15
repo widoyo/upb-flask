@@ -154,7 +154,6 @@ def kegiatan_add(bendungan_id):
             db.session.commit()
 
             flash('Tambah Kegiatan berhasil !', 'success')
-            return redirect(url_for('admin.kegiatan_bendungan', bendungan_id=bend.id))
         except Exception as e:
             db.session.rollback()
             print(e)

@@ -1,6 +1,6 @@
 {% extends 'master/base_adm.html' %}
 
-{% set title = "Operasi" %}
+{% set title = "Kegiatan" %}
 
 {% block css %}
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-datepicker/1.9.0/css/bootstrap-datepicker.css">
@@ -159,7 +159,7 @@
 <script src="{{ url_for('static', filename='js/id.js') }}"></script>
 <script src="{{ url_for('static', filename='js/bootstrap-editable.min.js') }}"></script>
 <script src="{{ url_for('static', filename='js/bootstrap-datepicker.min.js') }}"></script>
-<script type="text/javascript" src="{{ url_for('static', filename='js/MinifyJpegAsync.js') }}"></script>
+<script src="{{ url_for('static', filename='js/MinifyJpegAsync.js') }}"></script>
 <script>
     $(document).ready(function() {
         // resolve package confict
