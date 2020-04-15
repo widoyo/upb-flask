@@ -54,7 +54,12 @@ def mysql_test(sampling):
 @app.cli.command()
 def import_manual_data():
     waduk_daily = custom_query(mycursor, 'waduk_daily', limit=None)
+    print(f"Importing Manual Data")
+    count = 0
     for daily in waduk_daily:
+        count += 1
+        if count % 1000 == 0:
+            print(f"At {count} Data")
         # Manual Daily
         try:
             obj_dict = {
@@ -62,6 +67,8 @@ def import_manual_data():
                 "ch": daily['curahhujan'],
                 "inflow_vol": daily['inflow_v'],
                 "inflow_deb": daily['inflow_q'],
+                "intake_vol": daily['intake_v'],
+                "intake_deb": daily['intake_q'],
                 "outflow_vol": daily['outflow_v'],
                 "outflow_deb": daily['outflow_q'],
                 "spillway_vol": daily['spillway_v'],
@@ -73,16 +80,16 @@ def import_manual_data():
                                         ManualDaily.bendungan_id == daily['pos_id']
                                     ).first()
             if md:
-                print(f"Updating manual daily {daily['waktu']} for id {daily['pos_id']}")
+                # print(f"Updating manual daily {daily['waktu']} for id {daily['pos_id']}")
                 for key, value in obj_dict.items():
                     setattr(md, key, value)
             else:
-                print(f"Inserting manual daily {daily['waktu']} for id {daily['pos_id']}")
+                # print(f"Inserting manual daily {daily['waktu']} for id {daily['pos_id']}")
                 manual_daily = ManualDaily(**obj_dict)
                 db.session.add(manual_daily)
             db.session.commit()
         except Exception as e:
-            print(f"-- Error Daily : {type(e)}")
+            print(f"-- Error Daily : {e}")
             db.session.rollback()
         # TMA
         try:
@@ -98,11 +105,11 @@ def import_manual_data():
                                         ManualTma.bendungan_id == daily['pos_id']
                                     ).first()
             if tma6:
-                print(f"Updating tma6 {daily['waktu'].replace(hour=6)} for id {daily['pos_id']}")
+                # print(f"Updating tma6 {daily['waktu'].replace(hour=6)} for id {daily['pos_id']}")
                 for key, value in obj_dict.items():
                     setattr(tma6, key, value)
             else:
-                print(f"Inserting tma6 {daily['waktu'].replace(hour=6)} for id {daily['pos_id']}")
+                # print(f"Inserting tma6 {daily['waktu'].replace(hour=6)} for id {daily['pos_id']}")
                 manual_tma6 = ManualTma(**obj_dict)
                 db.session.add(manual_tma6)
             db.session.commit()
@@ -122,11 +129,11 @@ def import_manual_data():
                                         ManualTma.bendungan_id == daily['pos_id']
                                     ).first()
             if tma12:
-                print(f"Updating tma12 {daily['waktu'].replace(hour=12)} for id {daily['pos_id']}")
+                # print(f"Updating tma12 {daily['waktu'].replace(hour=12)} for id {daily['pos_id']}")
                 for key, value in obj_dict.items():
                     setattr(tma12, key, value)
             else:
-                print(f"Inserting tma12 {daily['waktu'].replace(hour=12)} for id {daily['pos_id']}")
+                # print(f"Inserting tma12 {daily['waktu'].replace(hour=12)} for id {daily['pos_id']}")
                 manual_tma12 = ManualTma(**obj_dict)
                 db.session.add(manual_tma12)
             db.session.commit()
@@ -146,11 +153,11 @@ def import_manual_data():
                                         ManualTma.bendungan_id == daily['pos_id']
                                     ).first()
             if tma18:
-                print(f"Updating tma18 {daily['waktu'].replace(hour=18)} for id {daily['pos_id']}")
+                # print(f"Updating tma18 {daily['waktu'].replace(hour=18)} for id {daily['pos_id']}")
                 for key, value in obj_dict.items():
                     setattr(tma18, key, value)
             else:
-                print(f"Inserting tma18 {daily['waktu'].replace(hour=18)} for id {daily['pos_id']}")
+                # print(f"Inserting tma18 {daily['waktu'].replace(hour=18)} for id {daily['pos_id']}")
                 manual_tma18 = ManualTma(**obj_dict)
                 db.session.add(manual_tma18)
             db.session.commit()
@@ -176,11 +183,11 @@ def import_manual_data():
                                         ManualVnotch.bendungan_id == daily['pos_id']
                                     ).first()
             if vn:
-                print(f"Updating manual vnotch {daily['waktu']} for id {daily['pos_id']}")
+                # print(f"Updating manual vnotch {daily['waktu']} for id {daily['pos_id']}")
                 for key, value in obj_dict.items():
                     setattr(vn, key, value)
             else:
-                print(f"Inserting manual vnotch {daily['waktu']} for id {daily['pos_id']}")
+                # print(f"Inserting manual vnotch {daily['waktu']} for id {daily['pos_id']}")
                 manual_vnotch = ManualVnotch(**obj_dict)
                 db.session.add(manual_vnotch)
             db.session.commit()
@@ -213,11 +220,11 @@ def import_manual_data():
                                         ManualPiezo.bendungan_id == daily['pos_id']
                                     ).first()
             if pz:
-                print(f"Updating manual piezo {daily['waktu']} for id {daily['pos_id']}")
+                # print(f"Updating manual piezo {daily['waktu']} for id {daily['pos_id']}")
                 for key, value in obj_dict.items():
                     setattr(pz, key, value)
             else:
-                print(f"Inserting manual piezo {daily['waktu']} for id {daily['pos_id']}")
+                # print(f"Inserting manual piezo {daily['waktu']} for id {daily['pos_id']}")
                 manual_piezo = ManualPiezo(**obj_dict)
                 db.session.add(manual_piezo)
             db.session.commit()
@@ -245,11 +252,11 @@ def import_manual_data():
                                     Rencana.bendungan_id == daily['pos_id']
                                 ).first()
             if rc:
-                print(f"Updating rencana {daily['waktu']} for id {daily['pos_id']}")
+                # print(f"Updating rencana {daily['waktu']} for id {daily['pos_id']}")
                 for key, value in obj_dict.items():
                     setattr(rc, key, value)
             else:
-                print(f"Inserting rencana {daily['waktu']} for id {daily['pos_id']}")
+                # print(f"Inserting rencana {daily['waktu']} for id {daily['pos_id']}")
                 rencana = Rencana(**obj_dict)
                 db.session.add(rencana)
             db.session.commit()

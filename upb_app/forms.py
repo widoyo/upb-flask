@@ -108,6 +108,13 @@ class LaporBanjir(FlaskForm):
     submit = SubmitField('Kirim')
 
 
+class CHTerkini(FlaskForm):
+    tanggal = DateField("Tanggal", default=datetime.datetime.today())
+    jam = StringField("Jam")
+    ch = DecimalField('Curah Hujan')
+    submit = SubmitField('Kirim')
+
+
 class AddVnotch(FlaskForm):
     sampling = DateField("Hari", default=datetime.datetime.today())
     vn1_tma = DecimalField('Vnotch 1 TMA', validators=[Optional()])

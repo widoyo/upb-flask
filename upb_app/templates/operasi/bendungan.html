@@ -73,12 +73,12 @@
                           <div class="row">
                               <div class="col-md-6 form-group">
                                   <label class="form-text" for="out-deb-pagi"><b>Intake Debit</b></label>
-                                  <input class="form-control" type="number" name="outflow_deb" id="out-deb-pagi" required value="0" step="1" aria-describedby="out-debpagihelp">
+                                  <input class="form-control" type="number" name="intake_deb" id="out-deb-pagi" required value="0" step="1" aria-describedby="out-debpagihelp">
                                   <small id="out-debpagihelp" class="form-text text-muted">m<sup>3</sup>/detik</small>
                               </div>
                               <div class="col-md-6 form-group">
                                   <label class="form-text" for="out-vol-pagi"><b>Intake Volume</b></label>
-                                  <input class="form-control" type="number" name="outflow_vol" id="out-vol-pagi" required value="0" step="1" aria-describedby="out-volpagihelp">
+                                  <input class="form-control" type="number" name="intake_vol" id="out-vol-pagi" required value="0" step="1" aria-describedby="out-volpagihelp">
                                   <small id="out-volpagihelp" class="form-text text-muted">m<sup>3</sup></small>
                               </div>
                           </div>
@@ -518,26 +518,26 @@
                         <td class="text-right">
                             <a data-url="{{ url_for('admin.operasi_daily_update') }}"
                                 class="editable"
-                                data-name="outflow_deb"
+                                data-name="intake_deb"
                                 data-type="number"
                                 data-title="Q Intake"
                                 data-step=".01"
                                 data-pk="{{ per.daily.id }}">
                                 {% if per.daily %}
-                                <span style="color: blue">{{ per.daily.outflow_deb }}</span>
+                                <span style="color: blue">{{ per.daily.intake_deb }}</span>
                                 {% else %}<span style="color: red">Empty</span>{% endif %}
                             </a>
                         </td>
                         <td class="text-right">
                             <a data-url="{{ url_for('admin.operasi_daily_update') }}"
                                 class="editable"
-                                data-name="outflow_vol"
+                                data-name="intake_vol"
                                 data-type="number"
                                 data-title="V Intake"
                                 data-step=".01"
                                 data-pk="{{ per.daily.id }}">
                                 {% if per.daily %}
-                                <span style="color: blue">{{ per.daily.outflow_vol }}</span>
+                                <span style="color: blue">{{ per.daily.intake_vol }}</span>
                                 {% else %}<span style="color: red">Empty</span>{% endif %}
                             </a>
                         </td>

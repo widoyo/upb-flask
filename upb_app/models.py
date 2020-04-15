@@ -66,6 +66,8 @@ class ManualDaily(BaseLog):
     ch = db.Column(db.Float)
     inflow_vol = db.Column(db.Float)
     inflow_deb = db.Column(db.Float)
+    intake_vol = db.Column(db.Float, nullable=True)
+    intake_deb = db.Column(db.Float, nullable=True)
     outflow_vol = db.Column(db.Float, nullable=True)
     outflow_deb = db.Column(db.Float, nullable=True)
     spillway_vol = db.Column(db.Float, nullable=True)
@@ -146,6 +148,17 @@ class BendungAlert(BaseLog):
     sampling = db.Column(db.DateTime, index=True)
     tma = db.Column(db.Float)
     spillway_deb = db.Column(db.Float, nullable=True)
+
+    bendungan_id = db.Column(db.Integer, db.ForeignKey('bendungan.id'), nullable=True)
+
+
+class CurahHujanTerkini(BaseLog):
+    ''' CH Terkini '''
+    __tablename__ = 'curahhujan_terkini'
+
+    id = db.Column(db.Integer, primary_key=True)
+    sampling = db.Column(db.DateTime, index=True)
+    ch = db.Column(db.Float)
 
     bendungan_id = db.Column(db.Integer, db.ForeignKey('bendungan.id'), nullable=True)
 

@@ -6,7 +6,7 @@ from sqlalchemy import and_, extract
 from sqlalchemy.exc import IntegrityError
 from upb_app.models import ManualDaily, ManualTma, ManualPiezo, ManualVnotch
 from upb_app.models import Bendungan, BendungAlert
-from upb_app.forms import AddDaily, AddTma, LaporBanjir
+from upb_app.forms import AddDaily, AddTma, LaporBanjir, CHTerkini
 from upb_app import app, db, admin_only, petugas_only, role_check
 import datetime
 import calendar
@@ -100,7 +100,7 @@ def operasi_harian():
             'tma12': tma_d['12'],
             'tma18': tma_d['18'],
             'inflow_deb': None if not daily else daily.inflow_deb,
-            'outflow_deb': None if not daily else daily.outflow_deb,
+            'intake_deb': None if not daily else daily.intake_deb,
             'spillway_deb': None if not daily else daily.spillway_deb,
             'curahhujan': None if not daily else daily.ch,
             'tinggi': None if not vnotch else vnotch.vn1_tma,
@@ -256,8 +256,8 @@ def operasi_daily_add(bendungan_id):
                 "ch": form.curahhujan.data,
                 "inflow_deb": form.inflow_deb.data,
                 "inflow_vol": form.inflow_vol.data,
-                "outflow_deb": form.outflow_deb.data,
-                "outflow_vol": form.outflow_vol.data,
+                "intake_deb": form.intake_deb.data,
+                "intake_vol": form.intake_vol.data,
                 "spillway_deb": form.spillway_deb.data,
                 "spillway_vol": form.spillway_vol.data,
                 "bendungan_id": bend.id
@@ -322,9 +322,35 @@ def banjir_add(bendungan_id):
             db.session.commit()
             flash('Laporan Banjir berhasil ditambahkan !', 'success')
 
-        except IntegrityError:
+        except Exception as e:
             db.session.rollback()
-            flash('Data Laporan Banjir sudah ada, mohon update untuk mengubah', 'danger')
+            flash("Terjadi Error", 'danger')
+
+    return redirect(url_for('admin.operasi_bendungan', bendungan_id=bendungan_id))
+
+
+@bp.route('/bendungan/operasi/<bendungan_id>/curahhujan', methods=['POST'])
+@login_required
+@role_check
+def ch_terkini(bendungan_id):
+    form = CHTerkini()
+    if form.validate_on_submit():
+        try:
+            tgl = form.tanggal.data
+            jam = form.jam.data.replace('.', ':')
+            sampling = datetime.datetime.strptime(f"{tgl} {jam}", "%Y-%m-%d %H:%M:%S")
+            alert = BendungAlert(
+                sampling=sampling,
+                ch=form.ch.data,
+                bendungan_id=bendungan_id
+            )
+            db.session.add(alert)
+            db.session.commit()
+            flash('Curah Hujan Terkini berhasil ditambahkan !', 'success')
+
+        except Exception as e:
+            db.session.rollback()
+            flash("Terjadi Error", 'danger')
 
     return redirect(url_for('admin.operasi_bendungan', bendungan_id=bendungan_id))
 
@@ -414,8 +440,8 @@ def operasi_csv(bendungan_id):
             data['tma']['18'].vol if data['tma']['18'] else None,
             data['daily'].inflow_deb if data['daily'] else None,
             data['daily'].inflow_vol if data['daily'] else None,
-            data['daily'].outflow_deb if data['daily'] else None,
-            data['daily'].outflow_vol if data['daily'] else None,
+            data['daily'].intake_deb if data['daily'] else None,
+            data['daily'].intake_vol if data['daily'] else None,
             data['daily'].outflow_deb if data['daily'] else None,
             data['daily'].outflow_vol if data['daily'] else None,
             data['daily'].spillway_deb if data['daily'] else None,

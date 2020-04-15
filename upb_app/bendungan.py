@@ -64,20 +64,20 @@ def index():
         time = ""
         for t in tma:
             if t.tma:
-                spill = t.tma - w.muka_air_max
+                spill = t.tma - w.muka_air_normal
                 if spill > flood:
                     flood = spill
-                    time = t.sampling.strftime("%H:%M")
+                    time = t.sampling.strftime("%H:%M:%S")
             tma_d[f"{t.sampling.hour}"] = None if not t.tma else "{:,.2f}".format(t.tma)
 
         for al in alert:
-            spill = al.tma - w.muka_air_max
+            spill = al.tma - w.muka_air_normal
             if spill > flood:
                 flood = spill
                 time = al.sampling.strftime("%H:%M:%S")
 
         if round(flood, 2) > 0:
-            kondisi = f"<b>Overflow</b><br><span style='color: red'>+{round(flood, 3)}</span> <small><i>{time}</i></small>"
+            kondisi = f"<b>Normal</b><br><span style='color: red'>+{round(flood, 3)}</span> <small><i>{time}</i></small>"
 
         data[w.wil_sungai].append({
             'id': w.id,
@@ -87,13 +87,13 @@ def index():
             'volume': "{:,.2f}".format(w.volume/1000000),
             'lbi': "{:,.2f}".format(w.lbi),
             'elev_puncak': "{:,.2f}".format(w.elev_puncak),
-            'muka_air_max': "{:,.2f}".format(w.muka_air_max),
+            'muka_air_normal': "{:,.2f}".format(w.muka_air_normal),
             'muka_air_min': "{:,.2f}".format(w.muka_air_min),
             'tma6': tma_d['6'],
             'tma12': tma_d['12'],
             'tma18': tma_d['18'],
-            'outflow_vol': None if not daily else daily.outflow_vol,
-            'outflow_deb': None if not daily else daily.outflow_deb,
+            'intake_vol': None if not daily else daily.intake_vol,
+            'intake_deb': None if not daily else daily.intake_deb,
             'spillway_deb': None if not daily else daily.spillway_deb,
             'curahhujan': None if not daily else daily.ch,
             'debit': None if not vnotch else vnotch.vn1_deb,
