@@ -2,7 +2,8 @@ from flask import Blueprint, request, render_template, redirect, flash
 from flask import Response, url_for, jsonify
 from flask_login import login_required
 from sqlalchemy import and_
-from upb_app.models import Bendungan, Rencana
+from upb_app.helper import to_date
+from upb_app.models import Bendungan, Rencana, wil_sungai
 from upb_app import db, admin_only
 import datetime
 import calendar
@@ -26,32 +27,57 @@ def rtow():
     rencana = Rencana.query.filter(
                             and_(
                                 Rencana.sampling >= start,
-                                Rencana.sampling <= end)
+                                Rencana.sampling <= end),
                             ).order_by(Rencana.sampling).all()
-
-    rtow = {}
-    date_list = []
+    rencana_s = {}
     for bend in bends:
-        rtow[bend.id] = {
-            "bend": bend,
-            "data": {}
-        }
+        rencana_s[bend.id] = []
     for ren in rencana:
-        index = ren.sampling.strftime('%d %b %y')
-        if sampling.year <= 2018 and ren.sampling.day in [1, 16]:
-            rtow[ren.bendungan_id]['data'][index] = ren
-            if index not in date_list:
-                date_list.append(index)
-        elif sampling.year >= 2019:
-            if ren.sampling.day == 15 or ren.sampling.day == calendar.monthrange(ren.sampling.year, ren.sampling.month)[1]:
-                rtow[ren.bendungan_id]['data'][index] = ren
-                if index not in date_list:
-                    date_list.append(index)
+        rencana_s[ren.bendungan_id].append(ren)
+
+    rtow = {
+        '1': {
+            'date_list': [],
+            'data': {}
+        },
+        '2': {
+            'date_list': [],
+            'data': {}
+        },
+        '3': {
+            'date_list': [],
+            'data': {}
+        }
+    }
+    for bend in bends:
+        temp = {}
+        for ren in rencana_s[bend.id]:
+            index = ren.sampling.strftime('%d %b %y')
+            last_day = calendar.monthrange(ren.sampling.year, ren.sampling.month)[1]
+
+            if sampling.year >= 2020 and bend.wil_sungai == '3':
+                if ren.sampling.day in [10, 20, last_day]:
+                    temp[index] = ren
+                    if index not in rtow[bend.wil_sungai]['date_list']:
+                        rtow[bend.wil_sungai]['date_list'].append(index)
+            elif sampling.year >= 2019 and ren.sampling.day in [15, last_day]:
+                temp[index] = ren
+                if index not in rtow[bend.wil_sungai]['date_list']:
+                    rtow[bend.wil_sungai]['date_list'].append(index)
+            elif sampling.year <= 2018 and ren.sampling.day in [1, 16]:
+                temp[index] = ren
+                if index not in rtow[bend.wil_sungai]['date_list']:
+                    rtow[bend.wil_sungai]['date_list'].append(index)
+
+        rtow[bend.wil_sungai]['data'][bend.id] = {
+            "bend": bend,
+            "data": temp
+        }
 
     return render_template('rencana/index.html',
                             sampling=sampling,
                             rtow=rtow,
-                            date_list=date_list)
+                            wil_sungai=wil_sungai)
 
 
 @bp.route('/bendungan/rtow/<bendungan_id>/export', methods=['GET'])
@@ -112,9 +138,17 @@ def rtow_imports(bendungan_id):
         upload = request.files['upload'].read().decode("utf-8")
         print(upload)
         raw = upload.split('\r\n')
+        seps = "\t_;_,_|".split('_')
+        sep = None
+
+        for s in seps:
+            length = len(raw[1].split(s))
+            if length > 5:
+                sep = s
+
         data = []
         for r in raw[:len(raw)-1]:
-            data.append(r.split('\t'))
+            data.append(r.split(sep))
 
         if not data:
             flash(f"File Kosong", 'danger')
@@ -145,9 +179,9 @@ def rtow_update():
 
 
 def rtow_upload(data, bend_id):
+    columns = [col.replace('q', 'deb') for col in data[1]]
     for row in data[2:]:
-        columns = ['sampling', 'po_tma', 'po_vol', 'po_outflow_deb', 'po_inflow_deb', 'po_bona', 'po_bonb', 'vol_bona', 'vol_bonb']
-        sampling = datetime.datetime.strptime(row[0], "%Y-%m-%d")
+        sampling = to_date(row[0])
         rencana = Rencana.query.filter(
                                     Rencana.sampling == sampling,
                                     Rencana.bendungan_id == bend_id
@@ -158,7 +192,7 @@ def rtow_upload(data, bend_id):
 
         for i, col in enumerate(columns[1:]):
             if row[i+1]:
-                setattr(rencana, col, float(row[i+1]))
+                setattr(rencana, col, float(row[i+1].replace(',', '.')))
 
     try:
         db.session.commit()

@@ -164,11 +164,16 @@ def operasi(lokasi_id):
     }
     i = 0
     for rt in rtow:
+        last_day = calendar.monthrange(rt.sampling.year, rt.sampling.month)[1]
+
+        cond = sampling.year >= 2020 and pos.wil_sungai == '3'
+        if cond and rt.sampling.day == 15:
+            continue
+
         cond1 = sampling.year <= 2018 and rt.sampling.day in [1, 16]
-        cond2 = sampling.year >= 2019
-        cond3 = rt.sampling.day == 15 or rt.sampling.day == calendar.monthrange(rt.sampling.year, rt.sampling.month)[1]
-        print(f"{cond1} {cond2} {cond3}")
-        if cond1 or (cond2 and cond3):
+        cond2 = sampling.year >= 2019 and rt.sampling.day in [15, last_day]
+        cond3 = rt.sampling.day in [10, 20, last_day]
+        if cond1 or cond2 or (cond and cond3):
             if (i != 0):
                 tanggal += ","
                 operasi['po_bona'] += ","

@@ -2,6 +2,9 @@
 <html lang="en" dir="ltr">
     <head>
         <meta charset="utf-8">
+        <meta content="IE=edge" http-equiv="X-UA-Compatible">
+        <meta content="width=device-width, initial-scale=1" name="viewport">
+
         <title>Login</title>
         <link rel="shortcut icon" href="{{ url_for('static', filename='images/pupr.ico') }}"/>
         <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css" integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous">
@@ -59,7 +62,7 @@
         </style>
 
     </head>
-    <body>
+    <body class="text-center">
         <div class="container">
             {% with messages = get_flashed_messages(with_categories=true) %}
               {% if messages %}
