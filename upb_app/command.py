@@ -17,7 +17,7 @@ from telegram import Bot
 
 from upb_app import app, db
 from upb_app.models import Bendungan, Embung, Rencana, Users, Asset
-from upb_app.models import Kerusakan, Kegiatan, Foto, BendungAlert
+from upb_app.models import Kerusakan, Kegiatan, Foto, BendungAlert, CurahHujanTerkini
 from upb_app.models import ManualDaily, ManualTma, ManualVnotch, ManualPiezo
 
 upbbendungan = ("upbuser", "upbsecret")
@@ -317,6 +317,7 @@ def import_master():
             insert_kegiatan(waduk_name, bend_id)
             insert_kerusakan(waduk_name, bend_id)
             insert_alert(bend_id)
+            insert_chterkini(bend_id)
         except Exception as e:
             print(f"--Error Bendungan : {e}")
             db.session.rollback()
@@ -612,7 +613,42 @@ def insert_alert(bend_id):
                 db.session.add(new_alert)
             db.session.commit()
         except Exception as e:
-            print(f"--Error Asset : {e}")
+            print(f"--Error Alert : {e}")
+            db.session.rollback()
+
+
+def insert_chterkini(bend_id):
+    print("Importing Curah Hujan Terkini")
+    mycursor.execute(f"SHOW columns FROM curahhujan_terkini")
+    columns = [column[0] for column in mycursor.fetchall()]
+
+    kerusakan_query = """SELECT * FROM curahhujan_terkini"""
+    mycursor.execute(kerusakan_query + f" WHERE bendungan_id='{bend_id}'")
+    all_cht = res2array(mycursor.fetchall(), columns)
+    for cht in all_cht:
+        try:
+            tanggal = cht['tanggall'].strftime("%Y-%m-%d")
+            jam = str(cht['jam'])
+            sampling = datetime.datetime.strptime(f"{tanggal} {jam}", "%Y-%m-%d %H:%M:%S")
+
+            obj_dict = {
+                "id": cht['id'],
+                "sampling": sampling,
+                "ch": cht['ch_terkini'],
+                "bendungan_id": bend_id
+            }
+            alert = CurahHujanTerkini.query.get(cht['id'])
+            if alert:
+                # print(f"Updating asset {asset['id']}")
+                for key, value in obj_dict.items():
+                    setattr(alert, key, value)
+            else:
+                # print(f"Inserting asset {asset['id']}")
+                new_alert = CurahHujanTerkini(**obj_dict)
+                db.session.add(new_alert)
+            db.session.commit()
+        except Exception as e:
+            print(f"--Error Terkini : {e}")
             db.session.rollback()
 
 

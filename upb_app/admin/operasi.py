@@ -5,7 +5,7 @@ from flask_wtf.csrf import generate_csrf
 from sqlalchemy import and_, extract
 from sqlalchemy.exc import IntegrityError
 from upb_app.models import ManualDaily, ManualTma, ManualPiezo, ManualVnotch
-from upb_app.models import Bendungan, BendungAlert
+from upb_app.models import Bendungan, BendungAlert, CurahHujanTerkini
 from upb_app.forms import AddDaily, AddTma, LaporBanjir, CHTerkini
 from upb_app import app, db, admin_only, petugas_only, role_check
 import datetime
@@ -339,17 +339,19 @@ def ch_terkini(bendungan_id):
             tgl = form.tanggal.data
             jam = form.jam.data.replace('.', ':')
             sampling = datetime.datetime.strptime(f"{tgl} {jam}", "%Y-%m-%d %H:%M:%S")
-            alert = BendungAlert(
+            alert = CurahHujanTerkini(
                 sampling=sampling,
                 ch=form.ch.data,
                 bendungan_id=bendungan_id
             )
+            print(alert.ch)
             db.session.add(alert)
             db.session.commit()
             flash('Curah Hujan Terkini berhasil ditambahkan !', 'success')
 
         except Exception as e:
             db.session.rollback()
+            print(f"{e}")
             flash("Terjadi Error", 'danger')
 
     return redirect(url_for('admin.operasi_bendungan', bendungan_id=bendungan_id))

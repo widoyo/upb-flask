@@ -1,7 +1,7 @@
 from flask import Blueprint, render_template, request
 from upb_app.models import Bendungan, Petugas
 from upb_app.models import ManualDaily, ManualTma, ManualVnotch, ManualPiezo
-from upb_app.models import Kegiatan, Rencana, BendungAlert, wil_sungai
+from upb_app.models import Kegiatan, Rencana, BendungAlert, CurahHujanTerkini, wil_sungai
 from sqlalchemy import and_, desc, cast, Date, extract
 from pprint import pprint
 from pytz import timezone
@@ -52,7 +52,13 @@ def index():
                                         extract('year', BendungAlert.sampling) == sampling.year,
                                         extract('day', BendungAlert.sampling) == sampling.day),
                                     BendungAlert.bendungan_id == w.id
-                                    ).all()
+                                    ).order_by(BendungAlert.sampling.desc()).all()
+        ch_t = CurahHujanTerkini.query.filter(and_(
+                                        extract('month', CurahHujanTerkini.sampling) == sampling.month,
+                                        extract('year', CurahHujanTerkini.sampling) == sampling.year,
+                                        extract('day', CurahHujanTerkini.sampling) == sampling.day),
+                                    CurahHujanTerkini.bendungan_id == w.id
+                                    ).order_by(CurahHujanTerkini.sampling.desc()).first()
 
         tma_d = {
             '6': None,
@@ -65,14 +71,14 @@ def index():
         for t in tma:
             if t.tma:
                 spill = t.tma - w.muka_air_normal
-                if spill > flood:
+                if spill >= flood:
                     flood = spill
                     time = t.sampling.strftime("%H:%M:%S")
             tma_d[f"{t.sampling.hour}"] = None if not t.tma else "{:,.2f}".format(t.tma)
 
-        for al in alert:
+        for al in alert[::-1]:
             spill = al.tma - w.muka_air_normal
-            if spill > flood:
+            if spill >= flood:
                 flood = spill
                 time = al.sampling.strftime("%H:%M:%S")
 
@@ -95,9 +101,10 @@ def index():
             'intake_vol': None if not daily else daily.intake_vol,
             'intake_deb': None if not daily else daily.intake_deb,
             'spillway_deb': None if not daily else daily.spillway_deb,
-            'curahhujan': None if not daily else daily.ch,
             'debit': None if not vnotch else vnotch.vn1_deb,
-            'kondisi': kondisi or "Normal"
+            'kondisi': kondisi or "Normal",
+            'curahhujan': None if not ch_t else {'ch': ch_t.ch, 'time': ch_t.sampling},
+            'tma_banjir': None if not alert else {'tma': alert[0].tma, 'time': alert[0].sampling}
         })
         count += 1
 

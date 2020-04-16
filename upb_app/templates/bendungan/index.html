@@ -38,6 +38,7 @@
                     <th colspan="2" class="text-center align-middle">Outflow (M3/det)</th>
                     <th rowspan="2" class="text-center align-middle">VNotch (L/det3)</th>
                     <th rowspan="2" class="text-center align-middle">Curah Hujan (mm)</th>
+                    <th rowspan="2" class="text-center align-middle">TMA Banjir (m)</th>
                 </tr>
                 <tr>
                     <th>Intake</th>
@@ -47,7 +48,7 @@
             <tbody>
                 {% for wil_s, data in waduk.items() %}
                     <tr>
-                        <td colspan="16" class="text-center text-light" style="background-color:#0277BD;"><big><b>Wilayah {{ wil_sungai[wil_s] }}</b></big></td>
+                        <td colspan="17" class="text-center text-light" style="background-color:#0277BD;"><big><b>Wilayah {{ wil_sungai[wil_s] }}</b></big></td>
                     </tr>
                     {% for w in data %}
                         <tr>
@@ -69,7 +70,18 @@
                             <td class="text-right">{% if w.intake_deb %}{{ "{:,.2f}".format(w.intake_deb) }}{% else %}0.0{% endif %}</td>
                             <td class="text-right">{% if w.spillway_deb %}{{ "{:,.2f}".format(w.spillway_deb) }}{% else %}0.0{% endif %}</td>
                             <td class="text-right">{% if w.debit %}{{ "{:,.2f}".format(w.debit) }}{% else %}0.0{% endif %}</td>
-                            <td class="text-right">{% if w.curahhujan %}{{ "{:,.2f}".format(w.curahhujan) }}{% else %}0.0{% endif %}</td>
+                            <td class="text-right">
+                                {% if w.curahhujan %}
+                                    {{ "{:,.2f}".format(w.curahhujan.ch) }}<br>
+                                    <small><i>{{ w.curahhujan.time.strftime("%H:%M:%S") }}</i></small>
+                                {% endif %}
+                            </td>
+                            <td class="text-right">
+                                {% if w.tma_banjir %}
+                                    {{ "{:,.2f}".format(w.tma_banjir.tma) }}<br>
+                                    <small><i>{{ w.tma_banjir.time.strftime("%H:%M:%S") }}</i></small>
+                                {% endif %}
+                            </td>
                         </tr>
                     {% endfor %}
                 {% endfor %}
