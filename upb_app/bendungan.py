@@ -65,10 +65,12 @@ def index():
             '12': None,
             '18': None,
         }
+        vol = None
         kondisi = ""
         flood = 0
         time = ""
         for t in tma:
+            vol = t.vol/1000000 if t.vol else None
             if t.tma:
                 spill = t.tma - w.muka_air_normal
                 if spill >= flood:
@@ -90,7 +92,7 @@ def index():
             'no': count,
             'nama': w.name,
             'kab': w.kab,
-            'volume': "{:,.2f}".format(w.volume/1000000),
+            'volume': "{:,.3f}".format(w.volume/1000000),
             'lbi': "{:,.2f}".format(w.lbi),
             'elev_puncak': "{:,.2f}".format(w.elev_puncak),
             'muka_air_normal': "{:,.2f}".format(w.muka_air_normal),
@@ -98,10 +100,10 @@ def index():
             'tma6': tma_d['6'],
             'tma12': tma_d['12'],
             'tma18': tma_d['18'],
-            'intake_vol': None if not daily else daily.intake_vol,
-            'intake_deb': None if not daily else daily.intake_deb,
-            'spillway_deb': None if not daily else daily.spillway_deb,
-            'debit': None if not vnotch else vnotch.vn1_deb,
+            'vol': None if not vol else "{:,.3f}".format(vol),
+            'intake_deb': None if not daily else "{:,.2f}".format(daily.intake_deb or 0),
+            'spillway_deb': None if not daily else "{:,.2f}".format(daily.spillway_deb or 0),
+            'debit': None if not vnotch else "{:,.2f}".format(vnotch.vn1_deb or 0),
             'kondisi': kondisi or "Normal",
             'curahhujan': None if not ch_t else {'ch': ch_t.ch, 'time': ch_t.sampling},
             'tma_banjir': None if not alert else {'tma': alert[0].tma, 'time': alert[0].sampling}

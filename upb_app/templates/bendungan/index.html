@@ -25,7 +25,7 @@
                     </th>
                 </tr>
                 <tr>
-                    <th rowspan="2" class="text-center align-middle">Tampungan (Juta M3)</th>
+                    <th rowspan="2" class="text-center align-middle">Tampungan (Juta M<sup>3</sup>)</th>
                     <th rowspan="2" class="text-center align-middle">Irigasi (Ha)</th>
                     <th rowspan="2" class="text-center align-middle">Elevasi Puncak (M)</th>
                     <th rowspan="2" class="text-center align-middle">Elevasi Puncak Mercu (M)</th>
@@ -33,10 +33,10 @@
                     <th rowspan="2" class="text-center align-middle">07 (M)</th>
                     <th rowspan="2" class="text-center align-middle">12 (M)</th>
                     <th rowspan="2" class="text-center align-middle">18 (M)</th>
-                    <th rowspan="2" class="text-center align-middle">Vol (Juta M3)</th>
+                    <th rowspan="2" class="text-center align-middle">Vol (Juta M<sup>3</sup>)</th>
                     <!-- <th rowspan="2">TMA Banjir (Juta M3)</th> -->
-                    <th colspan="2" class="text-center align-middle">Outflow (M3/det)</th>
-                    <th rowspan="2" class="text-center align-middle">VNotch (L/det3)</th>
+                    <th colspan="2" class="text-center align-middle">Outflow (M<sup>3</sup>/det)</th>
+                    <th rowspan="2" class="text-center align-middle">VNotch (L/det)</th>
                     <th rowspan="2" class="text-center align-middle">Curah Hujan (mm)</th>
                     <th rowspan="2" class="text-center align-middle">TMA Banjir (m)</th>
                 </tr>
@@ -66,10 +66,10 @@
                             <td class="text-right">{% if w.tma6 %}{{ w.tma6 }}{% else %}0.0{% endif %}</td>
                             <td class="text-right">{% if w.tma12 %}{{ w.tma12 }}{% else %}0.0{% endif %}</td>
                             <td class="text-right">{% if w.tma18 %}{{ w.tma18 }}{% else %}0.0{% endif %}</td>
-                            <td class="text-right">{% if w.intake_vol %}{{ "{:,.2f}".format(w.intake_vol) }}{% else %}0.0{% endif %}</td>
-                            <td class="text-right">{% if w.intake_deb %}{{ "{:,.2f}".format(w.intake_deb) }}{% else %}0.0{% endif %}</td>
-                            <td class="text-right">{% if w.spillway_deb %}{{ "{:,.2f}".format(w.spillway_deb) }}{% else %}0.0{% endif %}</td>
-                            <td class="text-right">{% if w.debit %}{{ "{:,.2f}".format(w.debit) }}{% else %}0.0{% endif %}</td>
+                            <td class="text-right">{% if w.vol %}{{ w.vol }}{% else %}0.0{% endif %}</td>
+                            <td class="text-right">{% if w.intake_deb %}{{ w.intake_deb }}{% else %}0.0{% endif %}</td>
+                            <td class="text-right">{% if w.spillway_deb %}{{ w.spillway_deb }}{% else %}0.0{% endif %}</td>
+                            <td class="text-right">{% if w.debit %}{{ w.debit }}{% else %}0.0{% endif %}</td>
                             <td class="text-right">
                                 {% if w.curahhujan %}
                                     {{ "{:,.2f}".format(w.curahhujan.ch) }}<br>
