@@ -249,7 +249,7 @@ class Bendungan(BaseLog):
     @property
     def name(self):
         arr = self.nama.split('_')
-        return f"{arr[0].title()}.{arr[1].title()}"
+        return " ".join(a.title() for a in arr)
 
 
 class Foto(BaseLog):

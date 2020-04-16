@@ -273,6 +273,7 @@ def import_master():
     for waduk in all_waduk:
         try:
             waduk_name = waduk['AgentName'].replace('.', '_').lower()
+            waduk_name = waduk_name.replace(' ', '_').lower()
             bend_id = waduk["AgentID"]
             obj_dict = {
                 "id": waduk["AgentID"],
