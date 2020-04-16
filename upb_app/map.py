@@ -29,11 +29,9 @@ def bendungan():
                 'vol': "{:,.0f}".format(tma.vol) if tma.vol else "-",
                 'tma': "{:,.2f}".format(tma.tma) if tma.tma else "-",
             }
-        arr = b.nama.split('_')
-        name = f"{arr[0].title()}.{arr[1].title()}"
         data.append({
             'id': b.id,
-            'nama': name,
+            'nama': b.name,
             'kab': b.kab,
             'll': b.ll,
             'wil': wil_sungai[b.wil_sungai],

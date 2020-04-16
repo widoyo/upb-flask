@@ -110,7 +110,7 @@
                           labels: [{{ tgl_labels|safe }}],
                           datasets: [
                               {
-                                  label: "Piezometer {{ piezo }}{{ p }}",
+                                  label: "Piezometer {{ piezo }}{{ p.upper() }}",
                                   data: [{{ piezodata[piezo][p]|safe }}],
                                   backgroundColor: 'rgba(0,0,255,0.5)',
                                   borderColor: 'rgba(0,0,255,1)',

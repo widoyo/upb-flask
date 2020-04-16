@@ -53,11 +53,11 @@
         let kml3 = omnivore.kml("{{ url_for('static', filename='kml/madiun.kml') }}", null, kmlGroup).addTo(mymap);
 
         var defIcon = L.icon({
-            iconSize: [25, 41],
+            iconSize: [40, 40],
             iconAnchor: [12, 41],
-            popupAnchor: [1, -34],
+            popupAnchor: [-77, -7],
             shadowSize: [41, 41],
-            iconUrl: "{{ url_for('static', filename='images/marker/marker-icon-green.png') }}",
+            iconUrl: "{{ url_for('static', filename='images/marker/marker-icon-blue.png') }}",
             shadowUrl: "{{ url_for('static', filename='images/marker/marker-shadow.png') }}"
         });
         var lokasi = [

@@ -6,6 +6,7 @@ from sqlalchemy import and_, desc, cast, Date, extract
 from pprint import pprint
 from pytz import timezone
 import datetime
+import calendar
 
 bp = Blueprint('bendungan', __name__)
 
@@ -136,19 +137,19 @@ def tma(lokasi_id):
 
 @bp.route('/<lokasi_id>/operasi', methods=['GET', 'POST'])
 def operasi(lokasi_id):
-    date = request.values.get('sampling')
-    def_date = datetime.datetime.utcnow()
-    sampling = datetime.datetime.strptime(date, "%Y") if date else def_date
-    end = datetime.datetime.strptime(f"{sampling.year}-11-1", "%Y-%m-%d")
-    start = end - datetime.timedelta(days=356)
+    sampling = request.values.get('sampling')
+    sampling = datetime.datetime.strptime(sampling, "%Y") if sampling else datetime.datetime.now()
+    start = datetime.datetime.strptime(f"{sampling.year -1}-11-01", "%Y-%m-%d")
+    end = datetime.datetime.strptime(f"{sampling.year}-10-31", "%Y-%m-%d")
 
     pos = Bendungan.query.get(lokasi_id)
     rtow = Rencana.query.filter(
-                                and_(
-                                    Rencana.sampling >= start,
-                                    Rencana.sampling <= end),
-                                Rencana.bendungan_id == pos.id
-                                ).all()
+                            and_(
+                                Rencana.sampling >= start,
+                                Rencana.sampling <= end),
+                            Rencana.bendungan_id == pos.id
+                            ).order_by(Rencana.sampling).all()
+
     tanggal = ""
     operasi = {
         'po_bona': "",
@@ -161,30 +162,52 @@ def operasi(lokasi_id):
         'real_outflow': "",
         'real_inflow': ""
     }
-    for i, rt in enumerate(rtow):
-        if (i != 0):
-            tanggal += ","
-            operasi['po_bona'] += ","
-            operasi['po_bonb'] += ","
-            operasi['real'] += ","
-            operasi['elev_min'] += ","
-            operasi['sedimen'] += ","
-            operasi['po_outflow'] += ","
-            operasi['po_inflow'] += ","
-            operasi['real_outflow'] += ","
-            operasi['real_inflow'] += ","
+    i = 0
+    for rt in rtow:
+        cond1 = sampling.year <= 2018 and rt.sampling.day in [1, 16]
+        cond2 = sampling.year >= 2019
+        cond3 = rt.sampling.day == 15 or rt.sampling.day == calendar.monthrange(rt.sampling.year, rt.sampling.month)[1]
+        print(f"{cond1} {cond2} {cond3}")
+        if cond1 or (cond2 and cond3):
+            if (i != 0):
+                tanggal += ","
+                operasi['po_bona'] += ","
+                operasi['po_bonb'] += ","
+                operasi['real'] += ","
+                operasi['elev_min'] += ","
+                operasi['sedimen'] += ","
+                operasi['po_outflow'] += ","
+                operasi['po_inflow'] += ","
+                operasi['real_outflow'] += ","
+                operasi['real_inflow'] += ","
 
-        tgl_str = rt.sampling.strftime("%Y-%m-%d")
-        tanggal += f"'{tgl_str}'"
-        operasi['po_bona'] += f"{rt.po_bona}" if rt.po_bona else "0"
-        operasi['po_bonb'] += f"{rt.po_bonb}" if rt.po_bonb else "0"
-        operasi['real'] += str(rt.po_bona - 2) if rt.po_bona else "0"
-        operasi['elev_min'] += f"{pos.muka_air_min}"
-        operasi['sedimen'] += f"{pos.sedimen}"
-        operasi['po_outflow'] += '0' if not rt.po_outflow_deb else str(rt.po_outflow_deb)
-        operasi['po_inflow'] += '0' if not rt.po_inflow_deb else str(rt.po_inflow_deb)
-        operasi['real_outflow'] += "0"
-        operasi['real_inflow'] += "0"
+            daily = ManualDaily.query.filter(
+                                        and_(
+                                            extract('month', ManualDaily.sampling) == rt.sampling.month,
+                                            extract('year', ManualDaily.sampling) == rt.sampling.year,
+                                            extract('day', ManualDaily.sampling) == rt.sampling.day),
+                                        ManualDaily.bendungan_id == lokasi_id
+                                        ).first()
+            tma = ManualTma.query.filter(
+                                    and_(
+                                        extract('month', ManualTma.sampling) == rt.sampling.month,
+                                        extract('year', ManualTma.sampling) == rt.sampling.year,
+                                        extract('day', ManualTma.sampling) == rt.sampling.day),
+                                    ManualTma.bendungan_id == lokasi_id
+                                    ).first()
+
+            tgl_str = rt.sampling.strftime("%d %b %Y")
+            tanggal += f"'{tgl_str}'"
+            operasi['po_bona'] += f"{rt.po_bona}" if rt.po_bona else "0"
+            operasi['po_bonb'] += f"{rt.po_bonb}" if rt.po_bonb else "0"
+            operasi['real'] += str(tma.tma) if tma.tma else "null"
+            operasi['elev_min'] += f"{pos.muka_air_min}"
+            operasi['sedimen'] += f"{pos.sedimen}"
+            operasi['po_outflow'] += '0' if not rt.po_outflow_deb else str(rt.po_outflow_deb)
+            operasi['po_inflow'] += '0' if not rt.po_inflow_deb else str(rt.po_inflow_deb)
+            operasi['real_outflow'] += str(daily.intake_deb) if daily.intake_deb else "0"
+            operasi['real_inflow'] += str(daily.inflow_deb) if daily.inflow_deb else "0"
+            i += 1
 
     return render_template('bendungan/operasi.html',
                             waduk=pos,
@@ -209,45 +232,53 @@ def vnotch(lokasi_id):
                                             ManualVnotch.sampling >= start,
                                             ManualVnotch.sampling <= end),
                                         ManualVnotch.bendungan_id == pos.id
-                                    ).all()
+                                    ).order_by(ManualVnotch.sampling).all()
     manual_daily = ManualDaily.query.filter(
                                         and_(
                                             ManualDaily.sampling >= start,
                                             ManualDaily.sampling <= end),
                                         ManualDaily.bendungan_id == pos.id
-                                    ).all()
+                                    ).order_by(ManualDaily.sampling).all()
     filtered_daily = {}
     for daily in manual_daily:
-        filtered_daily[daily.sampling.strftime("%Y-%m-%d")] = daily
+        filtered_daily[daily.sampling.strftime("%d %b %Y")] = daily
     filtered_vnotch = {}
     for vn in manual_vn:
-        tgl = vn.sampling.strftime("%Y-%m-%d")
+        tgl = vn.sampling.strftime("%d %b %Y")
         if tgl not in filtered_vnotch:
             filtered_vnotch[tgl] = {
                 'ch': 0,
+                'bts_remb': pos.vn1_q_limit,
                 'vn': {
                     'VNotch 1': vn.vn1_deb,
                     'VNotch 2': vn.vn2_deb,
                     'VNotch 3': vn.vn3_deb
                 }
             }
-        filtered_vnotch[tgl]['ch'] += filtered_daily[tgl].ch or 0
+
+        if tgl in filtered_daily:
+            filtered_vnotch[tgl]['ch'] += filtered_daily[tgl].ch or 0
+        else:
+            filtered_vnotch[tgl]['ch'] += 0
 
     vnotch = {
         'tanggal': "",
         'ch': "",
+        'bts_remb': "",
         'vn': {}
     }
     for i, vn in enumerate(filtered_vnotch):
         if i != 0:
             vnotch['tanggal'] += ","
             vnotch['ch'] += ","
+            vnotch['bts_remb'] += ","
             for vnn in filtered_vnotch[vn]['vn']:
                 vnotch['vn'][vnn] += ","
 
         tgl = vn
         vnotch['tanggal'] += f"'{tgl}'"
         vnotch['ch'] += f"{filtered_vnotch[vn]['ch']}"
+        vnotch['bts_remb'] += f"{filtered_vnotch[vn]['bts_remb']}"
         for vnn in filtered_vnotch[vn]['vn']:
             if vnn not in vnotch['vn']:
                 vnotch['vn'][vnn] = ""
@@ -277,7 +308,7 @@ def piezo(lokasi_id):
                                                 ManualPiezo.sampling >= start,
                                                 ManualPiezo.sampling <= end),
                                             ManualPiezo.bendungan_id == pos.id
-                                        ).all()
+                                        ).order_by(ManualPiezo.sampling).all()
     profile = ['1', '2', '3', '4', '5']
     alpha = ['a', 'b', 'c']
     tgl_labels = ""
@@ -288,21 +319,22 @@ def piezo(lokasi_id):
             piezodata[p][a] = ""
 
     for i, piezo in enumerate(manual_piezo):
-        if i == 0:
-            tgl_labels += f"'{piezo.sampling.strftime('%d %b %Y')}'"
+        if piezo.sampling.strftime("%a") == "Mon":
+            if i == 0:
+                tgl_labels += f"'{piezo.sampling.strftime('%d %b %Y')}'"
+                for p in profile:
+                    for a in alpha:
+                        val = getattr(piezo, f"p{p}{a}")
+                        val = val or "0"
+                        piezodata[p][a] += f"{val}"
+                continue
+
+            tgl_labels += f",'{piezo.sampling.strftime('%d %b %Y')}'"
             for p in profile:
                 for a in alpha:
                     val = getattr(piezo, f"p{p}{a}")
                     val = val or "0"
-                    piezodata[p][a] += f"{val}"
-            continue
-
-        tgl_labels += f",'{piezo.sampling.strftime('%d %b %Y')}'"
-        for p in profile:
-            for a in alpha:
-                val = getattr(piezo, f"p{p}{a}")
-                val = val or "0"
-                piezodata[p][a] += f",{val}"
+                    piezodata[p][a] += f",{val}"
     # pprint(piezodata)
 
     return render_template('bendungan/piezo.html',

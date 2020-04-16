@@ -117,12 +117,21 @@
             data: {
                 labels: [{{ vnotch.tanggal|safe }}],
                 datasets: [
+                    {
+                        label: "Batas Rembesan",
+                        data: [{{ vnotch.bts_remb|safe }}],
+                        backgroundColor: 'rgba(10,10,10,0.5)',
+                        borderColor: 'rgba(10,10,10,1)',
+                        borderWidth: 1,
+                        fill: false,
+                        pointStyle: 'round'
+                    },
                     {% for vnn in vnotch.vn %}
                         {
                             label: "{{ vnn }}",
                             data: [{{ vnotch.vn[vnn]|safe }}],
-                            backgroundColor: 'rgba(255,0,255,0.5)',
-                            borderColor: 'rgba(255,0,255,1)',
+                            backgroundColor: 'rgba(255,{{ loop.index * 50 }},155,0.5)',
+                            borderColor: 'rgba(255,{{ loop.index * 50 }},155,1)',
                             borderWidth: 1,
                             fill: false,
                             pointStyle: 'round'

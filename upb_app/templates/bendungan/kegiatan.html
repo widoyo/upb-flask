@@ -1,4 +1,4 @@
-{% extends 'master/base_adm.html' %}
+{% extends 'master/base.html' %}
 
 {% set title = "Bendungan" %}
 
@@ -28,6 +28,7 @@
                 <span>
             </h5>
         </ul>
+        {% if data %}
         {% for id, d in data.items() %}
             <h3 style="margin-top: 50px;" class="bd_name">
                 <i class="fa fa-map-marker text-primary"></i>
@@ -56,6 +57,7 @@
                 </div>
             {% endfor %}
         {% endfor %}
+        {% else %}<h3>Belum Ada Kegiatan</h3>{% endif %}
         <br>
     </div>
 {% endblock %}
