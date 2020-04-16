@@ -88,6 +88,11 @@ def map():
     return render_template('map.html', lokasis=lokasis)
 
 
+@app.route('/adm')
+def adm():
+    return redirect(url_for('login'))
+
+
 @app.route('/logout')
 @login_required
 def logout():
