@@ -123,7 +123,7 @@ def operasi_bendungan(bendungan_id):
 
     date = request.values.get('sampling')
     date = datetime.datetime.strptime(date, "%Y-%m-%d") if date else datetime.datetime.utcnow()
-    sampling = datetime.datetime.strptime(f"{date.year}-{date.month}-01", "%Y-%m-%d") + datetime.timedelta(hours=7)
+    sampling = datetime.datetime.strptime(f"{date.year}-{date.month}-01", "%Y-%m-%d") + datetime.timedelta(hours=8)
 
     now = datetime.datetime.now()
     if sampling.year == now.year and sampling.month == now.month:
