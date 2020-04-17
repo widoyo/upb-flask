@@ -88,7 +88,7 @@ def kinerja_bendungan(bendungan_id):
     kerusakan = Kerusakan.query.filter(
                                     Kerusakan.bendungan_id == bendungan_id
                                 ).order_by(
-                                    Kerusakan.kategori,
+                                    Kerusakan.tgl_tanggapan.desc(),
                                     Kerusakan.tgl_lapor.desc()
                                 ).all()
     ids = []

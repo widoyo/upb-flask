@@ -5,6 +5,7 @@ from upb_app import login
 from upb_app import db
 from sqlalchemy.dialects.postgresql import JSONB
 from sqlalchemy.orm import relationship
+from sqlalchemy.ext.declarative import declarative_base
 from sqlalchemy import desc
 import datetime
 import hashlib
@@ -14,6 +15,13 @@ wil_sungai = {
     '2': "Madiun",
     '3': "Hilir",
 }
+
+Base = declarative_base()
+# association table for Petugas and Pemeliharaan
+# PemeliharaanPetugas = db.Table('PemeliharaanPetugas', Base.metadata,
+#                         db.Column('id', db.Integer, primary_key=True),
+#                         db.Column('pemeliharaan_id', db.Integer, db.ForeignKey('Pemeliharaan.id')),
+#                         db.Column('petugas_id', db.Integer, db.ForeignKey('Petugas.id')))
 
 
 class BaseLog(db.Model):
@@ -63,9 +71,9 @@ class ManualDaily(BaseLog):
 
     id = db.Column(db.Integer, primary_key=True)
     sampling = db.Column(db.DateTime, index=True)
-    ch = db.Column(db.Float)
-    inflow_vol = db.Column(db.Float)
-    inflow_deb = db.Column(db.Float)
+    ch = db.Column(db.Float, nullable=True)
+    inflow_vol = db.Column(db.Float, nullable=True)
+    inflow_deb = db.Column(db.Float, nullable=True)
     intake_vol = db.Column(db.Float, nullable=True)
     intake_deb = db.Column(db.Float, nullable=True)
     outflow_vol = db.Column(db.Float, nullable=True)
@@ -209,6 +217,7 @@ class Petugas(BaseLog):
     pendidikan = db.Column(db.Text, nullable=True)
     bendungan_id = bendungan_id = db.Column(db.Integer, db.ForeignKey('bendungan.id'), nullable=True)
 
+    # petugas = relationship('Pemeliharaan', secondary=PemeliharaanPetugas, backref='Petugas')
     bendungan = relationship('Bendungan', back_populates='petugas')
 
 
@@ -245,6 +254,7 @@ class Bendungan(BaseLog):
     petugas = relationship('Petugas', back_populates='bendungan')
     users = relationship('Users', back_populates='bendungan')
     kegiatan = relationship('Kegiatan', back_populates='bendungan')
+    pemeliharaan = relationship('Pemeliharaan', back_populates='bendungan')
 
     @property
     def name(self):
@@ -292,6 +302,23 @@ class Kegiatan(BaseLog):
     bendungan_id = db.Column(db.Integer, db.ForeignKey('bendungan.id'), nullable=True)
 
     bendungan = relationship('Bendungan', back_populates='kegiatan')
+
+    def get_hms(self):
+        return self.c_date + datetime.timedelta(hours=7)
+
+
+class Pemeliharaan(BaseLog):
+    __tablename__ = 'pemeliharaan'
+
+    id = db.Column(db.Integer, primary_key=True)
+    sampling = db.Column(db.DateTime)
+    is_rencana = db.Column(db.String(1))
+    jenis = db.Column(db.String(2))
+    keterangan = db.Column(db.Text)
+    bendungan_id = db.Column(db.Integer, db.ForeignKey('bendungan.id'), nullable=True)
+
+    bendungan = relationship('Bendungan', back_populates='pemeliharaan')
+    # petugas = relationship('Petugas', secondary=PemeliharaanPetugas, backref='Pemeliharaan')
 
     def get_hms(self):
         return self.c_date + datetime.timedelta(hours=7)

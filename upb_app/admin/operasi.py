@@ -239,7 +239,15 @@ def operasi_tma_update():
 @role_check
 def operasi_daily_add(bendungan_id):
     bend = Bendungan.query.get(bendungan_id)
-    form = AddDaily()
+    form = AddDaily(
+        curahhujan=0,
+        intake_deb=0,
+        intake_vol=0,
+        inflow_deb=0,
+        inflow_vol=0,
+        spillway_deb=0,
+        spillway_vol=0
+    )
     if form.validate_on_submit():
         # insert tma
         insert_tma(
@@ -253,7 +261,7 @@ def operasi_daily_add(bendungan_id):
         try:
             obj_dict = {
                 "sampling": form.sampling.data,
-                "ch": form.curahhujan.data,
+                "ch": form.curahhujan.data or 0,
                 "inflow_deb": form.inflow_deb.data,
                 "inflow_vol": form.inflow_vol.data,
                 "intake_deb": form.intake_deb.data,
@@ -278,7 +286,7 @@ def operasi_daily_add(bendungan_id):
 
         except Exception as e:
             db.session.rollback()
-            print(f"Daily Manual Error : {e.__class__.__name__}")
+            print(f"Daily Manual Error : {e}")
             flash(f"Terjadi kesalahan saat mencoba menyimpan data", 'danger')
 
     return redirect(url_for('admin.operasi_bendungan', bendungan_id=bend.id))

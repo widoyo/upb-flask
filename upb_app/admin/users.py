@@ -32,8 +32,8 @@ def user_add():
 
         # check if username is available
         if Users.query.filter_by(username=username).first():
-            flash('Username tidak tersedia !', 'danger')
-            return render_template('users/tambah.html', form=form)
+            flash('Username sudah terdaftar !', 'danger')
+            return redirect(url_for('admin.users'))
 
         # save new user data
         new_user = Users(
