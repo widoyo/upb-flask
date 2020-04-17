@@ -2,7 +2,7 @@ import datetime
 from urllib.parse import urlparse, urljoin
 from flask import render_template, redirect, url_for, flash, request, abort, Blueprint
 from flask_login import current_user, login_required, login_user, logout_user
-from sqlalchemy import desc
+from sqlalchemy import and_, extract
 from pytz import timezone
 
 from upb_app import app
@@ -22,11 +22,11 @@ def index():
     ''' Index UPB '''
     date = request.values.get('sampling')
     today = datetime.datetime.now()
-    sampling = today  # if not date else datetime.datetime.strptime(date, "%Y-%m-%d")
-    if sampling.day < 15:
-        sampling = sampling - datetime.timedelta(days=today.day)
-    else:
-        sampling.replace(day=15)
+    sampling = today if not date else datetime.datetime.strptime(date, "%Y-%m-%d")
+    # if sampling.day < 15:
+    #     sampling = sampling - datetime.timedelta(days=today.day)
+    # else:
+    #     sampling.replace(day=15)
     print(sampling)
 
     all_waduk = Bendungan.query.all()
@@ -34,8 +34,9 @@ def index():
                                 Embung.is_verified == '1'
                             ).all()
     all_rencana = Rencana.query.filter(
-                                Rencana.sampling == sampling
-                            ).all()
+                                Rencana.sampling >= sampling,
+                                Rencana.po_tma > 0
+                            ).order_by(Rencana.sampling).all()
     all_tma = ManualTma.query.filter(
                                 ManualTma.sampling == f"{sampling.strftime('%Y-%m-%d')} 06:00:00"
                             ).all()
@@ -60,16 +61,19 @@ def index():
         'inflow': 0,
         'outflow': 0
     }
+    bend_ids = []
 
     for t in all_tma:
         real['volume'] += t.vol if t.vol else 0
     for d in all_daily:
-        real['inflow'] += d.inflow_vol if d.inflow_vol else 0
-        real['outflow'] += d.outflow_vol if d.outflow_vol else 0
+        real['inflow'] += d.inflow_deb if d.inflow_deb else 0
+        real['outflow'] += d.intake_deb if d.intake_deb else 0
     for r in all_rencana:
-        rtow['volume'] += r.po_vol if r.po_vol else 0
-        rtow['inflow'] += r.po_inflow_vol if r.po_inflow_vol else 0
-        rtow['outflow'] += r.po_outflow_vol if r.po_outflow_vol else 0
+        if r.bendungan_id not in bend_ids:
+            rtow['volume'] += r.po_vol if r.po_vol else 0
+            rtow['inflow'] += r.po_inflow_deb if r.po_inflow_deb else 0
+            rtow['outflow'] += r.po_outflow_deb if r.po_outflow_deb else 0
+            bend_ids.append(r.bendungan_id)
 
     return render_template('index.html',
                             vol_potensi=vol_potensi,
