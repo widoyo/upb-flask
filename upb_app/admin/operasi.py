@@ -129,7 +129,7 @@ def operasi_bendungan(bendungan_id):
         day = now.day
     else:
         day = calendar.monthrange(sampling.year, sampling.month)[1]
-    end = datetime.datetime.strptime(f"{date.year}-{date.month}-{day} 23:59:59", "%Y-%m-%d %H:%M:%S") + datetime.timedelta(hours=7)
+    end = datetime.datetime.strptime(f"{date.year}-{date.month}-{day} 23:59:59", "%Y-%m-%d %H:%M:%S") + datetime.timedelta(hours=8)
     print(end)
 
     arr = bend.nama.split('_')
