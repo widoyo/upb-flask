@@ -129,7 +129,8 @@ def operasi_bendungan(bendungan_id):
         day = now.day
     else:
         day = calendar.monthrange(sampling.year, sampling.month)[1]
-    end = datetime.datetime.strptime(f"{date.year}-{date.month}-{day} 23:59:59", "%Y-%m-%d %H:%M:%S")
+    end = datetime.datetime.strptime(f"{date.year}-{date.month}-{day} 23:59:59", "%Y-%m-%d %H:%M:%S") + datetime.timedelta(hours=7)
+    print(end)
 
     arr = bend.nama.split('_')
     name = f"{arr[0].title()}.{arr[1].title()}"
@@ -239,15 +240,7 @@ def operasi_tma_update():
 @role_check
 def operasi_daily_add(bendungan_id):
     bend = Bendungan.query.get(bendungan_id)
-    form = AddDaily(
-        curahhujan=0,
-        intake_deb=0,
-        intake_vol=0,
-        inflow_deb=0,
-        inflow_vol=0,
-        spillway_deb=0,
-        spillway_vol=0
-    )
+    form = AddDaily()
     if form.validate_on_submit():
         # insert tma
         insert_tma(
