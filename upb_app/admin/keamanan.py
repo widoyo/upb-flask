@@ -29,14 +29,14 @@ def keamanan_bendungan(bendungan_id):
 
     date = request.values.get('sampling')
     date = datetime.datetime.strptime(date, "%Y-%m-%d") if date else datetime.datetime.utcnow()
-    sampling = datetime.datetime.strptime(f"{date.year}-{date.month}-01", "%Y-%m-%d")
+    sampling = datetime.datetime.strptime(f"{date.year}-{date.month}-01", "%Y-%m-%d") + datetime.timedelta(hours=7)
 
     now = datetime.datetime.now()
     if sampling.year == now.year and sampling.month == now.month:
         day = now.day
     else:
         day = calendar.monthrange(sampling.year, sampling.month)[1]
-    end = datetime.datetime.strptime(f"{date.year}-{date.month}-{day} 23:59:59", "%Y-%m-%d %H:%M:%S") + datetime.timedelta(hours=8)
+    end = datetime.datetime.strptime(f"{date.year}-{date.month}-{day} 23:59:59", "%Y-%m-%d %H:%M:%S")
 
     vnotch = ManualVnotch.query.filter(
                                         ManualVnotch.bendungan_id == bendungan_id,
@@ -48,7 +48,7 @@ def keamanan_bendungan(bendungan_id):
                                 ).all()
 
     periodik = {}
-    for i in range(day + 1, 0, -1):
+    for i in range(day, 0, -1):
         sampl = datetime.datetime.strptime(f"{sampling.year}-{sampling.month}-{i}", "%Y-%m-%d")
         periodik[sampl] = {
             'vnotch': None,
