@@ -36,7 +36,7 @@ def keamanan_bendungan(bendungan_id):
         day = now.day
     else:
         day = calendar.monthrange(sampling.year, sampling.month)[1]
-    end = datetime.datetime.strptime(f"{date.year}-{date.month}-{day} 23:59:59", "%Y-%m-%d %H:%M:%S")
+    end = datetime.datetime.strptime(f"{date.year}-{date.month}-{day} 23:59:59", "%Y-%m-%d %H:%M:%S") + datetime.timedelta(hours=8)
 
     vnotch = ManualVnotch.query.filter(
                                         ManualVnotch.bendungan_id == bendungan_id,
@@ -48,7 +48,7 @@ def keamanan_bendungan(bendungan_id):
                                 ).all()
 
     periodik = {}
-    for i in range(day, 0, -1):
+    for i in range(day + 1, 0, -1):
         sampl = datetime.datetime.strptime(f"{sampling.year}-{sampling.month}-{i}", "%Y-%m-%d")
         periodik[sampl] = {
             'vnotch': None,
