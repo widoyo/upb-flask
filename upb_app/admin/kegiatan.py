@@ -41,17 +41,7 @@ def kegiatan():
 def kegiatan_bendungan(bendungan_id):
     bend = Bendungan.query.get(bendungan_id)
 
-    date = request.values.get('sampling')
-    now = datetime.datetime.now() + datetime.timedelta(hours=7)
-    date = datetime.datetime.strptime(date, "%Y-%m-%d") if date else now
-    sampling = datetime.datetime.strptime(f"{date.year}-{date.month}-01", "%Y-%m-%d")
-    if sampling.year == now.year and sampling.month == now.month:
-        day = now.day
-    else:
-        day = calendar.monthrange(sampling.year, sampling.month)[1]
-    end = sampling + datetime.timedelta(days=(day-1), hours=23)
-    # sampling, end, day = month_range(request.values.get('sampling'))
-
+    sampling, end, day = month_range(request.values.get('sampling'))
     all_kegiatan = Kegiatan.query.filter(
                                     Kegiatan.bendungan_id == bendungan_id,
                                     extract('month', Kegiatan.sampling) == sampling.month,
@@ -88,7 +78,7 @@ def kegiatan_bendungan(bendungan_id):
                             name=bend.name,
                             petugas=petugas,
                             kegiatan=kegiatan,
-                            sampling=datetime.datetime.now() - datetime.timedelta(hours=7),
+                            sampling=datetime.datetime.now() + datetime.timedelta(hours=7),
                             sampling_dt=sampling)
 
 

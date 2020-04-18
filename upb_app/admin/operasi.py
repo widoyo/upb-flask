@@ -32,13 +32,7 @@ def operasi():
 def operasi_harian():
     waduk = Bendungan.query.order_by(Bendungan.wil_sungai, Bendungan.id).all()
 
-    date = request.values.get('sampling')
-    now = datetime.datetime.now() + datetime.timedelta(hours=7)
-    def_date = date if date else now.strftime("%Y-%m-%d")
-    sampling = datetime.datetime.strptime(def_date, "%Y-%m-%d")
-    end = sampling + datetime.timedelta(hours=23, minutes=55)
-    # sampling, end = day_range(request.values.get('sampling'))
-
+    sampling, end = day_range(request.values.get('sampling'))
     data = {
         '1': [],
         '2': [],
@@ -124,19 +118,7 @@ def operasi_harian():
 def operasi_bendungan(bendungan_id):
     bend = Bendungan.query.get(bendungan_id)
 
-    date = request.values.get('sampling')
-    now = datetime.datetime.now() + datetime.timedelta(hours=7)
-    date = datetime.datetime.strptime(date, "%Y-%m-%d") if date else now
-    sampling = datetime.datetime.strptime(f"{date.year}-{date.month}-01", "%Y-%m-%d")
-    if sampling.year == now.year and sampling.month == now.month:
-        day = now.day
-    else:
-        day = calendar.monthrange(sampling.year, sampling.month)[1]
-    end = sampling + datetime.timedelta(days=(day-1), hours=23)
-    # sampling, end, day = month_range(request.values.get('sampling'))
-
-    arr = bend.nama.split('_')
-    name = f"{arr[0].title()}.{arr[1].title()}"
+    sampling, end, day = month_range(request.values.get('sampling'))
 
     manual_daily = ManualDaily.query.filter(
                                         ManualDaily.bendungan_id == bendungan_id,
@@ -167,7 +149,7 @@ def operasi_bendungan(bendungan_id):
 
     return render_template('operasi/bendungan.html',
                             csrf=generate_csrf(),
-                            name=name,
+                            name=bend.name,
                             bend_id=bend.id,
                             periodik=periodik,
                             sampling=end,

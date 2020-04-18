@@ -17,12 +17,7 @@ def index():
     ''' Home Bendungan '''
     waduk = Bendungan.query.order_by(Bendungan.wil_sungai, Bendungan.id).all()
 
-    date = request.values.get('sampling')
-    def_date = datetime.datetime.now()
-    sampling = datetime.datetime.strptime(date, "%Y-%m-%d") if date else def_date
-    end = sampling + datetime.timedelta(days=1)
-    # sampling, end = day_range(request.values.get('sampling'))
-
+    sampling, end = day_range(request.values.get('sampling'))
     data = {
         '1': [],
         '2': [],
@@ -377,12 +372,12 @@ def petugas():
 
 @bp.route('/kegiatan')
 def kegiatan():
-    date = request.values.get('sampling')
-    now = datetime.datetime.now() + datetime.timedelta(hours=7)
-    def_date = date if date else now.strftime("%Y-%m-%d")
-    sampling = datetime.datetime.strptime(def_date, "%Y-%m-%d")
-    end = sampling + datetime.timedelta(hours=23, minutes=55)
-    # sampling, end = day_range(request.values.get('sampling'))
+    # date = request.values.get('sampling')
+    # now = datetime.datetime.now() + datetime.timedelta(hours=7)
+    # def_date = date if date else now.strftime("%Y-%m-%d")
+    # sampling = datetime.datetime.strptime(def_date, "%Y-%m-%d")
+    # end = sampling + datetime.timedelta(hours=23, minutes=55)
+    sampling, end = day_range(request.values.get('sampling'))
 
     kegiatan = Kegiatan.query.filter(
                                 and_(
