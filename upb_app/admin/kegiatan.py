@@ -157,7 +157,7 @@ def kegiatan_add(bendungan_id):
         except Exception as e:
             db.session.rollback()
             print(e)
-            flash(f"Terjadi Error saat menyimpan data Kegiatan", 'danger')
+            flash(f"Terjadi Error saat menyimpan data Kegiatan : {e}", 'danger')
 
     return redirect(url_for('admin.kegiatan_bendungan', bendungan_id=bend.id))
 
