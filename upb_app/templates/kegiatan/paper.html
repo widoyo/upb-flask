@@ -55,6 +55,14 @@
             .text-center { text-align: center; }
             .mengetahui { width: 33%; float: left; font-size: 12px;}
         </style>
+        <title>
+            {% if title %}
+                {{title}} | UPB Bendungan
+            {% else %}
+                UPB Bendungan
+            {% endif %}
+        </title>
+        <link rel="shortcut icon" href="{{ url_for('static', filename='images/pupr.ico') }}"/>
     </head>
     <body>
         <section>
@@ -81,7 +89,7 @@
                     <td>
                         {% if user.bendungan_id == bend.id %}
                             <!-- delete button -->
-                            <!-- <button id="no-print" class="btn btn-danger btn-sm" style="float: right;" onclick="del_ft(${keg.kegiatan.get('kid')},${keg.kegiatan.get('fid')},'${keg.kegiatan.get('f')}');">Hapus</button> -->
+                            <button id="no-print" class="btn btn-danger btn-sm" style="float: right;" onclick="delete_foto({{ keg.kegiatan.id }}, {{ keg.foto.id }}, '{{ keg.foto.url }}')">Hapus</button>
                         {% endif %}
                         <img src="{{ url_for('static', filename=keg.foto.url[7:]) }}" style="width: 50%; height: auto;">
                         <div style="vertical-align: top">{{ keg.kegiatan.uraian }}, {{ keg.kegiatan.petugas.title() }}</div>
@@ -109,7 +117,21 @@
         </section>
 
         <script>
-          // delete function
+            // delete function
+            function delete_foto(keg_id, foto_id, filename){
+            //alert(f);
+            var result = confirm("Anda yakin ingin menghapus data ini?");
+            if (result) {
+                $.post("{{ url_for('admin.kegiatan_delete', bendungan_id=bend.id) }}", {keg_id:keg_id, foto_id:foto_id, filename:filename}).done(function(result){
+                    var a = result;
+                    if(a == "ok"){
+                        alert("Berhasil dihapus");
+                        window.location.reload();
+                    }
+                });
+            }
+
+      }
         </script>
         <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.12.4/jquery.min.js"></script>
     </body>

@@ -179,6 +179,28 @@ def kegiatan_update():
     return jsonify(result)
 
 
+@bp.route('/bendungan/kegiatan/<bendungan_id>/delete', methods=['POST'])
+@login_required
+@petugas_only
+def kegiatan_delete(bendungan_id):
+    keg_id = int(request.values.get('keg_id'))
+    foto_id = int(request.values.get('foto_id'))
+    filename = request.values.get('filename')
+    filepath = os.path.join(app.config['SAVE_DIR'], filename)
+
+    kegiatan = Kegiatan.query.get(keg_id)
+    foto = Foto.query.get(foto_id)
+
+    db.session.delete(kegiatan)
+    db.session.delete(foto)
+    db.session.commit()
+
+    if os.path.exists(filepath):
+        os.remove(filepath)
+
+    return "ok"
+
+
 def save_image(imageStr, filename):
     # print(file_name)
     img_file = os.path.join(app.config['UPLOAD_FOLDER'], filename)
