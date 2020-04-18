@@ -67,10 +67,8 @@ def kinerja():
         kinerja[ker.bendungan_id]['kategori'][ker.kategori] += 1
     for bend in bends:
         if bend.id in kinerja:
-            arr = bend.nama.split('_')
-            name = f"{arr[0].title()}.{arr[1].title()}"
             kinerja[bend.id]['bendungan'] = {
-                'nama': name,
+                'nama': bend.name,
                 'id': bend.id
             }
     print(kerusakan)

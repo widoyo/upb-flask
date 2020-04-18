@@ -83,12 +83,10 @@ def operasi_harian():
             tma_d[f"{t.sampling.hour}"]['tma'] = None if not t.tma else round(t.tma, 2)
             tma_d[f"{t.sampling.hour}"]['vol'] = None if not t.vol else round(t.vol, 2)
 
-        arr = w.nama.split('_')
-        name = f"{arr[0].title()}.{arr[1].title()}"
         data[w.wil_sungai].append({
             'no': count,
             'id': w.id,
-            'nama': name,
+            'nama': w.name,
             'volume': w.volume,
             'lbi': w.lbi,
             'elev_puncak': w.elev_puncak,

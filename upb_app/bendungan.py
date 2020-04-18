@@ -354,10 +354,8 @@ def petugas():
 
     data = {}
     for w in waduk:
-        arr = w.nama.split('_')
-        name = f"{arr[0].title()}.{arr[1].title()}"
         data[w.id] = {
-            'nama': name,
+            'nama': w.name,
             'petugas': []
         }
     for p in petugas:
