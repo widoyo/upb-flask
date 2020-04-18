@@ -28,15 +28,15 @@ def keamanan_bendungan(bendungan_id):
     bend = Bendungan.query.get(bendungan_id)
 
     date = request.values.get('sampling')
-    date = datetime.datetime.strptime(date, "%Y-%m-%d") if date else datetime.datetime.utcnow()
+    now = datetime.datetime.now() + datetime.timedelta(hours=7)
+    date = datetime.datetime.strptime(date, "%Y-%m-%d") if date else now
     sampling = datetime.datetime.strptime(f"{date.year}-{date.month}-01", "%Y-%m-%d")
 
-    now = datetime.datetime.now()
     if sampling.year == now.year and sampling.month == now.month:
         day = now.day
     else:
         day = calendar.monthrange(sampling.year, sampling.month)[1]
-    end = datetime.datetime.strptime(f"{date.year}-{date.month}-{day} 23:59:59", "%Y-%m-%d %H:%M:%S") + datetime.timedelta(hours=8)
+    end = sampling + datetime.timedelta(days=(day-1))
 
     vnotch = ManualVnotch.query.filter(
                                         ManualVnotch.bendungan_id == bendungan_id,
@@ -72,7 +72,7 @@ def keamanan_bendungan(bendungan_id):
 @role_check
 def keamanan_vnotch(bendungan_id):
     form = AddVnotch()
-    print(form.sampling.data)
+    print(form.vn1_tma.data)
     if form.validate_on_submit():
         try:
             obj_dict = {

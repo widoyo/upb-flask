@@ -31,8 +31,9 @@ def operasi():
 def operasi_harian():
     waduk = Bendungan.query.order_by(Bendungan.wil_sungai, Bendungan.id).all()
     date = request.values.get('sampling')
-    def_date = date if date else datetime.datetime.now().strftime("%Y-%m-%d")
-    sampling = datetime.datetime.strptime(def_date, "%Y-%m-%d") + datetime.timedelta(hours=7)
+    now = datetime.datetime.now() + datetime.timedelta(hours=7)
+    def_date = date if date else now.strftime("%Y-%m-%d")
+    sampling = datetime.datetime.strptime(def_date, "%Y-%m-%d")
     end = sampling + datetime.timedelta(hours=23, minutes=55)
     print(sampling)
 
@@ -122,16 +123,16 @@ def operasi_bendungan(bendungan_id):
     bend = Bendungan.query.get(bendungan_id)
 
     date = request.values.get('sampling')
-    date = datetime.datetime.strptime(date, "%Y-%m-%d") if date else datetime.datetime.utcnow()
+    now = datetime.datetime.now() + datetime.timedelta(hours=7)
+    date = datetime.datetime.strptime(date, "%Y-%m-%d") if date else now
     sampling = datetime.datetime.strptime(f"{date.year}-{date.month}-01", "%Y-%m-%d")
 
-    now = datetime.datetime.now()
     if sampling.year == now.year and sampling.month == now.month:
         day = now.day
     else:
         day = calendar.monthrange(sampling.year, sampling.month)[1]
-    end = datetime.datetime.strptime(f"{date.year}-{date.month}-{day} 23:59:59", "%Y-%m-%d %H:%M:%S") + datetime.timedelta(hours=8)
-    print(end)
+    end = sampling + datetime.timedelta(days=(day-1))
+    # print(f"{sampling} to {end}")
 
     arr = bend.nama.split('_')
     name = f"{arr[0].title()}.{arr[1].title()}"
@@ -146,7 +147,7 @@ def operasi_bendungan(bendungan_id):
                                 ).all()
 
     periodik = {}
-    for i in range(day + 1, 0, -1):
+    for i in range(day, 0, -1):
         sampl = datetime.datetime.strptime(f"{sampling.year}-{sampling.month}-{i}", "%Y-%m-%d")
         periodik[sampl] = {
             'daily': None,
@@ -168,7 +169,7 @@ def operasi_bendungan(bendungan_id):
                             name=name,
                             bend_id=bend.id,
                             periodik=periodik,
-                            sampling=datetime.datetime.now() + datetime.timedelta(hours=8),
+                            sampling=end,
                             sampling_dt=sampling)
 
 
