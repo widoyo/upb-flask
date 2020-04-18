@@ -1,4 +1,5 @@
 from flask import Blueprint, render_template, request
+from upb_app.helper import day_range
 from upb_app.models import Bendungan, Petugas
 from upb_app.models import ManualDaily, ManualTma, ManualVnotch, ManualPiezo
 from upb_app.models import Kegiatan, Rencana, BendungAlert, CurahHujanTerkini, wil_sungai
@@ -15,10 +16,12 @@ bp = Blueprint('bendungan', __name__)
 def index():
     ''' Home Bendungan '''
     waduk = Bendungan.query.order_by(Bendungan.wil_sungai, Bendungan.id).all()
-    date = request.values.get('sampling')
-    def_date = datetime.datetime.now()
-    sampling = datetime.datetime.strptime(date, "%Y-%m-%d") if date else def_date
-    end = sampling + datetime.timedelta(days=1)
+
+    # date = request.values.get('sampling')
+    # def_date = datetime.datetime.now()
+    # sampling = datetime.datetime.strptime(date, "%Y-%m-%d") if date else def_date
+    # end = sampling + datetime.timedelta(days=1)
+    sampling, end = day_range(request.values.get('sampling'))
 
     data = {
         '1': [],
@@ -374,10 +377,12 @@ def petugas():
 
 @bp.route('/kegiatan')
 def kegiatan():
-    date = request.values.get('sampling')
-    def_date = date if date else datetime.datetime.now().strftime("%Y-%m-%d")
-    sampling = datetime.datetime.strptime(def_date, "%Y-%m-%d")
-    end = sampling + datetime.timedelta(hours=23, minutes=55)
+    # date = request.values.get('sampling')
+    # now = datetime.datetime.now() + datetime.timedelta(hours=7)
+    # def_date = date if date else now.strftime("%Y-%m-%d")
+    # sampling = datetime.datetime.strptime(def_date, "%Y-%m-%d")
+    # end = sampling + datetime.timedelta(hours=23, minutes=55)
+    sampling, end = day_range(request.values.get('sampling'))
 
     kegiatan = Kegiatan.query.filter(
                                 and_(
@@ -389,9 +394,7 @@ def kegiatan():
         if keg.bendungan_id not in data:
             data[keg.bendungan_id] = {
                 'bend': keg.bendungan,
-                'kegiatan': {
-
-                }
+                'kegiatan': {}
             }
 
         if keg.petugas not in data[keg.bendungan_id]['kegiatan']:

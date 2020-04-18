@@ -3,6 +3,7 @@ from flask_login import login_required, current_user
 from flask_wtf.csrf import generate_csrf
 from sqlalchemy import extract
 from sqlalchemy.exc import IntegrityError
+from upb_app.helper import month_range
 from upb_app.models import Kegiatan, Foto, Bendungan
 from upb_app.forms import AddKegiatan
 from upb_app import app, db, petugas_only, role_check
@@ -40,9 +41,16 @@ def kegiatan():
 def kegiatan_bendungan(bendungan_id):
     bend = Bendungan.query.get(bendungan_id)
 
-    date = request.values.get('sampling')
-    date = datetime.datetime.strptime(date, "%Y-%m-%d") if date else datetime.datetime.utcnow()
-    sampling = datetime.datetime.strptime(f"{date.year}-{date.month}-01", "%Y-%m-%d")
+    # date = request.values.get('sampling')
+    # now = datetime.datetime.now() + datetime.timedelta(hours=7)
+    # date = datetime.datetime.strptime(date, "%Y-%m-%d") if date else now
+    # sampling = datetime.datetime.strptime(f"{date.year}-{date.month}-01", "%Y-%m-%d")
+    # if sampling.year == now.year and sampling.month == now.month:
+    #     day = now.day
+    # else:
+    #     day = calendar.monthrange(sampling.year, sampling.month)[1]
+    # end = sampling + datetime.timedelta(days=(day-1), hours=23)
+    sampling, end, day = month_range(request.values.get('sampling'))
 
     all_kegiatan = Kegiatan.query.filter(
                                     Kegiatan.bendungan_id == bendungan_id,
@@ -50,11 +58,6 @@ def kegiatan_bendungan(bendungan_id):
                                     extract('year', Kegiatan.sampling) == sampling.year
                                 ).all()
     kegiatan = {}
-    now = datetime.datetime.now()
-    if sampling.year == now.year and sampling.month == now.month:
-        day = now.day
-    else:
-        day = calendar.monthrange(sampling.year, sampling.month)[1]
     for i in range(day, 0, -1):
         sampl = datetime.datetime.strptime(f"{sampling.year}-{sampling.month}-{i}", "%Y-%m-%d")
         kegiatan[sampl] = {
@@ -85,7 +88,7 @@ def kegiatan_bendungan(bendungan_id):
                             name=bend.name,
                             petugas=petugas,
                             kegiatan=kegiatan,
-                            sampling=datetime.datetime.today(),
+                            sampling=datetime.datetime.now() - datetime.timedelta(hours=7),
                             sampling_dt=sampling)
 
 
