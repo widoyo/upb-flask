@@ -48,7 +48,7 @@ def keamanan_bendungan(bendungan_id):
                                 ).all()
 
     periodik = {}
-    for i in range(day + 1, 0, -1):
+    for i in range(day, 0, -1):
         sampl = datetime.datetime.strptime(f"{sampling.year}-{sampling.month}-{i}", "%Y-%m-%d")
         periodik[sampl] = {
             'vnotch': None,
