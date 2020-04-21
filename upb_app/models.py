@@ -15,8 +15,20 @@ wil_sungai = {
     '2': "Madiun",
     '3': "Hilir",
 }
+jenis_pemeliharaan = [
+    'cabut rumput',
+    'potong rumput',
+    'pembersihan sampah',
+    'pelumasan',
+    'pengecatan',
+    'penggantian oli mesin',
+    'perawatan alat kerja',
+    'pengangkatan sedimen',
+    'tambal sulam kerusakan ringan',
+    'penghijauan',
+]
 
-Base = declarative_base()
+# Base = declarative_base()
 # association table for Petugas and Pemeliharaan
 # PemeliharaanPetugas = db.Table('PemeliharaanPetugas', Base.metadata,
 #                         db.Column('id', db.Integer, primary_key=True),
@@ -217,8 +229,12 @@ class Petugas(BaseLog):
     pendidikan = db.Column(db.Text, nullable=True)
     bendungan_id = bendungan_id = db.Column(db.Integer, db.ForeignKey('bendungan.id'), nullable=True)
 
-    # petugas = relationship('Pemeliharaan', secondary=PemeliharaanPetugas, backref='Petugas')
     bendungan = relationship('Bendungan', back_populates='petugas')
+    pemeliharaan_petugas = relationship('PemeliharaanPetugas', back_populates='petugas')
+
+    @property
+    def birthdate(self):
+        return None if not self.tgl_lahir else self.tgl_lahir.strftime("%-d %b %Y")
 
 
 class Bendungan(BaseLog):
@@ -313,15 +329,34 @@ class Pemeliharaan(BaseLog):
     id = db.Column(db.Integer, primary_key=True)
     sampling = db.Column(db.DateTime)
     is_rencana = db.Column(db.String(1))
-    jenis = db.Column(db.String(2))
+    jenis = db.Column(db.Text)
+    komponen = db.Column(db.Text)
+    nilai = db.Column(db.Float)
     keterangan = db.Column(db.Text)
     bendungan_id = db.Column(db.Integer, db.ForeignKey('bendungan.id'), nullable=True)
 
     bendungan = relationship('Bendungan', back_populates='pemeliharaan')
-    # petugas = relationship('Petugas', secondary=PemeliharaanPetugas, backref='Pemeliharaan')
+    pemeliharaan_petugas = relationship('PemeliharaanPetugas', back_populates='pemeliharaan')
 
     def get_hms(self):
         return self.c_date + datetime.timedelta(hours=7)
+
+    def get_petugas(self):
+        petugas = []
+        for pp in self.pemeliharaan_petugas:
+            petugas.append(pp.petugas)
+        return petugas
+
+
+class PemeliharaanPetugas(BaseLog):
+    __tablename__ = 'pemeliharaan_petugas'
+
+    id = db.Column(db.Integer, primary_key=True)
+    pemeliharaan_id = db.Column(db.Integer, db.ForeignKey('pemeliharaan.id'))
+    petugas_id = db.Column(db.Integer, db.ForeignKey('petugas.id'))
+
+    pemeliharaan = relationship('Pemeliharaan', back_populates='pemeliharaan_petugas')
+    petugas = relationship('Petugas', back_populates='pemeliharaan_petugas')
 
 
 class Rencana(BaseLog):

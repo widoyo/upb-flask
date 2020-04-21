@@ -77,6 +77,17 @@ class AddUser(FlaskForm):
     submit = SubmitField('Tambah')
 
 
+class AddPetugas(FlaskForm):
+    nama = StringField('Name', validators=[DataRequired()])
+    jabatan = StringField('Name', validators=[DataRequired()])
+    tgl_lahir = DateField("Hari", validators=[Optional()])
+    alamat = StringField('Alamat', validators=[Optional()])
+    kab = StringField('Kab', validators=[Optional()])
+    pendidikan = StringField('Pendidikan', validators=[Optional()])
+    bendungan = StringField('Name', validators=[DataRequired()])
+    submit = SubmitField('Tambah')
+
+
 class AddDaily(FlaskForm):
     sampling = DateField("Hari", default=datetime.datetime.today())
     curahhujan = DecimalField('Curah Hujan', validators=[Optional()])

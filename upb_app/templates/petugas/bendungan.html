@@ -1,0 +1,157 @@
+{% extends 'master/base_adm.html' %}
+
+{% set title = "Petugas" %}
+
+{% block css %}
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-datepicker/1.9.0/css/bootstrap-datepicker.css">
+<style>
+    .datepicker {
+        z-index: 10000 !important;
+        display: inherit;
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+    <div class="container">
+        <h1>
+            Daftar Petugas Bendungan
+            <a data-toggle="collapse" href="#petugas" class="btn btn-primary" role="button" aria-expanded="false" aria-controls="petugas">
+              Tambah Petugas
+            </a>
+        </h1>
+        <div class="collapse" id="petugas">
+            <div class="row">
+                <div class="col-md-6">
+                    <hr>
+                    <form action="{{ url_for('admin.petugas_bendungan_add') }}" method="POST">
+                        <input id="csrf_token" name="csrf_token" type="hidden" value="{{ csrf }}">
+                        <div class="form-group">
+                            <label class="form-text" for="nama"><b>Nama</b></label>
+                            <input type="text" name="nama" class="form-control" required aria-describedby="namehelp">
+                            <small id="namehelp" class="form-text text-muted">wajib diisi</small>
+                        </div>
+                        <div class="row">
+                            <div class="form-group col-md-6">
+                                <label class="form-text" for="jabatan"><b>Jabatan</b></label>
+                                <select id="jabatan" name="jabatan" class="form-control" required aria-describedby="jabhelp">
+                                  <option selected>-</option>
+                                  <option>Koordinator</option>
+                                  <option>Keamanan</option>
+                                  <option>Pemantauan</option>
+                                  <option>Operasi</option>
+                                  <option>Pemeliharaan</option>
+                                </select>
+                                <small id="jabhelp" class="form-text text-muted">wajib diisi</small>
+                            </div>
+                            <div class="form-group col-md-6">
+                                <label class="form-text" for="bendungan"><b>Bendungan</b></label>
+                                <select id="bendungan" name="bendungan" class="form-control" required aria-describedby="bendhelp">
+                                  <option selected>-</option>
+                                  {% for bend in bendungan %}
+                                    <option value="{{ bend.id }}">{{ bend.name }}</option>
+                                  {% endfor %}
+                                </select>
+                                <small id="bendhelp" class="form-text text-muted">wajib diisi</small>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="form-group col-md-4">
+                                <label class="form-text" for="tgl_lahir"><b>Tanggal Lahir</b></label>
+                                <input class="form-control" type="text" name="tgl_lahir" id="datepicker" hidden value="" aria-describedby="tglhelp">
+                                <i class="fas fa-calendar d-inline"></i><p class="ml-2 d-inline" id="tgl_lahir">Klik untuk mengisi</p>
+                                <small id="tglhelp" class="form-text text-muted">boleh tidak diisi</small>
+                            </div>
+                            <div class="form-group col-md-4">
+                                <label class="form-text" for="kab"><b>Kab</b></label>
+                                <input type="text" name="kab" class="form-control">
+                            </div>
+                            <div class="form-group col-md-4">
+                                <label class="form-text" for="pendidikan"><b>Pendidikan</b></label>
+                                <input type="text" name="pendidikan" class="form-control">
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label class="form-text" for="alamat"><b>Alamat</b></label>
+                            <textarea class="form-control" name="alamat" id="alamat" value=""></textarea>
+                        </div>
+                        <div>
+                            <button type="submit" name="submit" class="btn btn-primary my-1 mr-2">Tambah</button>
+                            <a data-toggle="collapse" href="#petugas" role="button" aria-expanded="false" aria-controls="petugas">batal</a>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+        <br>
+        <table class="table table-bordered">
+            <thead>
+                <tr>
+                    <th class="text-center align-middle">No</th>
+                    <th class="text-center align-middle">Bendungan</th>
+                    <th class="text-center align-middle">Nama</th>
+                    <th class="text-center align-middle">Jabatan</th>
+                    <th class="text-center align-middle">Tgl Lahir</th>
+                    <th class="text-center align-middle">Kab</th>
+                    <th class="text-center align-middle">Alamat</th>
+                    <th class="text-center align-middle">Pendidikan</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for id, d in data.items() %}
+                    <tr>
+                        <td rowspan="{{ d.petugas|length or 1 }}">{{ loop.index }}</td>
+                        <td rowspan="{{ d.petugas|length or 1 }}"><a href="{{ url_for('bendungan.tma', lokasi_id=id) }}">{{ d.nama }}</a></td>
+                        {% if d.petugas %}
+                            <td>
+                                <b>{{ d.petugas.0.nama }}</b>
+                            </td>
+                            <td><b>{{ d.petugas.0.tugas }}</b></td>
+                            <td><b>{{ d.petugas.0.birthdate or '-' }}</b></td>
+                            <td><b>{{ d.petugas.0.kab or '-' }}</b></td>
+                            <td><b>{{ d.petugas.0.alamat or '-' }}</b></td>
+                            <td><b>{{ d.petugas.0.pendidikan or '-' }}</b></td>
+                        {% else %}
+                            <td colspan="2"><span style="color: red;">Belum Ada Data</span></td>
+                        {% endif %}
+                    </tr>
+                    {% for p in d.petugas %}
+                        {% if loop.index > 1 %}
+                            <tr>
+                                <td>
+                                    {{ p.nama }}
+                                </td>
+                                <td>{{ p.tugas }}</td>
+                                <td>{{ p.birthdate or "-" }}</td>
+                                <td>{{ p.kab or "-" }}</td>
+                                <td>{{ p.alamat or "-" }}</td>
+                                <td>{{ p.pendidikan or "-" }}</td>
+                            </tr>
+                        {% endif %}
+                    {% endfor %}
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+{% endblock %}
+
+{% block js %}
+<script src="{{ url_for('static', filename='js/moment.min.js') }}"></script>
+<script src="{{ url_for('static', filename='js/id.js') }}"></script>
+<script src="{{ url_for('static', filename='js/bootstrap-datepicker.min.js') }}"></script>
+<script>
+    $(document).ready(function() {
+        $('#tgl_lahir').datepicker({
+            todayHighlight: true,
+            autoclose: true,
+            format:  'yyyy-mm-dd'
+        });
+        $('#tgl_lahir').on('changeDate', function () {
+            let date = $('#tgl_lahir').datepicker('getFormattedDate');
+            $('#tgl_lahir').text(moment(date).format('DD MMMM YYYY'));
+            $('#datepicker').attr('value', moment(date).format('YYYY-MM-DD'));
+            $('.datepicker').hide();
+        });
+    });
+</script>
+{% endblock %}

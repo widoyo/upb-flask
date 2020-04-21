@@ -1,0 +1,285 @@
+{% extends 'master/base_adm.html' %}
+
+{% set title = "Kegiatan" %}
+
+{% block css %}
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-select@1.13.14/dist/css/bootstrap-select.min.css">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-datepicker/1.9.0/css/bootstrap-datepicker.css">
+<style>
+    .datepicker {
+        z-index: 10000 !important;
+        display: inherit;
+    }
+</style>
+<link href="{{ url_for('static', filename='css/bootstrap-editable.css') }}" rel="stylesheet"/>
+{% endblock %}
+
+{% block content %}
+    <div>
+        <h1>Kegiatan Pemeliharaan {{ bend.name }}</h1><br>
+        <div class="forms">
+            <div class="row">
+                <div class="col-md-6">
+                    <h5>
+                      <a data-toggle="collapse" href="#rencana" role="button" aria-expanded="false" aria-controls="rencana">
+                        Rencana Mingguan <small><i class="fas fa-play"></i></small>
+                      </a>
+                    </h5>
+                    <hr>
+                    <form action="#" method="POST">
+                        <input id="csrf_token" name="csrf_token" type="hidden" value="{{ csrf }}">
+                        <div class="collapse" id="rencana">
+                          <div class="form-group">
+                              <label class="form-text" for="sampling"><b>Minggu</b></label>
+                              <input class="form-control" type="text" name="sampling" id="datepicker-rencana" hidden required value="{{ sampling.strftime('%Y-%m-%d') }}">
+                              <a class="d-inline" href="#" onclick="prevWeek()"><i class="fas fa-arrow-left"></i></a>
+                              <p class="d-inline ml-2 mr-2" id="sampling-rencana"><i class="fas fa-calendar"></i> {{ sampling.strftime('%Y-%m-%d') }}</p>
+                              <a class="d-inline" href="#" onclick="nextWeek()"><i class="fas fa-arrow-right"></i></a>
+                          </div>
+                          <div class="form-group">
+                              <label class="form-text" for="jenis"><b>Jenis Kegiatan</b></label>
+                              <select id="jenis" name="jenis" class="form-control">
+                                  <option selected>-</option>
+                                {% for jen in jenis %}
+                                    <option value="{{ jen }}">{{ jen.title() }}</option>
+                                {% endfor %}
+                              </select>
+                          </div>
+                          <div class="form-group">
+                              <label class="form-text" for="komponen"><b>Komponen</b></label>
+                              <textarea class="form-control" name="komponen" id="komponen" placeholder="Misal: Puncak Bendungan, Lereng Bendungan" required value=""></textarea>
+                          </div>
+                          <div class="form-group">
+                              <label class="form-text" for="target"><b>Target</b></label>
+                              <div class="input-group">
+                                  <input class="form-control" type="number" name="target" id="target" placeholder="contoh:700" step="0.1">
+                                  <div class="input-group-append">
+                                    <span class="input-group-text" id="satuan">m<sup>3</sup></span>
+                                  </div>
+                              </div>
+                          </div>
+                          <div>
+                              <button type="submit" name="submit" class="btn btn-primary my-1 mr-2">Kirim</button>
+                              <a data-toggle="collapse" href="#rencana" role="button" aria-expanded="false" aria-controls="rencana">batal</a>
+                          </div>
+                        </div>
+                    </form>
+                    <br>
+                </div>
+                <div class="col-md-6">
+                    <h5>
+                      <a data-toggle="collapse" href="#pemeliharaan" role="button" aria-expanded="false" aria-controls="pemeliharaan">
+                        Laporan Pemeliharaan <small><i class="fas fa-play"></i></small>
+                      </a>
+                    </h5>
+                    <hr>
+                    <form action="#" method="POST">
+                        <input id="csrf_token" name="csrf_token" type="hidden" value="{{ csrf }}">
+                        <div class="collapse" id="pemeliharaan">
+                          <div class="form-group">
+                              <label class="form-text" for="sampling"><b>Tanggal</b></label>
+                              <input class="form-control" type="text" name="sampling" id="datepicker-pemeliharaan" hidden required value="{{ sampling.strftime('%Y-%m-%d') }}">
+                              <i class="fas fa-calendar d-inline"></i>
+                              <p class="ml-2 d-inline" id="sampling-pemeliharaan">{{ sampling.strftime('%d %B %Y') }}</p>
+                          </div>
+                          <div class="form-group">
+                              <label class="form-text" for="jenis"><b>Jenis Kegiatan</b></label>
+                              <select id="jenis" name="jenis" class="form-control" aria-describedby="jenishelp">
+                                  <option selected>-</option>
+                                {% for jen in jenis %}
+                                    <option value="{{ jen }}">{{ jen.title() }}</option>
+                                {% endfor %}
+                              </select>
+                              <small id="jenishelp" class="form-text text-muted">Bisa pilih yg sudah direncanakan</small>
+                          </div>
+                          <div class="form-group">
+                              <label class="form-text" for="petugas"><b>Petugas</b></label>
+                              <select id="petugas" name="petugas" class="selectpicker form-control" multiple aria-describedby="petugashelp">
+                                {% for p in petugas %}
+                                    <option value="{{ p.id }}">{{ p.nama }}</option>
+                                {% endfor %}
+                              </select>
+                              <small id="petugashelp" class="form-text text-muted">Bisa pilih banyak</small>
+                          </div>
+                          <div class="form-group">
+                              <label class="form-text" for="progress"><b>Progress</b></label>
+                              <div class="input-group">
+                                  <input class="form-control" type="number" name="progress" id="progress" placeholder="contoh:700" step="0.1">
+                                  <div class="input-group-append">
+                                    <span class="input-group-text" id="satuan">m<sup>3</sup></span>
+                                  </div>
+                              </div>
+                          </div>
+                          <div class="form-group">
+                              <label class="form-text" for="keterangan"><b>Keterangan</b></label>
+                              <textarea class="form-control" name="keterangan" id="keterangan" required value=""></textarea>
+                          </div>
+                          <div>
+                              <button type="submit" name="submit" class="btn btn-primary my-1 mr-2">Kirim</button>
+                              <a data-toggle="collapse" href="#pemeliharaan" role="button" aria-expanded="false" aria-controls="pemeliharaan">batal</a>
+                          </div>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+        <br>
+    </div>
+{% endblock %}
+
+{% block js %}
+<script src="https://cdn.jsdelivr.net/npm/bootstrap-select@1.13.14/dist/js/bootstrap-select.min.js"></script>
+<script src="{{ url_for('static', filename='js/moment.min.js') }}"></script>
+<script src="{{ url_for('static', filename='js/id.js') }}"></script>
+<script src="{{ url_for('static', filename='js/bootstrap-editable.min.js') }}"></script>
+<script src="{{ url_for('static', filename='js/bootstrap-datepicker.min.js') }}"></script>
+<script src="{{ url_for('static', filename='js/MinifyJpegAsync.js') }}"></script>
+<script>
+    function customFormat(m) {
+        return `${m.format('dddd').slice(0,3)}, ${m.format('ll')}`
+    }
+    function getMonday(date) {
+        let weekday = date.getDay();
+        if (weekday == 0){
+            return moment(date).add(1, 'days');
+        } else if (weekday > 1) {
+            return moment(date).subtract(weekday-1, 'days');
+        } else {
+            return moment(date);
+        }
+    };
+    function getSatFromMon(date) {
+        return moment(date).add(5, 'days');
+    }
+    function nextWeek() {
+        let sampling = new Date($('#datepicker-rencana').attr('value'));
+        let mon = getMonday(date);
+        mon = monday.add(7, 'days');
+        $('#sampling-rencana').text(`${customFormat(mon)} - ${customFormat(getSatFromMon(mon))}`);
+        $('#datepicker-rencana').attr('value', mon.format('YYYY-MM-DD'));
+    }
+    function prevWeek() {
+        let sampling = new Date($('#datepicker-rencana').attr('value'));
+        let mon = getMonday(date);
+        mon = monday.subtract(7, 'days');
+        $('#sampling-rencana').text(`${customFormat(mon)} - ${customFormat(getSatFromMon(mon))}`);
+        $('#datepicker-rencana').attr('value', mon.format('YYYY-MM-DD'));
+    }
+
+    let date = new Date($('#datepicker-rencana').attr('value'));
+    let monday = getMonday(date);
+    $('#sampling-rencana').text(`${customFormat(monday)} - ${customFormat(getSatFromMon(monday))}`);
+    $('#datepicker-rencana').attr('value', monday.format('YYYY-MM-DD'));
+
+    $(document).ready(function() {
+        // resolve package confict
+        let datepicker = $.fn.datepicker.noConflict();
+        $.fn.bootstrapDP = datepicker;
+
+        $('#datepicker').datepicker({
+            autoclose: true,
+            format: 'yyyy-mm-dd',
+            startView: "months",
+            minViewMode: "months"
+        });
+        $('#datepicker').on('changeDate', function () {
+            window.location = "{{ url_for('admin.kegiatan_bendungan', bendungan_id=bend_id) }}?sampling=" + $('#datepicker').datepicker('getFormattedDate')
+        });
+
+        $('#sampling-pemeliharaan').datepicker({
+            todayHighlight: true,
+            autoclose: true,
+            format:  'yyyy-mm-dd'
+        });
+        $('#sampling-pemeliharaan').on('changeDate', function () {
+            let date = $('#sampling-pemeliharaan').datepicker('getFormattedDate');
+            $('#sampling-pemeliharaan').text(moment(date).format('DD MMMM YYYY'));
+            $('#datepicker-pemeliharaan').attr('value', moment(date).format('YYYY-MM-DD'));
+            $('.datepicker').hide();
+        });
+
+        //turn to popup mode
+        $.fn.editable.defaults.mode = 'popup';
+        $(document).ready(function() {
+            $('.editable').editable({
+                error: function(response, newValue) {
+                    if(response.status === 500) {
+                        return 'Tidak bisa update, Tambah data pakai form.';
+                    }
+                 },
+            });
+        });
+
+        $('select[name="petugas"]').change(function () {
+            if ($('input#foto')[0].files && ($('input#foto')[0].files.length > 0)) {
+                $('input[name="submit"]').removeClass('disabled');
+            };
+            console.log(this.value);
+        });
+
+        $('#foto').on('change', function(event) {
+            console.log("Input Change Detected");
+            readURL(event);
+        });
+    });
+
+    let enc_img = '';
+	let file_name = '';
+	function readURL(event) {
+        let f = event.target.files[0];
+		file_name = f.name;
+        let reader = new FileReader();
+
+        reader.onloadend = function(e){
+            console.log(`onload function called, parameter : ${e}`);
+			MinifyJpegAsync.minify(e.target.result, 1280, function(data) {
+				enc_img = "data:image/jpeg;base64," + btoa(data);
+				let img = new Image();
+				img.src = enc_img;
+
+				document.getElementById('blah').src = enc_img;
+				console.log('Hasil proses minify') ;
+			});
+        };  // (function(theFile))(f)
+		reader.readAsDataURL(f);
+    };
+
+    function go_upload() {
+        if($('select[name="petugas"]').val() == 'Tidak Ada'){
+            alert('Pilih petugas');
+            $('select[name="petugas"]').focus();
+        } else if ($('#blah').attr('src') == "{{ url_for('static', filename='img/null.jpg') }}"){
+            alert('Pilih foto terlebih dahulu');
+        } else if ($('input[name="keterangan"]').val() == ''){
+            alert('Harap masukkan keterangan foto kegiatan');
+            $('input[name="keterangan"]').focus();
+        } else {
+            let fields = 'keterangan_waktu'.split('_');
+            let formData = {
+                csrf_token: '{{ csrf }}',
+                foto: enc_img,
+                filename: file_name,
+                keterangan: $('input[name="keterangan"]').val(),
+                sampling: $('input[name="sampling"]').val(),
+                petugas: $('select[name="petugas"]').val().toLowerCase()
+            };
+            console.log("Posting Photo");
+            console.log(formData);
+            $.post("{{ url_for('admin.kegiatan_add', bendungan_id=bend_id) }}", formData,
+                function (res) {
+                    console.log(res);
+                    location.reload();
+                }
+            );
+        }
+    }
+
+    function srcnull(){
+    	$('#fotoFile').val('');
+    	$('#blah').attr('src', "{{ url_for('static', filename='img/null.jpg') }}");
+    	$('input[name="keterangan"]').val('');
+    	$('select[name="petugas"]').val("Tidak Ada").change();
+    	$('#form-kegiatan').collapse('hide');
+    }
+</script>
+{% endblock %}

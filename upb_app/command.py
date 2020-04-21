@@ -53,6 +53,9 @@ def mysql_test(sampling):
 
 @app.cli.command()
 def import_manual_data():
+    print("Disabled")
+    return
+
     waduk_daily = custom_query(mycursor, 'waduk_daily', limit=None)
     print(f"Importing Manual Data")
     count = 0
@@ -266,6 +269,9 @@ def import_manual_data():
 
 @app.cli.command()
 def import_master():
+    print("Disabled")
+    return
+
     print("Importing Bendungan")
     all_waduk = custom_query(mycursor, 'agent', limit=None)
     for waduk in all_waduk:

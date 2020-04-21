@@ -4,7 +4,7 @@ from flask_wtf.csrf import generate_csrf
 from sqlalchemy import extract
 from sqlalchemy.exc import IntegrityError
 from upb_app.helper import month_range
-from upb_app.models import Kegiatan, Foto, Bendungan
+from upb_app.models import Kegiatan, Foto, Bendungan, Petugas, jenis_pemeliharaan
 from upb_app.forms import AddKegiatan
 from upb_app import app, db, petugas_only, role_check
 import datetime
@@ -153,6 +153,21 @@ def kegiatan_add(bendungan_id):
             flash(f"Terjadi Error saat menyimpan data Kegiatan : {e}", 'danger')
 
     return redirect(url_for('admin.kegiatan_bendungan', bendungan_id=bend.id))
+
+
+@bp.route('/bendungan/pemeliharaan/<bendungan_id>/add', methods=['GET', 'POST'])
+@login_required
+@role_check
+def pemeliharaan_add(bendungan_id):
+    bend = Bendungan.query.get(bendungan_id)
+    sampling = datetime.datetime.now()
+    petugas = Petugas.query.filter(Petugas.bendungan_id == bend.id).all()
+
+    return render_template('kegiatan/pemeliharaan.html',
+                            bend=bend,
+                            sampling=sampling,
+                            petugas=petugas,
+                            jenis=jenis_pemeliharaan)
 
 
 @bp.route('/bendungan/kegiatan/update', methods=['POST'])  # @login_required
