@@ -1,8 +1,8 @@
 from flask_wtf import FlaskForm
-from wtforms import StringField, PasswordField, DecimalField, DateField
-from wtforms import BooleanField, SubmitField, SelectField, RadioField, FileField, TimeField
+from wtforms import StringField, PasswordField, DecimalField, DateField, FileField, TimeField
+from wtforms import BooleanField, SubmitField, SelectField, SelectMultipleField, RadioField
 from wtforms.validators import DataRequired, Optional
-from upb_app.models import Bendungan
+from upb_app.models import Bendungan, Petugas
 import datetime
 
 bends = [(b.id, b.nama) for b in Bendungan.query.all()]
@@ -60,6 +60,7 @@ kategori = [
     ('sedang', 'Sedang'),
     ('berat', 'Berat')
 ]
+daftar_petugas = [(f"{p.id}", p.nama) for p in Petugas.query.all()]
 
 
 class LoginForm(FlaskForm):
@@ -184,3 +185,20 @@ class LaporKerusakan(FlaskForm):
     komponen = SelectField("Komponen", choices=komponen, validators=[DataRequired()], default=komponen[0][0])
     keterangan = StringField('Keterangan', validators=[DataRequired()])
     submit = SubmitField('Lapor')
+
+
+class RencanaPemeliharaan(FlaskForm):
+    sampling = DateField("Minggu", validators=[DataRequired()], default=datetime.datetime.today())
+    jenis = StringField('Jenis Kegiatan', validators=[DataRequired()])
+    komponen = StringField('Komponen', validators=[DataRequired()])
+    target = DecimalField('Target', validators=[DataRequired()])
+    submit = SubmitField('Kirim')
+
+
+class LaporPemeliharaan(FlaskForm):
+    sampling = DateField("Minggu", validators=[DataRequired()], default=datetime.datetime.today())
+    jenis = StringField('Jenis Kegiatan', validators=[DataRequired()])
+    petugas = SelectMultipleField('Petugas', validators=[DataRequired()], choices=daftar_petugas)
+    progress = DecimalField('Target', validators=[DataRequired()])
+    keterangan = StringField('Keterangan', validators=[DataRequired()])
+    submit = SubmitField('Kirim')

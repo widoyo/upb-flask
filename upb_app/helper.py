@@ -16,7 +16,7 @@ def to_date(datestring):
     return _date
 
 
-def month_range(date):
+def month_range(date=None):
     ''' input str format (%Y-%m-%d)
     return start of the month, todays date or end of the month, and number of days '''
     now = datetime.datetime.now() + datetime.timedelta(hours=7)
@@ -31,7 +31,21 @@ def month_range(date):
     return start, end, day
 
 
-def day_range(date):
+def week_range(date=None):
+    ''' input str format (%Y-%m-%d)
+    return current date, monday of the week and saturday of the week '''
+    now = datetime.datetime.now() + datetime.timedelta(hours=7)
+    def_date = date if date else now.strftime("%Y-%m-%d")
+    date = datetime.datetime.strptime(def_date, "%Y-%m-%d")
+
+    weekday = int(date.strftime('%w'))
+    start = date if weekday == 1 else date - datetime.timedelta(days=weekday-1)
+    end = start + datetime.timedelta(days=5)
+
+    return date, start, end
+
+
+def day_range(date=None):
     ''' input str format (%Y-%m-%d)
     return start of the day and end of the day '''
     now = datetime.datetime.now() + datetime.timedelta(hours=7)

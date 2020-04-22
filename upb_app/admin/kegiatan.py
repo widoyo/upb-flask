@@ -3,9 +3,9 @@ from flask_login import login_required, current_user
 from flask_wtf.csrf import generate_csrf
 from sqlalchemy import extract
 from sqlalchemy.exc import IntegrityError
-from upb_app.helper import month_range
-from upb_app.models import Kegiatan, Foto, Bendungan, Petugas, jenis_pemeliharaan
-from upb_app.forms import AddKegiatan
+from upb_app.helper import month_range, week_range
+from upb_app.models import Kegiatan, Foto, Bendungan, Petugas, Pemeliharaan, jenis_pemeliharaan
+from upb_app.forms import AddKegiatan, RencanaPemeliharaan, LaporPemeliharaan
 from upb_app import app, db, petugas_only, role_check
 import datetime
 import calendar
@@ -155,19 +155,112 @@ def kegiatan_add(bendungan_id):
     return redirect(url_for('admin.kegiatan_bendungan', bendungan_id=bend.id))
 
 
-@bp.route('/bendungan/pemeliharaan/<bendungan_id>/add', methods=['GET', 'POST'])
+@bp.route('/bendungan/pemeliharaan/<bendungan_id>')
 @login_required
 @role_check
-def pemeliharaan_add(bendungan_id):
+def pemeliharaan(bendungan_id):
     bend = Bendungan.query.get(bendungan_id)
-    sampling = datetime.datetime.now()
+    sampling, start, end = week_range(request.values.get('sampling'))
     petugas = Petugas.query.filter(Petugas.bendungan_id == bend.id).all()
+
+    pemeliharaan = Pemeliharaan.query.filter(
+                                        Pemeliharaan.sampling >= start,
+                                        Pemeliharaan.sampling <= sampling,
+                                        Pemeliharaan.bendungan_id == bendungan_id
+                                    ).order_by(Pemeliharaan.sampling).all()
+    data = {}
+    rencana = {}
+    laporan = []
+    for i in range(int(sampling.strftime('%w'))):
+        sampl = sampling - datetime.timedelta(days=i)
+        data[sampl] = []
+    for pem in pemeliharaan:
+        if pem.is_rencana == '1':
+            rencana[pem.jenis] = {
+                'rencana': pem,
+                'progress': 0
+            }
+        else:
+            laporan.append(pem)
+    for l in laporan:
+        rencana[l.jenis]['progress'] += round(l.nilai/rencana[l.jenis]['rencana'].nilai, 4)
+        lap_pet = l.get_petugas()
+        data[l.sampling].append({
+            'laporan': l,
+            'petugas': lap_pet,
+            'length': max(1, len(lap_pet)),
+            'rencana': rencana[l.jenis]['rencana'],
+            'progress': rencana[l.jenis]['progress']
+        })
+    # data = sorted(data, reverse=True)
 
     return render_template('kegiatan/pemeliharaan.html',
                             bend=bend,
+                            data=data,
+                            csrf=generate_csrf(),
                             sampling=sampling,
                             petugas=petugas,
-                            jenis=jenis_pemeliharaan)
+                            jenis=jenis_pemeliharaan,
+                            jenis_ren=[j for j, ren in rencana.items()])
+
+
+@bp.route('/bendungan/pemeliharaan/<bendungan_id>/rencana', methods=['POST'])
+@login_required
+@role_check
+def pemeliharaan_rencana(bendungan_id):
+    form = RencanaPemeliharaan()
+
+    if form.validate_on_submit():
+        obj_dict = {
+            'sampling': form.sampling.data,
+            'is_rencana': '1',
+            'jenis': form.jenis.data,
+            'komponen': form.komponen.data,
+            'nilai': form.target.data,
+            'bendungan_id': bendungan_id
+        }
+        obj = Pemeliharaan(**obj_dict)
+        db.session.add(obj)
+        try:
+            db.session.commit()
+            flash('Rencana Pemeliharaan berhasil ditambahkan !', 'success')
+        except IntegrityError:
+            db.session.rollback()
+            flash(f"Rencana Pemeliharaan sudah dibuat", 'danger')
+
+    return redirect(url_for('admin.pemeliharaan', bendungan_id=bendungan_id))
+
+
+@bp.route('/bendungan/pemeliharaan/<bendungan_id>/lapor', methods=['POST'])
+@login_required
+@role_check
+def pemeliharaan_lapor(bendungan_id):
+    form = LaporPemeliharaan()
+
+    if form.validate_on_submit():
+        obj_dict = {
+            'sampling': form.sampling.data,
+            'is_rencana': '0',
+            'jenis': form.jenis.data,
+            'nilai': form.progress.data,
+            'keterangan': form.keterangan.data,
+            'bendungan_id': bendungan_id
+        }
+        obj = Pemeliharaan(**obj_dict)
+        db.session.add(obj)
+        try:
+            db.session.commit()
+        except IntegrityError:
+            db.session.rollback()
+            flash(f"Rencana Pemeliharaan sudah dibuat", 'danger')
+            return redirect(url_for('admin.pemeliharaan', bendungan_id=bendungan_id))
+
+        # set association table for pemeliharaan-petugas
+        petugas = [int(id) for id in form.petugas.data]
+        obj.set_petugas(petugas)
+        flash('Rencana Pemeliharaan berhasil ditambahkan !', 'success')
+
+    return redirect(url_for('admin.pemeliharaan', bendungan_id=bendungan_id))
 
 
 @bp.route('/bendungan/kegiatan/update', methods=['POST'])  # @login_required

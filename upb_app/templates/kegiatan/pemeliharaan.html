@@ -25,8 +25,7 @@
                         Rencana Mingguan <small><i class="fas fa-play"></i></small>
                       </a>
                     </h5>
-                    <hr>
-                    <form action="#" method="POST">
+                    <form action="{{ url_for('admin.pemeliharaan_rencana', bendungan_id=bend.id) }}" method="POST">
                         <input id="csrf_token" name="csrf_token" type="hidden" value="{{ csrf }}">
                         <div class="collapse" id="rencana">
                           <div class="form-group">
@@ -38,8 +37,7 @@
                           </div>
                           <div class="form-group">
                               <label class="form-text" for="jenis"><b>Jenis Kegiatan</b></label>
-                              <select id="jenis" name="jenis" class="form-control">
-                                  <option selected>-</option>
+                              <select id="jenis" name="jenis" class="form-control" required>
                                 {% for jen in jenis %}
                                     <option value="{{ jen }}">{{ jen.title() }}</option>
                                 {% endfor %}
@@ -52,7 +50,7 @@
                           <div class="form-group">
                               <label class="form-text" for="target"><b>Target</b></label>
                               <div class="input-group">
-                                  <input class="form-control" type="number" name="target" id="target" placeholder="contoh:700" step="0.1">
+                                  <input class="form-control" type="number" name="target" id="target" placeholder="contoh:700" step="0.1" required>
                                   <div class="input-group-append">
                                     <span class="input-group-text" id="satuan">m<sup>3</sup></span>
                                   </div>
@@ -72,8 +70,7 @@
                         Laporan Pemeliharaan <small><i class="fas fa-play"></i></small>
                       </a>
                     </h5>
-                    <hr>
-                    <form action="#" method="POST">
+                    <form action="{{ url_for('admin.pemeliharaan_lapor', bendungan_id=bend.id) }}" method="POST" enctype="multipart/form-data">
                         <input id="csrf_token" name="csrf_token" type="hidden" value="{{ csrf }}">
                         <div class="collapse" id="pemeliharaan">
                           <div class="form-group">
@@ -84,9 +81,8 @@
                           </div>
                           <div class="form-group">
                               <label class="form-text" for="jenis"><b>Jenis Kegiatan</b></label>
-                              <select id="jenis" name="jenis" class="form-control" aria-describedby="jenishelp">
-                                  <option selected>-</option>
-                                {% for jen in jenis %}
+                              <select id="jenis" name="jenis" class="form-control" aria-describedby="jenishelp" required>
+                                {% for jen in jenis_ren %}
                                     <option value="{{ jen }}">{{ jen.title() }}</option>
                                 {% endfor %}
                               </select>
@@ -94,7 +90,7 @@
                           </div>
                           <div class="form-group">
                               <label class="form-text" for="petugas"><b>Petugas</b></label>
-                              <select id="petugas" name="petugas" class="selectpicker form-control" multiple aria-describedby="petugashelp">
+                              <select id="petugas" name="petugas" class="selectpicker form-control" multiple required aria-describedby="petugashelp">
                                 {% for p in petugas %}
                                     <option value="{{ p.id }}">{{ p.nama }}</option>
                                 {% endfor %}
@@ -104,7 +100,7 @@
                           <div class="form-group">
                               <label class="form-text" for="progress"><b>Progress</b></label>
                               <div class="input-group">
-                                  <input class="form-control" type="number" name="progress" id="progress" placeholder="contoh:700" step="0.1">
+                                  <input class="form-control" type="number" name="progress" id="progress" placeholder="contoh:700" step="0.1" required>
                                   <div class="input-group-append">
                                     <span class="input-group-text" id="satuan">m<sup>3</sup></span>
                                   </div>
@@ -114,9 +110,24 @@
                               <label class="form-text" for="keterangan"><b>Keterangan</b></label>
                               <textarea class="form-control" name="keterangan" id="keterangan" required value=""></textarea>
                           </div>
+                          <div class="form-group container">
+                              <p>*Upload Foto bisa dilakukan di tampilan harian pemeliharaan di bawah</p>
+                          </div>
+                          <!-- <div class="form-group">
+                              <label for="foto"><b>Foto</b></label>
+                              <input type="file" class="form-control-file" id="foto" name="foto">
+                              <div>
+                                  <img id="blah" src="{{ url_for('static', filename='images/null.jpg') }}" alt="gambar disini">
+                              </div>
+                          </div>
+                          <div class="form-group">
+                              <label class="form-text" for="keterangan_foto"><b>Keterangan Foto</b></label>
+                              <input type="text" name="keterangan_foto" class="form-control" placeholder="Kegiatan Babat Rumput = 80%" aria-describedby="fotohelp">
+                              <small id="fotohelp" class="form-text text-muted">Foto bisa ditambah di tabel harian</small>
+                          </div> -->
                           <div>
                               <button type="submit" name="submit" class="btn btn-primary my-1 mr-2">Kirim</button>
-                              <a data-toggle="collapse" href="#pemeliharaan" role="button" aria-expanded="false" aria-controls="pemeliharaan">batal</a>
+                              <a data-toggle="collapse" href="#pemeliharaan" role="button" aria-expanded="false" aria-controls="pemeliharaan" onclick="srcnull()">batal</a>
                           </div>
                         </div>
                     </form>
@@ -124,6 +135,80 @@
             </div>
         </div>
         <br>
+        <div id="weekly-data">
+            {% if user.role == "2" %}
+                <div class="row">
+                    <div class="col-md-3">
+                        Testing
+                    </div>
+                    <div class="col-md-3">
+                        Testing
+                    </div>
+                    <div class="col-md-3">
+                        Testing
+                    </div>
+                    <div class="col-md-3">
+                        Testing
+                    </div>
+                </div>
+            {% else %}
+            <table class="table table-hover table-bordered">
+                <thead>
+                    <tr>
+                        <th rowspan="2" class="text-center align-middle">No</th>
+                        <th rowspan="2" class="text-center align-middle">Nama Petugas</th>
+                        <th rowspan="2" class="text-center align-middle">Jabatan</th>
+                        <th rowspan="2" class="text-center align-middle">Jenis Kegiatan</th>
+                        <th colspan="3" class="text-center align-middle">Progress Output</th>
+                        <th rowspan="2" class="text-center align-middle">Keterangan</th>
+                        <th rowspan="2" class="text-center align-middle">Dokumentasi</th>
+                    </tr>
+                    <tr>
+                        <th class="text-center align-middle">Rencana Mingguan</th>
+                        <th class="text-center align-middle">Realisasi Harian</th>
+                        <th class="text-center align-middle">Progres Pekerjaan</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for sampl, d in data.items() %}
+                        <tr>
+                            <td class="bg-secondary text-center" colspan="9"><b><span id="tgl" >{{ sampl }}</span></b></td>
+                        </tr>
+                        {% if d %}
+                            {% for pem in d %}
+                            <tr>
+                                <td rowspan="{{ pem.length }}" class="text-center align-middle">{{ loop.index }}</td>
+                                <td>{% if pem.petugas %}{{ pem.petugas.0.nama }}{% else %}-{% endif %}</td>
+                                <td>{% if pem.petugas %}{{ pem.petugas.0.tugas }}{% else %}-{% endif %}</td>
+                                <td rowspan="{{ pem.length }}" class="text-center align-middle">
+                                    {{ pem.laporan.jenis.title() }}<br>
+                                    <small>({{ pem.rencana.komponen }})</small>
+                                </td>
+                                <td rowspan="{{ pem.length }}" class="text-center align-middle">{{ pem.rencana.str_nilai()|safe }}</td>
+                                <td rowspan="{{ pem.length }}" class="text-center align-middle">
+                                    {{ pem.laporan.str_nilai()|safe }}
+                                </td>
+                                <td rowspan="{{ pem.length }}" class="text-center align-middle">{{ pem.progress * 100 }} %</td>
+                                <td rowspan="{{ pem.length }}" class="text-center align-middle">{{ pem.laporan.keterangan }}</td>
+                                <td rowspan="{{ pem.length }}" class="text-center align-middle"></td>
+                            </tr>
+                                {% for pet in pem.petugas[1:] %}
+                                <tr>
+                                    <td>{{ pet.nama }}</td>
+                                    <td>{{ pet.tugas }}</td>
+                                </tr>
+                                {% endfor %}
+                            {% endfor %}
+                        {% else %}
+                            <tr>
+                                <td colspan="9" class="text-center">Tidak Ada Laporan</td>
+                            </tr>
+                        {% endif %}
+                    {% endfor %}
+                </tbody>
+            </table>
+            {% endif %}
+        </div>
     </div>
 {% endblock %}
 
@@ -198,6 +283,12 @@
             $('.datepicker').hide();
         });
 
+        let tgls = document.querySelectorAll("#tgl");
+        tgls.forEach(function(el){
+            console.log(el.value);
+            el.innerText = moment(el.innerText).format('dddd, LL');
+        });
+
         //turn to popup mode
         $.fn.editable.defaults.mode = 'popup';
         $(document).ready(function() {
@@ -208,13 +299,6 @@
                     }
                  },
             });
-        });
-
-        $('select[name="petugas"]').change(function () {
-            if ($('input#foto')[0].files && ($('input#foto')[0].files.length > 0)) {
-                $('input[name="submit"]').removeClass('disabled');
-            };
-            console.log(this.value);
         });
 
         $('#foto').on('change', function(event) {
@@ -245,12 +329,7 @@
     };
 
     function go_upload() {
-        if($('select[name="petugas"]').val() == 'Tidak Ada'){
-            alert('Pilih petugas');
-            $('select[name="petugas"]').focus();
-        } else if ($('#blah').attr('src') == "{{ url_for('static', filename='img/null.jpg') }}"){
-            alert('Pilih foto terlebih dahulu');
-        } else if ($('input[name="keterangan"]').val() == ''){
+        if ($('input[name="keterangan_foto"]').val() == ''){
             alert('Harap masukkan keterangan foto kegiatan');
             $('input[name="keterangan"]').focus();
         } else {
@@ -275,11 +354,10 @@
     }
 
     function srcnull(){
-    	$('#fotoFile').val('');
-    	$('#blah').attr('src', "{{ url_for('static', filename='img/null.jpg') }}");
-    	$('input[name="keterangan"]').val('');
-    	$('select[name="petugas"]').val("Tidak Ada").change();
-    	$('#form-kegiatan').collapse('hide');
+    	$('#foto').val('');
+    	$('#blah').attr('src', "{{ url_for('static', filename='images/null.jpg') }}");
+    	$('input[name="keterangan_foto"]').val('');
+    	$('#pemeliharaan').collapse('hide');
     }
 </script>
 {% endblock %}

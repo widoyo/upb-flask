@@ -1,11 +1,11 @@
 from werkzeug.security import generate_password_hash, check_password_hash
 from flask_login import UserMixin
+from flask import flash
 
 from upb_app import login
 from upb_app import db
 from sqlalchemy.dialects.postgresql import JSONB
 from sqlalchemy.orm import relationship
-from sqlalchemy.ext.declarative import declarative_base
 from sqlalchemy import desc
 import datetime
 import hashlib
@@ -27,13 +27,18 @@ jenis_pemeliharaan = [
     'tambal sulam kerusakan ringan',
     'penghijauan',
 ]
-
-# Base = declarative_base()
-# association table for Petugas and Pemeliharaan
-# PemeliharaanPetugas = db.Table('PemeliharaanPetugas', Base.metadata,
-#                         db.Column('id', db.Integer, primary_key=True),
-#                         db.Column('pemeliharaan_id', db.Integer, db.ForeignKey('Pemeliharaan.id')),
-#                         db.Column('petugas_id', db.Integer, db.ForeignKey('Petugas.id')))
+jenis2atuan = {
+    'cabut rumput': "m<sup>3</sup>",
+    'potong rumput': "m<sup>3</sup>",
+    'pembersihan sampah': "m<sup>3</sup>",
+    'pelumasan': "Pcs",
+    'pengecatan': "m<sup>3</sup>",
+    'penggantian oli mesin': "Ltr",
+    'perawatan alat kerja': "Pcs",
+    'pengangkatan sedimen': "m<sup>3</sup>",
+    'tambal sulam kerusakan ringan': "m<sup>3</sup>",
+    'penghijauan': "m<sup>3</sup>"
+}
 
 
 class BaseLog(db.Model):
@@ -337,9 +342,26 @@ class Pemeliharaan(BaseLog):
 
     bendungan = relationship('Bendungan', back_populates='pemeliharaan')
     pemeliharaan_petugas = relationship('PemeliharaanPetugas', back_populates='pemeliharaan')
+    __table_args__ = (db.UniqueConstraint('is_rencana', 'sampling', 'jenis'),)
 
     def get_hms(self):
         return self.c_date + datetime.timedelta(hours=7)
+
+    def str_nilai(self):
+        if self.nilai:
+            formatted = f"{self.nilai} {jenis2atuan[self.jenis]}"
+        else:
+            formatted = "-"
+        return formatted
+
+    def set_petugas(self, petugas_id_list):
+        for id in petugas_id_list:
+            new_obj = PemeliharaanPetugas(
+                pemeliharaan_id=self.id,
+                petugas_id=id
+            )
+            db.session.add(new_obj)
+        db.session.commit()
 
     def get_petugas(self):
         petugas = []
