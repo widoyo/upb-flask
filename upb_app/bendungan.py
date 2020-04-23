@@ -204,8 +204,8 @@ def operasi(lokasi_id):
             operasi['po_bona'] += f"{rt.po_bona}" if rt.po_bona else "0"
             operasi['po_bonb'] += f"{rt.po_bonb}" if rt.po_bonb else "0"
             operasi['real'] += str(tma.tma) if tma.tma else "null"
-            operasi['elev_min'] += f"{pos.muka_air_min}"
-            operasi['sedimen'] += f"{pos.sedimen}"
+            operasi['elev_min'] += f"{pos.muka_air_min or '0'}"
+            operasi['sedimen'] += f"{pos.sedimen or '0'}"
             operasi['po_outflow'] += '0' if not rt.po_outflow_deb else str(rt.po_outflow_deb)
             operasi['po_inflow'] += '0' if not rt.po_inflow_deb else str(rt.po_inflow_deb)
             operasi['real_outflow'] += str(daily.intake_deb) if daily.intake_deb else "0"
@@ -281,7 +281,7 @@ def vnotch(lokasi_id):
         tgl = vn
         vnotch['tanggal'] += f"'{tgl}'"
         vnotch['ch'] += f"{filtered_vnotch[vn]['ch']}"
-        vnotch['bts_remb'] += f"{filtered_vnotch[vn]['bts_remb']}"
+        vnotch['bts_remb'] += f"{filtered_vnotch[vn]['bts_remb'] or 0}"
         for vnn in filtered_vnotch[vn]['vn']:
             if vnn not in vnotch['vn']:
                 vnotch['vn'][vnn] = ""
