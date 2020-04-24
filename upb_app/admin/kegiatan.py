@@ -197,8 +197,11 @@ def pemeliharaan(bendungan_id):
     return render_template('kegiatan/pemeliharaan.html',
                             bend=bend,
                             data=data,
+                            rencana=rencana,
                             csrf=generate_csrf(),
                             sampling=sampling,
+                            next=sampling + datetime.timedelta(days=7),
+                            prev=sampling - datetime.timedelta(days=7),
                             petugas=petugas,
                             jenis=jenis_pemeliharaan,
                             jenis_ren=[j for j, ren in rencana.items()])
@@ -228,7 +231,7 @@ def pemeliharaan_rencana(bendungan_id):
             db.session.rollback()
             flash(f"Rencana Pemeliharaan sudah dibuat", 'danger')
 
-    return redirect(url_for('admin.pemeliharaan', bendungan_id=bendungan_id))
+    return redirect(url_for('admin.pemeliharaan', bendungan_id=bendungan_id, rencana='on'))
 
 
 @bp.route('/bendungan/pemeliharaan/<bendungan_id>/lapor', methods=['POST'])

@@ -10,6 +10,7 @@ bp = Blueprint('api', __name__)
 @bp.route('/bendungan/periodic')
 def bendungan_periodic():
     sampling, end = day_range(request.values.get('sampling'))
+    print(f"{sampling} to {end}")
 
     result = []
     bendungan = Bendungan.query.all()
@@ -20,6 +21,8 @@ def bendungan_periodic():
                                         ManualDaily.sampling <= end),
                                     ManualDaily.bendungan_id == bend.id
                                     ).first()
+        if not daily:
+            continue
         vnotch = ManualVnotch.query.filter(
                                     and_(
                                         ManualVnotch.sampling >= sampling,

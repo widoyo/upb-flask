@@ -134,80 +134,117 @@
                 </div>
             </div>
         </div>
-        <br>
+        <hr>
+        <div class="text-center">
+            <a class="d-inline mr-2" href="{{ url_for('admin.pemeliharaan', bendungan_id=bend.id, sampling=prev.strftime('%Y-%m-%d')) }}"><i class="fas fa-arrow-left"></i></a>
+            <p class="d-inline"><b><span id="sampling-weekly">{{ sampling.strftime('%d %B %Y') }}</span></b></p>
+            <a class="d-inline ml-2" href="{{ url_for('admin.pemeliharaan', bendungan_id=bend.id, sampling=next.strftime('%Y-%m-%d')) }}"><i class="fas fa-arrow-right"></i></a>
+        </div>
+        <hr>
+        <div class="d-flex mb-3">
+            <nav>
+              <div class="nav nav-tabs" id="nav-tab" role="tablist">
+                <a class="nav-item nav-link {% if not request.values.get('rencana') == 'on' %}active{% endif %}"
+                  id="nav-laporan-tab" data-toggle="tab"
+                  href="#nav-laporan" role="tab"
+                  aria-controls="laporan"
+                  aria-selected="{% if request.values.get('rencana') == 'on' %}false{% else %}true{% endif %}">
+                  <h5>Laporan</h5>
+                </a>
+                <a class="nav-item nav-link {% if request.values.get('rencana') == 'on' %}active{% endif %}"
+                    id="nav-rencana-tab" data-toggle="tab"
+                    href="#nav-rencana" role="tab"
+                    aria-controls="rencana"
+                    aria-selected="{% if request.values.get('rencana') == 'on' %}true{% else %}false{% endif %}">
+                    <h5>Rencana</h5>
+                </a>
+              </div>
+            </nav>
+        </div>
         <div id="weekly-data">
-            {% if user.role == "2" %}
-                <div class="row">
-                    <div class="col-md-3">
-                        Testing
-                    </div>
-                    <div class="col-md-3">
-                        Testing
-                    </div>
-                    <div class="col-md-3">
-                        Testing
-                    </div>
-                    <div class="col-md-3">
-                        Testing
-                    </div>
-                </div>
-            {% else %}
-            <table class="table table-hover table-bordered">
-                <thead>
-                    <tr>
-                        <th rowspan="2" class="text-center align-middle">No</th>
-                        <th rowspan="2" class="text-center align-middle">Nama Petugas</th>
-                        <th rowspan="2" class="text-center align-middle">Jabatan</th>
-                        <th rowspan="2" class="text-center align-middle">Jenis Kegiatan</th>
-                        <th colspan="3" class="text-center align-middle">Progress Output</th>
-                        <th rowspan="2" class="text-center align-middle">Keterangan</th>
-                        <th rowspan="2" class="text-center align-middle">Dokumentasi</th>
-                    </tr>
-                    <tr>
-                        <th class="text-center align-middle">Rencana Mingguan</th>
-                        <th class="text-center align-middle">Realisasi Harian</th>
-                        <th class="text-center align-middle">Progres Pekerjaan</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    {% for sampl, d in data.items() %}
-                        <tr>
-                            <td class="bg-secondary text-center" colspan="9"><b><span id="tgl" >{{ sampl }}</span></b></td>
-                        </tr>
-                        {% if d %}
-                            {% for pem in d %}
+            <div class="tab-content" id="nav-tabContent">
+              <div class="tab-pane fade {% if not request.values.get('rencana') == 'on' %}show active{% endif %} mt-2"
+                id="nav-laporan" role="tabpanel">
+                    <table class="table table-hover table-bordered">
+                        <thead>
                             <tr>
-                                <td rowspan="{{ pem.length }}" class="text-center align-middle">{{ loop.index }}</td>
-                                <td>{% if pem.petugas %}{{ pem.petugas.0.nama }}{% else %}-{% endif %}</td>
-                                <td>{% if pem.petugas %}{{ pem.petugas.0.tugas }}{% else %}-{% endif %}</td>
-                                <td rowspan="{{ pem.length }}" class="text-center align-middle">
-                                    {{ pem.laporan.jenis.title() }}<br>
-                                    <small>({{ pem.rencana.komponen }})</small>
-                                </td>
-                                <td rowspan="{{ pem.length }}" class="text-center align-middle">{{ pem.rencana.str_nilai()|safe }}</td>
-                                <td rowspan="{{ pem.length }}" class="text-center align-middle">
-                                    {{ pem.laporan.str_nilai()|safe }}
-                                </td>
-                                <td rowspan="{{ pem.length }}" class="text-center align-middle">{{ pem.progress * 100 }} %</td>
-                                <td rowspan="{{ pem.length }}" class="text-center align-middle">{{ pem.laporan.keterangan }}</td>
-                                <td rowspan="{{ pem.length }}" class="text-center align-middle"></td>
+                                <th rowspan="2" class="text-center align-middle">Jenis Kegiatan</th>
+                                <th rowspan="2" class="text-center align-middle">Nama Petugas</th>
+                                <th rowspan="2" class="text-center align-middle">Jabatan</th>
+                                <th colspan="3" class="text-center align-middle">Progres Output</th>
+                                <th rowspan="2" class="text-center align-middle">Keterangan</th>
+                                <th rowspan="2" class="text-center align-middle">Dokumentasi</th>
                             </tr>
-                                {% for pet in pem.petugas[1:] %}
+                            <tr>
+                                <th class="text-center align-middle">Rencana Mingguan</th>
+                                <th class="text-center align-middle">Realisasi Harian</th>
+                                <th class="text-center align-middle">Progres Pekerjaan</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for sampl, d in data.items() %}
                                 <tr>
-                                    <td>{{ pet.nama }}</td>
-                                    <td>{{ pet.tugas }}</td>
+                                    <td class="bg-secondary text-center" colspan="9"><b><span id="tgl" >{{ sampl }}</span></b></td>
                                 </tr>
-                                {% endfor %}
+                                {% if d %}
+                                    {% for pem in d %}
+                                    <tr>
+                                        <td rowspan="{{ pem.length }}" class="text-center align-middle">
+                                            <b>{{ pem.laporan.jenis.title() }}</b><br>
+                                            <small>({{ pem.rencana.komponen }})</small>
+                                        </td>
+                                        <td class="align-middle">{% if pem.petugas %}{{ pem.petugas.0.nama }}{% else %}-{% endif %}</td>
+                                        <td class="align-middle">{% if pem.petugas %}{{ pem.petugas.0.tugas }}{% else %}-{% endif %}</td>
+                                        <td rowspan="{{ pem.length }}" class="text-center align-middle">{{ pem.rencana.str_nilai()|safe }}</td>
+                                        <td rowspan="{{ pem.length }}" class="text-center align-middle">
+                                            {{ pem.laporan.str_nilai()|safe }}
+                                        </td>
+                                        <td rowspan="{{ pem.length }}" class="text-center align-middle">{{ pem.progress * 100 }} %</td>
+                                        <td rowspan="{{ pem.length }}" class="text-center align-middle">{{ pem.laporan.keterangan }}</td>
+                                        <td rowspan="{{ pem.length }}" class="text-center align-middle"></td>
+                                    </tr>
+                                        {% for pet in pem.petugas[1:] %}
+                                        <tr>
+                                            <td>{{ pet.nama }}</td>
+                                            <td>{{ pet.tugas }}</td>
+                                        </tr>
+                                        {% endfor %}
+                                    {% endfor %}
+                                {% else %}
+                                    <tr>
+                                        <td colspan="9" class="text-center">Tidak Ada Laporan</td>
+                                    </tr>
+                                {% endif %}
                             {% endfor %}
-                        {% else %}
+                        </tbody>
+                    </table>
+                </div>
+                <div class="tab-pane fade {% if request.values.get('rencana') == 'on' %}show active{% endif %} mt-2"
+                id="nav-rencana" role="tabpanel">
+                    <table class="table table-hover table-bordered">
+                        <thead>
                             <tr>
-                                <td colspan="9" class="text-center">Tidak Ada Laporan</td>
+                                <th class="text-center align-middle">No</th>
+                                <th class="text-center align-middle">Jenis Kegiatan</th>
+                                <th class="text-center align-middle">Komponen</th>
+                                <th class="text-center align-middle">Target</th>
+                                <th class="text-center align-middle">Progres</th>
                             </tr>
-                        {% endif %}
-                    {% endfor %}
-                </tbody>
-            </table>
-            {% endif %}
+                        </thead>
+                        <tbody>
+                            {% for j, ren in rencana.items() %}
+                            <tr>
+                                <td>{{ loop.index }}</td>
+                                <td>{{ j.title() }}</td>
+                                <td>{{ ren.rencana.komponen }}</td>
+                                <td align="right">{{ ren.rencana.str_nilai()|safe }}</td>
+                                <td align="right">{{ ren.progress*100 }} %</td>
+                            </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+            </div>
         </div>
     </div>
 {% endblock %}
@@ -253,6 +290,7 @@
 
     let date = new Date($('#datepicker-rencana').attr('value'));
     let monday = getMonday(date);
+    $('#sampling-weekly').text(`${monday.format('ll')} - ${getSatFromMon(monday).format('ll')}`);
     $('#sampling-rencana').text(`${customFormat(monday)} - ${customFormat(getSatFromMon(monday))}`);
     $('#datepicker-rencana').attr('value', monday.format('YYYY-MM-DD'));
 
