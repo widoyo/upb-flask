@@ -9,7 +9,7 @@ bp = Blueprint('api', __name__)
 
 @bp.route('/bendungan/periodic')
 def bendungan_periodic():
-    sampling, end = day_range(request.values.get('sampling'))
+    sampling, end = day_range(request.values.get('sampling').replace('/', '-'))
     print(f"{sampling} to {end}")
 
     result = []
