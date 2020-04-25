@@ -203,13 +203,13 @@ def operasi(lokasi_id):
             tanggal += f"'{tgl_str}'"
             operasi['po_bona'] += f"{rt.po_bona}" if rt.po_bona else "0"
             operasi['po_bonb'] += f"{rt.po_bonb}" if rt.po_bonb else "0"
-            operasi['real'] += str(tma.tma) if tma.tma else "null"
+            operasi['real'] += str(tma.tma) if tma and tma.tma else "null"
             operasi['elev_min'] += f"{pos.muka_air_min or '0'}"
             operasi['sedimen'] += f"{pos.sedimen or '0'}"
             operasi['po_outflow'] += '0' if not rt.po_outflow_deb else str(rt.po_outflow_deb)
             operasi['po_inflow'] += '0' if not rt.po_inflow_deb else str(rt.po_inflow_deb)
-            operasi['real_outflow'] += str(daily.intake_deb) if daily.intake_deb else "0"
-            operasi['real_inflow'] += str(daily.inflow_deb) if daily.inflow_deb else "0"
+            operasi['real_outflow'] += str(daily.intake_deb) if daily and daily.intake_deb else "0"
+            operasi['real_inflow'] += str(daily.inflow_deb) if daily and daily.inflow_deb else "0"
             i += 1
 
     return render_template('bendungan/operasi.html',
