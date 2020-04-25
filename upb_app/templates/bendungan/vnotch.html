@@ -87,7 +87,30 @@
                 mode: "index",
                 intersect: false,
                 callbacks: {
-                    label: (item, data) => `${data.datasets[item.datasetIndex].label} : ${item.yLabel} cm`,
+                    label: (item, data) => `${data.datasets[item.datasetIndex].label} : ${item.yLabel} mm`,
+                },
+            },
+        };
+        let options_vn = {
+            responsive: true,
+            legend: {
+                labels: {
+                    usePointStyle: true,
+                },
+            },
+            scales: {
+                yAxes: [{
+                    ticks: {
+                        beginAtZero: false
+                    }
+                }]
+            },
+            tooltips: {
+                position: "nearest",
+                mode: "index",
+                intersect: false,
+                callbacks: {
+                    label: (item, data) => `${data.datasets[item.datasetIndex].label} : ${item.yLabel} L/det`,
                 },
             },
         };
@@ -139,7 +162,7 @@
                     {% endfor %}
                 ]
             },
-            options: options
+            options: options_vn
         });
     </script>
 {% endblock %}
