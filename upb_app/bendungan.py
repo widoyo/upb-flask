@@ -152,6 +152,7 @@ def operasi(lokasi_id):
     operasi = {
         'po_bona': "",
         'po_bonb': "",
+        'po_tma': "",
         'real': "",
         'elev_min': "",
         'sedimen': "",
@@ -176,6 +177,7 @@ def operasi(lokasi_id):
                 tanggal += ","
                 operasi['po_bona'] += ","
                 operasi['po_bonb'] += ","
+                operasi['po_tma'] += ","
                 operasi['real'] += ","
                 operasi['elev_min'] += ","
                 operasi['sedimen'] += ","
@@ -203,6 +205,7 @@ def operasi(lokasi_id):
             tanggal += f"'{tgl_str}'"
             operasi['po_bona'] += f"{rt.po_bona}" if rt.po_bona else "0"
             operasi['po_bonb'] += f"{rt.po_bonb}" if rt.po_bonb else "0"
+            operasi['po_tma'] += f"{rt.po_tma}" if rt.po_tma else "0"
             operasi['real'] += str(tma.tma) if tma and tma.tma else "null"
             operasi['elev_min'] += f"{pos.muka_air_min or '0'}"
             operasi['sedimen'] += f"{pos.sedimen or '0'}"

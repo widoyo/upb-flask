@@ -89,7 +89,8 @@
             scales: {
                 yAxes: [{
                     ticks: {
-                        beginAtZero: false
+                        beginAtZero: false,
+                        min: {{ waduk.muka_air_min }}
                     }
                 }]
             },
@@ -153,6 +154,15 @@
                         data: [{{ operasi.real|safe }}],
                         backgroundColor: 'rgba(0,0,255,0.5)',
                         borderColor: 'rgba(0,0,255,1)',
+                        borderWidth: 1,
+                        fill: false,
+                        pointStyle: 'rectRot'
+                    },
+                    {
+                        label: "TMA RTOW",
+                        data: [{{ operasi.po_tma|safe }}],
+                        backgroundColor: 'rgba(255,255,0,0.5)',
+                        borderColor: 'rgba(255,255,0,1)',
                         borderWidth: 1,
                         fill: false,
                         pointStyle: 'rectRot'
