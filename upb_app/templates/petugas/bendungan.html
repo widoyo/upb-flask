@@ -9,7 +9,15 @@
         z-index: 10000 !important;
         display: inherit;
     }
+    .prev:before {
+        content: "\2190 ";
+    }
+
+    .next:before {
+        content: "\2192 ";
+    }
 </style>
+<link href="{{ url_for('static', filename='css/bootstrap-editable.css') }}" rel="stylesheet"/>
 {% endblock %}
 
 {% block content %}
@@ -95,6 +103,7 @@
                     <th class="text-center align-middle">Kab</th>
                     <th class="text-center align-middle">Alamat</th>
                     <th class="text-center align-middle">Pendidikan</th>
+                    <th></th>
                 </tr>
             </thead>
             <tbody>
@@ -104,28 +113,150 @@
                         <td rowspan="{{ d.petugas|length or 1 }}"><a href="{{ url_for('bendungan.tma', lokasi_id=id) }}">{{ d.nama }}</a></td>
                         {% if d.petugas %}
                             <td>
-                                <b>{{ d.petugas.0.nama }}</b>
+                                <b>
+                                    <a data-url="{{ url_for('admin.petugas_update') }}"
+                                        class="editable"
+                                        data-name="nama"
+                                        data-type="text"
+                                        data-title="Nama"
+                                        data-pk="{{ d.petugas.0.id }}">
+                                        {{ d.petugas.0.nama }}
+                                    </a>
+                                </b>
                             </td>
-                            <td><b>{{ d.petugas.0.tugas }}</b></td>
-                            <td><b>{{ d.petugas.0.birthdate or '-' }}</b></td>
-                            <td><b>{{ d.petugas.0.kab or '-' }}</b></td>
-                            <td><b>{{ d.petugas.0.alamat or '-' }}</b></td>
-                            <td><b>{{ d.petugas.0.pendidikan or '-' }}</b></td>
+                            <td>
+                                <b>
+                                    <a data-url="{{ url_for('admin.petugas_update') }}"
+                                        data-name="tugas"
+                                        data-type="select"
+                                        data-title="Jabatan"
+                                        data-pk="{{ d.petugas.0.id }}"
+                                        class="tugas">
+                                        {{ d.petugas.0.tugas }}
+                                    </a>
+                                </b>
+                            </td>
+                            <td>
+                                <b>
+                                    <a data-url="{{ url_for('admin.petugas_update') }}"
+                                        class="editable"
+                                        data-name="tgl_lahir"
+                                        data-type="date"
+                                        data-title="Tanggal Lahir"
+                                        data-pk="{{ d.petugas.0.id }}">
+                                        {{ d.petugas.0.birthdate or '-' }}
+                                    </a>
+                                </b>
+                            </td>
+                            <td>
+                                <b>
+                                    <a data-url="{{ url_for('admin.petugas_update') }}"
+                                        class="editable"
+                                        data-name="kab"
+                                        data-type="text"
+                                        data-title="Kabupaten"
+                                        data-pk="{{ d.petugas.0.id }}">
+                                        {{ d.petugas.0.kab or '-' }}
+                                    </a>
+                                </b>
+                            </td>
+                            <td>
+                                <b>
+                                    <a data-url="{{ url_for('admin.petugas_update') }}"
+                                        class="editable"
+                                        data-name="alamat"
+                                        data-type="text"
+                                        data-title="Alamat"
+                                        data-pk="{{ d.petugas.0.id }}">
+                                        {{ d.petugas.0.alamat or '-' }}
+                                    </a>
+                                </b>
+                            </td>
+                            <td>
+                                <b>
+                                    <a data-url="{{ url_for('admin.petugas_update') }}"
+                                        class="editable"
+                                        data-name="pendidikan"
+                                        data-type="text"
+                                        data-title="Pendidikan"
+                                        data-pk="{{ d.petugas.0.id }}">
+                                        {{ d.petugas.0.pendidikan or '-' }}
+                                    </a>
+                                </b>
+                            </td>
+                            <td>
+                                <input type="button" value="Hapus" onclick="deletePetugas({{ d.petugas.0.id }})" class="btn btn-sm btn-danger">
+                            </td>
                         {% else %}
-                            <td colspan="2"><span style="color: red;">Belum Ada Data</span></td>
+                            <td colspan="6"><span style="color: red;">Belum Ada Data</span></td>
                         {% endif %}
                     </tr>
                     {% for p in d.petugas %}
                         {% if loop.index > 1 %}
                             <tr>
                                 <td>
-                                    {{ p.nama }}
+                                    <a data-url="{{ url_for('admin.petugas_update') }}"
+                                        class="editable"
+                                        data-name="nama"
+                                        data-type="text"
+                                        data-title="Nama"
+                                        data-pk="{{ p.id }}">
+                                        {{ p.nama }}
+                                    </a>
                                 </td>
-                                <td>{{ p.tugas }}</td>
-                                <td>{{ p.birthdate or "-" }}</td>
-                                <td>{{ p.kab or "-" }}</td>
-                                <td>{{ p.alamat or "-" }}</td>
-                                <td>{{ p.pendidikan or "-" }}</td>
+                                <td>
+                                    <a data-url="{{ url_for('admin.petugas_update') }}"
+                                        data-name="tugas"
+                                        data-type="select"
+                                        data-title="Jabatan"
+                                        data-pk="{{ p.id }}"
+                                        class="tugas">
+                                        {{ p.tugas }}
+                                    </a>
+                                </td>
+                                <td>
+                                    <a data-url="{{ url_for('admin.petugas_update') }}"
+                                        class="editable"
+                                        data-name="tgl_lahir"
+                                        data-type="date"
+                                        data-title="Tanggal Lahir"
+                                        data-pk="{{ p.id }}">
+                                        {{ p.birthdate or "-" }}
+                                    </a>
+                                </td>
+                                <td>
+                                    <a data-url="{{ url_for('admin.petugas_update') }}"
+                                        class="editable"
+                                        data-name="kab"
+                                        data-type="text"
+                                        data-title="Kabupaten"
+                                        data-pk="{{ p.id }}">
+                                        {{ p.kab or "-" }}
+                                    </a>
+                                </td>
+                                <td>
+                                    <a data-url="{{ url_for('admin.petugas_update') }}"
+                                        class="editable"
+                                        data-name="alamat"
+                                        data-type="text"
+                                        data-title="Alamat"
+                                        data-pk="{{ p.id }}">
+                                        {{ p.alamat or "-" }}
+                                    </a>
+                                </td>
+                                <td>
+                                    <a data-url="{{ url_for('admin.petugas_update') }}"
+                                        class="editable"
+                                        data-name="pendidikan"
+                                        data-type="text"
+                                        data-title="Pendidikan"
+                                        data-pk="{{ p.id }}">
+                                        {{ p.pendidikan or "-" }}
+                                    </a>
+                                </td>
+                                <td>
+                                    <input type="button" value="Hapus" onclick="deletePetugas({{ p.id }})" class="btn btn-sm btn-danger">
+                                </td>
                             </tr>
                         {% endif %}
                     {% endfor %}
@@ -138,19 +269,43 @@
 {% block js %}
 <script src="{{ url_for('static', filename='js/moment.min.js') }}"></script>
 <script src="{{ url_for('static', filename='js/id.js') }}"></script>
-<script src="{{ url_for('static', filename='js/bootstrap-datepicker.min.js') }}"></script>
+<script src="{{ url_for('static', filename='js/bootstrap-editable.min.js') }}"></script>
 <script>
+    function deletePetugas(pet_id){
+        var result = confirm("Anda yakin ingin menghapus data petugas ini?");
+        if (result) {
+            $.post("{{ url_for('admin.petugas_delete') }}", {pet_id:pet_id}).done(function(result){
+                var a = result;
+                if(a == "ok"){
+                    alert("Berhasil dihapus");
+                    location.reload();
+                }
+            });
+        }
+
+    }
+
     $(document).ready(function() {
-        $('#tgl_lahir').datepicker({
-            todayHighlight: true,
-            autoclose: true,
-            format:  'yyyy-mm-dd'
-        });
-        $('#tgl_lahir').on('changeDate', function () {
-            let date = $('#tgl_lahir').datepicker('getFormattedDate');
-            $('#tgl_lahir').text(moment(date).format('DD MMMM YYYY'));
-            $('#datepicker').attr('value', moment(date).format('YYYY-MM-DD'));
-            $('.datepicker').hide();
+        //turn to popup mode
+        $.fn.editable.defaults.mode = 'popup';
+        $(document).ready(function() {
+            $('.editable').editable({
+                error: function(response, newValue) {
+                    if (response.status === 500) {
+                        return 'Terjadi error, gagal update data.';
+                    }
+                 }
+            });
+            $('.tugas').editable({
+                prepend: "pilih",
+                source: [
+                    {value: 'Koordinator', text: 'Koordinator'},
+                    {value: 'Keamanan', text: 'Keamanan'},
+                    {value: 'Pemantauan', text: 'Pemantauan'},
+                    {value: 'Operasi', text: 'Operasi'},
+                    {value: 'Pemeliharaan', text: 'Pemeliharaan'}
+                ]
+            });
         });
     });
 </script>

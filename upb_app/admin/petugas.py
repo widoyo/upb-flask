@@ -15,7 +15,7 @@ from upb_app.admin import bp
 @admin_only
 def petugas_bendungan():
     waduk = Bendungan.query.all()
-    petugas = Petugas.query.all()
+    petugas = Petugas.query.order_by(Petugas.id).all()
 
     data = {}
     for w in waduk:
@@ -24,7 +24,10 @@ def petugas_bendungan():
             'petugas': []
         }
     for p in petugas:
-        data[p.bendungan.id]['petugas'].append(p)
+        if p.tugas == "Koordinator":
+            data[p.bendungan.id]['petugas'].insert(0, p)
+        else:
+            data[p.bendungan.id]['petugas'].append(p)
 
     return render_template('petugas/bendungan.html',
                             bendungan=waduk,
@@ -69,3 +72,34 @@ def petugas_bendungan_del(petugas_id):
 
     flash(f"Data petugas berhasil dihapus", 'success')
     return redirect(url_for('admin.petugas_bendungan'))
+
+
+@bp.route('/bendungan/petugas/delete', methods=['POST'])
+@login_required
+@admin_only
+def petugas_delete():
+    pet_id = int(request.values.get('pet_id'))
+
+    petugas = Petugas.query.get(pet_id)
+    db.session.delete(petugas)
+    db.session.commit()
+
+    return "ok"
+
+
+@bp.route('/bendungan/petugas/update', methods=['POST'])  # @login_required
+def petugas_update():
+    pk = request.values.get('pk')
+    attr = request.values.get('name')
+    val = request.values.get('value')
+
+    row = Petugas.query.get(pk)
+    setattr(row, attr, val)
+    db.session.commit()
+
+    result = {
+        "name": attr,
+        "pk": pk,
+        "value": val
+    }
+    return jsonify(result)

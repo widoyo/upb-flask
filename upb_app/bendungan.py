@@ -362,10 +362,16 @@ def petugas():
             'petugas': []
         }
     for p in petugas:
-        data[p.bendungan.id]['petugas'].append({
-            'nama': p.nama,
-            'tugas': p.tugas
-        })
+        if p.tugas == "Koordinator":
+            data[p.bendungan.id]['petugas'].insert(0, {
+                'nama': p.nama,
+                'tugas': p.tugas
+            })
+        else:
+            data[p.bendungan.id]['petugas'].append({
+                'nama': p.nama,
+                'tugas': p.tugas
+            })
 
     return render_template('bendungan/petugas.html',
                             data=data)
