@@ -342,7 +342,10 @@ class Pemeliharaan(BaseLog):
 
     bendungan = relationship('Bendungan', back_populates='pemeliharaan')
     pemeliharaan_petugas = relationship('PemeliharaanPetugas', back_populates='pemeliharaan')
-    __table_args__ = (db.UniqueConstraint('is_rencana', 'sampling', 'jenis'),)
+
+    @property
+    def fotos(self):
+        return Foto.query.filter(Foto.obj_type == 'pemeliharaan', Foto.obj_id == self.id).all()
 
     def get_hms(self):
         return self.c_date + datetime.timedelta(hours=7)
@@ -354,7 +357,14 @@ class Pemeliharaan(BaseLog):
             formatted = "-"
         return formatted
 
+    def get_unit(self):
+        return jenis2atuan[self.jenis]
+
     def set_petugas(self, petugas_id_list):
+        for pet in PemeliharaanPetugas.query.filter(PemeliharaanPetugas.pemeliharaan_id == self.id).all():
+            # reset association first
+            db.session.delete(pet)
+
         for id in petugas_id_list:
             new_obj = PemeliharaanPetugas(
                 pemeliharaan_id=self.id,
