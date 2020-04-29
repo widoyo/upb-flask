@@ -360,27 +360,19 @@ def operasi_csv(bendungan_id):
 
     manual_daily = ManualDaily.query.filter(
                                         ManualDaily.bendungan_id == bendungan_id,
-                                        ManualDaily.sampling.between(sampling, end),
-                                        # extract('month', ManualDaily.sampling) == sampling.month,
-                                        # extract('year', ManualDaily.sampling) == sampling.year
+                                        ManualDaily.sampling.between(sampling, end)
                                     ).all()
     tma = ManualTma.query.filter(
                                     ManualTma.bendungan_id == bendungan_id,
-                                    ManualTma.sampling.between(sampling, end),
-                                    # extract('month', ManualTma.sampling) == sampling.month,
-                                    # extract('year', ManualTma.sampling) == sampling.year
+                                    ManualTma.sampling.between(sampling, end)
                                 ).all()
     vnotch = ManualVnotch.query.filter(
                                     ManualVnotch.bendungan_id == bendungan_id,
-                                    ManualVnotch.sampling.between(sampling, end),
-                                    # extract('month', ManualTma.sampling) == sampling.month,
-                                    # extract('year', ManualTma.sampling) == sampling.year
+                                    ManualVnotch.sampling.between(sampling, end)
                                 ).all()
     piezo = ManualPiezo.query.filter(
                                     ManualPiezo.bendungan_id == bendungan_id,
-                                    ManualPiezo.sampling.between(sampling, end),
-                                    # extract('month', ManualTma.sampling) == sampling.month,
-                                    # extract('year', ManualTma.sampling) == sampling.year
+                                    ManualPiezo.sampling.between(sampling, end)
                                 ).all()
 
     periodik = {}
@@ -403,9 +395,9 @@ def operasi_csv(bendungan_id):
         jam = t.sampling.strftime("%H")
         periodik[sampl]['tma'][jam] = t
     for v in vnotch:
-        periodik[d.sampling]['vnotch'] = v
+        periodik[v.sampling]['vnotch'] = v
     for p in piezo:
-        periodik[d.sampling]['piezo'] = p
+        periodik[p.sampling]['piezo'] = p
 
     pre_csv = []
     pre_csv.append([
