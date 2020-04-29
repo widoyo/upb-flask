@@ -3,7 +3,7 @@
 {% set title = "Petugas" %}
 
 {% block css %}
-<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-datepicker/1.9.0/css/bootstrap-datepicker.css">
+<link rel="stylesheet" href="{{ url_for('static', filename='css/bootstrap-datepicker.css') }}">
 <style>
     .datepicker {
         z-index: 10000 !important;
@@ -12,7 +12,6 @@
     .prev:before {
         content: "\2190 ";
     }
-
     .next:before {
         content: "\2192 ";
     }
@@ -270,6 +269,7 @@
 <script src="{{ url_for('static', filename='js/moment.min.js') }}"></script>
 <script src="{{ url_for('static', filename='js/id.js') }}"></script>
 <script src="{{ url_for('static', filename='js/bootstrap-editable.min.js') }}"></script>
+<script src="{{ url_for('static', filename='js/bootstrap-datepicker.min.js') }}"></script>
 <script>
     function deletePetugas(pet_id){
         var result = confirm("Anda yakin ingin menghapus data petugas ini?");
@@ -286,6 +286,22 @@
     }
 
     $(document).ready(function() {
+        // resolve package confict
+        let datepicker = $.fn.datepicker.noConflict();
+        $.fn.bootstrapDP = datepicker;
+
+        $('#tgl_lahir').datepicker({
+            todayHighlight: true,
+            autoclose: true,
+            format:  'yyyy-mm-dd'
+        });
+        $('#tgl_lahir').on('changeDate', function () {
+            let date = $('#tgl_lahir').datepicker('getFormattedDate');
+            $('#tgl_lahir').text(moment(date).format('DD MMM YYYY'));
+            $('#datepicker').attr('value', moment(date).format('YYYY-MM-DD'));
+            $('.datepicker').hide();
+        });
+
         //turn to popup mode
         $.fn.editable.defaults.mode = 'popup';
         $(document).ready(function() {

@@ -420,7 +420,7 @@ def pemeliharaan_update():
 
 @bp.route('/bendungan/pemeliharaan/<bendungan_id>/delete', methods=['POST'])
 @login_required
-@petugas_only
+@role_check
 def pemeliharaan_delete(bendungan_id):
     pem_id = int(request.values.get('pem_id'))
 
@@ -444,7 +444,7 @@ def pemeliharaan_delete(bendungan_id):
 
 @bp.route('/bendungan/pemeliharaan/<bendungan_id>/delete/foto', methods=['POST'])
 @login_required
-@petugas_only
+@role_check
 def pemeliharaan_delete_foto(bendungan_id):
     foto_id = int(request.values.get('foto_id'))
     print(f"ID Foto : {foto_id}")
