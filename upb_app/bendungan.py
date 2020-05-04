@@ -165,7 +165,7 @@ def operasi(lokasi_id):
     for rt in rtow:
         last_day = calendar.monthrange(rt.sampling.year, rt.sampling.month)[1]
 
-        cond = sampling.year >= 2020 and pos.wil_sungai == '3'
+        cond = sampling.year >= 2020 and pos.wil_sungai in ['2', '3']
         if cond and rt.sampling.day == 15:
             continue
 
