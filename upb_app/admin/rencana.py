@@ -55,7 +55,7 @@ def rtow():
             index = ren.sampling.strftime('%d %b %y')
             last_day = calendar.monthrange(ren.sampling.year, ren.sampling.month)[1]
 
-            if sampling.year >= 2020 and bend.wil_sungai == '3':
+            if sampling.year >= 2020 and bend.wil_sungai in ['2', '3']:
                 if ren.sampling.day in [10, 20, last_day]:
                     temp[index] = ren
                     if index not in rtow[bend.wil_sungai]['date_list']:
