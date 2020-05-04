@@ -64,7 +64,8 @@ def keamanan_bendungan(bendungan_id):
                             csrf=generate_csrf(),
                             bend_id=bend.id,
                             periodik=periodik,
-                            sampling=datetime.datetime.today() + datetime.timedelta(hours=8))
+                            sampling=datetime.datetime.today() + datetime.timedelta(hours=8),
+                            sampling_dt=sampling)
 
 
 @bp.route('/bendungan/keamanan/<bendungan_id>/vnotch', methods=['POST'])
