@@ -194,7 +194,7 @@ def kegiatan_delete(bendungan_id):
     return "ok"
 
 
-@bp.route('/bendungan/pemeliharaan/<bendungan_id>')
+@bp.route('/bendungan/<bendungan_id>/pemeliharaan')
 @login_required
 @role_check
 def pemeliharaan(bendungan_id):
@@ -249,7 +249,7 @@ def pemeliharaan(bendungan_id):
                             jenis_ren=[j for j, ren in rencana.items()])
 
 
-@bp.route('/bendungan/pemeliharaan/<bendungan_id>/rencana', methods=['POST'])
+@bp.route('/bendungan/<bendungan_id>/pemeliharaan/rencana', methods=['POST'])
 @login_required
 @role_check
 def pemeliharaan_rencana(bendungan_id):
@@ -287,7 +287,7 @@ def pemeliharaan_rencana(bendungan_id):
     return redirect(url_for('admin.pemeliharaan', bendungan_id=bendungan_id, rencana='on'))
 
 
-@bp.route('/bendungan/pemeliharaan/<bendungan_id>/lapor', methods=['POST'])
+@bp.route('/bendungan/<bendungan_id>/pemeliharaan/lapor', methods=['POST'])
 @login_required
 @role_check
 def pemeliharaan_lapor(bendungan_id):
@@ -353,7 +353,7 @@ def pemeliharaan_lapor(bendungan_id):
     return "success"
 
 
-@bp.route('/bendungan/pemeliharaan/<bendungan_id>/petugas/<pem_id>', methods=['POST'])
+@bp.route('/bendungan/<bendungan_id>/pemeliharaan/<pem_id>/petugas', methods=['POST'])
 @login_required
 @role_check
 def pemeliharaan_petugas(bendungan_id, pem_id):
@@ -365,7 +365,7 @@ def pemeliharaan_petugas(bendungan_id, pem_id):
     return redirect(url_for('admin.pemeliharaan', bendungan_id=bendungan_id))
 
 
-@bp.route('/bendungan/pemeliharaan/<bendungan_id>/foto/<pem_id>', methods=['POST'])
+@bp.route('/bendungan/<bendungan_id>/pemeliharaan/<pem_id>/foto', methods=['POST'])
 @login_required
 @role_check
 def pemeliharaan_foto(bendungan_id, pem_id):
@@ -418,7 +418,7 @@ def pemeliharaan_update():
     return jsonify(result)
 
 
-@bp.route('/bendungan/pemeliharaan/<bendungan_id>/delete', methods=['POST'])
+@bp.route('/bendungan/<bendungan_id>/pemeliharaan/delete', methods=['POST'])
 @login_required
 @role_check
 def pemeliharaan_delete(bendungan_id):
@@ -442,7 +442,7 @@ def pemeliharaan_delete(bendungan_id):
     return "ok"
 
 
-@bp.route('/bendungan/pemeliharaan/<bendungan_id>/delete/foto', methods=['POST'])
+@bp.route('/bendungan/<bendungan_id>/pemeliharaan/delete/foto', methods=['POST'])
 @login_required
 @role_check
 def pemeliharaan_delete_foto(bendungan_id):

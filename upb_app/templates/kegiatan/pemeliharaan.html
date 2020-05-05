@@ -22,7 +22,7 @@
                 <div class="col-md-6">
                     <h5>
                       <a data-toggle="collapse" href="#rencana" role="button" aria-expanded="false" aria-controls="rencana">
-                        Rencana Mingguan <small><i class="fas fa-play"></i></small>
+                        Form Rencana Mingguan <small><i class="fas fa-play"></i></small>
                       </a>
                     </h5>
                     <form action="{{ url_for('admin.pemeliharaan_rencana', bendungan_id=bend.id) }}" method="POST">
@@ -67,7 +67,7 @@
                 <div class="col-md-6">
                     <h5>
                       <a data-toggle="collapse" href="#pemeliharaan" role="button" aria-expanded="false" aria-controls="pemeliharaan">
-                        Laporan Pemeliharaan <small><i class="fas fa-play"></i></small>
+                        Form Laporan Pemeliharaan <small><i class="fas fa-play"></i></small>
                       </a>
                     </h5>
                     <!-- <form method="POST"> -->
@@ -580,7 +580,7 @@
             };
             console.log("Posting Photo");
             // console.log(formData);
-            $.post(`/admin/bendungan/pemeliharaan/{{ bend.id }}/foto/${pem_id}`, formData,
+            $.post(`/admin/bendungan/{{ bend.id }}/pemeliharaan/${pem_id}/foto`, formData,
                 function (res) {
                     console.log(res);
                     location.reload();

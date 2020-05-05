@@ -1,0 +1,20 @@
+<!DOCTYPE html>
+<html lang="en" dir="ltr">
+    <head>
+        <meta charset="utf-8">
+        <meta content="IE=edge" http-equiv="X-UA-Compatible">
+        <meta content="width=device-width, initial-scale=1" name="viewport">
+        <title>404 - Not Found</title>
+        <link rel="shortcut icon" href="{{ url_for('static', filename='images/pupr.ico') }}"/>
+    </head>
+    <body>
+        <p>Halaman ini tidak ditemukan.</p>
+        <p>
+            {% if user.is_authenticated %}
+            <a href="{{ url_for('admin.operasi') }}">Dashboard</a>
+            {% else %}
+            <a href="{{ url_for('index') }}">Kembali</a>
+            {% endif %}
+        </p>
+    </body>
+</html>

@@ -88,13 +88,18 @@ def index():
 @app.route('/map')
 @login_required
 def map():
-    lokasis = Lokasi.query.all()
+    lokasis = Bendungan.query.all()
     return render_template('map.html', lokasis=lokasis)
 
 
 @app.route('/adm')
 def adm():
     return redirect(url_for('login'))
+
+
+@app.errorhandler(404)
+def page_not_found(e):
+    return render_template('master/404.html'), 404
 
 
 @app.route('/logout')
