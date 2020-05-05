@@ -58,18 +58,18 @@
                                 ({{ w.kab }})
                             </td>
                             <td class="text-center">{{ w.kondisi|safe }}</td>
-                            <td class="text-right">{% if w.volume %}{{ w.volume }}{% else %}0.0{% endif %}</td>
-                            <td class="text-right">{% if w.lbi %}{{ w.lbi }}{% else %}0.0{% endif %}</td>
-                            <td class="text-right">{% if w.elev_puncak %}{{ w.elev_puncak }}{% else %}0.0{% endif %}</td>
-                            <td class="text-right">{% if w.muka_air_normal %}{{ w.muka_air_normal }}{% else %}0.0{% endif %}</td>
-                            <td class="text-right">{% if w.muka_air_min %}{{ w.muka_air_min }}{% else %}0.0{% endif %}</td>
-                            <td class="text-right">{% if w.tma6 %}{{ w.tma6 }}{% else %}0.0{% endif %}</td>
-                            <td class="text-right">{% if w.tma12 %}{{ w.tma12 }}{% else %}0.0{% endif %}</td>
-                            <td class="text-right">{% if w.tma18 %}{{ w.tma18 }}{% else %}0.0{% endif %}</td>
-                            <td class="text-right">{% if w.vol %}{{ w.vol }}{% else %}0.0{% endif %}</td>
-                            <td class="text-right">{% if w.intake_deb %}{{ w.intake_deb }}{% else %}0.0{% endif %}</td>
-                            <td class="text-right">{% if w.spillway_deb %}{{ w.spillway_deb }}{% else %}0.0{% endif %}</td>
-                            <td class="text-right">{% if w.debit %}{{ w.debit }}{% else %}0.0{% endif %}</td>
+                            <td class="text-right">{% if w.volume %}{{ w.volume }}{% else %}-{% endif %}</td>
+                            <td class="text-right">{% if w.lbi %}{{ w.lbi }}{% else %}-{% endif %}</td>
+                            <td class="text-right">{% if w.elev_puncak %}{{ w.elev_puncak }}{% else %}-{% endif %}</td>
+                            <td class="text-right">{% if w.muka_air_normal %}{{ w.muka_air_normal }}{% else %}-{% endif %}</td>
+                            <td class="text-right">{% if w.muka_air_min %}{{ w.muka_air_min }}{% else %}-{% endif %}</td>
+                            <td class="text-right">{% if w.tma6 %}{{ w.tma6 }}{% else %}-{% endif %}</td>
+                            <td class="text-right">{% if w.tma12 %}{{ w.tma12 }}{% else %}-{% endif %}</td>
+                            <td class="text-right">{% if w.tma18 %}{{ w.tma18 }}{% else %}-{% endif %}</td>
+                            <td class="text-right">{% if w.vol %}{{ w.vol }}{% else %}-{% endif %}</td>
+                            <td class="text-right">{% if w.intake_deb %}{{ w.intake_deb }}{% else %}-{% endif %}</td>
+                            <td class="text-right">{% if w.spillway_deb %}{{ w.spillway_deb }}{% else %}-{% endif %}</td>
+                            <td class="text-right">{% if w.debit %}{{ w.debit }}{% else %}-{% endif %}</td>
                             <td class="text-right">
                                 {% if w.curahhujan %}
                                     {{ "{:,.2f}".format(w.curahhujan.ch) }}<br>
