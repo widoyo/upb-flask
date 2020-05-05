@@ -100,9 +100,9 @@ def index():
             'tma12': tma_d['12'],
             'tma18': tma_d['18'],
             'vol': None if not vol else "{:,.3f}".format(vol),
-            'intake_deb': None if not daily else "{:,.2f}".format(daily.intake_deb or 0),
-            'spillway_deb': None if not daily else "{:,.2f}".format(daily.spillway_deb or 0),
-            'debit': None if not vnotch else "{:,.2f}".format(vnotch.vn1_deb or 0),
+            'intake_deb': None if not daily or not daily.intake_deb else "{:,.2f}".format(daily.intake_deb),
+            'spillway_deb': None if not daily or not daily.spillway_deb else "{:,.2f}".format(daily.spillway_deb),
+            'debit': None if not vnotch or not vnotch.vn1_deb else "{:,.2f}".format(vnotch.vn1_deb),
             'kondisi': kondisi or "Normal",
             'curahhujan': None if not ch_t else {'ch': ch_t.ch, 'time': ch_t.sampling},
             'tma_banjir': None if not alert else {'tma': alert[0].tma, 'time': alert[0].sampling}
