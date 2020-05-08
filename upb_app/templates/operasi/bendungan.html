@@ -82,6 +82,16 @@
                                   <small id="out-volpagihelp" class="form-text text-muted">m<sup>3</sup></small>
                               </div>
                           </div>
+                          <div class="form-group">
+                              <label class="form-text" for="jenis"><b>Keterangan Intake</b></label>
+                              <select id="intake_ket" name="intake_ket" class="form-control" required>
+                                <option value="">- pilih -</option>
+                                <option value="pemenuhan kebutuhan air irigasi">Pemenuhan Kebutuhan Air Irigasi</option>
+                                <option value="pengendalian banjir">Pengendalian Banjir</option>
+                                <option value="kebocoran intake">Kebocoran Intake</option>
+                              </select>
+                              <small id="intake_ket_help" class="form-text text-muted">wajib jika nilai intake di atas 0</small>
+                          </div>
                           <div class="row">
                               <div class="col-md-6 form-group">
                                   <label class="form-text" for="spill-deb-pagi"><b>Spillway Debit</b></label>
@@ -411,27 +421,32 @@
         <table class="table table-hover table-bordered">
             <thead>
                 <tr class="table-active">
-                    <th rowspan="2" class="text-center align-middle">Tanggal</th>
-                    <th rowspan="2" class="text-center align-middle">Curah Hujan</th>
+                    <th rowspan="3" class="text-center align-middle">Tanggal</th>
+                    <th rowspan="3" class="text-center align-middle">Curah Hujan</th>
                     <th colspan="2" class="text-center align-middle">Jam 6</th>
                     <th colspan="2" class="text-center align-middle">Jam 12</th>
                     <th colspan="2" class="text-center align-middle">Jam 18</th>
                     <th colspan="2" class="text-center align-middle">Inflow</th>
-                    <th colspan="4" class="text-center align-middle">Outflow</th>
+                    <th colspan="5" class="text-center align-middle">Outflow</th>
                 </tr>
                 <tr class="table-active">
-                    <th class="text-center align-middle">TMA</th>
-                    <th class="text-center align-middle">Vol</th>
-                    <th class="text-center align-middle">TMA</th>
-                    <th class="text-center align-middle">Vol</th>
-                    <th class="text-center align-middle">TMA</th>
-                    <th class="text-center align-middle">Vol</th>
-                    <th class="text-center align-middle">Debit</th>
-                    <th class="text-center align-middle">Volume</th>
-                    <th class="text-center align-middle">Q Intake</th>
-                    <th class="text-center align-middle">V Intake</th>
-                    <th class="text-center align-middle">Q Spillway</th>
-                    <th class="text-center align-middle">V Spillway</th>
+                    <th rowspan="2" class="text-center align-middle">TMA</th>
+                    <th rowspan="2" class="text-center align-middle">Vol</th>
+                    <th rowspan="2" class="text-center align-middle">TMA</th>
+                    <th rowspan="2" class="text-center align-middle">Vol</th>
+                    <th rowspan="2" class="text-center align-middle">TMA</th>
+                    <th rowspan="2" class="text-center align-middle">Vol</th>
+                    <th rowspan="2" class="text-center align-middle">Debit</th>
+                    <th rowspan="2" class="text-center align-middle">Volume</th>
+                    <th colspan="3" class="text-center align-middle">Intake</th>
+                    <th colspan="2" class="text-center align-middle">Spillway</th>
+                </tr>
+                <tr class="table-active">
+                    <th class="text-center align-middle">Q</th>
+                    <th class="text-center align-middle">V</th>
+                    <th class="text-center align-middle">Ket</th>
+                    <th class="text-center align-middle">Q</th>
+                    <th class="text-center align-middle">V</th>
                 </tr>
             </thead>
             <tbody>
@@ -580,6 +595,22 @@
                                 <span style="color: blue">{{ per.daily.intake_vol }}</span>
                                 {% else %}<span style="color: red">Empty</span>{% endif %}
                             </a>
+                        </td>
+                        <td>
+                            {% if per.daily and per.daily.intake_vol > 0 %}
+                            <a data-url="{{ url_for('admin.operasi_daily_update') }}"
+                                class="intake_ket"
+                                data-name="intake_ket"
+                                data-type="select"
+                                data-title="Keterangan Intake"
+                                data-pk="{{ per.daily.id }}">
+                                {% if per.daily.intake_ket %}
+                                <span style="color: blue">{{ per.daily.intake_ket.title() }}</span>
+                                {% else %}<span style="color: red">Empty</span>{% endif %}
+                            </a>
+                            {% else %}
+                            -
+                            {% endif %}
                         </td>
                         <td class="text-right">
                             <a data-url="{{ url_for('admin.operasi_daily_update') }}"
@@ -757,6 +788,14 @@
                         return 'Tidak bisa update, Tambah data pakai form.';
                     }
                  },
+            });
+            $('.intake_ket').editable({
+                prepend: "pilih",
+                source: [
+                    {value: 'pemenuhan kebutuhan air irigasi', text: 'Pemenuhan Kebutuhan Air Irigasi'},
+                    {value: 'pengendalian banjir', text: 'Pengendalian Banjir'},
+                    {value: 'kebocoran intake', text: 'Kebocoran Intake'}
+                ]
             });
         });
     });

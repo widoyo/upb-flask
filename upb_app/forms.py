@@ -94,6 +94,7 @@ class AddDaily(FlaskForm):
     curahhujan = DecimalField('Curah Hujan', validators=[Optional()])
     intake_deb = DecimalField('Intake Debit', validators=[Optional()])
     intake_vol = DecimalField('Intake Volume', validators=[Optional()])
+    intake_ket = StringField('Keterangan Intake', validators=[Optional()])
     inflow_deb = DecimalField('Inflow Debit', validators=[Optional()])
     inflow_vol = DecimalField('Inflow Volume', validators=[Optional()])
     spillway_deb = DecimalField('Spillway Debit', validators=[Optional()])

@@ -97,6 +97,7 @@ def operasi_harian():
             'tma18': tma_d['18'],
             'inflow_deb': None if not daily else daily.inflow_deb,
             'intake_deb': None if not daily else daily.intake_deb,
+            'intake_ket': "-" if not daily else daily.intake_ket,
             'spillway_deb': None if not daily else daily.spillway_deb,
             'curahhujan': None if not daily else daily.ch,
             'tinggi': None if not vnotch else vnotch.vn1_tma,
@@ -235,6 +236,7 @@ def operasi_daily_add(bendungan_id):
         )
         # insert daily
         try:
+            print(form.intake_ket.data)
             obj_dict = {
                 "sampling": form.sampling.data,
                 "ch": form.curahhujan.data or 0,
@@ -242,6 +244,7 @@ def operasi_daily_add(bendungan_id):
                 "inflow_vol": form.inflow_vol.data,
                 "intake_deb": form.intake_deb.data,
                 "intake_vol": form.intake_vol.data,
+                "intake_ket": form.intake_ket.data,
                 "spillway_deb": form.spillway_deb.data,
                 "spillway_vol": form.spillway_vol.data,
                 "bendungan_id": bend.id

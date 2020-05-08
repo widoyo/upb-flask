@@ -93,6 +93,7 @@ class ManualDaily(BaseLog):
     inflow_deb = db.Column(db.Float, nullable=True)
     intake_vol = db.Column(db.Float, nullable=True)
     intake_deb = db.Column(db.Float, nullable=True)
+    intake_ket = db.Column(db.Text, nullable=True)
     outflow_vol = db.Column(db.Float, nullable=True)
     outflow_deb = db.Column(db.Float, nullable=True)
     spillway_vol = db.Column(db.Float, nullable=True)
