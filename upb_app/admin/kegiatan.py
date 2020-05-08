@@ -425,18 +425,33 @@ def pemeliharaan_delete(bendungan_id):
     pem_id = int(request.values.get('pem_id'))
 
     pemeliharaan = Pemeliharaan.query.get(pem_id)
-    fotos = pemeliharaan.fotos
+    pem_list = [pemeliharaan]
 
-    for f in fotos:
-        filepath = os.path.join(app.config['SAVE_DIR'], f.url)
+    if pemeliharaan.is_rencana == '1':
+        sampling, start, end = week_range(pemeliharaan.sampling.strftime("%Y-%m-%d"))
+        laporan = Pemeliharaan.query.filter(
+                            Pemeliharaan.sampling >= start,
+                            Pemeliharaan.sampling <= end,
+                            Pemeliharaan.jenis == pemeliharaan.jenis,
+                            Pemeliharaan.is_rencana == '0',
+                            Pemeliharaan.bendungan_id == bendungan_id
+                        ).all()
+        pem_list += laporan
+    print(pem_list)
 
-        db.session.delete(f)
-        if os.path.exists(filepath):
-            os.remove(filepath)
-    for ass in pemeliharaan.pemeliharaan_petugas:
-        db.session.delete(ass)
+    for pem in pem_list:
+        fotos = pem.fotos
 
-    db.session.delete(pemeliharaan)
+        for f in fotos:
+            filepath = os.path.join(app.config['SAVE_DIR'], f.url)
+
+            db.session.delete(f)
+            if os.path.exists(filepath):
+                os.remove(filepath)
+        for ass in pem.pemeliharaan_petugas:
+            db.session.delete(ass)
+        db.session.delete(pem)
+
     db.session.commit()
 
     return "ok"

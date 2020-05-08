@@ -448,17 +448,19 @@
                             <tr>
                                 <th class="text-center align-middle">No</th>
                                 <th class="text-center align-middle">Jenis Kegiatan</th>
-                                <th class="text-center align-middle">Komponen</th>
                                 <th class="text-center align-middle">Target</th>
                                 <th class="text-center align-middle">Progres</th>
+                                <th></th>
                             </tr>
                         </thead>
                         <tbody>
                             {% for j, ren in rencana.items() %}
                             <tr>
                                 <td>{{ loop.index }}</td>
-                                <td>{{ j.title() }}</td>
-                                <td>{{ ren.rencana.komponen }}</td>
+                                <td>
+                                    {{ j.title() }}<br>
+                                    <small>Komponen : {{ ren.rencana.komponen }}</small>
+                                </td>
                                 <td align="right">
                                     <a data-url="{{ url_for('admin.pemeliharaan_update') }}"
                                         class="editable"
@@ -472,6 +474,9 @@
                                     {{ ren.rencana.get_unit()|safe }}
                                 </td>
                                 <td align="right">{{ (100*ren.progress)|round(2) }} %</td>
+                                <td align="center">
+                                    <input type="button" value="Hapus" onclick="deleteRencana({{ ren.rencana.id }})" class="btn btn-sm btn-danger">
+                                </td>
                             </tr>
                             {% endfor %}
                         </tbody>
@@ -748,7 +753,7 @@
 
     function deleteLaporan(pem_id){
         console.log(pem_id);
-        var result = confirm("Anda yakin ingin menghapus foto ini?");
+        var result = confirm("Anda yakin ingin menghapus laporan ini?");
         if (result) {
             $.post("{{ url_for('admin.pemeliharaan_delete', bendungan_id=bend.id) }}", {pem_id:pem_id}).done(function(result){
                 var a = result;
@@ -758,7 +763,20 @@
                 }
             });
         }
+    }
 
+    function deleteRencana(pem_id){
+        console.log(pem_id);
+        var result = confirm("Menghapus rencana ini juga akan menghapus laporan rencana ini.\nAnda yakin ingin menghapus rencana ini?");
+        if (result) {
+            $.post("{{ url_for('admin.pemeliharaan_delete', bendungan_id=bend.id) }}", {pem_id:pem_id}).done(function(result){
+                var a = result;
+                if(a == "ok"){
+                    alert("Berhasil dihapus");
+                    location.reload();
+                }
+            });
+        }
     }
 </script>
 {% endblock %}
