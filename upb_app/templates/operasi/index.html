@@ -81,7 +81,12 @@
                         {{ bend.intake_deb if bend.intake_deb != None }}
                         {% if bend.intake_deb and bend.intake_deb > 0 %}
                             <br>
-                            <a role="button" tabindex="0" data-toggle="popover" title="Ket Intake {{ bend.nama }}" data-content="{{ bend.intake_ket.title() or 'Belum Ada Keterangan' }}">?</a>
+                            <a role="button"
+                                tabindex="0"
+                                data-toggle="popover"
+                                title="Ket Intake {{ bend.nama }}"
+                                data-content="{% if bend.intake_ket %}{{ bend.intake_ket.title() }}{% else %}Belum Ada Keterangan{% endif %}"
+                                >?</a>
                         {% endif %}
                     </td>
                     <td class="text-right">{{ bend.spillway_deb if bend.spillway_deb != None }}</td>
