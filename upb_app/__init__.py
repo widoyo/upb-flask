@@ -25,6 +25,8 @@ def admin_only(f):
     @wraps(f)
     def decorated_function(*args, **kwargs):
         if current_user.role not in ['1', '4']:
+            if current_user.role == '3':
+                return redirect(url_for('admin.kegiatan'))
             return redirect(url_for('admin.operasi'))
         return f(*args, **kwargs)
     return decorated_function
@@ -46,6 +48,16 @@ def role_check(f):
             return redirect(url_for('admin.operasi'))
 
         return f(bendungan_id, *args, **kwargs)
+    return decorated_function
+
+
+def role_check_embung(f):
+    @wraps(f)
+    def decorated_function(embung_id, *args, **kwargs):
+        if current_user.role in ['3'] and current_user.embung_id != int(embung_id):
+            return redirect(url_for('admin.kegiatan'))
+
+        return f(embung_id, *args, **kwargs)
     return decorated_function
 
 

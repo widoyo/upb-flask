@@ -50,7 +50,7 @@ class BaseLog(db.Model):
 
 
 class Users(UserMixin, db.Model):
-    ''' Role { 2:petugas bendungan, 1,4:admin balai} '''
+    ''' Role { 2:petugas bendungan, 3:petugas embung, 1,4:admin balai} '''
     __tablename__ = 'users'
 
     id = db.Column(db.Integer, primary_key=True)
@@ -58,8 +58,10 @@ class Users(UserMixin, db.Model):
     password = db.Column(db.String(128))
     role = db.Column(db.String(1))
     bendungan_id = db.Column(db.Integer, db.ForeignKey('bendungan.id'), nullable=True)
+    embung_id = db.Column(db.Integer, db.ForeignKey('embung.id'), nullable=True)
 
     bendungan = relationship('Bendungan', back_populates='users')
+    embung = relationship('Embung', back_populates='users')
 
     def set_password(self, password):
         self.password = generate_password_hash(password)
@@ -222,6 +224,9 @@ class Embung(BaseLog):
     irigasi = db.Column(db.Float)
     is_verified = db.Column(db.String(1))
 
+    kegiatan = relationship('KegiatanEmbung', back_populates='embung')
+    users = relationship('Users', back_populates='embung')
+
 
 class Petugas(BaseLog):
     __tablename__ = 'petugas'
@@ -311,6 +316,22 @@ class Kerusakan(BaseLog):
     bendungan_id = db.Column(db.Integer, db.ForeignKey('bendungan.id'), nullable=True)
     asset_id = db.Column(db.Integer, db.ForeignKey('asset.id'), nullable=True)
     upb_id = db.Column(db.Integer, nullable=True)
+
+
+class KegiatanEmbung(BaseLog):
+    __tablename__ = 'kegiatan_embung'
+
+    id = db.Column(db.Integer, primary_key=True)
+    sampling = db.Column(db.DateTime)
+    petugas = db.Column(db.Text)
+    uraian = db.Column(db.Text)
+    foto_id = db.Column(db.Integer)
+    embung_id = db.Column(db.Integer, db.ForeignKey('embung.id'), nullable=True)
+
+    embung = relationship('Embung', back_populates='kegiatan')
+
+    def get_hms(self):
+        return self.c_date + datetime.timedelta(hours=7)
 
 
 class Kegiatan(BaseLog):

@@ -71,13 +71,19 @@
                         <td>
                             {% if u.role == '2' %}
                                 Bendungan
+                            {% elif u.role == '3' %}
+                                Embung
                             {% elif u.role in ['1', '4'] %}
                                 Balai Sungai
                             {% endif %}
                         </td>
                         <td>
-                            {% if u.bendungan_id %}
+                            {% if u.role == '2' %}
                                 {{ u.bendungan.name }}
+                            {% elif u.role == '3' %}
+                                {{ u.embung.nama }}
+                            {% else %}
+                                -
                             {% endif %}
                         </td>
                         <td class="text-center"><a href="#"><i class="fa fa-pen"></i></a></td>

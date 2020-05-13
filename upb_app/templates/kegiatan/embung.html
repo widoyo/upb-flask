@@ -1,0 +1,24 @@
+{% extends 'master/base_adm.html' %}
+
+{% set title = "Kegiatan" %}
+
+{% block css %}
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-datepicker/1.9.0/css/bootstrap-datepicker.css">
+<style>
+    .datepicker {
+        z-index: 10000 !important;
+        display: inherit;
+    }
+</style>
+<link href="{{ url_for('static', filename='css/bootstrap-editable.css') }}" rel="stylesheet"/>
+{% endblock %}
+
+{% block content %}
+    <div class="container">
+        <h1>Kegiatan Embung {{ embung.nama }}</h1>
+    </div>
+{% endblock %}
+
+{% block js %}
+
+{% endblock %}

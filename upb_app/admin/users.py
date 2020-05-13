@@ -4,6 +4,7 @@ from flask_wtf.csrf import generate_csrf
 from upb_app.models import Users, Bendungan
 from upb_app.forms import AddUser
 from upb_app import db
+from upb_app import admin_only
 
 from upb_app.admin import bp
 # bp = Blueprint('users', __name__)
@@ -11,8 +12,9 @@ from upb_app.admin import bp
 
 @bp.route('/users')
 @login_required
+@admin_only
 def users():
-    users = Users.query.all()
+    users = Users.query.order_by(Users.role).all()
     bends = Bendungan.query.all()
     return render_template('users/index.html',
                             users=users,
@@ -22,6 +24,7 @@ def users():
 
 @bp.route('/user/add', methods=['POST'])
 @login_required
+@admin_only
 def user_add():
     form = AddUser()
     if form.validate_on_submit():
@@ -57,6 +60,7 @@ def user_add():
 
 @bp.route('/user/<user_id>/password', methods=['GET', 'POST'])
 @login_required
+@admin_only
 def user_password(user_id):
     user = Users.query.get(user_id)
     if request.method == 'POST':
@@ -71,6 +75,7 @@ def user_password(user_id):
 
 @bp.route('/user/<user_id>/delete', methods=['GET', 'POST'])
 @login_required
+@admin_only
 def user_delete(user_id):
     user = Users.query.get(user_id)
     if request.method == 'POST':

@@ -52,6 +52,29 @@ def mysql_test(sampling):
 
 
 @app.cli.command()
+@click.option('-p', '--password', default='changeitquick', help='password')
+def generate_embung_users(password):
+    # print("Disabled")
+    # return
+    print("Generating Embung Users")
+    embung = Embung.query.filter(Embung.is_verified == '1').order_by(Embung.id).all()
+
+    for e in embung:
+        new_user = Users(
+            username=e.nama.lower().replace(' ', '_'),
+            role='3',
+            embung_id=e.id
+        )
+        new_user.set_password(password)
+
+        db.session.add(new_user)
+        db.session.flush()
+        db.session.commit()
+
+        print(f"Adding user '{e.nama.lower().replace(' ', '_')}' with password '{password}'")
+
+
+@app.cli.command()
 def import_manual_data():
     print("Disabled")
     return

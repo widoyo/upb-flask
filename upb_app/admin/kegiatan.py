@@ -4,9 +4,9 @@ from flask_wtf.csrf import generate_csrf
 from sqlalchemy import extract, and_
 from sqlalchemy.exc import IntegrityError
 from upb_app.helper import month_range, week_range
-from upb_app.models import Kegiatan, Foto, Bendungan, Petugas, Pemeliharaan, jenis_pemeliharaan
+from upb_app.models import Kegiatan, Foto, Bendungan, Embung, Petugas, Pemeliharaan, jenis_pemeliharaan
 from upb_app.forms import AddKegiatan, RencanaPemeliharaan, LaporPemeliharaan
-from upb_app import app, db, petugas_only, role_check
+from upb_app import app, db, petugas_only, role_check, role_check_embung
 import datetime
 import calendar
 import base64
@@ -30,6 +30,8 @@ petugas = [
 def kegiatan():
     if current_user.role == "2":
         return redirect(url_for('admin.kegiatan_bendungan', bendungan_id=current_user.bendungan_id))
+    if current_user.role == "3":
+        return redirect(url_for('admin.kegiatan_embung', embung_id=current_user.embung_id))
     bends = Bendungan.query.all()
     return render_template('kegiatan/index.html',
                             bends=bends)
@@ -493,3 +495,14 @@ def save_image(imageStr, filename):
         obj_type="kegiatan"
     )
     return foto
+
+
+@bp.route('/embung/<embung_id>/kegiatan')
+@login_required
+@role_check_embung
+def kegiatan_embung(embung_id):
+    embung = Embung.query.get(embung_id)
+
+    return render_template('kegiatan/embung.html',
+                            csrf=generate_csrf(),
+                            embung=embung)
