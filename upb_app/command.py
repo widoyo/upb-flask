@@ -54,8 +54,8 @@ def mysql_test(sampling):
 @app.cli.command()
 @click.option('-p', '--password', default='changeitquick', help='password')
 def generate_embung_users(password):
-    # print("Disabled")
-    # return
+    print("Disabled")
+    return
     print("Generating Embung Users")
     embung = Embung.query.filter(Embung.is_verified == '1').order_by(Embung.id).all()
 
