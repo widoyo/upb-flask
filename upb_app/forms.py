@@ -204,3 +204,26 @@ class LaporPemeliharaan(FlaskForm):
     progress = DecimalField('Target', validators=[DataRequired()])
     keterangan = StringField('Keterangan', validators=[DataRequired()])
     submit = SubmitField('Kirim')
+
+
+class RencanaEmbung(FlaskForm):
+    sampling = DateField("Hari", default=datetime.datetime.today())
+    lokasi = StringField('Lokasi', validators=[DataRequired()])
+    kegiatan = StringField('Kegiatan', validators=[DataRequired()])
+    luas = DecimalField('Luas', validators=[DataRequired()])
+    submit = SubmitField('Kirim')
+
+
+class PencapaianEmbung(FlaskForm):
+    sampling = DateField("Hari", default=datetime.datetime.today())
+    mulai = StringField('Mulai', validators=[DataRequired()])
+    selesai = StringField('Selesai', validators=[DataRequired()])
+    pencapaian = StringField('Pencapaian Kerja', validators=[DataRequired()])
+    kendala = StringField('Kendala', default="Tidak Ada")
+    foto_0 = FileField("0 %")
+    filename_0 = StringField('Filename')
+    foto_50 = FileField("50 %")
+    filename5_0 = StringField('Filename')
+    foto_100 = FileField("100 %")
+    filename_100 = StringField('Filename')
+    submit = SubmitField('Kirim')

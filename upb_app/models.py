@@ -28,16 +28,16 @@ jenis_pemeliharaan = [
     'penghijauan',
 ]
 jenis2atuan = {
-    'cabut rumput': "m<sup>3</sup>",
-    'potong rumput': "m<sup>3</sup>",
-    'pembersihan sampah': "m<sup>3</sup>",
+    'cabut rumput': "m<sup>2</sup>",
+    'potong rumput': "m<sup>2</sup>",
+    'pembersihan sampah': "m<sup>2</sup>",
     'pelumasan': "Pcs",
-    'pengecatan': "m<sup>3</sup>",
+    'pengecatan': "m<sup>2</sup>",
     'penggantian oli mesin': "Ltr",
     'perawatan alat kerja': "Pcs",
-    'pengangkatan sedimen': "m<sup>3</sup>",
-    'tambal sulam kerusakan ringan': "m<sup>3</sup>",
-    'penghijauan': "m<sup>3</sup>"
+    'pengangkatan sedimen': "m<sup>2</sup>",
+    'tambal sulam kerusakan ringan': "m<sup>2</sup>",
+    'penghijauan': "m<sup>2</sup>"
 }
 
 
@@ -323,16 +323,20 @@ class KegiatanEmbung(BaseLog):
 
     id = db.Column(db.Integer, primary_key=True)
     sampling = db.Column(db.DateTime)
-    petugas = db.Column(db.Text)
-    uraian = db.Column(db.Text)
-    foto_id = db.Column(db.Integer)
+    lokasi = db.Column(db.Text)
+    rencana = db.Column(db.Text)
+    pencapaian = db.Column(db.Text)
+    mulai = db.Column(db.String(5))
+    selesai = db.Column(db.String(5))
+    kendala = db.Column(db.Text)
+    nilai = db.Column(db.Float)
     embung_id = db.Column(db.Integer, db.ForeignKey('embung.id'), nullable=True)
 
     embung = relationship('Embung', back_populates='kegiatan')
 
     @property
-    def foto(self):
-        return Foto.query.get(self.foto_id)
+    def fotos(self):
+        return Foto.query.filter(Foto.obj_type == 'kegiatan_embung', Foto.obj_id == self.id).all()
 
     def get_hms(self):
         return self.c_date + datetime.timedelta(hours=7)

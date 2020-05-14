@@ -15,61 +15,120 @@
 
 {% block content %}
     <div>
-        <h1>{{ name }}
-            <a data-toggle="collapse" href="#addkeg" class="btn btn-primary" role="button" aria-expanded="false" aria-controls="tmapagi">
-              Tambah Laporan Kegiatan
-            </a>
-        </h1>
+        <h1>Kegiatan {{ name }}</h1><br>
         <div class="forms">
-            <div class="container">
-                <!-- <form method="POST"> -->
-                    <div class="collapse" id="addkeg">
-                      <div class="row">
-                          <div class="col-md-6">
-                              <div class="form-group">
-                                  <label class="form-text" for="sampling"><b>Tanggal</b></label>
-                                  <input class="form-control" type="text" name="sampling" id="datepicker_kegiatan" hidden required value="{{ sampling.strftime('%Y-%m-%d') }}">
-                                  <p class="ml-2" id="sampling-kegiatan">{{ sampling.strftime('%d %B %Y') }}</p>
-                              </div>
-                              <!-- <div class="form-group">
-                                  <label class="form-text" for="petugas"><b>Petugas Kegiatan</b></label> -->
-                                  <select id="petugas" name="petugas" class="form-control" hidden>
-                                    <option selected>Petugas OP Embung</option>
-                                  </select>
-                              <!-- </div> -->
-                              <div class="form-group">
-                                  <label for="foto"><b>Foto</b></label>
-                                  <input type="file" class="form-control-file" id="foto" name="foto">
-                                  <div>
-                                      <img id="blah" src="{{ url_for('static', filename='images/null.jpg') }}" alt="gambar disini">
+            <div class="row">
+                <div class="col-md-6">
+                    <h5>
+                      <a data-toggle="collapse" href="#rencana" role="button" aria-expanded="false" aria-controls="rencana">
+                        Form Rencana <small><i class="fas fa-play"></i></small>
+                      </a>
+                    </h5>
+                    <form action="{{ url_for('admin.kegiatan_embung_add', embung_id=emb_id) }}" method="POST">
+                        <input id="csrf_token" name="csrf_token" type="hidden" value="{{ csrf }}">
+                        <div class="collapse" id="rencana">
+                          <div class="form-group">
+                              <label class="form-text" for="sampling"><b>Tanggal</b></label>
+                              <input class="form-control" type="text" name="sampling" id="datepicker-rencana" hidden required value="{{ sampling.strftime('%Y-%m-%d') }}">
+                              <i class="fas fa-calendar d-inline"></i>
+                              <p class="ml-2 d-inline" id="sampling-rencana">{{ sampling.strftime('%d %B %Y') }}</p>
+                          </div>
+                          <div class="form-group">
+                              <label class="form-text" for="lokasi"><b>Lokasi</b></label>
+                              <input type="text" name="lokasi" class="form-control" placeholder="Tampungan sebelah timur laut">
+                          </div>
+                          <div class="form-group">
+                              <label class="form-text" for="kegiatan"><b>Kegiatan</b></label>
+                              <input type="text" name="kegiatan" class="form-control" placeholder="Babat Rumput">
+                          </div>
+                          <div class="form-group">
+                              <label class="form-text" for="luas"><b>Luas</b></label>
+                              <div class="input-group">
+                                  <input class="form-control" type="number" name="luas" id="luas" placeholder="contoh:200" step="0.1" required>
+                                  <div class="input-group-append">
+                                    <span class="input-group-text" id="satuan">m<sup>2</sup></span>
                                   </div>
                               </div>
-                              <div class="form-group">
-                                  <label class="form-text" for="keterangan"><b>Keterangan</b></label>
-                                  <input type="text" name="keterangan" class="form-control" required placeholder="Kegiatan Babat Rumput = 80%">
+                          </div>
+                          <div>
+                              <button type="submit" name="submit" class="btn btn-primary my-1 mr-2">Kirim</button>
+                              <a data-toggle="collapse" href="#rencana" role="button" aria-expanded="false" aria-controls="rencana">batal</a>
+                          </div>
+                        </div>
+                    </form>
+                    <br>
+                </div>
+                <div class="col-md-6">
+                    <h5>
+                      <a data-toggle="collapse" href="#pemeliharaan" role="button" aria-expanded="false" aria-controls="pemeliharaan">
+                        Laporan Pencapaian <small><i class="fas fa-play"></i></small>
+                      </a>
+                    </h5>
+                    <!-- <form method="POST"> -->
+                        <input id="csrf_token" name="csrf_token" type="hidden" value="{{ csrf }}">
+                        <div class="collapse" id="pemeliharaan">
+                          <div class="form-group">
+                              <label class="form-text" for="sampling"><b>Tanggal</b></label>
+                              <input class="form-control" type="text" name="sampling" id="datepicker-pencapaian" hidden required value="{{ sampling.strftime('%Y-%m-%d') }}">
+                              <i class="fas fa-calendar d-inline"></i>
+                              <p class="ml-2 d-inline" id="sampling-pencapaian">{{ sampling.strftime('%d %B %Y') }}</p>
+                          </div>
+                          <div>
+                              <label class="form-text"><b>Jam Kerja</b></label>
+                          </div>
+                          <div class="form-group row">
+                              <div class="col-md-6">
+                                  Mulai
                               </div>
+                              <div class="col-md-6">
+                                  Selesai
+                              </div>
+                          </div>
+                          <div class="form-group">
+                              <label class="form-text" for="pencapaian"><b>Pencapaian Kerja</b></label>
+                              <input type="text" name="pencapaian" class="form-control" placeholder="Tercapai 100%">
+                          </div>
+                          <div class="form-group">
+                              <label class="form-text" for="kendala"><b>Kendala</b></label>
+                              <input type="text" name="kendala" class="form-control" placeholder="Tidak Ada">
+                          </div>
+                          <div>
+                              <label><b>Foto</b></label>
+                          </div>
+                          <div class="form-group">
+                              <label for="foto_0"><b>0 %</b></label>
+                              <input type="file" class="form-control-file" id="foto_0" name="foto_0">
                               <div>
-                                  <button class="btn btn-primary my-1 mr-2" onclick="go_upload()">Kirim</button>
-                                  <a data-toggle="collapse" href="#addkeg" role="button" aria-expanded="false" aria-controls="addkeg" onclick="srcnull()">batal</a>
+                                  <img id="blah" src="{{ url_for('static', filename='images/null.jpg') }}" alt="gambar disini">
                               </div>
                           </div>
-                          <div class="col-md-6 form-group">
-                                <h3>Laporan Kegiatan Petugas</h3>
-                                <p>Pilih foto, bisa juga langsung dari kamera Handphone</p>
-                                <p>Berikan keterangan tentang foto</p>
-                                <p>Tanggal aktifitas berlangsung</p>
-                                <p>Pilih petugas yang melakukan kegiatan pada foto</p>
+                          <div class="form-group">
+                              <label for="foto_50"><b>50 %</b></label>
+                              <input type="file" class="form-control-file" id="foto_50" name="foto_50">
+                              <div>
+                                  <img id="blah" src="{{ url_for('static', filename='images/null.jpg') }}" alt="gambar disini">
+                              </div>
                           </div>
-                      </div>
-                    </div>
-                <!-- </form> -->
+                          <div class="form-group">
+                              <label for="foto_100"><b>100 %</b></label>
+                              <input type="file" class="form-control-file" id="foto_100" name="foto_100">
+                              <div>
+                                  <img id="blah" src="{{ url_for('static', filename='images/null.jpg') }}" alt="gambar disini">
+                              </div>
+                          </div>
+                          <div>
+                              <button type="submit" name="submit" onclick="uploadlaporan()" class="btn btn-primary my-1 mr-2">Kirim</button>
+                              <a data-toggle="collapse" href="#pemeliharaan" role="button" aria-expanded="false" aria-controls="pemeliharaan" onclick="srcnull()">batal</a>
+                          </div>
+                        </div>
+                    <!-- </form> -->
+                </div>
             </div>
         </div>
         <br>
         <h3>
             Bulan
             <span id="datepicker" style="color: #18bc9c"><i class="fa fa-calendar"></i> {{ sampling_dt.strftime('%B %Y') }}</span>
-            <!-- <small><a href="{{ url_for('admin.kegiatan_embung_paper', embung_id=emb_id) }}?sampling={{ sampling_dt.strftime("%Y-%m-%d") }}" class="text-right"><i class="fa fa-print"></i></a></small> -->
         </h3>
         <table class="table table-hover table-bordered">
             <thead>

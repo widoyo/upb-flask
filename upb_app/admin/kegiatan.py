@@ -524,67 +524,24 @@ def kegiatan_embung(embung_id):
     embung = Embung.query.get(embung_id)
 
     sampling, end, day = month_range(request.values.get('sampling'))
-    all_kegiatan = KegiatanEmbung.query.filter(
-                                    KegiatanEmbung.embung_id == embung_id,
-                                    extract('month', KegiatanEmbung.sampling) == sampling.month,
-                                    extract('year', KegiatanEmbung.sampling) == sampling.year
-                                ).all()
+    all_kegiatan = []
+    # all_kegiatan = KegiatanEmbung.query.filter(
+    #                                 KegiatanEmbung.embung_id == embung_id,
+    #                                 extract('month', KegiatanEmbung.sampling) == sampling.month,
+    #                                 extract('year', KegiatanEmbung.sampling) == sampling.year
+    #                             ).all()
     kegiatan = {}
     for i in range(day, 0, -1):
         sampl = datetime.datetime.strptime(f"{sampling.year}-{sampling.month}-{i}", "%Y-%m-%d")
-        kegiatan[sampl] = {
-            'id': 0,
-            'length': 0,
-            'kegiatan': []
-        }
+        kegiatan[sampl] = None
 
     for keg in all_kegiatan:
-        kegiatan[keg.sampling]['id'] = keg.id
-        kegiatan[keg.sampling]['length'] += 1
-        kegiatan[keg.sampling]['kegiatan'].append(keg)
+        kegiatan[keg.sampling] = keg
 
     return render_template('kegiatan/embung/embung.html',
                             csrf=generate_csrf(),
                             emb_id=embung.id,
                             name=embung.nama,
-                            petugas=petugas,
-                            kegiatan=kegiatan,
-                            sampling=datetime.datetime.now() + datetime.timedelta(hours=7),
-                            sampling_dt=sampling)
-
-
-@bp.route('/embung/<embung_id>/kegiatan/paper')
-@login_required
-@role_check_embung
-def kegiatan_embung_paper(embung_id):
-    embung = Embung.query.get(embung_id)
-
-    sampling, end, day = month_range(request.values.get('sampling'))
-    all_kegiatan = KegiatanEmbung.query.filter(
-                                    KegiatanEmbung.embung_id == embung_id,
-                                    extract('month', KegiatanEmbung.sampling) == sampling.month,
-                                    extract('year', KegiatanEmbung.sampling) == sampling.year
-                                ).all()
-    kegiatan = {}
-    for i in range(day, 0, -1):
-        sampl = datetime.datetime.strptime(f"{sampling.year}-{sampling.month}-{i}", "%Y-%m-%d")
-        kegiatan[sampl] = {
-            'id': 0,
-            'length': 0,
-            'kegiatan': []
-        }
-
-    for keg in all_kegiatan:
-        kegiatan[keg.sampling]['id'] = keg.id
-        kegiatan[keg.sampling]['length'] += 1
-        kegiatan[keg.sampling]['kegiatan'].append(keg)
-    print(kegiatan)
-
-    return render_template('kegiatan/embung/paper.html',
-                            csrf=generate_csrf(),
-                            emb_id=embung.id,
-                            name=embung.nama,
-                            petugas=petugas,
                             kegiatan=kegiatan,
                             sampling=datetime.datetime.now() + datetime.timedelta(hours=7),
                             sampling_dt=sampling)
@@ -594,54 +551,14 @@ def kegiatan_embung_paper(embung_id):
 @login_required
 @role_check_embung
 def kegiatan_embung_add(embung_id):
-    form = AddKegiatan()
-    if form.validate_on_submit():
-        last_foto = Foto.query.order_by(Foto.id.desc()).first()
-        new_id = 1 if not last_foto else (last_foto.id + 1)
-        try:
-            raw = form.foto.data
-            # imageStr = base64.b64encode(raw).decode('ascii')
-            imageStr = raw.split(',')[1]
-            filename = f"kegiatan_embung_{new_id}_{form.filename.data}"
-            img_file = os.path.join(app.config['UPLOAD_FOLDER'], filename)
-            save_file = os.path.join(app.config['SAVE_DIR'], img_file)
+    pass
 
-            # convert base64 into image file and then save it
-            imgdata = base64.b64decode(imageStr)
-            # print(imgdata)
-            with open(save_file, 'wb') as f:
-                f.write(imgdata)
 
-            print("saving image !")
-            foto = Foto(
-                url=img_file,
-                obj_type="kegiatan_embung"
-            )
-
-            foto.keterangan = form.keterangan.data
-
-            kegiatan = KegiatanEmbung(
-                sampling=form.sampling.data,
-                petugas=form.petugas.data,
-                uraian=form.keterangan.data,
-                embung_id=embung_id
-            )
-            print("saving kegiatan embung")
-            db.session.add(kegiatan)
-            db.session.add(foto)
-            db.session.commit()
-
-            foto.obj_id = kegiatan.id
-            kegiatan.foto_id = foto.id
-            db.session.commit()
-
-            flash('Tambah Kegiatan berhasil !', 'success')
-        except Exception as e:
-            db.session.rollback()
-            print(e)
-            flash(f"Terjadi Error saat menyimpan data Kegiatan : {e}", 'danger')
-
-    return redirect(url_for('admin.kegiatan_embung', embung_id=embung_id))
+@bp.route('/embung/<embung_id>/kegiatan/update', methods=['POST'])
+@login_required
+@role_check_embung
+def kegiatan_embung_update(embung_id):
+    pass
 
 
 @bp.route('/embung/<embung_id>/kegiatan/delete', methods=['POST'])
@@ -651,16 +568,16 @@ def kegiatan_embung_delete(embung_id):
     keg_id = int(request.values.get('keg_id'))
     foto_id = int(request.values.get('foto_id'))
     filename = request.values.get('filename')
-    filepath = os.path.join(app.config['SAVE_DIR'], filename)
-
-    kegiatan = KegiatanEmbung.query.get(keg_id)
-    foto = Foto.query.get(foto_id)
-
-    db.session.delete(kegiatan)
-    db.session.delete(foto)
-    db.session.commit()
-
-    if os.path.exists(filepath):
-        os.remove(filepath)
+    # filepath = os.path.join(app.config['SAVE_DIR'], filename)
+    #
+    # kegiatan = KegiatanEmbung.query.get(keg_id)
+    # foto = Foto.query.get(foto_id)
+    #
+    # db.session.delete(kegiatan)
+    # db.session.delete(foto)
+    # db.session.commit()
+    #
+    # if os.path.exists(filepath):
+    #     os.remove(filepath)
 
     return "ok"

@@ -58,7 +58,7 @@
                               <div class="input-group">
                                   <input class="form-control" type="number" name="target" id="target" placeholder="contoh:700" step="0.1" required>
                                   <div class="input-group-append">
-                                    <span class="input-group-text" id="satuan">m<sup>3</sup></span>
+                                    <span class="input-group-text" id="satuan">m<sup>2</sup></span>
                                   </div>
                               </div>
                           </div>
@@ -507,16 +507,16 @@
 <script src="{{ url_for('static', filename='js/MinifyJpegAsync.js') }}"></script>
 <script>
     var jUnits = {
-        "cabut rumput": "m<sup>3</sup>",
-        "potong rumput": "m<sup>3</sup>",
-        "pembersihan sampah": "m<sup>3</sup>",
-        "pelumasan": "Pcs",
-        "pengecatan": "m<sup>3</sup>",
-        "penggantian oli mesin": "Ltr",
-        "perawatan alat kerja": "Pcs",
-        "pengangkatan sedimen": "m<sup>3</sup>",
-        "tambal sulam kerusakan ringan": "m<sup>3</sup>",
-        "penghijauan": "m<sup>3</sup>"
+        'cabut rumput': "m<sup>2</sup>",
+        'potong rumput': "m<sup>2</sup>",
+        'pembersihan sampah': "m<sup>2</sup>",
+        'pelumasan': "Pcs",
+        'pengecatan': "m<sup>2</sup>",
+        'penggantian oli mesin': "Ltr",
+        'perawatan alat kerja': "Pcs",
+        'pengangkatan sedimen': "m<sup>2</sup>",
+        'tambal sulam kerusakan ringan': "m<sup>2</sup>",
+        'penghijauan': "m<sup>2</sup>"
     }
     function customFormat(m) {
         return `${m.format('dddd').slice(0,3)}, ${m.format('ll')}`
