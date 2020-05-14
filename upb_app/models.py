@@ -330,6 +330,10 @@ class KegiatanEmbung(BaseLog):
 
     embung = relationship('Embung', back_populates='kegiatan')
 
+    @property
+    def foto(self):
+        return Foto.query.get(self.foto_id)
+
     def get_hms(self):
         return self.c_date + datetime.timedelta(hours=7)
 

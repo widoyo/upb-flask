@@ -1,0 +1,77 @@
+{% extends 'master/base_adm.html' %}
+
+{% set title = "Kegiatan" %}
+
+{% block css %}
+<link href="{{ url_for('static', filename='css/bootstrap-editable.css') }}" rel="stylesheet"/>
+{% endblock %}
+
+{% block content %}
+<div class="container">
+    <h1>Kegiatan Embung</h1>
+    <nav>
+      <div class="nav nav-tabs" id="nav-tab" role="tablist">
+        <a class="nav-item nav-link active"
+            id="nav-home-tab" data-toggle="tab"
+            href="#nav-home" role="tab"
+            aria-controls="penampung-air" aria-selected="true">
+            <h4>Penampung Air <small><span class="badge badge-pill badge-secondary" id="eb_len"></span></small></h4>
+        </a>
+        <a class="nav-item nav-link"
+            id="nav-profile-tab" data-toggle="tab"
+            href="#nav-profile" role="tab"
+            aria-controls="air-baku" aria-selected="false">
+            <h4>Air Baku <small><span class="badge badge-pill badge-secondary" id="ea_len"></span></small></h4>
+        </a>
+      </div>
+    </nav>
+    <div class="tab-content" id="nav-tabContent">
+      <div class="tab-pane fade show active mt-2"
+        id="nav-home" role="tabpanel"
+        aria-labelledby="penampung-air-tab">
+        <br>
+        <table id="bpa" class="table table-bordered">
+            <thead>
+                <tr class="table-active">
+                    <th>Embung</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for e in embung_b %}
+                <tr>
+                    <td>
+                        <a href="{{ url_for('admin.kegiatan_embung', embung_id=e.id) }}">{{ e.nama }}</a>
+                    </td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+      </div>
+      <div class="tab-pane fade mt-2"
+        id="nav-profile" role="tabpanel"
+        aria-labelledby="air-baku-tab">
+        <br>
+        <table id="ab" class="table table-bordered ">
+            <thead>
+                <tr class="table-active">
+                    <th>Embung</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for e in embung_a %}
+                    <tr>
+                        <td>
+                            <a href="{{ url_for('admin.kegiatan_embung', embung_id=e.id) }}">{{ e.nama }}</a>
+                        </td>
+                    </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+      </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block js %}
+
+{% endblock %}

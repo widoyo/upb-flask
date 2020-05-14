@@ -24,7 +24,8 @@ petugas = [
     ("keamanan", "Keamanan"),
     ("pemantauan", "Pemantauan"),
     ("operasi", "Operasi"),
-    ("pemeliharaan", "Pemeliharaan")
+    ("pemeliharaan", "Pemeliharaan"),
+    ("petugas op embung", "Petugas OP Embung")
 ]
 komponen = [
     ("Tubuh Bendungan - Puncak", "Tubuh Bendungan - Puncak"),

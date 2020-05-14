@@ -28,6 +28,12 @@
                     <form action="{{ url_for('admin.pemeliharaan_rencana', bendungan_id=bend.id) }}" method="POST">
                         <input id="csrf_token" name="csrf_token" type="hidden" value="{{ csrf }}">
                         <div class="collapse" id="rencana">
+                            <div class="container">
+                                <p>Form Rencana diisi per Jenis Kegiatan</p>
+                                <p>Seminggu bisa diisi beberapa kali asalkan berbeda Jenis Kegiatan</p>
+                                <p>Jika Rencana Jenis Kegiatan sudah dibuat akan muncul error</p>
+                                <p>Lihat daftar rencana <a href="{{ url_for('admin.pemeliharaan', bendungan_id=bend.id, rencana='on') }}">di sini</a></p>
+                            </div>
                           <div class="form-group">
                               <label class="form-text" for="sampling"><b>Minggu</b></label>
                               <input class="form-control" type="text" name="sampling" id="datepicker-rencana" hidden required value="{{ sampling.strftime('%Y-%m-%d') }}">

@@ -67,11 +67,6 @@
                             Bendungan
                         </a>
                     </li>
-                    <!-- <li class="nav-item {% if title == 'Bendungan' %}active{% endif %}">
-                        <a class="nav-link" href="{{ url_for('admin.bendungan') }}">
-                            Data Teknis
-                        </a>
-                    </li> -->
                     <li class="nav-item dropdown">
                       <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
                           Data Teknis
@@ -91,10 +86,19 @@
                             RTOW
                         </a>
                     </li>
-                    <li class="nav-item {% if title == 'Kegiatan' %}active{% endif %}">
+                    <!-- <li class="nav-item {% if title == 'Kegiatan' %}active{% endif %}">
                         <a class="nav-link" href="{{ url_for('admin.kegiatan') }}">
                             Foto Kegiatan
                         </a>
+                    </li> -->
+                    <li class="nav-item dropdown">
+                      <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                          Foto Kegiatan
+                      </a>
+                        <div class="dropdown-menu" aria-labelledby="navbarDropdown">
+                          <a class="dropdown-item" href="{{ url_for('admin.kegiatan') }}">Bendungan</a>
+                          <a class="dropdown-item" href="{{ url_for('admin.kegiatan_index_embung') }}">Embung</a>
+                        </div>
                     </li>
                     <li class="nav-item {% if title == 'Kinerja' %}active{% endif %}">
                         <a class="nav-link" href="{{ url_for('admin.kinerja') }}">
