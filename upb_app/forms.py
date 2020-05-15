@@ -223,7 +223,7 @@ class PencapaianEmbung(FlaskForm):
     foto_0 = FileField("0 %")
     filename_0 = StringField('Filename')
     foto_50 = FileField("50 %")
-    filename5_0 = StringField('Filename')
+    filename_50 = StringField('Filename')
     foto_100 = FileField("100 %")
     filename_100 = StringField('Filename')
     submit = SubmitField('Kirim')

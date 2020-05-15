@@ -4,6 +4,7 @@
 
 {% block css %}
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-datepicker/1.9.0/css/bootstrap-datepicker.css">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/tempusdominus-bootstrap-4/5.0.1/css/tempusdominus-bootstrap-4.min.css" />
 <style>
     .datepicker {
         z-index: 10000 !important;
@@ -29,7 +30,7 @@
                         <div class="collapse" id="rencana">
                           <div class="form-group">
                               <label class="form-text" for="sampling"><b>Tanggal</b></label>
-                              <input class="form-control" type="text" name="sampling" id="datepicker-rencana" hidden required value="{{ sampling.strftime('%Y-%m-%d') }}">
+                              <input class="form-control" type="text" name="sampling" id="datepicker_rencana" hidden required value="{{ sampling.strftime('%Y-%m-%d') }}">
                               <i class="fas fa-calendar d-inline"></i>
                               <p class="ml-2 d-inline" id="sampling-rencana">{{ sampling.strftime('%d %B %Y') }}</p>
                           </div>
@@ -52,7 +53,7 @@
                           </div>
                           <div>
                               <button type="submit" name="submit" class="btn btn-primary my-1 mr-2">Kirim</button>
-                              <a data-toggle="collapse" href="#rencana" role="button" aria-expanded="false" aria-controls="rencana">batal</a>
+                              <a data-toggle="collapse" href="#rencana" role="button" aria-expanded="false" aria-controls="rencana" onclick="rencananull()">batal</a>
                           </div>
                         </div>
                     </form>
@@ -60,16 +61,16 @@
                 </div>
                 <div class="col-md-6">
                     <h5>
-                      <a data-toggle="collapse" href="#pemeliharaan" role="button" aria-expanded="false" aria-controls="pemeliharaan">
+                      <a data-toggle="collapse" href="#pencapaian" role="button" aria-expanded="false" aria-controls="pencapaian">
                         Laporan Pencapaian <small><i class="fas fa-play"></i></small>
                       </a>
                     </h5>
                     <!-- <form method="POST"> -->
                         <input id="csrf_token" name="csrf_token" type="hidden" value="{{ csrf }}">
-                        <div class="collapse" id="pemeliharaan">
+                        <div class="collapse" id="pencapaian">
                           <div class="form-group">
-                              <label class="form-text" for="sampling"><b>Tanggal</b></label>
-                              <input class="form-control" type="text" name="sampling" id="datepicker-pencapaian" hidden required value="{{ sampling.strftime('%Y-%m-%d') }}">
+                              <label class="form-text" for="sampling_p"><b>Tanggal</b></label>
+                              <input class="form-control" type="text" name="sampling_p" id="datepicker_pencapaian" hidden required value="{{ sampling.strftime('%Y-%m-%d') }}">
                               <i class="fas fa-calendar d-inline"></i>
                               <p class="ml-2 d-inline" id="sampling-pencapaian">{{ sampling.strftime('%d %B %Y') }}</p>
                           </div>
@@ -78,10 +79,23 @@
                           </div>
                           <div class="form-group row">
                               <div class="col-md-6">
-                                  Mulai
+                                  <label for="mulai">Mulai <small id="timepickerhelp"class="form-text text-muted">(Tekan icon jam)</small></label>
+
+                                <div class="input-group date" id="timemulai" data-target-input="nearest">
+                                    <input type="text" name="mulai" class="form-control datetimepicker-input" data-target="#timemulai"/>
+                                    <div class="input-group-append" data-target="#timemulai" data-toggle="datetimepicker">
+                                        <div class="input-group-text"><i class="fa fa-clock"></i></div>
+                                    </div>
+                                </div>
                               </div>
                               <div class="col-md-6">
-                                  Selesai
+                                  <label for="selesai">Selesai <small id="timepickerhelp"class="form-text text-muted">(Tekan icon jam)</small></label>
+                                  <div class="input-group date" id="timeselesai" data-target-input="nearest">
+                                      <input type="text" name="selesai" class="form-control datetimepicker-input" data-target="#timeselesai"/>
+                                      <div class="input-group-append" data-target="#timeselesai" data-toggle="datetimepicker">
+                                          <div class="input-group-text"><i class="fa fa-clock"></i></div>
+                                      </div>
+                                  </div>
                               </div>
                           </div>
                           <div class="form-group">
@@ -92,33 +106,30 @@
                               <label class="form-text" for="kendala"><b>Kendala</b></label>
                               <input type="text" name="kendala" class="form-control" placeholder="Tidak Ada">
                           </div>
-                          <div>
-                              <label><b>Foto</b></label>
-                          </div>
                           <div class="form-group">
-                              <label for="foto_0"><b>0 %</b></label>
+                              <label for="foto_0"><b>Foto 0 %</b></label>
                               <input type="file" class="form-control-file" id="foto_0" name="foto_0">
                               <div>
-                                  <img id="blah" src="{{ url_for('static', filename='images/null.jpg') }}" alt="gambar disini">
+                                  <img id="blah1" src="{{ url_for('static', filename='images/null.jpg') }}" alt="gambar disini">
                               </div>
                           </div>
                           <div class="form-group">
-                              <label for="foto_50"><b>50 %</b></label>
+                              <label for="foto_50"><b>Foto 50 %</b></label>
                               <input type="file" class="form-control-file" id="foto_50" name="foto_50">
                               <div>
-                                  <img id="blah" src="{{ url_for('static', filename='images/null.jpg') }}" alt="gambar disini">
+                                  <img id="blah2" src="{{ url_for('static', filename='images/null.jpg') }}" alt="gambar disini">
                               </div>
                           </div>
                           <div class="form-group">
-                              <label for="foto_100"><b>100 %</b></label>
+                              <label for="foto_100"><b>Foto 100 %</b></label>
                               <input type="file" class="form-control-file" id="foto_100" name="foto_100">
                               <div>
-                                  <img id="blah" src="{{ url_for('static', filename='images/null.jpg') }}" alt="gambar disini">
+                                  <img id="blah3" src="{{ url_for('static', filename='images/null.jpg') }}" alt="gambar disini">
                               </div>
                           </div>
                           <div>
                               <button type="submit" name="submit" onclick="uploadlaporan()" class="btn btn-primary my-1 mr-2">Kirim</button>
-                              <a data-toggle="collapse" href="#pemeliharaan" role="button" aria-expanded="false" aria-controls="pemeliharaan" onclick="srcnull()">batal</a>
+                              <a data-toggle="collapse" href="#pencapaian" role="button" aria-expanded="false" aria-controls="pencapaian" onclick="srcnull()">batal</a>
                           </div>
                         </div>
                     <!-- </form> -->
@@ -133,44 +144,85 @@
         <table class="table table-hover table-bordered">
             <thead>
                 <tr class="table-active">
-                    <th class="text-center align-middle">Tanggal</th>
-                    <th class="text-center align-middle">Kegiatan</th>
-                    <th class="text-center align-middle">Foto</th>
+                    <th rowspan="2" class="text-center align-middle">Tanggal</th>
+                    <th rowspan="2" class="text-center align-middle">Lokasi</th>
+                    <th rowspan="2" class="text-center align-middle">Kegiatan</th>
+                    <th rowspan="2" class="text-center align-middle">Pencapaian</th>
+                    <th colspan="2" class="text-center align-middle">Jam Kerja</th>
+                    <th rowspan="2" class="text-center align-middle">Kendala</th>
+                    <th colspan="3" class="text-center align-middle">Dokumentasi</th>
+                    <th rowspan="2" class="text-center align-middle"></th>
+                </tr>
+                <tr class="table-active">
+                    <th class="text-center align-middle">Mulai</th>
+                    <th class="text-center align-middle">Selesai</th>
+                    <th class="text-center align-middle">0 %</th>
+                    <th class="text-center align-middle">50 %</th>
+                    <th class="text-center align-middle">100 %</th>
                 </tr>
             </thead>
             <tbody>
                 {% for date, keg in kegiatan.items() %}
                 <tr>
-                    <td rowspan="{{ keg.length or 1 }}">
-                        <span id="tgl">{{ date.strftime("%Y-%m-%d") }}</span>
+                    <td>
+                        <span id="tgl">{{ date }}</span>
+                        <!-- <small style="float: right">
+                            <i class="fa fa-trash"></i>
+                        </small> -->
                     </td>
-                    {% if keg.kegiatan %}
-                      <td>{{ keg.kegiatan.0.uraian }}</td>
-                      <td align="center">
-                          {% if user.embung_id == emb_id %}
-                              <!-- delete button -->
-                              <button id="no-print" class="btn btn-danger btn-sm" style="float: right;" onclick="delete_foto({{ keg.kegiatan.0.id }}, {{ keg.kegiatan.0.foto.id }}, '{{ keg.kegiatan.0.foto.url }}')">Hapus</button>
-                          {% endif %}
-                          <img src="{{ url_for('static', filename=keg.kegiatan.0.foto.url[7:]) }}" style="width: 30%; height: auto;">
-                      </td>
+                    {% if keg %}
+                    <td>{{ keg.lokasi }}</td>
+                    <td>{{ keg.rencana }}</td>
+                    <td>{{ keg.pencapaian or "-" }}</td>
+                    <td class="text-center">{{ keg.mulai or "-" }}</td>
+                    <td class="text-center">{{ keg.selesai or "-" }}</td>
+                    <td>{{ keg.kendala or "-" }}</td>
+                    {% if keg.fotos %}
+                        {% for f in keg.fotos %}
+                        <td class="text-center">
+                            <a data-toggle="modal" href="#preview-foto-{{ f.id }}"
+                                role="button" aria-expanded="false"
+                                class="card-link">
+                                <img class="img-card" id="foto-{{ f.id }}" src="{{ url_for('static', filename=f.url[7:]) }}" alt="" style="width: 8rem;height: 8rem;">
+                            </a>
+                            <div class="modal fade" id="preview-foto-{{ f.id }}" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+                              <div class="modal-dialog" role="document">
+                                <div class="modal-content">
+                                  <div class="modal-header">
+                                    <h5 class="modal-title" id="exampleModalLabel">{{ keg.rencana }} {{ keg.sampling.strftime('%d %b %Y') }}</h5>
+                                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                      <span aria-hidden="true">&times;</span>
+                                    </button>
+                                  </div>
+                                  <div class="modal-body">
+                                      <div class="form-group">
+                                          <img class="img-fluid" src="{{ url_for('static', filename=f.url[7:]) }}" id="foto-modal-show">
+                                          <div style="position: absolute;top: 70%;left: 0;width: 100%;background-color: rgba(255, 255, 255, 0.6);">
+                                              <p class="text-center">{{ f.keterangan }}</p>
+                                          </div>
+                                      </div>
+                                  </div>
+                                  <div class="modal-footer">
+                                      <button type="button" class="btn btn-secondary" data-dismiss="modal">Tutup</button>
+                                  </div>
+                                </div>
+                              </div>
+                            </div>
+                        </td>
+                        {% endfor %}
                     {% else %}
-                        <td colspan="2" class="text-center">Tidak Ada Laporan</td>
+                    <td class="text-center">-</td>
+                    <td class="text-center">-</td>
+                    <td class="text-center">-</td>
+                    {% endif %}
+                    <td align="center">
+                        <input type="button" value="Hapus" onclick="deleteKegiatan({{ keg.id }}, '{{ keg.sampling.strftime('%d %b %Y') }}')" class="btn btn-sm btn-danger">
+                    </td>
+
+                    {% else %}
+                    <td colspan="10" class="text-center">Tidak Ada Kegiatan</td>
                     {% endif %}
                 </tr>
-                  {% for k in keg.kegiatan %}
-                      {% if loop.index > 1 %}
-                      <tr>
-                          <td>{{ k.uraian }}</td>
-                          <td align="center">
-                              {% if user.embung_id == emb_id %}
-                                  <!-- delete button -->
-                                  <button id="no-print" class="btn btn-danger btn-sm" style="float: right;" onclick="delete_foto({{ k.id }}, {{ k.foto.id }}, '{{ k.foto.url }}')">Hapus</button>
-                              {% endif %}
-                              <img src="{{ url_for('static', filename=k.foto.url[7:]) }}" style="width: 30%; height: auto;">
-                          </td>
-                      </tr>
-                      {% endif %}
-                  {% endfor %}
                 {% endfor %}
             </tbody>
         </table>
@@ -182,12 +234,24 @@
 <script src="{{ url_for('static', filename='js/id.js') }}"></script>
 <script src="{{ url_for('static', filename='js/bootstrap-editable.min.js') }}"></script>
 <script src="{{ url_for('static', filename='js/bootstrap-datepicker.min.js') }}"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/tempusdominus-bootstrap-4/5.0.1/js/tempusdominus-bootstrap-4.min.js"></script>
 <script src="{{ url_for('static', filename='js/MinifyJpegAsync.js') }}"></script>
 <script>
     $(document).ready(function() {
         // resolve package confict
         let datepicker = $.fn.datepicker.noConflict();
         $.fn.bootstrapDP = datepicker;
+
+        $(function () {
+            $('#timemulai').datetimepicker({
+                format: 'LT'
+            });
+        });
+        $(function () {
+            $('#timeselesai').datetimepicker({
+                format: 'LT'
+            });
+        });
 
         $('#datepicker').datepicker({
             autoclose: true,
@@ -199,15 +263,27 @@
             window.location = "{{ url_for('admin.kegiatan_embung', embung_id=emb_id) }}?sampling=" + $('#datepicker').datepicker('getFormattedDate')
         });
 
-        $('#sampling-kegiatan').datepicker({
+        $('#sampling-rencana').datepicker({
             todayHighlight: true,
             autoclose: true,
             format:  'yyyy-mm-dd'
         });
-        $('#sampling-kegiatan').on('changeDate', function () {
-            let date = $('#sampling-kegiatan').datepicker('getFormattedDate');
-            $('#sampling-kegiatan').text(moment(date).format('DD MMMM YYYY'));
-            $('#datepicker_kegiatan').attr('value', moment(date).format('YYYY-MM-DD'));
+        $('#sampling-rencana').on('changeDate', function () {
+            let date = $('#sampling-rencana').datepicker('getFormattedDate');
+            $('#sampling-rencana').text(moment(date).format('DD MMMM YYYY'));
+            $('#datepicker_rencana').attr('value', moment(date).format('YYYY-MM-DD'));
+            $('.datepicker').hide();
+        });
+
+        $('#sampling-pencapaian').datepicker({
+            todayHighlight: true,
+            autoclose: true,
+            format:  'yyyy-mm-dd'
+        });
+        $('#sampling-pencapaian').on('changeDate', function () {
+            let date = $('#sampling-pencapaian').datepicker('getFormattedDate');
+            $('#sampling-pencapaian').text(moment(date).format('DD MMMM YYYY'));
+            $('#datepicker_pencapaian').attr('value', moment(date).format('YYYY-MM-DD'));
             $('.datepicker').hide();
         });
 
@@ -236,69 +312,138 @@
             console.log(this.value);
         });
 
-        $('#foto').on('change', function(event) {
-            console.log("Input Change Detected");
-            readURL(event);
+        $('#foto_0').on('change', function(event) {
+            console.log("Foto 0% change Detected");
+            readURL(event, 'blah1');
+        });
+        $('#foto_50').on('change', function(event) {
+            console.log("Foto 50% change Detected");
+            readURL(event, 'blah2');
+        });
+        $('#foto_100').on('change', function(event) {
+            console.log("Foto 100% change Detected");
+            readURL(event, 'blah3');
         });
     });
 
-    let enc_img = '';
-	let file_name = '';
-	function readURL(event) {
+    let enc_img = {
+        'blah1': '',
+        'blah2': '',
+        'blah3': ''
+    };
+	let file_name = {
+        'blah1': '',
+        'blah2': '',
+        'blah3': ''
+    };
+	function readURL(event, blah_id) {
         let f = event.target.files[0];
-		file_name = f.name;
+		file_name[blah_id] = f.name;
         let reader = new FileReader();
 
         reader.onloadend = function(e){
             console.log(`onload function called, parameter : ${e}`);
-			MinifyJpegAsync.minify(e.target.result, 1280, function(data) {
-				enc_img = "data:image/jpeg;base64," + btoa(data);
+			MinifyJpegAsync.minify(e.target.result, 1024, function(data) {
+				enc_img[blah_id] = "data:image/jpeg;base64," + btoa(data);
 				let img = new Image();
-				img.src = enc_img;
+				img.src = enc_img[blah_id];
 
-				document.getElementById('blah').src = enc_img;
+				// document.getElementById(blah_id).src = enc_img;
+				// console.log('Hasil proses minify') ;
+			});
+            MinifyJpegAsync.minify(e.target.result, 360, function(data) {
+                let temp_img = "data:image/jpeg;base64," + btoa(data);
+
+				document.getElementById(blah_id).src = temp_img;
 				console.log('Hasil proses minify') ;
 			});
         };  // (function(theFile))(f)
 		reader.readAsDataURL(f);
     };
 
-    function go_upload() {
-        if($('select[name="petugas"]').val() == 'Tidak Ada'){
-            alert('Pilih petugas');
-            $('select[name="petugas"]').focus();
-        } else if ($('#blah').attr('src') == "{{ url_for('static', filename='img/null.jpg') }}"){
-            alert('Pilih foto terlebih dahulu');
-        } else if ($('input[name="keterangan"]').val() == ''){
-            alert('Harap masukkan keterangan foto kegiatan');
-            $('input[name="keterangan"]').focus();
+    function uploadlaporan() {
+        if ($('input[name="mulai"]').val() == ''){
+            alert('Harap masukkan jam mulai');
+            $('input[name="mulai"]').focus();
+        } else if ($('input[name="selesai"]').val() == ''){
+            alert('Harap masukkan jam selesai');
+            $('input[name="selesai"]').focus();
+        } else if ($('input[name="pencapaian"]').val() == ''){
+            alert('Harap masukkan capaian kerja');
+            $('input[name="pencapaian"]').focus();
+        } else if ($('input[name="kendala"]').val() == ''){
+            alert('Harap masukkan kendala');
+            $('input[name="pencapaian"]').focus();
+        } else if ($('#blah1').attr('src') == "{{ url_for('static', filename='images/null.jpg') }}"){
+            alert('Pilih foto 0% terlebih dahulu');
+        } else if ($('#blah2').attr('src') == "{{ url_for('static', filename='images/null.jpg') }}"){
+            alert('Pilih foto 50% terlebih dahulu');
+        } else if ($('#blah3').attr('src') == "{{ url_for('static', filename='images/null.jpg') }}"){
+            alert('Pilih foto 100% terlebih dahulu');
         } else {
             let fields = 'keterangan_waktu'.split('_');
             let formData = {
                 csrf_token: '{{ csrf }}',
                 foto: enc_img,
                 filename: file_name,
-                keterangan: $('input[name="keterangan"]').val(),
-                sampling: $('input[name="sampling"]').val(),
-                petugas: $('select[name="petugas"]').val().toLowerCase()
+                foto_0: enc_img['blah1'],
+                filename_0: file_name['blah1'],
+                foto_50: enc_img['blah2'],
+                filename_50: file_name['blah2'],
+                foto_100: enc_img['blah3'],
+                filename_100: file_name['blah3'],
+                mulai: $('input[name="mulai"]').val(),
+                selesai: $('input[name="selesai"]').val(),
+                pencapaian: $('input[name="pencapaian"]').val(),
+                kendala: $('input[name="kendala"]').val(),
+                sampling: $('input[name="sampling_p"]').val()
             };
-            console.log("Posting Photo");
+            console.log("Update Kegiatan Embung");
             console.log(formData);
-            $.post("{{ url_for('admin.kegiatan_embung_add', embung_id=emb_id) }}", formData,
+            $.post("{{ url_for('admin.kegiatan_embung_update', embung_id=emb_id) }}", formData,
                 function (res) {
-                    console.log(res);
-                    location.reload();
+                    if (res == 'ok') {
+                        console.log(res);
+                        location.reload();
+                    } else {
+                        alert("Rencana dari laporan penyelesaian tidak ditemukan");
+                    }
                 }
             );
         }
     }
+    function deleteKegiatan(keg_id, date){
+        console.log(keg_id);
+        var result = confirm(`Anda yakin ingin menghapus kegiatan tgl ${date}?`);
+        if (result) {
+            $.post("{{ url_for('admin.kegiatan_embung_delete', embung_id=emb_id) }}", {keg_id:keg_id}).done(function(result){
+                var a = result;
+                if(a == "ok"){
+                    alert("Berhasil dihapus");
+                    location.reload();
+                }
+            });
+        }
+    }
 
     function srcnull(){
-    	$('#fotoFile').val('');
-    	$('#blah').attr('src', "{{ url_for('static', filename='img/null.jpg') }}");
-    	$('input[name="keterangan"]').val('');
-    	$('select[name="petugas"]').val("Tidak Ada").change();
-    	$('#form-kegiatan').collapse('hide');
+    	$('#foto_0').val('');
+        $('#foto_50').val('');
+        $('#foto_100').val('');
+    	$('#blah1').attr('src', "{{ url_for('static', filename='images/null.jpg') }}");
+        $('#blah2').attr('src', "{{ url_for('static', filename='images/null.jpg') }}");
+        $('#blah3').attr('src', "{{ url_for('static', filename='images/null.jpg') }}");
+        $('input[name="mulai"]').val('');
+    	$('input[name="selesai"]').val("");
+        $('input[name="pencapaian"]').val('');
+    	$('input[name="kendala"]').val("");
+    	$('#pencapaian').collapse('hide');
+    }
+    function rencananull(){
+    	$('input[name="lokasi"]').val('');
+    	$('input[name="kegiatan"]').val("");
+        $('input[name="target"]').val("");
+    	// $('#rencana').collapse('hide');
     }
 </script>
 {% endblock %}

@@ -334,6 +334,9 @@ class KegiatanEmbung(BaseLog):
 
     embung = relationship('Embung', back_populates='kegiatan')
 
+    __table_args__ = (db.UniqueConstraint('embung_id', 'sampling',
+                                          name='kegiatan_embung_sampling'),)
+
     @property
     def fotos(self):
         return Foto.query.filter(Foto.obj_type == 'kegiatan_embung', Foto.obj_id == self.id).all()

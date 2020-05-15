@@ -6,7 +6,7 @@ from sqlalchemy.exc import IntegrityError
 from upb_app.helper import month_range, week_range
 from upb_app.models import Kegiatan, Foto, Bendungan, Embung, Petugas, Pemeliharaan, jenis_pemeliharaan
 from upb_app.models import KegiatanEmbung
-from upb_app.forms import AddKegiatan, RencanaPemeliharaan, LaporPemeliharaan
+from upb_app.forms import AddKegiatan, RencanaPemeliharaan, LaporPemeliharaan, RencanaEmbung, PencapaianEmbung
 from upb_app import app, db, admin_only, petugas_only, role_check, role_check_embung
 import datetime
 import calendar
@@ -524,12 +524,11 @@ def kegiatan_embung(embung_id):
     embung = Embung.query.get(embung_id)
 
     sampling, end, day = month_range(request.values.get('sampling'))
-    all_kegiatan = []
-    # all_kegiatan = KegiatanEmbung.query.filter(
-    #                                 KegiatanEmbung.embung_id == embung_id,
-    #                                 extract('month', KegiatanEmbung.sampling) == sampling.month,
-    #                                 extract('year', KegiatanEmbung.sampling) == sampling.year
-    #                             ).all()
+    all_kegiatan = KegiatanEmbung.query.filter(
+                                    KegiatanEmbung.embung_id == embung_id,
+                                    extract('month', KegiatanEmbung.sampling) == sampling.month,
+                                    extract('year', KegiatanEmbung.sampling) == sampling.year
+                                ).all()
     kegiatan = {}
     for i in range(day, 0, -1):
         sampl = datetime.datetime.strptime(f"{sampling.year}-{sampling.month}-{i}", "%Y-%m-%d")
@@ -551,14 +550,99 @@ def kegiatan_embung(embung_id):
 @login_required
 @role_check_embung
 def kegiatan_embung_add(embung_id):
-    pass
+    form = RencanaEmbung()
+
+    if form.validate_on_submit():
+        obj_dict = {
+            'sampling': form.sampling.data,
+            'lokasi': form.lokasi.data,
+            'rencana': f"{form.kegiatan.data} seluas {form.luas.data}m2",
+            'embung_id': embung_id
+        }
+        print(obj_dict)
+
+        row = KegiatanEmbung.query.filter(
+                                        KegiatanEmbung.sampling == form.sampling.data,
+                                        KegiatanEmbung.embung_id == embung_id
+                                    ).first()
+        if row:
+            for key, value in obj_dict.items():
+                setattr(row, key, value)
+        else:
+            nrow = KegiatanEmbung(**obj_dict)
+            db.session.add(nrow)
+        db.session.commit()
+
+    return redirect(url_for('admin.kegiatan_embung', embung_id=embung_id))
 
 
 @bp.route('/embung/<embung_id>/kegiatan/update', methods=['POST'])
 @login_required
 @role_check_embung
 def kegiatan_embung_update(embung_id):
-    pass
+    form = PencapaianEmbung()
+
+    if form.validate_on_submit():
+        print("Validated")
+        row = KegiatanEmbung.query.filter(
+                                        KegiatanEmbung.sampling == form.sampling.data,
+                                        KegiatanEmbung.embung_id == embung_id
+                                    ).first()
+        if not row:
+            return "not ok"
+
+        obj_dict = {
+            'mulai': form.mulai.data,
+            'selesai': form.selesai.data,
+            'pencapaian': form.pencapaian.data,
+            'kendala': form.kendala.data,
+        }
+        for key, value in obj_dict.items():
+            setattr(row, key, value)
+        fotos = [
+            {
+                'filename': form.filename_0.data,
+                'file': form.foto_0.data,
+                'keterangan': "0%"
+            },
+            {
+                'filename': form.filename_50.data,
+                'file': form.foto_50.data,
+                'keterangan': "50%"
+            },
+            {
+                'filename': form.filename_100.data,
+                'file': form.foto_100.data,
+                'keterangan': "100%"
+            }
+        ]
+
+        last_foto = Foto.query.order_by(Foto.id.desc()).first()
+        new_id = 1 if not last_foto else (last_foto.id + 1)
+        for foto in fotos:
+            raw = foto['file']
+            imageStr = raw.split(',')[1]
+            filename = f"kegiatan_embung_{new_id}_{foto['filename']}"
+            new_id += 1
+
+            img_file = os.path.join(app.config['UPLOAD_FOLDER'], filename)
+            save_file = os.path.join(app.config['SAVE_DIR'], img_file)
+
+            # convert base64 into image file and then save it
+            imgdata = base64.b64decode(imageStr)
+            with open(save_file, 'wb') as f:
+                f.write(imgdata)
+
+            foto = Foto(
+                keterangan=foto['keterangan'],
+                url=img_file,
+                obj_type="kegiatan_embung",
+                obj_id=row.id
+            )
+            db.session.add(foto)
+        db.session.commit()
+
+    return "ok"
 
 
 @bp.route('/embung/<embung_id>/kegiatan/delete', methods=['POST'])
@@ -566,18 +650,18 @@ def kegiatan_embung_update(embung_id):
 @role_check_embung
 def kegiatan_embung_delete(embung_id):
     keg_id = int(request.values.get('keg_id'))
-    foto_id = int(request.values.get('foto_id'))
-    filename = request.values.get('filename')
-    # filepath = os.path.join(app.config['SAVE_DIR'], filename)
-    #
-    # kegiatan = KegiatanEmbung.query.get(keg_id)
-    # foto = Foto.query.get(foto_id)
-    #
-    # db.session.delete(kegiatan)
-    # db.session.delete(foto)
-    # db.session.commit()
-    #
-    # if os.path.exists(filepath):
-    #     os.remove(filepath)
+
+    kegiatan = KegiatanEmbung.query.get(keg_id)
+
+    fotos = kegiatan.fotos
+
+    for f in fotos:
+        filepath = os.path.join(app.config['SAVE_DIR'], f.url)
+
+        db.session.delete(f)
+        if os.path.exists(filepath):
+            os.remove(filepath)
+    db.session.delete(kegiatan)
+    db.session.commit()
 
     return "ok"

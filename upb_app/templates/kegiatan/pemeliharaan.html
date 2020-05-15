@@ -64,7 +64,7 @@
                           </div>
                           <div>
                               <button type="submit" name="submit" class="btn btn-primary my-1 mr-2">Kirim</button>
-                              <a data-toggle="collapse" href="#rencana" role="button" aria-expanded="false" aria-controls="rencana">batal</a>
+                              <a data-toggle="collapse" href="#rencana" role="button" aria-expanded="false" aria-controls="rencana" onclick="rencananull()">batal</a>
                           </div>
                         </div>
                     </form>
@@ -739,7 +739,15 @@
     	$('#foto').val('');
     	$('#blah').attr('src', "{{ url_for('static', filename='images/null.jpg') }}");
     	$('input[name="keterangan_foto"]').val('');
+        $('input[name="progress"]').val('');
+        $('textarea[name="keterangan"]').val('');
     	// $('#pemeliharaan').collapse('hide');
+    }
+    function rencananull(){
+    	$('input[name="target"]').val('');
+        $('textarea[name="komponen"]').val('');
+        // $('select[name="jenis"]').val("Tidak Ada").change();
+    	// $('#rencana').collapse('hide');
     }
 
     function deleteFoto(foto_id){
