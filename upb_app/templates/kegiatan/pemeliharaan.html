@@ -479,13 +479,13 @@
                                             <b>{{ pem.laporan.jenis.title() }}</b><br>
                                             <small>({{ pem.rencana.komponen }})</small>
                                         </td>
-                                        <td class="align-middle"><small>{% if pem.petugas %}{{ pem.petugas.0.nama }}{% else %}-{% endif %}</small></td>
-                                        <td class="align-middle"><small>{% if pem.petugas %}{{ pem.petugas.0.tugas }}{% else %}-{% endif %}</small></td>
+                                        <td class="align-middle">{% if pem.petugas %}{{ pem.petugas.0.nama }}{% else %}-{% endif %}</td>
+                                        <td class="align-middle">{% if pem.petugas %}{{ pem.petugas.0.tugas }}{% else %}-{% endif %}</td>
                                         <td rowspan="{{ pem.length }}" class="text-center align-middle">{{ pem.rencana.str_nilai()|safe }}</td>
                                         <td rowspan="{{ pem.length }}" class="text-center align-middle">
                                             {{ pem.laporan.str_nilai()|safe }}
                                         </td>
-                                        <td rowspan="{{ pem.length }}" class="text-center align-middle">{{ pem.progress * 100 }} %</td>
+                                        <td rowspan="{{ pem.length }}" class="text-center align-middle">{{ pem.progress }} %</td>
                                         <td rowspan="{{ pem.length }}" class="text-center align-middle">{{ pem.laporan.keterangan }}</td>
                                         <td rowspan="{{ pem.length }}" class="text-center align-middle">
                                             <div class="row">
@@ -502,8 +502,8 @@
                                     </tr>
                                         {% for pet in pem.petugas[1:] %}
                                         <tr>
-                                            <td><small>{{ pet.nama }}</small></td>
-                                            <td><small>{{ pet.tugas }}</small></td>
+                                            <td>{{ pet.nama }}</td>
+                                            <td>{{ pet.tugas }}</td>
                                         </tr>
                                         {% endfor %}
                                     {% endfor %}
