@@ -380,7 +380,7 @@ class Pemeliharaan(BaseLog):
     def fotos(self):
         return Foto.query.filter(
                             Foto.obj_type == 'pemeliharaan',
-                            Foto.obj_id == self.id).order_by(Foto.id.desc()).all()
+                            Foto.obj_id == self.id).order_by(Foto.id).all()
 
     def get_hms(self):
         return self.c_date + datetime.timedelta(hours=7)
