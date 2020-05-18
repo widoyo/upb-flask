@@ -1,4 +1,4 @@
-from flask import Blueprint, request, render_template, redirect, url_for, jsonify, flash
+from flask import Blueprint, request, render_template, redirect, url_for, jsonify, flash, Response
 from flask_login import login_required, current_user
 from flask_wtf.csrf import generate_csrf
 from sqlalchemy import extract, and_
@@ -11,7 +11,9 @@ from upb_app import app, db, admin_only, petugas_only, role_check, role_check_em
 import datetime
 import calendar
 import base64
+import csv
 import os
+import io
 
 from upb_app.admin import bp
 # bp = Blueprint('kegiatan', __name__)
@@ -663,5 +665,60 @@ def kegiatan_embung_delete(embung_id):
             os.remove(filepath)
     db.session.delete(kegiatan)
     db.session.commit()
+
+    return "ok"
+
+
+@bp.route('/embung/<embung_id>/kegiatan/csv', methods=['GET'])
+@login_required
+@role_check_embung
+def kegiatan_embung_csv(embung_id):
+    embung = Embung.query.get(embung_id)
+
+    sampling, end, day = month_range(request.values.get('sampling'))
+    all_kegiatan = KegiatanEmbung.query.filter(
+                                    KegiatanEmbung.embung_id == embung_id,
+                                    extract('month', KegiatanEmbung.sampling) == sampling.month,
+                                    extract('year', KegiatanEmbung.sampling) == sampling.year
+                                ).all()
+    kegiatan = {}
+    for i in range(day, 0, -1):
+        sampl = datetime.datetime.strptime(f"{sampling.year}-{sampling.month}-{i}", "%Y-%m-%d")
+        kegiatan[sampl] = None
+
+    for keg in all_kegiatan:
+        kegiatan[keg.sampling] = keg
+
+    pre_csv = []
+    pre_csv.append(['URAIAN KEGIATAN PETUGAS OP EMBUNG'])
+    pre_csv.append(['NAMA EMBUNG', embung.nama])
+    pre_csv.append(['LOKASI EMBUNG', f"{embung.desa} Kec. {embung.kec} Kab. {embung.kab}"])
+    pre_csv.append(['Bulan', sampling.strftime("%B")])
+    pre_csv.append([
+        'tanggal', 'lokasi kegiatan', 'rencana kegiatan', 'pencapaian', 'jam mulai',
+        'jam selesai', 'kendala', '0%', '50%', '100%'
+    ])
+    for date, keg in kegiatan.items():
+        if keg:
+            pre_csv.append([
+                date.strftime("%d %B %Y"), keg.lokasi,
+                keg.rencana, keg.pencapaian, keg.mulai, keg.selesai, keg.kendala,
+                f"{request.url_root}{keg.fotos[0].url}",
+                f"{request.url_root}{keg.fotos[1].url}",
+                f"{request.url_root}{keg.fotos[2].url}"
+            ])
+        else:
+            pre_csv.append([date.strftime("%d %B %Y"), None, None, None, None, None, None, None, None, None])
+    output = io.StringIO()
+    writer = csv.writer(output, delimiter='\t')
+    for l in pre_csv:
+        writer.writerow(l)
+    output.seek(0)
+
+    return Response(output,
+                    mimetype="text/csv",
+                    headers={
+                        "Content-Disposition": f"attachment;filename={embung.nama}-{sampling.strftime('%B %Y')}.csv"
+                    })
 
     return "ok"

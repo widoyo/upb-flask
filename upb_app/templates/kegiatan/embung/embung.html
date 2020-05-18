@@ -140,6 +140,7 @@
         <h3>
             Bulan
             <span id="datepicker" style="color: #18bc9c"><i class="fa fa-calendar"></i> {{ sampling_dt.strftime('%B %Y') }}</span>
+            <a href="{{ url_for('admin.kegiatan_embung_csv', embung_id=emb_id) }}?sampling={{ sampling.strftime('%Y-%m-%d') }}">CSV</a>
         </h3>
         <table class="table table-hover table-bordered">
             <thead>
