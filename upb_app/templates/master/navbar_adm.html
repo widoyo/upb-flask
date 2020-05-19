@@ -67,6 +67,11 @@
                             Bendungan
                         </a>
                     </li>
+                    <li class="nav-item {% if title == 'Embung' %}active{% endif %}">
+                        <a class="nav-link" href="{{ url_for('admin.embung_harian') }}">
+                            Embung
+                        </a>
+                    </li>
                     <li class="nav-item dropdown">
                       <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
                           Data Teknis

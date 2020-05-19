@@ -1,0 +1,231 @@
+{% extends 'master/base_adm.html' %}
+
+{% set title = "Embung" %}
+
+{% block css %}
+<link rel="stylesheet" href="//cdn.datatables.net/1.10.20/css/jquery.dataTables.min.css">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-datepicker/1.9.0/css/bootstrap-datepicker.css">
+<style>
+    .datepicker {
+        z-index: 10000 !important;
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="container">
+    <h1>Embung Harian</h1>
+    <h3>
+        <span id="datepicker" style="color: #18bc9c"><i class="fa fa-calendar"></i> {{ sampling.strftime('%d %B %Y') }}</span>
+    </h3>
+    <nav>
+      <div class="nav nav-tabs" id="nav-tab" role="tablist">
+        <a class="nav-item nav-link active"
+            id="nav-home-tab" data-toggle="tab"
+            href="#nav-home" role="tab"
+            aria-controls="penampung-air" aria-selected="true">
+            <h3>Penampung Air <small><span class="badge badge-pill badge-secondary" id="eb_len"></span></small></h3>
+        </a>
+        <a class="nav-item nav-link"
+            id="nav-profile-tab" data-toggle="tab"
+            href="#nav-profile" role="tab"
+            aria-controls="air-baku" aria-selected="false">
+            <h3>Air Baku <small><span class="badge badge-pill badge-secondary" id="ea_len"></span></small></h3>
+        </a>
+      </div>
+    </nav>
+    <div class="tab-content" id="nav-tabContent">
+      <div class="tab-pane fade show active mt-2"
+        id="nav-home" role="tabpanel"
+        aria-labelledby="penampung-air-tab">
+        <table id="bpa" class="table table-bordered">
+            <thead>
+                <tr>
+                    <th rowspan="2" class="align-middle">No</th>
+                    <th rowspan="2" class="align-middle">Nama</th>
+                    <th rowspan="2" class="align-middle">Kegiatan</th>
+                    <th rowspan="2" class="align-middle">Pencapaian</th>
+                    <th rowspan="2" class="align-middle">Jam Kerja</th>
+                    <th rowspan="2" class="align-middle">Kendala</th>
+                    <th colspan="3" class="text-center">Dokumentasi</th>
+                </tr>
+                <tr>
+                    <th class="text-center">0%</th>
+                    <th class="text-center">50%</th>
+                    <th class="text-center">100%</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for i, e in embung_b.items() %}
+                    <tr>
+                      <td>{{ loop.index }}</td>
+                      <td>{{ e.embung.nama }}</td>
+                      {% if e.kegiatan %}
+                          <td>{{ e.kegiatan.rencana }} di {{ e.kegiatan.lokasi }}</td>
+                          <td>
+                              {% if e.kegiatan.pencapaian %}{{ e.kegiatan.pencapaian }}
+                              {% else %} - {% endif %}
+                          </td>
+                          <td>
+                              {% if e.kegiatan.mulai %}{{ e.kegiatan.mulai }}-{{ e.kegiatan.selesai }}
+                              {% else %} - {% endif %}
+                          </td>
+                          <td>
+                              {% if e.kegiatan.kendala %}{{ e.kegiatan.kendala }}
+                              {% else %} - {% endif %}
+                          </td>
+                          {% if e.kegiatan.fotos %}
+                            {% for f in e.kegiatan.fotos %}
+                            <td class="text-center">
+                                <a data-toggle="modal" href="#preview-foto-{{ f.id }}"
+                                    role="button" aria-expanded="false"
+                                    class="card-link">
+                                    <img class="img-card" id="foto-{{ f.id }}" src="{{ url_for('static', filename=f.url[7:]) }}" alt="" style="width: 4rem;height: 4rem;">
+                                </a>
+                                <div class="modal fade" id="preview-foto-{{ f.id }}" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+                                  <div class="modal-dialog" role="document">
+                                    <div class="modal-content">
+                                      <div class="modal-header">
+                                        <h5 class="modal-title" id="exampleModalLabel">{{ e.kegiatan.rencana }}</h5>
+                                        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                          <span aria-hidden="true">&times;</span>
+                                        </button>
+                                      </div>
+                                      <div class="modal-body">
+                                          <div class="form-group">
+                                              <img class="img-fluid" src="{{ url_for('static', filename=f.url[7:]) }}" id="foto-modal-show">
+                                              <div style="position: absolute;top: 70%;left: 0;width: 100%;background-color: rgba(255, 255, 255, 0.6);">
+                                                  <p class="text-center">{{ f.keterangan }}</p>
+                                              </div>
+                                          </div>
+                                      </div>
+                                      <div class="modal-footer">
+                                          <button type="button" class="btn btn-secondary" data-dismiss="modal">Tutup</button>
+                                      </div>
+                                    </div>
+                                  </div>
+                                </div>
+                            </td>
+                            {% endfor %}
+                          {% else %}
+                          <td colspan="3">Belum Ada Dokumentasi</td>
+                          {% endif %}
+                      {% else %}
+                        <td colspan="7" class="text-center">Tidak Ada Kegiatan</td>
+                      {% endif %}
+                    </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+      </div>
+      <div class="tab-pane fade mt-2"
+        id="nav-profile" role="tabpanel"
+        aria-labelledby="air-baku-tab">
+        <table id="ab" class="table table-bordered ">
+            <thead>
+                <tr>
+                    <th rowspan="2" class="align-middle">No</th>
+                    <th rowspan="2" class="align-middle">Nama</th>
+                    <th rowspan="2" class="align-middle">Kegiatan</th>
+                    <th rowspan="2" class="align-middle">Pencapaian</th>
+                    <th rowspan="2" class="align-middle">Jam Kerja</th>
+                    <th rowspan="2" class="align-middle">Kendala</th>
+                    <th colspan="3" class="text-center">Dokumentasi</th>
+                </tr>
+                <tr>
+                    <th class="text-center">0%</th>
+                    <th class="text-center">50%</th>
+                    <th class="text-center">100%</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for i, e in embung_a.items() %}
+                    <tr>
+                      <td>{{ loop.index }}</td>
+                      <td>{{ e.embung.nama }}</td>
+                      {% if e.kegiatan %}
+                          <td>{{ e.kegiatan.rencana }} di {{ e.kegiatan.lokasi }}</td>
+                          {% if e.kegiatan.pencapaian %}
+                              <td>
+                                  {{ e.kegiatan.pencapaian }}
+                              </td>
+                              <td>
+                                  {{ e.kegiatan.mulai }}-{{ e.kegiatan.selesai }}
+                              </td>
+                              <td>
+                                  {{ e.kegiatan.kendala }}
+                              </td>
+                          {% else %}
+                            <td colspan="3">Belum Dilaporkan</td>
+                          {% endif %}
+
+                          {% if e.kegiatan.fotos %}
+                            {% for f in e.kegiatan.fotos %}
+                            <td class="text-center">
+                                <a data-toggle="modal" href="#preview-foto-{{ f.id }}"
+                                    role="button" aria-expanded="false"
+                                    class="card-link">
+                                    <img class="img-card" id="foto-{{ f.id }}" src="{{ url_for('static', filename=f.url[7:]) }}" alt="" style="width: 4rem;height: 4rem;">
+                                </a>
+                                <div class="modal fade" id="preview-foto-{{ f.id }}" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+                                  <div class="modal-dialog" role="document">
+                                    <div class="modal-content">
+                                      <div class="modal-header">
+                                        <h5 class="modal-title" id="exampleModalLabel">{{ e.kegiatan.rencana }}</h5>
+                                        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                          <span aria-hidden="true">&times;</span>
+                                        </button>
+                                      </div>
+                                      <div class="modal-body">
+                                          <div class="form-group">
+                                              <img class="img-fluid" src="{{ url_for('static', filename=f.url[7:]) }}" id="foto-modal-show">
+                                              <div style="position: absolute;top: 70%;left: 0;width: 100%;background-color: rgba(255, 255, 255, 0.6);">
+                                                  <p class="text-center">{{ f.keterangan }}</p>
+                                              </div>
+                                          </div>
+                                      </div>
+                                      <div class="modal-footer">
+                                          <button type="button" class="btn btn-secondary" data-dismiss="modal">Tutup</button>
+                                      </div>
+                                    </div>
+                                  </div>
+                                </div>
+                            </td>
+                            {% endfor %}
+                          {% else %}
+                          <td colspan="3">Belum Ada Dokumentasi</td>
+                          {% endif %}
+                      {% else %}
+                        <td colspan="7" class="text-center">Tidak Ada Kegiatan</td>
+                      {% endif %}
+                    </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+      </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block js %}
+<script src="{{ url_for('static', filename='js/bootstrap-editable.min.js') }}"></script>
+<script src="{{ url_for('static', filename='js/bootstrap-datepicker.min.js') }}"></script>
+<script>
+    // turn to popup mode
+    $.fn.editable.defaults.mode = 'popup';
+    $(document).ready(function() {
+        $('.editable').editable();
+    });
+
+    $('#datepicker').datepicker({
+      todayHighlight: true,
+      autoclose: true,
+      format: 'yyyy-mm-dd'
+    });
+    $('#datepicker').on('changeDate', function () {
+      window.location = "{{ url_for('admin.embung_harian') }}?sampling=" + $('#datepicker').datepicker('getFormattedDate')
+    });
+</script>
+  </script>
+
+{% endblock %}

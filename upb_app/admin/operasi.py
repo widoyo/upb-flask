@@ -28,7 +28,7 @@ def operasi():
     return redirect(url_for('admin.operasi_harian'))
 
 
-@bp.route('/operasi/harian')
+@bp.route('/bendungan/operasi/harian')
 @login_required
 @admin_only
 def operasi_harian():

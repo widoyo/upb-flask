@@ -1,8 +1,9 @@
 from flask import Blueprint, jsonify, request, render_template, redirect, url_for
 from flask_login import login_required
-from upb_app.models import Bendungan, Embung, wil_sungai
+from upb_app.models import Bendungan, Embung, KegiatanEmbung, wil_sungai
 from upb_app import db
 from upb_app import admin_only
+from upb_app.helper import day_range
 from sqlalchemy import and_
 import datetime
 
@@ -50,7 +51,7 @@ def bend_update():
 @login_required
 @admin_only
 def embung():
-    ''' Home Bendungan '''
+    ''' Home Embung '''
     embung = Embung.query.filter(Embung.is_verified == '1').order_by(Embung.id).all()
 
     embung_a = []
@@ -80,6 +81,42 @@ def emb_update():
         "value": val
     }
     return jsonify(result)
+
+
+@bp.route('/embung/harian')
+@login_required
+@admin_only
+def embung_harian():
+    ''' Harian Embung '''
+    sampling, end = day_range(request.values.get('sampling'))
+
+    embung = Embung.query.filter(Embung.is_verified == '1').order_by(Embung.id).all()
+    kegiatan = KegiatanEmbung.query.filter(
+                                KegiatanEmbung.sampling == sampling.strftime('%Y-%m-%d')
+                            ).all()
+
+    embung_a = {}
+    embung_b = {}
+    for e in embung:
+        if e.jenis == 'a':
+            embung_a[e.id] = {
+                'embung': e,
+                'kegiatan': None
+            }
+        elif e.jenis == 'b':
+            embung_b[e.id] = {
+                'embung': e,
+                'kegiatan': None
+            }
+    for keg in kegiatan:
+        if keg.embung_id in embung_a:
+            embung_a[keg.embung_id]['kegiatan'] = keg
+        elif keg.embung_id in embung_b:
+            embung_b[keg.embung_id]['kegiatan'] = keg
+    return render_template('embung/harian.html',
+                            sampling=sampling,
+                            embung_a=embung_a,
+                            embung_b=embung_b)
 
 
 import upb_app.admin.keamanan
