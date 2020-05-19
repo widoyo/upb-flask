@@ -88,11 +88,12 @@
                           <div class="form-group">
                               <label class="form-text" for="jenis"><b>Jenis Kegiatan</b></label>
                               <select id="jenisL" name="jenis" class="form-control" aria-describedby="jenishelp" required>
+                                  <option value="">pilih</option>
                                 {% for jen in jenis_ren %}
                                     <option value="{{ jen }}">{{ jen.title() }}</option>
                                 {% endfor %}
                               </select>
-                              <small id="jenishelp" class="form-text text-muted">Bisa pilih yg sudah direncanakan</small>
+                              <small id="jenishelp" class="form-text text-muted">Hanya bisa pilih yg sudah direncanakan</small>
                           </div>
                           <div class="form-group">
                               <label class="form-text" for="petugas"><b>Petugas</b></label>
@@ -723,7 +724,10 @@
         if($('select[name="petugas"]').val() == ''){
             alert('Pilih petugas');
             $('select[name="petugas"]').focus();
-        } else if($('input[name="progress"]').val() == ''){
+        } else if($('select[id="jenisL"]').val() == ''){
+            alert('Pilih Jenis Kegiatan');
+            $('select[id="jenisL"]').focus();
+        }  else if($('input[name="progress"]').val() == ''){
             alert('Masukkan nilai progress');
             $('input[name="progress"]').focus();
         } else if ($('textarea[name="keterangan"]').val() == ''){
