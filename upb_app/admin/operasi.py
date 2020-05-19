@@ -23,6 +23,8 @@ from upb_app.admin import bp
 def operasi():
     if current_user.role == "2":
         return redirect(url_for('admin.operasi_bendungan', bendungan_id=current_user.bendungan_id))
+    if current_user.role == "3":
+        return redirect(url_for('admin.kegiatan_embung', embung_id=current_user.embung_id))
     return redirect(url_for('admin.operasi_harian'))
 
 
