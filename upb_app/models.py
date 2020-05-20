@@ -226,6 +226,7 @@ class Embung(BaseLog):
     is_verified = db.Column(db.String(1))
 
     kegiatan = relationship('KegiatanEmbung', back_populates='embung')
+    bagian = relationship('BagianEmbung', back_populates='embung')
     users = relationship('Users', back_populates='embung')
 
     def gen_username(self):
@@ -323,6 +324,17 @@ class Kerusakan(BaseLog):
     upb_id = db.Column(db.Integer, nullable=True)
 
 
+class BagianEmbung(BaseLog):
+    __tablename__ = 'bagian_embung'
+
+    id = db.Column(db.Integer, primary_key=True)
+    nama = db.Column(db.Text)
+    embung_id = db.Column(db.Integer, db.ForeignKey('embung.id'), nullable=True)
+
+    embung = relationship('Embung', back_populates='bagian')
+    kegiatan = relationship('KegiatanEmbung', back_populates='bagian')
+
+
 class KegiatanEmbung(BaseLog):
     __tablename__ = 'kegiatan_embung'
 
@@ -335,12 +347,14 @@ class KegiatanEmbung(BaseLog):
     selesai = db.Column(db.String(5))
     kendala = db.Column(db.Text)
     nilai = db.Column(db.Float)
+    bagian_id = db.Column(db.Integer, db.ForeignKey('bagian_embung.id'), nullable=True)
     embung_id = db.Column(db.Integer, db.ForeignKey('embung.id'), nullable=True)
 
     embung = relationship('Embung', back_populates='kegiatan')
+    bagian = relationship('BagianEmbung', back_populates='kegiatan')
 
-    __table_args__ = (db.UniqueConstraint('embung_id', 'sampling',
-                                          name='kegiatan_embung_sampling'),)
+    __table_args__ = (db.UniqueConstraint('embung_id', 'sampling', 'bagian_id',
+                                          name='kegiatan_embung_sampling_bagian_id'),)
 
     @property
     def fotos(self):

@@ -208,6 +208,7 @@ class LaporPemeliharaan(FlaskForm):
 
 class RencanaEmbung(FlaskForm):
     sampling = DateField("Hari", default=datetime.datetime.today())
+    bagian = StringField('Mulai', validators=[Optional()])
     lokasi = StringField('Lokasi', validators=[DataRequired()])
     kegiatan = StringField('Kegiatan', validators=[DataRequired()])
     luas = DecimalField('Luas', validators=[DataRequired()])
@@ -216,6 +217,7 @@ class RencanaEmbung(FlaskForm):
 
 class PencapaianEmbung(FlaskForm):
     sampling = DateField("Hari", default=datetime.datetime.today())
+    bagian = StringField('Mulai', validators=[Optional()])
     mulai = StringField('Mulai', validators=[DataRequired()])
     selesai = StringField('Selesai', validators=[DataRequired()])
     pencapaian = StringField('Pencapaian Kerja', validators=[DataRequired()])

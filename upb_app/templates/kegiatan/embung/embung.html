@@ -34,6 +34,16 @@
                               <i class="fas fa-calendar d-inline"></i>
                               <p class="ml-2 d-inline" id="sampling-rencana">{{ sampling.strftime('%d %B %Y') }}</p>
                           </div>
+                          {% if bagian %}
+                          <div class="form-group">
+                              <label class="form-text" for="bagian"><b>Bagian Embung</b></label>
+                              <select id="bagian" name="bagian" class="form-control" required>
+                                {% for bag in bagian %}
+                                    <option value="{{ bag.id }}">{{ bag.nama }}</option>
+                                {% endfor %}
+                              </select>
+                          </div>
+                          {% endif %}
                           <div class="form-group">
                               <label class="form-text" for="lokasi"><b>Lokasi</b></label>
                               <input type="text" name="lokasi" class="form-control" placeholder="Tampungan sebelah timur laut">
@@ -74,6 +84,16 @@
                               <i class="fas fa-calendar d-inline"></i>
                               <p class="ml-2 d-inline" id="sampling-pencapaian">{{ sampling.strftime('%d %B %Y') }}</p>
                           </div>
+                          {% if bagian %}
+                          <div class="form-group">
+                              <label class="form-text" for="bagianP"><b>Bagian Embung</b></label>
+                              <select id="bagianP" name="bagianP" class="form-control" required>
+                                {% for bag in bagian %}
+                                    <option value="{{ bag.id }}">{{ bag.nama }}</option>
+                                {% endfor %}
+                              </select>
+                          </div>
+                          {% endif %}
                           <div>
                               <label class="form-text"><b>Jam Kerja</b></label>
                           </div>
@@ -146,6 +166,7 @@
             <thead>
                 <tr class="table-active">
                     <th rowspan="2" class="text-center align-middle">Tanggal</th>
+                    <th rowspan="2" class="text-center align-middle">Bagian</th>
                     <th rowspan="2" class="text-center align-middle">Lokasi</th>
                     <th rowspan="2" class="text-center align-middle">Kegiatan</th>
                     <th rowspan="2" class="text-center align-middle">Pencapaian</th>
@@ -165,21 +186,25 @@
             <tbody>
                 {% for date, keg in kegiatan.items() %}
                 <tr>
-                    <td>
+                    <td rowspan="{{ keg|length or 1}}">
                         <span id="tgl">{{ date }}</span>
                         <!-- <small style="float: right">
                             <i class="fa fa-trash"></i>
                         </small> -->
                     </td>
-                    {% if keg %}
-                    <td>{{ keg.lokasi }}</td>
-                    <td>{{ keg.rencana }}</td>
-                    <td>{{ keg.pencapaian or "-" }}</td>
-                    <td class="text-center">{{ keg.mulai or "-" }}</td>
-                    <td class="text-center">{{ keg.selesai or "-" }}</td>
-                    <td>{{ keg.kendala or "-" }}</td>
-                    {% if keg.fotos %}
-                        {% for f in keg.fotos %}
+                    {% if keg.0 %}
+                    <td>
+                        {% if keg.0.bagian %}{{ keg.0.bagian.nama }}
+                        {% else %}Petugas OP{% endif %}
+                    </td>
+                    <td>{{ keg.0.lokasi }}</td>
+                    <td>{{ keg.0.rencana }}</td>
+                    <td>{{ keg.0.pencapaian or "-" }}</td>
+                    <td class="text-center">{{ keg.0.mulai or "-" }}</td>
+                    <td class="text-center">{{ keg.0.selesai or "-" }}</td>
+                    <td>{{ keg.0.kendala or "-" }}</td>
+                    {% if keg.0.fotos %}
+                        {% for f in keg.0.fotos %}
                         <td class="text-center">
                             <a data-toggle="modal" href="#preview-foto-{{ f.id }}"
                                 role="button" aria-expanded="false"
@@ -190,7 +215,7 @@
                               <div class="modal-dialog" role="document">
                                 <div class="modal-content">
                                   <div class="modal-header">
-                                    <h5 class="modal-title" id="exampleModalLabel">{{ keg.rencana }} {{ keg.sampling.strftime('%d %b %Y') }}</h5>
+                                    <h5 class="modal-title" id="exampleModalLabel">{{ keg.0.rencana }} {{ keg.0.sampling.strftime('%d %b %Y') }}</h5>
                                     <button type="button" class="close" data-dismiss="modal" aria-label="Close">
                                       <span aria-hidden="true">&times;</span>
                                     </button>
@@ -217,13 +242,77 @@
                     <td class="text-center">-</td>
                     {% endif %}
                     <td align="center">
-                        <input type="button" value="Hapus" onclick="deleteKegiatan({{ keg.id }}, '{{ keg.sampling.strftime('%d %b %Y') }}')" class="btn btn-sm btn-danger">
+                        <input type="button" value="Hapus" onclick="deleteKegiatan({{ keg.0.id }}, '{{ keg.0.sampling.strftime('%d %b %Y') }}')" class="btn btn-sm btn-danger">
                     </td>
 
                     {% else %}
-                    <td colspan="10" class="text-center">Tidak Ada Kegiatan</td>
+                    <td colspan="11" class="text-center">Tidak Ada Kegiatan</td>
                     {% endif %}
                 </tr>
+
+                    <!-- ONLY FOR SUBSEQUENT KEGIATAN / BASICALLY ONLY SEROPAN -->
+                    {% for k in keg[1:] %}
+                    <tr>
+                        {% if k %}
+                        <td>
+                            {% if k.bagian %}{{ k.bagian.nama }}
+                            {% else %}Petugas OP{% endif %}
+                        </td>
+                        <td>{{ k.lokasi }}</td>
+                        <td>{{ k.rencana }}</td>
+                        <td>{{ k.pencapaian or "-" }}</td>
+                        <td class="text-center">{{ k.mulai or "-" }}</td>
+                        <td class="text-center">{{ k.selesai or "-" }}</td>
+                        <td>{{ k.kendala or "-" }}</td>
+                        {% if k.fotos %}
+                            {% for f in k.fotos %}
+                            <td class="text-center">
+                                <a data-toggle="modal" href="#preview-foto-{{ f.id }}"
+                                    role="button" aria-expanded="false"
+                                    class="card-link">
+                                    <img class="img-card" id="foto-{{ f.id }}" src="{{ url_for('static', filename=f.url[7:]) }}" alt="" style="width: 8rem;height: 8rem;">
+                                </a>
+                                <div class="modal fade" id="preview-foto-{{ f.id }}" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+                                  <div class="modal-dialog" role="document">
+                                    <div class="modal-content">
+                                      <div class="modal-header">
+                                        <h5 class="modal-title" id="exampleModalLabel">{{ k.rencana }} {{ k.sampling.strftime('%d %b %Y') }}</h5>
+                                        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                          <span aria-hidden="true">&times;</span>
+                                        </button>
+                                      </div>
+                                      <div class="modal-body">
+                                          <div class="form-group">
+                                              <img class="img-fluid" src="{{ url_for('static', filename=f.url[7:]) }}" id="foto-modal-show">
+                                              <div style="position: absolute;top: 70%;left: 0;width: 100%;background-color: rgba(255, 255, 255, 0.6);">
+                                                  <p class="text-center">{{ f.keterangan }}</p>
+                                              </div>
+                                          </div>
+                                      </div>
+                                      <div class="modal-footer">
+                                          <button type="button" class="btn btn-secondary" data-dismiss="modal">Tutup</button>
+                                      </div>
+                                    </div>
+                                  </div>
+                                </div>
+                            </td>
+                            {% endfor %}
+                        {% else %}
+                        <td class="text-center">-</td>
+                        <td class="text-center">-</td>
+                        <td class="text-center">-</td>
+                        {% endif %}
+                        <td align="center">
+                            <input type="button" value="Hapus" onclick="deleteKegiatan({{ k.id }}, '{{ k.sampling.strftime('%d %b %Y') }}')" class="btn btn-sm btn-danger">
+                        </td>
+
+                        {% else %}
+                        <td colspan="11" class="text-center">Tidak Ada Kegiatan</td>
+                        {% endif %}
+                    </tr>
+                    {% endfor %}
+                    <!-- END SUBSEQUENT KEGIATAN -->
+
                 {% endfor %}
             </tbody>
         </table>
@@ -238,6 +327,12 @@
 <script src="https://cdnjs.cloudflare.com/ajax/libs/tempusdominus-bootstrap-4/5.0.1/js/tempusdominus-bootstrap-4.min.js"></script>
 <script src="{{ url_for('static', filename='js/MinifyJpegAsync.js') }}"></script>
 <script>
+    $(document).on("change","select",function(){
+      $("option[value=" + this.value + "]", this)
+      .attr("selected", true).siblings()
+      .removeAttr("selected")
+    });
+
     $(document).ready(function() {
         // resolve package confict
         let datepicker = $.fn.datepicker.noConflict();
@@ -344,7 +439,7 @@
 
         reader.onloadend = function(e){
             console.log(`onload function called, parameter : ${e}`);
-			MinifyJpegAsync.minify(e.target.result, 1024, function(data) {
+			MinifyJpegAsync.minify(e.target.result, 480, function(data) {
 				enc_img[blah_id] = "data:image/jpeg;base64," + btoa(data);
 				let img = new Image();
 				img.src = enc_img[blah_id];
@@ -352,7 +447,7 @@
 				// document.getElementById(blah_id).src = enc_img;
 				// console.log('Hasil proses minify') ;
 			});
-            MinifyJpegAsync.minify(e.target.result, 360, function(data) {
+            MinifyJpegAsync.minify(e.target.result, 480, function(data) {
                 let temp_img = "data:image/jpeg;base64," + btoa(data);
 
 				document.getElementById(blah_id).src = temp_img;
@@ -393,6 +488,7 @@
                 filename_50: file_name['blah2'],
                 foto_100: enc_img['blah3'],
                 filename_100: file_name['blah3'],
+                bagian: $('select[id="bagianP"]').find(":selected").val(),
                 mulai: $('input[name="mulai"]').val(),
                 selesai: $('input[name="selesai"]').val(),
                 pencapaian: $('input[name="pencapaian"]').val(),

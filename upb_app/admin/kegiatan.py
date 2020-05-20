@@ -534,15 +534,16 @@ def kegiatan_embung(embung_id):
     kegiatan = {}
     for i in range(day, 0, -1):
         sampl = datetime.datetime.strptime(f"{sampling.year}-{sampling.month}-{i}", "%Y-%m-%d")
-        kegiatan[sampl] = None
+        kegiatan[sampl] = []
 
     for keg in all_kegiatan:
-        kegiatan[keg.sampling] = keg
+        kegiatan[keg.sampling].append(keg)
 
     return render_template('kegiatan/embung/embung.html',
                             csrf=generate_csrf(),
                             emb_id=embung.id,
                             name=embung.nama,
+                            bagian=embung.bagian,
                             kegiatan=kegiatan,
                             sampling=datetime.datetime.now() + datetime.timedelta(hours=7),
                             sampling_dt=sampling)
@@ -555,17 +556,22 @@ def kegiatan_embung_add(embung_id):
     form = RencanaEmbung()
 
     if form.validate_on_submit():
+        bagian_id = int(form.bagian.data or 0)
+        bagian_id = None if bagian_id == 0 else bagian_id
         obj_dict = {
             'sampling': form.sampling.data,
             'lokasi': form.lokasi.data,
             'rencana': f"{form.kegiatan.data} seluas {form.luas.data}m2",
             'embung_id': embung_id
         }
+        if form.bagian.data:
+            obj_dict['bagian_id'] = int(form.bagian.data)
         print(obj_dict)
 
         row = KegiatanEmbung.query.filter(
                                         KegiatanEmbung.sampling == form.sampling.data,
-                                        KegiatanEmbung.embung_id == embung_id
+                                        KegiatanEmbung.embung_id == embung_id,
+                                        KegiatanEmbung.bagian_id == bagian_id
                                     ).first()
         if row:
             for key, value in obj_dict.items():
@@ -586,9 +592,13 @@ def kegiatan_embung_update(embung_id):
 
     if form.validate_on_submit():
         print("Validated")
+        bagian_id = int(form.bagian.data or 0)
+        bagian_id = None if bagian_id == 0 else bagian_id
+        print(bagian_id)
         row = KegiatanEmbung.query.filter(
                                         KegiatanEmbung.sampling == form.sampling.data,
-                                        KegiatanEmbung.embung_id == embung_id
+                                        KegiatanEmbung.embung_id == embung_id,
+                                        KegiatanEmbung.bagian_id == bagian_id
                                     ).first()
         if not row:
             return "not ok"
@@ -599,6 +609,10 @@ def kegiatan_embung_update(embung_id):
             'pencapaian': form.pencapaian.data,
             'kendala': form.kendala.data,
         }
+        if form.bagian.data:
+            obj_dict['bagian_id'] = int(form.bagian.data)
+        print(obj_dict)
+
         for key, value in obj_dict.items():
             setattr(row, key, value)
         fotos = [
