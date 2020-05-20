@@ -196,7 +196,16 @@
                                 <div class="card-body">
                                   <h5 class="text-center align-middle h-100">
                                       <b>{{ pem.laporan.jenis.title() }}</b><br>
-                                      <small>({{ pem.rencana.komponen }})</small>
+                                      <small>(
+                                          <a data-url="{{ url_for('admin.pemeliharaan_update') }}"
+                                              class="editable"
+                                              data-name="komponen"
+                                              data-type="text"
+                                              data-title="Komponen"
+                                              data-pk="{{ pem.rencana.id }}">
+                                              {{ pem.rencana.komponen }}
+                                          </a>
+                                      )</small>
                                   </h5>
                                 </div>
                             </div>
@@ -422,7 +431,16 @@
                                 <td>{{ loop.index }}</td>
                                 <td>
                                     {{ j.title() }}<br>
-                                    <small>Komponen : {{ ren.rencana.komponen }}</small>
+                                    <small>Komponen :
+                                        <a data-url="{{ url_for('admin.pemeliharaan_update') }}"
+                                            class="editable"
+                                            data-name="komponen"
+                                            data-type="text"
+                                            data-title="Komponen"
+                                            data-pk="{{ ren.rencana.id }}">
+                                            {{ ren.rencana.komponen }}
+                                        </a>
+                                    </small>
                                 </td>
                                 <td align="right">
                                     <a data-url="{{ url_for('admin.pemeliharaan_update') }}"
