@@ -1,4 +1,4 @@
-from flask import Blueprint, render_template
+from flask import Blueprint, render_template, request
 from upb_app.models import Embung
 
 bp = Blueprint('embung', __name__)
@@ -7,7 +7,11 @@ bp = Blueprint('embung', __name__)
 @bp.route('/')
 def index():
     ''' Home Embung '''
-    embung = Embung.query.filter(Embung.is_verified == '1').all()
+    view = request.values.get('view')
+    if view == 'all':
+        embung = Embung.query.all()
+    else:
+        embung = Embung.query.filter(Embung.is_verified == '1').all()
 
     embung_a = []
     embung_b = []

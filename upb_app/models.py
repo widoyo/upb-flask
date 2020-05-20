@@ -9,6 +9,7 @@ from sqlalchemy.orm import relationship
 from sqlalchemy import desc
 import datetime
 import hashlib
+import re
 
 wil_sungai = {
     '1': "Hulu",
@@ -226,6 +227,10 @@ class Embung(BaseLog):
 
     kegiatan = relationship('KegiatanEmbung', back_populates='embung')
     users = relationship('Users', back_populates='embung')
+
+    def gen_username(self):
+        cleaned = re.sub('[,.-]', '', self.nama)
+        return cleaned.lower().replace(' ', '_')
 
 
 class Petugas(BaseLog):

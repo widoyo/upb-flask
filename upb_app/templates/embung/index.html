@@ -43,7 +43,10 @@
                 {% for e in embung_b %}
                     <tr>
                       <td>{{ loop.index }}</td>
-                      <td>{{ e.nama }}</td>
+                      <td>
+                          {{ e.nama }}
+                          {% if e.is_verified == '0' %}**{% endif %}
+                      </td>
                       <td>{{ e.kec }}, <b>{{ e.kab }}</b></td>
                       <td class="text-right">{{ e.tampungan }}</td>
                       <td class="text-right">{{ e.irigasi }}</td>
@@ -69,7 +72,10 @@
                 {% for e in embung_a %}
                     <tr>
                       <td>{{ loop.index }}</td>
-                      <td>{{ e.nama }}</td>
+                      <td>
+                          {{ e.nama }}
+                          {% if e.is_verified == '0' %}**{% endif %}
+                      </td>
                       <td>{{ e.kec }}, <b>{{ e.kab }}</b></td>
                       <td class="text-right">{{ e.tampungan }}</td>
                       <td class="text-right">{{ e.air_baku }}</td>

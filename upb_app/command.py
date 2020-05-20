@@ -60,16 +60,23 @@ def generate_embung_users(password):
     embung = Embung.query.filter(Embung.is_verified == '1').order_by(Embung.id).all()
 
     for e in embung:
-        new_user = Users(
-            username=e.nama.lower().replace(' ', '_'),
-            role='3',
-            embung_id=e.id
-        )
-        new_user.set_password(password)
+        username = e.nama.lower().replace(' ', '_')
+        user = Users.query.filter(Users.username == username).first()
+        if not user:
+            new_user = Users(
+                username=e.nama.lower().replace(' ', '_'),
+                role='3',
+                embung_id=e.id
+            )
+            new_user.set_password(password)
 
-        db.session.add(new_user)
-        db.session.flush()
-        db.session.commit()
+            db.session.add(new_user)
+            db.session.flush()
+            db.session.commit()
+            print(f"Success - Username {username} Created")
+        else:
+            print(f"Error - Username {username} Already Exist")
+            continue
 
         print(f"Adding user '{e.nama.lower().replace(' ', '_')}' with password '{password}'")
 

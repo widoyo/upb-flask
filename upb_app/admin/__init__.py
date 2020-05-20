@@ -1,6 +1,6 @@
-from flask import Blueprint, jsonify, request, render_template, redirect, url_for
+from flask import Blueprint, jsonify, request, render_template, redirect, url_for, flash
 from flask_login import login_required
-from upb_app.models import Bendungan, Embung, KegiatanEmbung, wil_sungai
+from upb_app.models import Bendungan, Embung, Users, KegiatanEmbung, wil_sungai
 from upb_app import db
 from upb_app import admin_only
 from upb_app.helper import day_range
@@ -52,7 +52,7 @@ def bend_update():
 @admin_only
 def embung():
     ''' Home Embung '''
-    embung = Embung.query.filter(Embung.is_verified == '1').order_by(Embung.id).all()
+    embung = Embung.query.order_by(Embung.is_verified.desc(), Embung.id).all()
 
     embung_a = []
     embung_b = []
@@ -81,6 +81,36 @@ def emb_update():
         "value": val
     }
     return jsonify(result)
+
+
+@bp.route('/embung/<emb_id>/verify', methods=['POST'])  # @login_required
+def embung_verify(emb_id):
+    password = request.values.get('password')
+
+    embung = Embung.query.get(emb_id)
+    if embung:
+        embung.is_verified = '1'
+        username = embung.gen_username()
+        user = Users.query.filter(Users.username == username).first()
+        if not user:
+            new_user = Users(
+                username=username,
+                role='3',
+                embung_id=embung.id
+            )
+            new_user.set_password(password)
+
+            db.session.add(new_user)
+            db.session.flush()
+            db.session.commit()
+        else:
+            flash(f"Username sudah ada", 'danger')
+            return redirect(url_for('admin.embung'))
+        flash(f"Berhasil verifikasi dan tambah user untuk {embung.nama}", 'success')
+    else:
+        flash(f"Terjadi kesalahan saat mencoba menyimpan data", 'danger')
+
+    return redirect(url_for('admin.embung'))
 
 
 @bp.route('/embung/harian')
