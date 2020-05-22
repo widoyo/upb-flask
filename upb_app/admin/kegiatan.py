@@ -633,6 +633,14 @@ def kegiatan_embung_update(embung_id):
             }
         ]
 
+        # delete old fotos first
+        for f in row.fotos:
+            filepath = os.path.join(app.config['SAVE_DIR'], f.url)
+
+            db.session.delete(f)
+            if os.path.exists(filepath):
+                os.remove(filepath)
+
         last_foto = Foto.query.order_by(Foto.id.desc()).first()
         new_id = 1 if not last_foto else (last_foto.id + 1)
         for foto in fotos:
