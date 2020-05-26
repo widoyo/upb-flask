@@ -358,9 +358,15 @@ class KegiatanEmbung(BaseLog):
 
     @property
     def fotos(self):
-        return Foto.query.filter(
+        fotos = Foto.query.filter(
                         Foto.obj_type == 'kegiatan_embung',
-                        Foto.obj_id == self.id).all()  # [:3]
+                        Foto.obj_id == self.id).all()
+        result = {}
+        for f in fotos:
+            length = len(f.keterangan)
+            tag = f.keterangan[:length-1]
+            result[tag] = f
+        return result
 
     def get_hms(self):
         return self.c_date + datetime.timedelta(hours=7)

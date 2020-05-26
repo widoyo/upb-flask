@@ -55,7 +55,7 @@ def role_check_embung(f):
     @wraps(f)
     def decorated_function(embung_id, *args, **kwargs):
         if current_user.role in ['3'] and current_user.embung_id != int(embung_id):
-            return redirect(url_for('admin.kegiatan'))
+            return redirect(url_for('admin.operasi'))
 
         return f(embung_id, *args, **kwargs)
     return decorated_function

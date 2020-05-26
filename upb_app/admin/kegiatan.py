@@ -615,58 +615,46 @@ def kegiatan_embung_update(embung_id):
 
         for key, value in obj_dict.items():
             setattr(row, key, value)
-        fotos = [
-            {
-                'filename': form.filename_0.data,
-                'file': form.foto_0.data,
-                'keterangan': "0%"
-            },
-            {
-                'filename': form.filename_50.data,
-                'file': form.foto_50.data,
-                'keterangan': "50%"
-            },
-            {
-                'filename': form.filename_100.data,
-                'file': form.foto_100.data,
-                'keterangan': "100%"
-            }
-        ]
-
-        # delete old fotos first
-        for f in row.fotos:
-            filepath = os.path.join(app.config['SAVE_DIR'], f.url)
-
-            db.session.delete(f)
-            if os.path.exists(filepath):
-                os.remove(filepath)
-
-        last_foto = Foto.query.order_by(Foto.id.desc()).first()
-        new_id = 1 if not last_foto else (last_foto.id + 1)
-        for foto in fotos:
-            raw = foto['file']
-            imageStr = raw.split(',')[1]
-            filename = f"kegiatan_embung_{new_id}_{foto['filename']}"
-            new_id += 1
-
-            img_file = os.path.join(app.config['UPLOAD_FOLDER'], filename)
-            save_file = os.path.join(app.config['SAVE_DIR'], img_file)
-
-            # convert base64 into image file and then save it
-            imgdata = base64.b64decode(imageStr)
-            with open(save_file, 'wb') as f:
-                f.write(imgdata)
-
-            foto = Foto(
-                keterangan=foto['keterangan'],
-                url=img_file,
-                obj_type="kegiatan_embung",
-                obj_id=row.id
-            )
-            db.session.add(foto)
         db.session.commit()
 
     return "ok"
+
+
+@bp.route('/embung/<embung_id>/kegiatan/foto', methods=['POST'])
+@login_required
+@role_check_embung
+def kegiatan_embung_foto(embung_id):
+    keg_id = request.form.get('keg_id')
+
+    latest = Foto.query.order_by(Foto.id.desc()).first()
+    raw = request.form.get('foto')
+    imageStr = raw.split(',')[1]
+    filename = f"kegiatan_embung_{latest.id}_{request.form.get('filename')}"
+    img_file = os.path.join(app.config['UPLOAD_FOLDER'], filename)
+    save_file = os.path.join(app.config['SAVE_DIR'], img_file)
+
+    print(imageStr)
+    print(filename)
+    print(request.form.get(f"keterangan"))
+
+    try:
+        # convert base64 into image file and then save it
+        imgdata = base64.b64decode(imageStr)
+        with open(save_file, 'wb') as f:
+            f.write(imgdata)
+
+        foto = Foto(
+            url=img_file,
+            obj_type="kegiatan_embung",
+            obj_id=keg_id
+        )
+        foto.keterangan = request.form.get(f"keterangan")
+        db.session.add(foto)
+        db.session.commit()
+
+        return "success"
+    except Exception:
+        return "error"
 
 
 @bp.route('/embung/<embung_id>/kegiatan/delete', methods=['POST'])
@@ -679,7 +667,7 @@ def kegiatan_embung_delete(embung_id):
 
     fotos = kegiatan.fotos
 
-    for f in fotos:
+    for tag, f in fotos.items():
         filepath = os.path.join(app.config['SAVE_DIR'], f.url)
 
         db.session.delete(f)
@@ -687,6 +675,25 @@ def kegiatan_embung_delete(embung_id):
             os.remove(filepath)
     db.session.delete(kegiatan)
     db.session.commit()
+
+    return "ok"
+
+
+@bp.route('/embung/<embung_id>/kegiatan/delete/foto', methods=['POST'])
+@login_required
+@role_check_embung
+def kegiatan_embung_delete_foto(embung_id):
+    foto_id = int(request.values.get('foto_id'))
+    print(f"ID Foto : {foto_id}")
+
+    foto = Foto.query.get(foto_id)
+    filepath = os.path.join(app.config['SAVE_DIR'], foto.url)
+
+    db.session.delete(foto)
+    db.session.commit()
+
+    if os.path.exists(filepath):
+        os.remove(filepath)
 
     return "ok"
 
