@@ -59,7 +59,11 @@
                 {% for i, e in embung_b.items() %}
                     <tr>
                       <td>{{ loop.index }}</td>
-                      <td>{{ e.embung.nama }}</td>
+                      <td>
+                          <a href="{{ url_for('admin.kegiatan_embung', embung_id=e.embung.id) }}">
+                              {{ e.embung.nama }}
+                          </a>
+                      </td>
                       {% if e.kegiatan %}
                           <td>{{ e.kegiatan.rencana }} di {{ e.kegiatan.lokasi }}</td>
                           <td>
@@ -216,7 +220,11 @@
                 {% for i, e in embung_a.items() %}
                     <tr>
                       <td>{{ loop.index }}</td>
-                      <td>{{ e.embung.nama }}</td>
+                      <td>
+                          <a href="{{ url_for('admin.kegiatan_embung', embung_id=e.embung.id) }}">
+                              {{ e.embung.nama }}
+                          </a>
+                      </td>
                       {% if e.kegiatan %}
                           <td>{{ e.kegiatan.rencana }} di {{ e.kegiatan.lokasi }}</td>
                           {% if e.kegiatan.pencapaian %}
