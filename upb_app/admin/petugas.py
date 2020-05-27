@@ -14,7 +14,7 @@ from upb_app.admin import bp
 @login_required
 @admin_only
 def petugas_bendungan():
-    waduk = Bendungan.query.all()
+    waduk = Bendungan.query.order_by(Bendungan.nama).all()
     petugas = Petugas.query.order_by(Petugas.id).all()
 
     data = {}
