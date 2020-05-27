@@ -531,8 +531,9 @@ def kegiatan_embung(embung_id):
                                     extract('month', KegiatanEmbung.sampling) == sampling.month,
                                     extract('year', KegiatanEmbung.sampling) == sampling.year
                                 ).all()
+    days = calendar.monthrange(sampling.year, sampling.month)[1]
     kegiatan = {}
-    for i in range(day, 0, -1):
+    for i in range(days, 0, -1):
         sampl = datetime.datetime.strptime(f"{sampling.year}-{sampling.month}-{i}", "%Y-%m-%d")
         kegiatan[sampl] = []
 
