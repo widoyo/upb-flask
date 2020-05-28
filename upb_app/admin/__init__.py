@@ -157,9 +157,9 @@ def embung_harian():
                 'count': count_b
             }
     for keg in kegiatan:
-        if keg.embung_id in embung_a:
+        if keg.embung_id in embung_a[keg.embung.wil_sungai or '4']:
             embung_a[keg.embung.wil_sungai or '4'][keg.embung_id]['kegiatan'] = keg
-        elif keg.embung_id in embung_b:
+        elif keg.embung_id in embung_b[keg.embung.wil_sungai or '4']:
             embung_b[keg.embung.wil_sungai or '4'][keg.embung_id]['kegiatan'] = keg
     return render_template('embung/harian.html',
                             sampling=sampling,
