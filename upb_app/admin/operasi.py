@@ -341,7 +341,7 @@ def ch_terkini(bendungan_id):
         except Exception as e:
             db.session.rollback()
             print(f"{e}")
-            flash("Terjadi Error", 'danger')
+            flash(f"Terjadi Error : {type(e)}", 'danger')
 
     return redirect(url_for('admin.operasi_bendungan', bendungan_id=bendungan_id))
 
