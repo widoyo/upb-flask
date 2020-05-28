@@ -230,6 +230,8 @@ def pemeliharaan(bendungan_id):
             laporan.append(pem)
             is_laporan = True
     for l in laporan:
+        if l.jenis not in rencana:
+            continue
         rencana[l.jenis]['progress'] += round(l.nilai/rencana[l.jenis]['rencana'].nilai, 4)
         lap_pet = l.get_petugas()
         data[l.sampling].append({
@@ -297,6 +299,10 @@ def pemeliharaan_rencana(bendungan_id):
 @login_required
 @role_check
 def pemeliharaan_lapor(bendungan_id):
+    if not request.form.get('jenis'):
+        flash(f"Rencana Pemeliharaan kosong", 'danger')
+        return "error"
+
     row = Pemeliharaan.query.filter(
                                 Pemeliharaan.sampling == request.form.get('sampling'),
                                 Pemeliharaan.is_rencana == '0',
