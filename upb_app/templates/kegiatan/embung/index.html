@@ -31,18 +31,18 @@
         aria-labelledby="penampung-air-tab">
         <br>
         <table id="bpa" class="table table-bordered">
-            <thead>
-                <tr class="table-active">
-                    <th>Embung</th>
-                </tr>
-            </thead>
             <tbody>
-                {% for e in embung_b %}
-                <tr>
-                    <td>
-                        <a href="{{ url_for('admin.kegiatan_embung', embung_id=e.id) }}">{{ e.nama }}</a>
-                    </td>
+                {% for wil, embungs in embung_b.items() %}
+                <tr class="table-active">
+                    <td class="text-center">{{ wil_sungai[wil] }}</td>
                 </tr>
+                    {% for e in embungs %}
+                    <tr>
+                        <td>
+                            <a href="{{ url_for('admin.kegiatan_embung', embung_id=e.id) }}">{{ e.nama }}</a>
+                        </td>
+                    </tr>
+                    {% endfor %}
                 {% endfor %}
             </tbody>
         </table>
@@ -52,18 +52,18 @@
         aria-labelledby="air-baku-tab">
         <br>
         <table id="ab" class="table table-bordered ">
-            <thead>
-                <tr class="table-active">
-                    <th>Embung</th>
-                </tr>
-            </thead>
             <tbody>
-                {% for e in embung_a %}
+                {% for wil, embungs in embung_a.items() %}
+                <tr class="table-active">
+                    <td class="text-center">{{ wil_sungai[wil] }}</td>
+                </tr>
+                    {% for e in embungs %}
                     <tr>
                         <td>
                             <a href="{{ url_for('admin.kegiatan_embung', embung_id=e.id) }}">{{ e.nama }}</a>
                         </td>
                     </tr>
+                    {% endfor %}
                 {% endfor %}
             </tbody>
         </table>

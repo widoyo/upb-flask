@@ -5,7 +5,7 @@ from sqlalchemy import extract, and_
 from sqlalchemy.exc import IntegrityError
 from upb_app.helper import month_range, week_range
 from upb_app.models import Kegiatan, Foto, Bendungan, Embung, Petugas, Pemeliharaan, jenis_pemeliharaan
-from upb_app.models import KegiatanEmbung
+from upb_app.models import KegiatanEmbung, wil_sungai
 from upb_app.forms import AddKegiatan, RencanaPemeliharaan, LaporPemeliharaan, RencanaEmbung, PencapaianEmbung
 from upb_app import app, db, admin_only, petugas_only, role_check, role_check_embung
 import datetime
@@ -507,14 +507,27 @@ def save_image(imageStr, filename):
 def kegiatan_index_embung():
     embung = Embung.query.filter(Embung.is_verified == '1').order_by(Embung.id).all()
 
-    embung_a = []
-    embung_b = []
+    embung_a = {
+        '1': [],
+        '2': [],
+        '3': [],
+        '4': []
+    }
+    embung_b = {
+        '1': [],
+        '2': [],
+        '3': [],
+        '4': []
+    }
+    wilayah = wil_sungai
+    wilayah['4'] = "Lain-Lain"
     for e in embung:
         if e.jenis == 'a':
-            embung_a.append(e)
+            embung_a[e.wil_sungai or '4'].append(e)
         elif e.jenis == 'b':
-            embung_b.append(e)
+            embung_b[e.wil_sungai or '4'].append(e)
     return render_template('kegiatan/embung/index.html',
+                            wil_sungai=wilayah,
                             embung_a=embung_a,
                             embung_b=embung_b)
 

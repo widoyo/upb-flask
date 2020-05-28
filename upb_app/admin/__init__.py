@@ -120,31 +120,50 @@ def embung_harian():
     ''' Harian Embung '''
     sampling, end = day_range(request.values.get('sampling'))
 
-    embung = Embung.query.filter(Embung.is_verified == '1').order_by(Embung.id).all()
+    embung = Embung.query.filter(Embung.is_verified == '1').order_by(Embung.wil_sungai, Embung.id).all()
     kegiatan = KegiatanEmbung.query.filter(
                                 KegiatanEmbung.sampling == sampling.strftime('%Y-%m-%d')
                             ).all()
 
-    embung_a = {}
-    embung_b = {}
+    embung_a = {
+        '1': {},
+        '2': {},
+        '3': {},
+        '4': {}
+    }
+    embung_b = {
+        '1': {},
+        '2': {},
+        '3': {},
+        '4': {}
+    }
+    wilayah = wil_sungai
+    wilayah['4'] = "Lain-Lain"
+    count_a = 0
+    count_b = 0
     for e in embung:
         if e.jenis == 'a':
-            embung_a[e.id] = {
+            count_a += 1
+            embung_a[e.wil_sungai or '4'][e.id] = {
                 'embung': e,
-                'kegiatan': None
+                'kegiatan': None,
+                'count': count_a
             }
         elif e.jenis == 'b':
-            embung_b[e.id] = {
+            count_b += 1
+            embung_b[e.wil_sungai or '4'][e.id] = {
                 'embung': e,
-                'kegiatan': None
+                'kegiatan': None,
+                'count': count_b
             }
     for keg in kegiatan:
         if keg.embung_id in embung_a:
-            embung_a[keg.embung_id]['kegiatan'] = keg
+            embung_a[keg.embung.wil_sungai or '4'][keg.embung_id]['kegiatan'] = keg
         elif keg.embung_id in embung_b:
-            embung_b[keg.embung_id]['kegiatan'] = keg
+            embung_b[keg.embung.wil_sungai or '4'][keg.embung_id]['kegiatan'] = keg
     return render_template('embung/harian.html',
                             sampling=sampling,
+                            wil_sungai=wilayah,
                             embung_a=embung_a,
                             embung_b=embung_b)
 

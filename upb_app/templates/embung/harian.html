@@ -56,142 +56,147 @@
                 </tr>
             </thead>
             <tbody>
-                {% for i, e in embung_b.items() %}
-                    <tr>
-                      <td>{{ loop.index }}</td>
-                      <td>
-                          <a href="{{ url_for('admin.kegiatan_embung', embung_id=e.embung.id) }}">
-                              {{ e.embung.nama }}
-                          </a>
-                      </td>
-                      {% if e.kegiatan %}
-                          <td>{{ e.kegiatan.rencana }} di {{ e.kegiatan.lokasi }}</td>
-                          <td>
-                              {% if e.kegiatan.pencapaian %}{{ e.kegiatan.pencapaian }}
-                              {% else %} - {% endif %}
-                          </td>
-                          <td>
-                              {% if e.kegiatan.mulai %}{{ e.kegiatan.mulai }}-{{ e.kegiatan.selesai }}
-                              {% else %} - {% endif %}
-                          </td>
-                          <td>
-                              {% if e.kegiatan.kendala %}{{ e.kegiatan.kendala }}
-                              {% else %} - {% endif %}
-                          </td>
-                          {% if e.kegiatan.fotos['0'] %}
-                            {% with f = e.kegiatan.fotos['0'] %}
-                            <td class="text-center">
-                                <a data-toggle="modal" href="#preview-foto-{{ f.id }}"
-                                    role="button" aria-expanded="false"
-                                    class="card-link">
-                                    <img class="img-card" id="foto-{{ f.id }}" src="{{ url_for('static', filename=f.url[7:]) }}" alt="" style="width: 4rem;height: 4rem;">
-                                </a>
-                                <div class="modal fade" id="preview-foto-{{ f.id }}" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
-                                  <div class="modal-dialog" role="document">
-                                    <div class="modal-content">
-                                      <div class="modal-header">
-                                        <h5 class="modal-title" id="exampleModalLabel">{{ e.kegiatan.rencana }}</h5>
-                                        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                                          <span aria-hidden="true">&times;</span>
-                                        </button>
-                                      </div>
-                                      <div class="modal-body">
-                                          <div class="form-group">
-                                              <img class="img-fluid" src="{{ url_for('static', filename=f.url[7:]) }}" id="foto-modal-show">
-                                              <div style="position: absolute;top: 70%;left: 0;width: 100%;background-color: rgba(255, 255, 255, 0.6);">
-                                                  <p class="text-center">{{ f.keterangan }}</p>
-                                              </div>
-                                          </div>
-                                      </div>
-                                      <div class="modal-footer">
-                                          <button type="button" class="btn btn-secondary" data-dismiss="modal">Tutup</button>
-                                      </div>
-                                    </div>
-                                  </div>
-                                </div>
-                            </td>
-                            {% endwith %}
-                          {% else %}
-                          <td class="text-center">-</td>
-                          {% endif %}
-
-                          {% if e.kegiatan.fotos['50'] %}
-                            {% with f = e.kegiatan.fotos['50'] %}
-                            <td class="text-center">
-                                <a data-toggle="modal" href="#preview-foto-{{ f.id }}"
-                                    role="button" aria-expanded="false"
-                                    class="card-link">
-                                    <img class="img-card" id="foto-{{ f.id }}" src="{{ url_for('static', filename=f.url[7:]) }}" alt="" style="width: 4rem;height: 4rem;">
-                                </a>
-                                <div class="modal fade" id="preview-foto-{{ f.id }}" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
-                                  <div class="modal-dialog" role="document">
-                                    <div class="modal-content">
-                                      <div class="modal-header">
-                                        <h5 class="modal-title" id="exampleModalLabel">{{ e.kegiatan.rencana }}</h5>
-                                        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                                          <span aria-hidden="true">&times;</span>
-                                        </button>
-                                      </div>
-                                      <div class="modal-body">
-                                          <div class="form-group">
-                                              <img class="img-fluid" src="{{ url_for('static', filename=f.url[7:]) }}" id="foto-modal-show">
-                                              <div style="position: absolute;top: 70%;left: 0;width: 100%;background-color: rgba(255, 255, 255, 0.6);">
-                                                  <p class="text-center">{{ f.keterangan }}</p>
-                                              </div>
-                                          </div>
-                                      </div>
-                                      <div class="modal-footer">
-                                          <button type="button" class="btn btn-secondary" data-dismiss="modal">Tutup</button>
-                                      </div>
-                                    </div>
-                                  </div>
-                                </div>
-                            </td>
-                            {% endwith %}
-                          {% else %}
-                          <td class="text-center">-</td>
-                          {% endif %}
-
-                          {% if e.kegiatan.fotos['100'] %}
-                            {% with f = e.kegiatan.fotos['100'] %}
-                            <td class="text-center">
-                                <a data-toggle="modal" href="#preview-foto-{{ f.id }}"
-                                    role="button" aria-expanded="false"
-                                    class="card-link">
-                                    <img class="img-card" id="foto-{{ f.id }}" src="{{ url_for('static', filename=f.url[7:]) }}" alt="" style="width: 4rem;height: 4rem;">
-                                </a>
-                                <div class="modal fade" id="preview-foto-{{ f.id }}" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
-                                  <div class="modal-dialog" role="document">
-                                    <div class="modal-content">
-                                      <div class="modal-header">
-                                        <h5 class="modal-title" id="exampleModalLabel">{{ e.kegiatan.rencana }}</h5>
-                                        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                                          <span aria-hidden="true">&times;</span>
-                                        </button>
-                                      </div>
-                                      <div class="modal-body">
-                                          <div class="form-group">
-                                              <img class="img-fluid" src="{{ url_for('static', filename=f.url[7:]) }}" id="foto-modal-show">
-                                              <div style="position: absolute;top: 70%;left: 0;width: 100%;background-color: rgba(255, 255, 255, 0.6);">
-                                                  <p class="text-center">{{ f.keterangan }}</p>
-                                              </div>
-                                          </div>
-                                      </div>
-                                      <div class="modal-footer">
-                                          <button type="button" class="btn btn-secondary" data-dismiss="modal">Tutup</button>
-                                      </div>
-                                    </div>
-                                  </div>
-                                </div>
-                            </td>
-                            {% endwith %}
-                          {% else %}
-                          <td class="text-center">-</td>
-                          {% endif %}
-                      {% else %}
-                        <td colspan="7" class="text-center">Tidak Ada Kegiatan</td>
-                      {% endif %}
+                {% for wil, embungs in embung_b.items() %}
+                    <tr class="table-active">
+                        <td colspan="9" class="text-center">{{ wil_sungai[wil] }}</td>
                     </tr>
+                    {% for i, e in embungs.items() %}
+                        <tr>
+                          <td>{{ e.count }}</td>
+                          <td>
+                              <a href="{{ url_for('admin.kegiatan_embung', embung_id=e.embung.id) }}">
+                                  {{ e.embung.nama }}
+                              </a>
+                          </td>
+                          {% if e.kegiatan %}
+                              <td>{{ e.kegiatan.rencana }} di {{ e.kegiatan.lokasi }}</td>
+                              <td>
+                                  {% if e.kegiatan.pencapaian %}{{ e.kegiatan.pencapaian }}
+                                  {% else %} - {% endif %}
+                              </td>
+                              <td>
+                                  {% if e.kegiatan.mulai %}{{ e.kegiatan.mulai }}-{{ e.kegiatan.selesai }}
+                                  {% else %} - {% endif %}
+                              </td>
+                              <td>
+                                  {% if e.kegiatan.kendala %}{{ e.kegiatan.kendala }}
+                                  {% else %} - {% endif %}
+                              </td>
+                              {% if e.kegiatan.fotos['0'] %}
+                                {% with f = e.kegiatan.fotos['0'] %}
+                                <td class="text-center">
+                                    <a data-toggle="modal" href="#preview-foto-{{ f.id }}"
+                                        role="button" aria-expanded="false"
+                                        class="card-link">
+                                        <img class="img-card" id="foto-{{ f.id }}" src="{{ url_for('static', filename=f.url[7:]) }}" alt="" style="width: 4rem;height: 4rem;">
+                                    </a>
+                                    <div class="modal fade" id="preview-foto-{{ f.id }}" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+                                      <div class="modal-dialog" role="document">
+                                        <div class="modal-content">
+                                          <div class="modal-header">
+                                            <h5 class="modal-title" id="exampleModalLabel">{{ e.kegiatan.rencana }}</h5>
+                                            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                              <span aria-hidden="true">&times;</span>
+                                            </button>
+                                          </div>
+                                          <div class="modal-body">
+                                              <div class="form-group">
+                                                  <img class="img-fluid" src="{{ url_for('static', filename=f.url[7:]) }}" id="foto-modal-show">
+                                                  <div style="position: absolute;top: 70%;left: 0;width: 100%;background-color: rgba(255, 255, 255, 0.6);">
+                                                      <p class="text-center">{{ f.keterangan }}</p>
+                                                  </div>
+                                              </div>
+                                          </div>
+                                          <div class="modal-footer">
+                                              <button type="button" class="btn btn-secondary" data-dismiss="modal">Tutup</button>
+                                          </div>
+                                        </div>
+                                      </div>
+                                    </div>
+                                </td>
+                                {% endwith %}
+                              {% else %}
+                              <td class="text-center">-</td>
+                              {% endif %}
+
+                              {% if e.kegiatan.fotos['50'] %}
+                                {% with f = e.kegiatan.fotos['50'] %}
+                                <td class="text-center">
+                                    <a data-toggle="modal" href="#preview-foto-{{ f.id }}"
+                                        role="button" aria-expanded="false"
+                                        class="card-link">
+                                        <img class="img-card" id="foto-{{ f.id }}" src="{{ url_for('static', filename=f.url[7:]) }}" alt="" style="width: 4rem;height: 4rem;">
+                                    </a>
+                                    <div class="modal fade" id="preview-foto-{{ f.id }}" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+                                      <div class="modal-dialog" role="document">
+                                        <div class="modal-content">
+                                          <div class="modal-header">
+                                            <h5 class="modal-title" id="exampleModalLabel">{{ e.kegiatan.rencana }}</h5>
+                                            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                              <span aria-hidden="true">&times;</span>
+                                            </button>
+                                          </div>
+                                          <div class="modal-body">
+                                              <div class="form-group">
+                                                  <img class="img-fluid" src="{{ url_for('static', filename=f.url[7:]) }}" id="foto-modal-show">
+                                                  <div style="position: absolute;top: 70%;left: 0;width: 100%;background-color: rgba(255, 255, 255, 0.6);">
+                                                      <p class="text-center">{{ f.keterangan }}</p>
+                                                  </div>
+                                              </div>
+                                          </div>
+                                          <div class="modal-footer">
+                                              <button type="button" class="btn btn-secondary" data-dismiss="modal">Tutup</button>
+                                          </div>
+                                        </div>
+                                      </div>
+                                    </div>
+                                </td>
+                                {% endwith %}
+                              {% else %}
+                              <td class="text-center">-</td>
+                              {% endif %}
+
+                              {% if e.kegiatan.fotos['100'] %}
+                                {% with f = e.kegiatan.fotos['100'] %}
+                                <td class="text-center">
+                                    <a data-toggle="modal" href="#preview-foto-{{ f.id }}"
+                                        role="button" aria-expanded="false"
+                                        class="card-link">
+                                        <img class="img-card" id="foto-{{ f.id }}" src="{{ url_for('static', filename=f.url[7:]) }}" alt="" style="width: 4rem;height: 4rem;">
+                                    </a>
+                                    <div class="modal fade" id="preview-foto-{{ f.id }}" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+                                      <div class="modal-dialog" role="document">
+                                        <div class="modal-content">
+                                          <div class="modal-header">
+                                            <h5 class="modal-title" id="exampleModalLabel">{{ e.kegiatan.rencana }}</h5>
+                                            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                              <span aria-hidden="true">&times;</span>
+                                            </button>
+                                          </div>
+                                          <div class="modal-body">
+                                              <div class="form-group">
+                                                  <img class="img-fluid" src="{{ url_for('static', filename=f.url[7:]) }}" id="foto-modal-show">
+                                                  <div style="position: absolute;top: 70%;left: 0;width: 100%;background-color: rgba(255, 255, 255, 0.6);">
+                                                      <p class="text-center">{{ f.keterangan }}</p>
+                                                  </div>
+                                              </div>
+                                          </div>
+                                          <div class="modal-footer">
+                                              <button type="button" class="btn btn-secondary" data-dismiss="modal">Tutup</button>
+                                          </div>
+                                        </div>
+                                      </div>
+                                    </div>
+                                </td>
+                                {% endwith %}
+                              {% else %}
+                              <td class="text-center">-</td>
+                              {% endif %}
+                          {% else %}
+                            <td colspan="7" class="text-center">Tidak Ada Kegiatan</td>
+                          {% endif %}
+                        </tr>
+                    {% endfor %}
                 {% endfor %}
             </tbody>
         </table>
@@ -217,144 +222,149 @@
                 </tr>
             </thead>
             <tbody>
-                {% for i, e in embung_a.items() %}
-                    <tr>
-                      <td>{{ loop.index }}</td>
-                      <td>
-                          <a href="{{ url_for('admin.kegiatan_embung', embung_id=e.embung.id) }}">
-                              {{ e.embung.nama }}
-                          </a>
-                      </td>
-                      {% if e.kegiatan %}
-                          <td>{{ e.kegiatan.rencana }} di {{ e.kegiatan.lokasi }}</td>
-                          {% if e.kegiatan.pencapaian %}
-                              <td>
-                                  {{ e.kegiatan.pencapaian }}
-                              </td>
-                              <td>
-                                  {{ e.kegiatan.mulai }}-{{ e.kegiatan.selesai }}
-                              </td>
-                              <td>
-                                  {{ e.kegiatan.kendala }}
-                              </td>
-                          {% else %}
-                            <td colspan="3">Belum Dilaporkan</td>
-                          {% endif %}
-
-                          {% if e.kegiatan.fotos['0'] %}
-                            {% with f = e.kegiatan.fotos['0'] %}
-                            <td class="text-center">
-                                <a data-toggle="modal" href="#preview-foto-{{ f.id }}"
-                                    role="button" aria-expanded="false"
-                                    class="card-link">
-                                    <img class="img-card" id="foto-{{ f.id }}" src="{{ url_for('static', filename=f.url[7:]) }}" alt="" style="width: 4rem;height: 4rem;">
-                                </a>
-                                <div class="modal fade" id="preview-foto-{{ f.id }}" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
-                                  <div class="modal-dialog" role="document">
-                                    <div class="modal-content">
-                                      <div class="modal-header">
-                                        <h5 class="modal-title" id="exampleModalLabel">{{ e.kegiatan.rencana }}</h5>
-                                        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                                          <span aria-hidden="true">&times;</span>
-                                        </button>
-                                      </div>
-                                      <div class="modal-body">
-                                          <div class="form-group">
-                                              <img class="img-fluid" src="{{ url_for('static', filename=f.url[7:]) }}" id="foto-modal-show">
-                                              <div style="position: absolute;top: 70%;left: 0;width: 100%;background-color: rgba(255, 255, 255, 0.6);">
-                                                  <p class="text-center">{{ f.keterangan }}</p>
-                                              </div>
-                                          </div>
-                                      </div>
-                                      <div class="modal-footer">
-                                          <button type="button" class="btn btn-secondary" data-dismiss="modal">Tutup</button>
-                                      </div>
-                                    </div>
-                                  </div>
-                                </div>
-                            </td>
-                            {% endwith %}
-                          {% else %}
-                          <td class="text-center">-</td>
-                          {% endif %}
-
-                          {% if e.kegiatan.fotos['50'] %}
-                            {% with f = e.kegiatan.fotos['50'] %}
-                            <td class="text-center">
-                                <a data-toggle="modal" href="#preview-foto-{{ f.id }}"
-                                    role="button" aria-expanded="false"
-                                    class="card-link">
-                                    <img class="img-card" id="foto-{{ f.id }}" src="{{ url_for('static', filename=f.url[7:]) }}" alt="" style="width: 4rem;height: 4rem;">
-                                </a>
-                                <div class="modal fade" id="preview-foto-{{ f.id }}" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
-                                  <div class="modal-dialog" role="document">
-                                    <div class="modal-content">
-                                      <div class="modal-header">
-                                        <h5 class="modal-title" id="exampleModalLabel">{{ e.kegiatan.rencana }}</h5>
-                                        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                                          <span aria-hidden="true">&times;</span>
-                                        </button>
-                                      </div>
-                                      <div class="modal-body">
-                                          <div class="form-group">
-                                              <img class="img-fluid" src="{{ url_for('static', filename=f.url[7:]) }}" id="foto-modal-show">
-                                              <div style="position: absolute;top: 70%;left: 0;width: 100%;background-color: rgba(255, 255, 255, 0.6);">
-                                                  <p class="text-center">{{ f.keterangan }}</p>
-                                              </div>
-                                          </div>
-                                      </div>
-                                      <div class="modal-footer">
-                                          <button type="button" class="btn btn-secondary" data-dismiss="modal">Tutup</button>
-                                      </div>
-                                    </div>
-                                  </div>
-                                </div>
-                            </td>
-                            {% endwith %}
-                          {% else %}
-                          <td class="text-center">-</td>
-                          {% endif %}
-
-                          {% if e.kegiatan.fotos['100'] %}
-                            {% with f = e.kegiatan.fotos['100'] %}
-                            <td class="text-center">
-                                <a data-toggle="modal" href="#preview-foto-{{ f.id }}"
-                                    role="button" aria-expanded="false"
-                                    class="card-link">
-                                    <img class="img-card" id="foto-{{ f.id }}" src="{{ url_for('static', filename=f.url[7:]) }}" alt="" style="width: 4rem;height: 4rem;">
-                                </a>
-                                <div class="modal fade" id="preview-foto-{{ f.id }}" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
-                                  <div class="modal-dialog" role="document">
-                                    <div class="modal-content">
-                                      <div class="modal-header">
-                                        <h5 class="modal-title" id="exampleModalLabel">{{ e.kegiatan.rencana }}</h5>
-                                        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                                          <span aria-hidden="true">&times;</span>
-                                        </button>
-                                      </div>
-                                      <div class="modal-body">
-                                          <div class="form-group">
-                                              <img class="img-fluid" src="{{ url_for('static', filename=f.url[7:]) }}" id="foto-modal-show">
-                                              <div style="position: absolute;top: 70%;left: 0;width: 100%;background-color: rgba(255, 255, 255, 0.6);">
-                                                  <p class="text-center">{{ f.keterangan }}</p>
-                                              </div>
-                                          </div>
-                                      </div>
-                                      <div class="modal-footer">
-                                          <button type="button" class="btn btn-secondary" data-dismiss="modal">Tutup</button>
-                                      </div>
-                                    </div>
-                                  </div>
-                                </div>
-                            </td>
-                            {% endwith %}
-                          {% else %}
-                          <td class="text-center">-</td>
-                          {% endif %}
-                      {% else %}
-                        <td colspan="7" class="text-center">Tidak Ada Kegiatan</td>
-                      {% endif %}
+                {% for wil, embungs in embung_a.items() %}
+                    <tr class="table-active">
+                        <td colspan="9" class="text-center">{{ wil_sungai[wil] }}</td>
                     </tr>
+                    {% for i, e in embungs.items() %}
+                        <tr>
+                          <td>{{ e.count }}</td>
+                          <td>
+                              <a href="{{ url_for('admin.kegiatan_embung', embung_id=e.embung.id) }}">
+                                  {{ e.embung.nama }}
+                              </a>
+                          </td>
+                          {% if e.kegiatan %}
+                              <td>{{ e.kegiatan.rencana }} di {{ e.kegiatan.lokasi }}</td>
+                              {% if e.kegiatan.pencapaian %}
+                                  <td>
+                                      {{ e.kegiatan.pencapaian }}
+                                  </td>
+                                  <td>
+                                      {{ e.kegiatan.mulai }}-{{ e.kegiatan.selesai }}
+                                  </td>
+                                  <td>
+                                      {{ e.kegiatan.kendala }}
+                                  </td>
+                              {% else %}
+                                <td colspan="3">Belum Dilaporkan</td>
+                              {% endif %}
+
+                              {% if e.kegiatan.fotos['0'] %}
+                                {% with f = e.kegiatan.fotos['0'] %}
+                                <td class="text-center">
+                                    <a data-toggle="modal" href="#preview-foto-{{ f.id }}"
+                                        role="button" aria-expanded="false"
+                                        class="card-link">
+                                        <img class="img-card" id="foto-{{ f.id }}" src="{{ url_for('static', filename=f.url[7:]) }}" alt="" style="width: 4rem;height: 4rem;">
+                                    </a>
+                                    <div class="modal fade" id="preview-foto-{{ f.id }}" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+                                      <div class="modal-dialog" role="document">
+                                        <div class="modal-content">
+                                          <div class="modal-header">
+                                            <h5 class="modal-title" id="exampleModalLabel">{{ e.kegiatan.rencana }}</h5>
+                                            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                              <span aria-hidden="true">&times;</span>
+                                            </button>
+                                          </div>
+                                          <div class="modal-body">
+                                              <div class="form-group">
+                                                  <img class="img-fluid" src="{{ url_for('static', filename=f.url[7:]) }}" id="foto-modal-show">
+                                                  <div style="position: absolute;top: 70%;left: 0;width: 100%;background-color: rgba(255, 255, 255, 0.6);">
+                                                      <p class="text-center">{{ f.keterangan }}</p>
+                                                  </div>
+                                              </div>
+                                          </div>
+                                          <div class="modal-footer">
+                                              <button type="button" class="btn btn-secondary" data-dismiss="modal">Tutup</button>
+                                          </div>
+                                        </div>
+                                      </div>
+                                    </div>
+                                </td>
+                                {% endwith %}
+                              {% else %}
+                              <td class="text-center">-</td>
+                              {% endif %}
+
+                              {% if e.kegiatan.fotos['50'] %}
+                                {% with f = e.kegiatan.fotos['50'] %}
+                                <td class="text-center">
+                                    <a data-toggle="modal" href="#preview-foto-{{ f.id }}"
+                                        role="button" aria-expanded="false"
+                                        class="card-link">
+                                        <img class="img-card" id="foto-{{ f.id }}" src="{{ url_for('static', filename=f.url[7:]) }}" alt="" style="width: 4rem;height: 4rem;">
+                                    </a>
+                                    <div class="modal fade" id="preview-foto-{{ f.id }}" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+                                      <div class="modal-dialog" role="document">
+                                        <div class="modal-content">
+                                          <div class="modal-header">
+                                            <h5 class="modal-title" id="exampleModalLabel">{{ e.kegiatan.rencana }}</h5>
+                                            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                              <span aria-hidden="true">&times;</span>
+                                            </button>
+                                          </div>
+                                          <div class="modal-body">
+                                              <div class="form-group">
+                                                  <img class="img-fluid" src="{{ url_for('static', filename=f.url[7:]) }}" id="foto-modal-show">
+                                                  <div style="position: absolute;top: 70%;left: 0;width: 100%;background-color: rgba(255, 255, 255, 0.6);">
+                                                      <p class="text-center">{{ f.keterangan }}</p>
+                                                  </div>
+                                              </div>
+                                          </div>
+                                          <div class="modal-footer">
+                                              <button type="button" class="btn btn-secondary" data-dismiss="modal">Tutup</button>
+                                          </div>
+                                        </div>
+                                      </div>
+                                    </div>
+                                </td>
+                                {% endwith %}
+                              {% else %}
+                              <td class="text-center">-</td>
+                              {% endif %}
+
+                              {% if e.kegiatan.fotos['100'] %}
+                                {% with f = e.kegiatan.fotos['100'] %}
+                                <td class="text-center">
+                                    <a data-toggle="modal" href="#preview-foto-{{ f.id }}"
+                                        role="button" aria-expanded="false"
+                                        class="card-link">
+                                        <img class="img-card" id="foto-{{ f.id }}" src="{{ url_for('static', filename=f.url[7:]) }}" alt="" style="width: 4rem;height: 4rem;">
+                                    </a>
+                                    <div class="modal fade" id="preview-foto-{{ f.id }}" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+                                      <div class="modal-dialog" role="document">
+                                        <div class="modal-content">
+                                          <div class="modal-header">
+                                            <h5 class="modal-title" id="exampleModalLabel">{{ e.kegiatan.rencana }}</h5>
+                                            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                              <span aria-hidden="true">&times;</span>
+                                            </button>
+                                          </div>
+                                          <div class="modal-body">
+                                              <div class="form-group">
+                                                  <img class="img-fluid" src="{{ url_for('static', filename=f.url[7:]) }}" id="foto-modal-show">
+                                                  <div style="position: absolute;top: 70%;left: 0;width: 100%;background-color: rgba(255, 255, 255, 0.6);">
+                                                      <p class="text-center">{{ f.keterangan }}</p>
+                                                  </div>
+                                              </div>
+                                          </div>
+                                          <div class="modal-footer">
+                                              <button type="button" class="btn btn-secondary" data-dismiss="modal">Tutup</button>
+                                          </div>
+                                        </div>
+                                      </div>
+                                    </div>
+                                </td>
+                                {% endwith %}
+                              {% else %}
+                              <td class="text-center">-</td>
+                              {% endif %}
+                          {% else %}
+                            <td colspan="7" class="text-center">Tidak Ada Kegiatan</td>
+                          {% endif %}
+                        </tr>
+                    {% endfor %}
                 {% endfor %}
             </tbody>
         </table>
