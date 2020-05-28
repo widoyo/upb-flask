@@ -57,9 +57,11 @@
             </thead>
             <tbody>
                 {% for wil, embungs in embung_b.items() %}
+                    {% if embungs %}
                     <tr class="table-active">
                         <td colspan="9" class="text-center">{{ wil_sungai[wil] }}</td>
                     </tr>
+                    {% endif %}
                     {% for i, e in embungs.items() %}
                         <tr>
                           <td>{{ e.count }}</td>
