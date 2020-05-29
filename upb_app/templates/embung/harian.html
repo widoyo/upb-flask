@@ -72,7 +72,7 @@
                           </td>
                           {% if emb.kegiatan %}
                             {% for e in emb.kegiatan %}
-                              <td>{{ e.rencana }} di {{ e.lokasi }}</td>
+                              <td>{{ e.rencana }} di {{ e.lokasi }} <small><i>- {{ e.bagian.nama or 'Petugas OP' }}</i></small></td>
                               <td>
                                   {% if e.pencapaian %}{{ e.pencapaian }}
                                   {% else %} - {% endif %}
@@ -243,7 +243,7 @@
                           {% if emb.kegiatan %}
                             {% for e in emb.kegiatan %}
                                 {% if loop.index > 1 %}<tr>{% endif %}
-                              <td>{{ e.rencana }} di {{ e.lokasi }}</td>
+                              <td>{{ e.rencana }} di {{ e.lokasi }} <small><i>- {{ e.bagian.nama or 'Petugas OP' }}</i></small></td>
                               {% if e.pencapaian %}
                                   <td>
                                       {{ e.pencapaian }}
