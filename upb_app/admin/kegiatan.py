@@ -733,10 +733,10 @@ def kegiatan_embung_csv(embung_id):
     kegiatan = {}
     for i in range(day, 0, -1):
         sampl = datetime.datetime.strptime(f"{sampling.year}-{sampling.month}-{i}", "%Y-%m-%d")
-        kegiatan[sampl] = None
+        kegiatan[sampl] = []
 
     for keg in all_kegiatan:
-        kegiatan[keg.sampling] = keg
+        kegiatan[keg.sampling].append(keg)
 
     pre_csv = []
     pre_csv.append(['URAIAN KEGIATAN PETUGAS OP EMBUNG'])
@@ -744,18 +744,21 @@ def kegiatan_embung_csv(embung_id):
     pre_csv.append(['LOKASI EMBUNG', f"{embung.desa} Kec. {embung.kec} Kab. {embung.kab}"])
     pre_csv.append(['Bulan', sampling.strftime("%B")])
     pre_csv.append([
-        'tanggal', 'lokasi kegiatan', 'rencana kegiatan', 'pencapaian', 'jam mulai',
+        'tanggal', 'bagian', 'lokasi kegiatan', 'rencana kegiatan', 'pencapaian', 'jam mulai',
         'jam selesai', 'kendala', '0%', '50%', '100%'
     ])
-    for date, keg in kegiatan.items():
-        if keg:
-            pre_csv.append([
-                date.strftime("%d %B %Y"), keg.lokasi,
-                keg.rencana, keg.pencapaian, keg.mulai, keg.selesai, keg.kendala,
-                f"{request.url_root}{keg.fotos[0].url}",
-                f"{request.url_root}{keg.fotos[1].url}",
-                f"{request.url_root}{keg.fotos[2].url}"
-            ])
+    for date, kegiat in kegiatan.items():
+        if kegiat:
+            for keg in kegiat:
+                bag = keg.bagian.nama or "Petugas OP"
+                fotos = keg.fotos
+                pre_csv.append([
+                    date.strftime("%d %B %Y"), bag, keg.lokasi,
+                    keg.rencana, keg.pencapaian, keg.mulai, keg.selesai, keg.kendala,
+                    f"{request.url_root + fotos['0'].url if '0' in fotos else None}",
+                    f"{request.url_root + fotos['50'].url if '50' in fotos else None}",
+                    f"{request.url_root + fotos['100'].url if '100' in fotos else None}"
+                ])
         else:
             pre_csv.append([date.strftime("%d %B %Y"), None, None, None, None, None, None, None, None, None])
     output = io.StringIO()

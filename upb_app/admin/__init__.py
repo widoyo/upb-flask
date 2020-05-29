@@ -146,21 +146,21 @@ def embung_harian():
             count_a += 1
             embung_a[e.wil_sungai or '4'][e.id] = {
                 'embung': e,
-                'kegiatan': None,
+                'kegiatan': [],
                 'count': count_a
             }
         elif e.jenis == 'b':
             count_b += 1
             embung_b[e.wil_sungai or '4'][e.id] = {
                 'embung': e,
-                'kegiatan': None,
+                'kegiatan': [],
                 'count': count_b
             }
     for keg in kegiatan:
         if keg.embung_id in embung_a[keg.embung.wil_sungai or '4']:
-            embung_a[keg.embung.wil_sungai or '4'][keg.embung_id]['kegiatan'] = keg
+            embung_a[keg.embung.wil_sungai or '4'][keg.embung_id]['kegiatan'].append(keg)
         elif keg.embung_id in embung_b[keg.embung.wil_sungai or '4']:
-            embung_b[keg.embung.wil_sungai or '4'][keg.embung_id]['kegiatan'] = keg
+            embung_b[keg.embung.wil_sungai or '4'][keg.embung_id]['kegiatan'].append(keg)
     return render_template('embung/harian.html',
                             sampling=sampling,
                             wil_sungai=wilayah,
