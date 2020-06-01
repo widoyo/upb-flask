@@ -36,9 +36,40 @@ def kegiatan():
         return redirect(url_for('admin.kegiatan_bendungan', bendungan_id=current_user.bendungan_id))
     if current_user.role == "3":
         return redirect(url_for('admin.kegiatan_embung', embung_id=current_user.embung_id))
+
+    sampling = datetime.datetime.now()
     bends = Bendungan.query.all()
+    kegiatan = Kegiatan.query.filter(
+                                    extract('day', Kegiatan.sampling) == sampling.day,
+                                    extract('month', Kegiatan.sampling) == sampling.month,
+                                    extract('year', Kegiatan.sampling) == sampling.year
+                                ).all()
+    pemeliharaan = Pemeliharaan.query.filter(
+                                        Pemeliharaan.is_rencana == '0',
+                                        extract('day', Pemeliharaan.sampling) == sampling.day,
+                                        extract('month', Pemeliharaan.sampling) == sampling.month,
+                                        extract('year', Pemeliharaan.sampling) == sampling.year
+                                    ).all()
+
+    results = {}
+    for b in bends:
+        results[b.id] = {
+            'bend': b,
+            'koordinator': [],
+            'keamanan': [],
+            'operasi': [],
+            'pemantauan': [],
+            'pemeliharaan': []
+        }
+    for keg in kegiatan:
+        results[keg.bendungan_id][keg.petugas].append(keg)
+    for pem in pemeliharaan:
+        print(pem)
+        results[pem.bendungan_id]['pemeliharaan'].append(pem)
     return render_template('kegiatan/index.html',
-                            bends=bends)
+                            bends=bends,
+                            results=results,
+                            sampling=sampling)
 
 
 @bp.route('/bendungan/kegiatan/<bendungan_id>')
@@ -511,31 +542,32 @@ def save_image(imageStr, filename):
 @login_required
 @admin_only
 def kegiatan_index_embung():
-    embung = Embung.query.filter(Embung.is_verified == '1').order_by(Embung.id).all()
-
-    embung_a = {
-        '1': [],
-        '2': [],
-        '3': [],
-        '4': []
-    }
-    embung_b = {
-        '1': [],
-        '2': [],
-        '3': [],
-        '4': []
-    }
-    wilayah = wil_sungai
-    wilayah['4'] = "Lain-Lain"
-    for e in embung:
-        if e.jenis == 'a':
-            embung_a[e.wil_sungai or '4'].append(e)
-        elif e.jenis == 'b':
-            embung_b[e.wil_sungai or '4'].append(e)
-    return render_template('kegiatan/embung/index.html',
-                            wil_sungai=wilayah,
-                            embung_a=embung_a,
-                            embung_b=embung_b)
+    # embung = Embung.query.filter(Embung.is_verified == '1').order_by(Embung.id).all()
+    #
+    # embung_a = {
+    #     '1': [],
+    #     '2': [],
+    #     '3': [],
+    #     '4': []
+    # }
+    # embung_b = {
+    #     '1': [],
+    #     '2': [],
+    #     '3': [],
+    #     '4': []
+    # }
+    # wilayah = wil_sungai
+    # wilayah['4'] = "Lain-Lain"
+    # for e in embung:
+    #     if e.jenis == 'a':
+    #         embung_a[e.wil_sungai or '4'].append(e)
+    #     elif e.jenis == 'b':
+    #         embung_b[e.wil_sungai or '4'].append(e)
+    # return render_template('kegiatan/embung/index.html',
+    #                         wil_sungai=wilayah,
+    #                         embung_a=embung_a,
+    #                         embung_b=embung_b)
+    return redirect(url_for('admin.embung_harian'))
 
 
 @bp.route('/embung/<embung_id>/kegiatan')
