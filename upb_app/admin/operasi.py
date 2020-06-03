@@ -18,7 +18,7 @@ from upb_app.admin import bp
 # bp = Blueprint('operasi', __name__)
 
 
-@bp.route('/operasi')
+@bp.route('/bendungan/operasi')
 @login_required
 def operasi():
     if current_user.role == "2":
@@ -113,7 +113,7 @@ def operasi_harian():
                             sampling=sampling)
 
 
-@bp.route('/bendungan/operasi/<bendungan_id>')
+@bp.route('/bendungan/<bendungan_id>/operasi')
 @login_required  # @petugas_only
 @role_check
 def operasi_bendungan(bendungan_id):
@@ -157,7 +157,7 @@ def operasi_bendungan(bendungan_id):
                             sampling_dt=sampling)
 
 
-@bp.route('/bendungan/operasi/<bendungan_id>/tma', methods=['GET', 'POST'])
+@bp.route('/bendungan/<bendungan_id>/operasi/tma', methods=['GET', 'POST'])
 @login_required
 @role_check
 def operasi_tma_add(bendungan_id):
@@ -221,7 +221,7 @@ def operasi_tma_update():
     return jsonify(result)
 
 
-@bp.route('/bendungan/operasi/<bendungan_id>/daily', methods=['GET', 'POST'])
+@bp.route('/bendungan/<bendungan_id>/operasi/daily', methods=['GET', 'POST'])
 @login_required
 @role_check
 def operasi_daily_add(bendungan_id):
@@ -291,7 +291,7 @@ def operasi_daily_update():
     return jsonify(result)
 
 
-@bp.route('/bendungan/operasi/<bendungan_id>/banjir', methods=['POST'])
+@bp.route('/bendungan/<bendungan_id>/operasi/banjir', methods=['POST'])
 @login_required
 @role_check
 def banjir_add(bendungan_id):
@@ -318,7 +318,7 @@ def banjir_add(bendungan_id):
     return redirect(url_for('admin.operasi_bendungan', bendungan_id=bendungan_id))
 
 
-@bp.route('/bendungan/operasi/<bendungan_id>/curahhujan', methods=['POST'])
+@bp.route('/bendungan/<bendungan_id>/operasi/curahhujan', methods=['POST'])
 @login_required
 @role_check
 def ch_terkini(bendungan_id):
@@ -346,7 +346,7 @@ def ch_terkini(bendungan_id):
     return redirect(url_for('admin.operasi_bendungan', bendungan_id=bendungan_id))
 
 
-@bp.route('/bendungan/operasi/<bendungan_id>/csv', methods=['GET'])
+@bp.route('/bendungan/<bendungan_id>/operasi/csv', methods=['GET'])
 @login_required
 @role_check
 def operasi_csv(bendungan_id):

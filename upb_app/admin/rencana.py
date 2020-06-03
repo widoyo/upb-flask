@@ -14,7 +14,7 @@ from upb_app.admin import bp
 # bp = Blueprint('rtow', __name__)
 
 
-@bp.route('/rtow')
+@bp.route('/bendungan/rtow')
 @login_required
 @admin_only
 def rtow():
@@ -80,7 +80,7 @@ def rtow():
                             wil_sungai=wil_sungai)
 
 
-@bp.route('/bendungan/rtow/<bendungan_id>/export', methods=['GET'])
+@bp.route('/bendungan/<bendungan_id>/rtow/export', methods=['GET'])
 @login_required
 @admin_only
 def rtow_exports(bendungan_id):
@@ -128,7 +128,7 @@ def rtow_exports(bendungan_id):
                     })
 
 
-@bp.route('/bendungan/rtow/<bendungan_id>/import', methods=['GET', 'POST'])
+@bp.route('/bendungan/<bendungan_id>/rtow/import', methods=['GET', 'POST'])
 @login_required
 @admin_only
 def rtow_imports(bendungan_id):

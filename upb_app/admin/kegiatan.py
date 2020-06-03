@@ -72,7 +72,7 @@ def kegiatan():
                             sampling=sampling)
 
 
-@bp.route('/bendungan/kegiatan/<bendungan_id>')
+@bp.route('/bendungan/<bendungan_id>/kegiatan')
 @login_required
 @role_check
 def kegiatan_bendungan(bendungan_id):
@@ -119,7 +119,7 @@ def kegiatan_bendungan(bendungan_id):
                             sampling_dt=sampling)
 
 
-@bp.route('/bendungan/kegiatan/<bendungan_id>/paper')
+@bp.route('/bendungan/<bendungan_id>/kegiatan/paper')
 @login_required
 @role_check
 def kegiatan_paper(bendungan_id):
@@ -149,7 +149,7 @@ def kegiatan_paper(bendungan_id):
                             sampling=sampling)
 
 
-@bp.route('/bendungan/kegiatan/<bendungan_id>/add', methods=['POST'])
+@bp.route('/bendungan/<bendungan_id>/kegiatan/add', methods=['POST'])
 @login_required
 @role_check
 def kegiatan_add(bendungan_id):
@@ -209,7 +209,7 @@ def kegiatan_update():
     return jsonify(result)
 
 
-@bp.route('/bendungan/kegiatan/<bendungan_id>/delete', methods=['POST'])
+@bp.route('/bendungan/<bendungan_id>/kegiatan/delete', methods=['POST'])
 @login_required
 @petugas_only
 def kegiatan_delete(bendungan_id):

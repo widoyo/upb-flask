@@ -115,7 +115,7 @@ def index():
                             sampling=sampling)
 
 
-@bp.route('/<lokasi_id>', methods=['GET', 'POST'])
+@bp.route('/<lokasi_id>', methods=['GET'])
 def tma(lokasi_id):
     date = request.values.get('sampling')
     def_date = datetime.datetime.utcnow()
@@ -133,7 +133,7 @@ def tma(lokasi_id):
     return render_template('bendungan/info.html', waduk=pos, tma=tma)
 
 
-@bp.route('/<lokasi_id>/operasi', methods=['GET', 'POST'])
+@bp.route('/<lokasi_id>/operasi', methods=['GET'])
 def operasi(lokasi_id):
     sampling = request.values.get('sampling')
     sampling = datetime.datetime.strptime(sampling, "%Y") if sampling else datetime.datetime.now()
@@ -222,7 +222,7 @@ def operasi(lokasi_id):
                             tanggal=tanggal)
 
 
-@bp.route('/<lokasi_id>/vnotch', methods=['GET', 'POST'])
+@bp.route('/<lokasi_id>/vnotch', methods=['GET'])
 def vnotch(lokasi_id):
     date = request.values.get('sampling')
     def_date = datetime.datetime.utcnow()
@@ -298,7 +298,7 @@ def vnotch(lokasi_id):
                             vnotch=vnotch)
 
 
-@bp.route('/<lokasi_id>/piezo', methods=['GET', 'POST'])
+@bp.route('/<lokasi_id>/piezo', methods=['GET'])
 def piezo(lokasi_id):
     date = request.values.get('sampling')
     def_date = datetime.datetime.utcnow()

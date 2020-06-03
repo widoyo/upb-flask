@@ -42,7 +42,7 @@ komponen = [
 ]
 
 
-@bp.route('/kinerja')
+@bp.route('/bendungan/kinerja')
 @login_required
 @admin_only
 def kinerja():
@@ -77,7 +77,7 @@ def kinerja():
                             kinerja=kinerja)
 
 
-@bp.route('/bendungan/kinerja/<bendungan_id>')
+@bp.route('/bendungan/<bendungan_id>/kinerja')
 @login_required
 @role_check
 def kinerja_bendungan(bendungan_id):
@@ -116,7 +116,7 @@ def kinerja_bendungan(bendungan_id):
                             foto=foto)
 
 
-@bp.route('/bendungan/kinerja/<bendungan_id>/asset', methods=['GET'])
+@bp.route('/bendungan/<bendungan_id>/asset', methods=['GET'])
 @login_required
 @petugas_only
 def asset(bendungan_id):
@@ -145,7 +145,7 @@ def asset(bendungan_id):
                             kategori=komponen)
 
 
-@bp.route('/bendungan/kinerja/<bendungan_id>/asset/add', methods=['POST'])
+@bp.route('/bendungan/<bendungan_id>/asset/add', methods=['POST'])
 @login_required
 @petugas_only
 def asset_add(bendungan_id):
@@ -179,7 +179,7 @@ def asset_add(bendungan_id):
     return redirect(url_for('admin.asset', bendungan_id=bendungan_id))
 
 
-@bp.route('/bendungan/kinerja/<bendungan_id>/asset/<asset_id>/lapor', methods=['GET', 'POST'])
+@bp.route('/bendungan/<bendungan_id>/kinerja/asset/<asset_id>/lapor', methods=['GET', 'POST'])
 @login_required
 @petugas_only
 def kinerja_lapor(bendungan_id, asset_id):
@@ -226,7 +226,7 @@ def kinerja_lapor(bendungan_id, asset_id):
                             csrf=generate_csrf())
 
 
-@bp.route('/bendungan/kinerja/<bendungan_id>/foto', methods=['POST'])
+@bp.route('/bendungan/<bendungan_id>/kinerja/foto', methods=['POST'])
 @login_required
 @petugas_only
 def kinerja_foto(bendungan_id):

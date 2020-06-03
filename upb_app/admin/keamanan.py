@@ -13,7 +13,7 @@ from upb_app.admin import bp
 # bp = Blueprint('keamanan', __name__)
 
 
-@bp.route('/keamanan')
+@bp.route('/bendungan/keamanan')
 @login_required
 def keamanan():
     if current_user.role == "2":
@@ -21,7 +21,7 @@ def keamanan():
     return redirect(url_for('admin.operasi_harian'))
 
 
-@bp.route('/bendungan/keamanan/<bendungan_id>')
+@bp.route('/bendungan/<bendungan_id>/keamanan')
 @login_required  # @petugas_only
 @role_check
 def keamanan_bendungan(bendungan_id):
@@ -68,7 +68,7 @@ def keamanan_bendungan(bendungan_id):
                             sampling_dt=sampling)
 
 
-@bp.route('/bendungan/keamanan/<bendungan_id>/vnotch', methods=['POST'])
+@bp.route('/bendungan/<bendungan_id>/keamanan/vnotch', methods=['POST'])
 @login_required  # @petugas_only
 @role_check
 def keamanan_vnotch(bendungan_id):
@@ -123,7 +123,7 @@ def keamanan_vnotch_update():
     return jsonify(result)
 
 
-@bp.route('/bendungan/keamanan/<bendungan_id>/piezo', methods=['POST'])
+@bp.route('/bendungan/<bendungan_id>/keamanan/piezo', methods=['POST'])
 @login_required  # @petugas_only
 @role_check
 def keamanan_piezo(bendungan_id):
