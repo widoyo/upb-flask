@@ -12,7 +12,7 @@ import calendar
 bp = Blueprint('bendungan', __name__)
 
 
-@bp.route('/')
+@bp.route('/', strict_slashes=False)
 def index():
     ''' Home Bendungan '''
     waduk = Bendungan.query.order_by(Bendungan.wil_sungai, Bendungan.id).all()

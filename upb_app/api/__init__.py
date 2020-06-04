@@ -3,14 +3,20 @@ from upb_app.helper import day_range
 from upb_app.models import Bendungan, ManualDaily, ManualTma, ManualPiezo, ManualVnotch
 from sqlalchemy import and_
 
+import datetime
+
 
 bp = Blueprint('api', __name__)
 
 
 @bp.route('/bendungan/periodic')
 def bendungan_periodic():
-    sampling, end = day_range(request.values.get('sampling').replace('/', '-'))
-    print(f"{sampling} to {end}")
+    if request.values.get('sampling'):
+        param = request.values.get('sampling').replace('/', '-')
+    else:
+        param = datetime.datetime.now().strftime("%Y-%m-%d")
+    sampling, end = day_range(param)
+    # print(f"{sampling} to {end}")
 
     result = []
     bendungan = Bendungan.query.all()

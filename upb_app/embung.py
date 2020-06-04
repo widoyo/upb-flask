@@ -4,7 +4,7 @@ from upb_app.models import Embung
 bp = Blueprint('embung', __name__)
 
 
-@bp.route('/')
+@bp.route('/', strict_slashes=False)
 def index():
     ''' Home Embung '''
     view = request.values.get('view')
