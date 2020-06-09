@@ -38,10 +38,6 @@ class TestCase(unittest.TestCase):
         '/admin/users'
     ]
 
-    public_api_urls = [
-        '/api/bendungan/periodic'
-    ]
-
     def setUp(self):
         # column 'content' in Raw table needs to be commented
         # or it will fail the tests
@@ -62,21 +58,11 @@ class TestCase(unittest.TestCase):
     def test_get_urls_public_status(self):
         print("### Testing URL with GET methods ###")
         for url in self.get_urls_public:
+            print(f"\ntesting url {url}")
             with app.test_request_context(url):
                 resp = self.app.get(url)
                 if resp.status != '200 OK':
                     print(f"-Error : GET METHOD request for {url} returns {resp.status} code")
-
-    def test_public_api(self):
-        print("### Testing Public API ###")
-        for url in self.public_api_urls:
-            with app.test_request_context(url):
-                resp = self.app.get(url)
-                if resp.status != '200 OK':
-                    print(f"-Error : GET METHOD request for {url} returns {resp.status} code")
-
-    def not_a_test(self):
-        print("not a test")
 
 
 if __name__ == '__main__':
