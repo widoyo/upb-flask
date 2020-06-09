@@ -237,7 +237,9 @@ def kegiatan_delete(bendungan_id):
 def pemeliharaan(bendungan_id):
     bend = Bendungan.query.get(bendungan_id)
     sampling, start, end = week_range(request.values.get('sampling'))
-    petugas = Petugas.query.filter(Petugas.bendungan_id == bend.id).all()
+    petugas = Petugas.query.filter(
+                                Petugas.bendungan_id == bend.id,
+                                Petugas.is_active == '1').all()
     is_laporan = False
 
     pemeliharaan = Pemeliharaan.query.filter(

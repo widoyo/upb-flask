@@ -245,6 +245,7 @@ class Petugas(BaseLog):
     alamat = db.Column(db.Text, nullable=True)
     kab = db.Column(db.Text, nullable=True)
     pendidikan = db.Column(db.Text, nullable=True)
+    is_active = db.Column(db.String(1))
     bendungan_id = bendungan_id = db.Column(db.Integer, db.ForeignKey('bendungan.id'), nullable=True)
 
     bendungan = relationship('Bendungan', back_populates='petugas')

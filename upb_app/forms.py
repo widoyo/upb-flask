@@ -61,7 +61,7 @@ kategori = [
     ('sedang', 'Sedang'),
     ('berat', 'Berat')
 ]
-daftar_petugas = [(f"{p.id}", p.nama) for p in Petugas.query.all()]
+daftar_petugas = [(f"{p.id}", p.nama) for p in Petugas.query.filter(Petugas.is_active == '1').all()]
 
 
 class LoginForm(FlaskForm):

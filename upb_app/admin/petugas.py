@@ -15,7 +15,7 @@ from upb_app.admin import bp
 @admin_only
 def petugas_bendungan():
     waduk = Bendungan.query.order_by(Bendungan.nama).all()
-    petugas = Petugas.query.order_by(Petugas.id).all()
+    petugas = Petugas.query.filter(Petugas.is_active == '1').order_by(Petugas.id).all()
 
     data = {}
     for w in waduk:
@@ -50,7 +50,8 @@ def petugas_bendungan_add():
                 'tgl_lahir': form.tgl_lahir.data or None,
                 'alamat': form.alamat.data or None,
                 'kab': form.kab.data or None,
-                'pendidikan': form.pendidikan.data or None
+                'pendidikan': form.pendidikan.data or None,
+                'is_active': '1'
             }
             obj = Petugas(**obj_dict)
             db.session.add(obj)
@@ -67,7 +68,7 @@ def petugas_bendungan_add():
 @admin_only
 def petugas_bendungan_del(petugas_id):
     obj = Petugas.query.get(petugas_id)
-    db.session.delete(obj)
+    petugas.is_active = '0'
     db.session.commit()
 
     flash(f"Data petugas berhasil dihapus", 'success')
@@ -81,7 +82,7 @@ def petugas_delete():
     pet_id = int(request.values.get('pet_id'))
 
     petugas = Petugas.query.get(pet_id)
-    db.session.delete(petugas)
+    petugas.is_active = '0'
     db.session.commit()
 
     return "ok"

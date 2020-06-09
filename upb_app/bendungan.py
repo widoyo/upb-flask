@@ -353,7 +353,7 @@ def piezo(lokasi_id):
 @bp.route('/petugas')
 def petugas():
     waduk = Bendungan.query.all()
-    petugas = Petugas.query.all()
+    petugas = Petugas.query.filter(Petugas.is_active == '1').all()
 
     data = {}
     for w in waduk:
