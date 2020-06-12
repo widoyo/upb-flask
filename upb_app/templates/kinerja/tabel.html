@@ -41,7 +41,7 @@
                     {% for f in fotos[1:] %}
                     <tr>
                         <td class="text-center">
-                            <img class="img-fluid" style="height: auto; width: 15rem;" src="{{ url_for('static', filename=f.url[7:]) }}">
+                            <img class="img-fluid" style="height: auto; width: 20rem;" src="{{ url_for('static', filename=f.url[7:]) }}">
                         </td>
                         <td>{{ f.keterangan }}</td>
                     </tr>
