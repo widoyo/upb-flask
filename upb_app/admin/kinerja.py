@@ -114,6 +114,41 @@ def kinerja_bendungan(bendungan_id):
                             foto=foto)
 
 
+@bp.route('/bendungan/<bendungan_id>/kinerja/tabel')
+@login_required
+@role_check
+def kinerja_bendungan_tabel(bendungan_id):
+    bend = Bendungan.query.get(bendungan_id)
+
+    kerusakan = Kerusakan.query.filter(
+                                    Kerusakan.bendungan_id == bendungan_id
+                                ).order_by(
+                                    Kerusakan.tgl_tanggapan.desc(),
+                                    Kerusakan.tgl_lapor.desc()
+                                ).all()
+    ids = []
+    komponens = []
+    foto = {}
+    for ker in kerusakan:
+        ids.append(ker.id)
+        if ker.komponen not in komponens:
+            komponens.append(ker.komponen)
+        for f in ker.fotos:
+            if ker.id not in foto:
+                foto[ker.id] = []
+            foto[ker.id].append({
+                'id': f.id,
+                'url': f.url[7:],
+                'keterangan': f.keterangan
+            })
+
+    return render_template('kinerja/tabel.html',
+                            name=bend.name,
+                            bend_id=bend.id,
+                            kerusakan=kerusakan,
+                            komponens=komponens)
+
+
 @bp.route('/bendungan/<bendungan_id>/asset', methods=['GET'])
 @login_required
 @petugas_only

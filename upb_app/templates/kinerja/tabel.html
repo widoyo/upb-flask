@@ -1,0 +1,58 @@
+{% extends 'master/base_adm.html' %}
+
+{% set title = "Kinerja" %}
+
+{% block css %}
+
+{% endblock %}
+
+{% block content %}
+    <div class="container">
+        <h1>Kerusakan Asset {{ name }}</h1>
+        <table class="table table-bordered table-hover">
+            <thead>
+                <tr>
+                    <th rowspan="2" class="align-middle text-center">No</th>
+                    <th rowspan="2" class="align-middle text-center">Nama Asset</th>
+                    <th rowspan="2" class="align-middle text-center">Uraian</th>
+                    <th colspan="2" class="align-middle text-center">Dokumentasi</th>
+                </tr>
+                <tr>
+                    <th class="align-middle text-center">Foto</th>
+                    <th class="align-middle text-center">Keterangan</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for k in kerusakan %}
+                {% with fotos = k.fotos %}
+                <tr>
+                    <td rowspan="{{ fotos|length or 1 }}">{{ loop.index }}</td>
+                    <td rowspan="{{ fotos|length or 1 }}">{{ k.asset.nama }}</td>
+                    <td rowspan="{{ fotos|length or 1 }}">{{ k.uraian }}</td>
+                    {% if fotos %}
+                    <td class="text-center">
+                        <img class="img-fluid" style="height: auto; width: 15rem;" src="{{ url_for('static', filename=fotos.0.url[7:]) }}">
+                    </td>
+                    <td>{{ fotos.0.keterangan }}</td>
+                    {% else %}
+                    <td colspan="2" class="text-center"><i>Belum Ada</i></td>
+                    {% endif %}
+                </tr>
+                    {% for f in fotos[1:] %}
+                    <tr>
+                        <td class="text-center">
+                            <img class="img-fluid" style="height: auto; width: 15rem;" src="{{ url_for('static', filename=f.url[7:]) }}">
+                        </td>
+                        <td>{{ f.keterangan }}</td>
+                    </tr>
+                    {% endfor %}
+                {% endwith %}
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+{% endblock %}
+
+{% block js %}
+
+{% endblock %}
