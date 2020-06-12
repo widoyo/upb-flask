@@ -71,7 +71,7 @@
                     <div class="col-md-7">
                         {% if k.kerusakan %}
                             <a href="{{ url_for('admin.kinerja_bendungan', bendungan_id=k.bendungan.id) }}">
-                                {{ k.kerusakan.0.komponen }}
+                                {{ k.kerusakan.0.asset.nama }}
                                 (<span class="hari" data-tgl="{{ k.kerusakan.0.tgl_lapor }}"></span>)
                                 {% if k.kerusakan|length - 1 != 0 %}
                                     dan {{ k.kerusakan|length - 1 }} kerusakan lainnya . . .
