@@ -205,6 +205,8 @@ class Asset(BaseLog):
     bmn = db.Column(db.Text, nullable=True)
     bendungan_id = db.Column(db.Integer, db.ForeignKey('bendungan.id'), nullable=True)
 
+    kerusakan = relationship('Kerusakan', back_populates='asset')
+
 
 class Embung(BaseLog):
     __tablename__ = 'embung'
@@ -350,6 +352,8 @@ class Kerusakan(BaseLog):
     bendungan_id = db.Column(db.Integer, db.ForeignKey('bendungan.id'), nullable=True)
     asset_id = db.Column(db.Integer, db.ForeignKey('asset.id'), nullable=True)
     upb_id = db.Column(db.Integer, nullable=True)
+
+    asset = relationship('Asset', back_populates='kerusakan')
 
     @property
     def fotos(self):
