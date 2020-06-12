@@ -63,16 +63,43 @@
                     <hr class="d-none d-md-block d-lg-none">
                 </div>
                 <div class="col-md-3">
-                    <p>{{ k.uraian }}</p>
+                    <p>
+                        {% if user.bendungan_id == bend_id %}
+                        <a data-url="{{ url_for('admin.kinerja_update') }}"
+                            class="editable"
+                            data-name="uraian"
+                            data-type="text"
+                            data-title="Uraian Kerusakan"
+                            data-pk="{{ k.id }}">
+                            {{ k.uraian }}
+                        </a>
+                        {% else %}
+                        {{ k.uraian }}
+                        {% endif %}
+                    </p>
                     <p><small>(<span class="hari" data-tgl="{{ k.tgl_lapor }}"></span>)</small></p>
                     <hr class="d-none d-md-block d-lg-none">
                 </div>
                 <div class="col-md-3">
                     {% if k.tanggapan %}
+                        {% if user.role in ['1', '4'] %}
+                        <p>
+                            <a data-url="{{ url_for('admin.kinerja_update') }}"
+                                class="editable"
+                                data-name="tanggapan"
+                                data-type="text"
+                                data-title="Tanggapan UPB"
+                                data-pk="{{ k.id }}">
+                                {{ k.tanggapan }}
+                            </a>
+                        </p>
+                        {% else %}
                         <p>{{ k.tanggapan }}</p>
+                        {% endif %}
+
                         <p><small>(<span class="hari" data-tgl="{{ k.tgl_tanggapan }}"></span>)</small></p>
                     {% else %}
-                        <p>UPB Belum Menanggapi</p>
+                        <p><i>UPB Belum Menanggapi</i></p>
                         {% if user.role == '1' %}
                             <p>
                                 <a data-toggle="modal"
@@ -91,7 +118,7 @@
                         <p>{{ k.tindak_lanjut }}</p>
                         <p><small>(<span class="hari" data-tgl="{{ k.tgl_tindak_lanjut }}"></span>)</small></p>
                     {% else %}
-                        <p>Belum ada tindak lanjut</p>
+                        <p><i>Belum ada tindak lanjut</i></p>
                     {% endif %}
                     <hr class="d-none d-md-block d-lg-none">
                 </div>
@@ -126,16 +153,24 @@
                               </div>
                               <div class="modal-body">
                                   <div class="form-group">
-                                      <img class="img-responsive" src="{{ url_for('static', filename=f.url) }}" id="foto-modal-show">
+                                      <img class="img-fluid" src="{{ url_for('static', filename=f.url) }}" id="foto-modal-show">
                                       <div style="position: absolute;top: 70%;left: 0;width: 100%;background-color: rgba(255, 255, 255, 0.6);">
                                           <p class="text-center">{{ f.keterangan }}</p>
                                       </div>
                                   </div>
                               </div>
+                              <div class="modal-footer">
+                                  {% if user.bendungan_id == bend_id %}
+                                      <!-- delete button -->
+                                      <input type="button" value="Hapus" onclick="deleteFoto({{ f.id }})" class="btn btn-danger">
+                                  {% endif %}
+                                  <button type="button" class="btn btn-secondary" data-dismiss="modal">Tutup</button>
+                              </div>
                             </div>
                           </div>
                         </div>
                     {% endfor %}
+                    {% if user.bendungan_id == bend_id %}
                     <li>
                         <hr class="d-md-none d-lg-block">
                         <a class="ml-2"
@@ -145,6 +180,7 @@
                             <big><i class="fas fa-plus mr-2"></i></big>
                         </a>
                     </li>
+                    {% endif %}
                 </ul>
             </div>
         </div>
@@ -302,6 +338,21 @@
             );
         }
     };
+
+    function deleteFoto(foto_id){
+        console.log(foto_id);
+        var result = confirm("Anda yakin ingin menghapus foto ini?");
+        if (result) {
+            $.post("{{ url_for('admin.kinerja_delete_foto', bendungan_id=bend_id) }}", {foto_id:foto_id}).done(function(result){
+                var a = result;
+                if(a == "ok"){
+                    alert("Berhasil dihapus");
+                    location.reload();
+                }
+            });
+        }
+
+    }
 
     function tanggapan_upb(kerusakan_id,) {
         if ($(`input[name="tanggapan-${kerusakan_id}"]`).val() == ''){

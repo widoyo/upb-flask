@@ -250,10 +250,36 @@ class Petugas(BaseLog):
 
     bendungan = relationship('Bendungan', back_populates='petugas')
     pemeliharaan_petugas = relationship('PemeliharaanPetugas', back_populates='petugas')
+    kinerja_nilai = relationship('KinerjaNilai', back_populates='petugas')
 
     @property
     def birthdate(self):
         return None if not self.tgl_lahir else self.tgl_lahir.strftime("%-d %b %Y")
+
+    def get_kinerja(self, sampling):
+        sampling = sampling.strftime("%Y-%m-01")
+
+        kinerja = KinerjaNilai.query.filter(
+                                        KinerjaNilai.sampling == sampling,
+                                        KinerjaNilai.petugas_id == self.id).all()
+        if not kinerja:
+            return None, None, None
+        else:
+            nilai = sum([k.nilai for k in kinerja])
+            nilai_max = sum([k.kinerja_komponen.nilai_max for k in kinerja])
+            return nilai, nilai_max, self.get_kinerja_str(nilai)
+
+    def get_kinerja_str(self, nilai):
+        if nilai > 90:
+            return "Sangat Baik"
+        elif nilai > 80:
+            return "Baik"
+        elif nilai > 70:
+            return "Cukup"
+        elif nilai > 54:
+            return "Kurang"
+        else:
+            return "Buruk"
 
 
 class Bendungan(BaseLog):
@@ -324,6 +350,12 @@ class Kerusakan(BaseLog):
     bendungan_id = db.Column(db.Integer, db.ForeignKey('bendungan.id'), nullable=True)
     asset_id = db.Column(db.Integer, db.ForeignKey('asset.id'), nullable=True)
     upb_id = db.Column(db.Integer, nullable=True)
+
+    @property
+    def fotos(self):
+        return Foto.query.filter(
+                            Foto.obj_type == 'kerusakan',
+                            Foto.obj_id == self.id).all()
 
 
 class BagianEmbung(BaseLog):
@@ -453,6 +485,39 @@ class PemeliharaanPetugas(BaseLog):
 
     pemeliharaan = relationship('Pemeliharaan', back_populates='pemeliharaan_petugas')
     petugas = relationship('Petugas', back_populates='pemeliharaan_petugas')
+
+
+class KinerjaKomponen(BaseLog):
+    __tablename__ = 'kinerja_komponen'
+
+    id = db.Column(db.Integer, primary_key=True)
+    jabatan = db.Column(db.Text)
+    deskripsi = db.Column(db.Text)
+    nilai_max = db.Column(db.Float)
+    input_max = db.Column(db.Float)
+    obj_type = db.Column(db.Text)   # endungan or embung
+
+    kinerja_nilai = relationship('KinerjaNilai', back_populates='kinerja_komponen')
+
+
+class KinerjaNilai(BaseLog):
+    __tablename__ = 'kinerja_nilai'
+
+    id = db.Column(db.Integer, primary_key=True)
+    sampling = db.Column(db.DateTime)
+    nilai = db.Column(db.Float)
+    kinerja_komponen_id = db.Column(db.Integer, db.ForeignKey('kinerja_komponen.id'))
+    petugas_id = db.Column(db.Integer, db.ForeignKey('petugas.id'))
+
+    kinerja_komponen = relationship('KinerjaKomponen', back_populates='kinerja_nilai')
+    petugas = relationship('Petugas', back_populates='kinerja_nilai')
+
+    __table_args__ = (db.UniqueConstraint('sampling', 'kinerja_komponen_id', 'petugas_id',
+                                          name='sampling_kinerja_komponen_petugas'),)
+
+    def set_nilai(self, nilai):
+        nilai = min(max(0, nilai), self.kinerja_komponen.input_max)
+        self.nilai = (nilai/self.kinerja_komponen.input_max) * self.kinerja_komponen.nilai_max
 
 
 class Rencana(BaseLog):

@@ -1,0 +1,182 @@
+{% extends 'master/base_adm.html' %}
+
+{% set title = "Petugas" %}
+
+{% block css %}
+<link rel="stylesheet" href="{{ url_for('static', filename='css/bootstrap-datepicker.css') }}">
+<style>
+    .datepicker {
+        z-index: 10000 !important;
+        display: inherit;
+    }
+    .prev:before {
+        content: "\2190 ";
+    }
+    .next:before {
+        content: "\2192 ";
+    }
+</style>
+<link href="{{ url_for('static', filename='css/bootstrap-editable.css') }}" rel="stylesheet"/>
+{% endblock %}
+
+{% block content %}
+    <div class="container">
+        <h1>
+            Komponen Kinerja
+            <a data-toggle="collapse" href="#komponen" class="btn btn-primary" role="button" aria-expanded="false" aria-controls="komponen">
+              Tambah Komponen
+            </a>
+        </h1>
+        <div class="collapse" id="komponen">
+            <div class="row">
+                <div class="col-md-6">
+                    <hr>
+                    <form action="{{ url_for('admin.kinerja_komponen_add') }}" method="POST">
+                        <input id="csrf_token" name="csrf_token" type="hidden" value="{{ csrf }}">
+                        <input id="obj_type" name="obj_type" type="hidden" value="bendungan">
+                        <div class="form-group">
+                            <label class="form-text" for="deskripsi"><b>Deskripsi</b></label>
+                            <textarea class="form-control" name="deskripsi" id="deskripsi" required value=""></textarea>
+                            <small id="deskripsihelp" class="form-text text-muted">penjelasan komponen kinerja (wajib diisi)</small>
+                        </div>
+                        <div class="form-group">
+                            <label class="form-text" for="jabatan"><b>Jabatan</b></label>
+                            <select id="jabatan" name="jabatan" class="form-control" required aria-describedby="jabhelp">
+                                {% for t in tugas %}
+                                <option value="{{ t }}" {% if loop.index == 1 %}selected{% endif %}>{{ t.title() }}</option>
+                                {% endfor %}
+                            </select>
+                            <small id="jabhelp" class="form-text text-muted">(wajib diisi)</small>
+                        </div>
+                        <div class="row">
+                            <div class="col-md-6 form-group">
+                                <label class="form-text" for="nilai_max"><b>Target</b></label>
+                                <input class="form-control" type="number" name="nilai_max" id="nilai_max" required step="1" aria-describedby="nilai_maxhelp">
+                                <small id="nilai_maxhelp" class="form-text text-muted">total nilai yg didapatkan dari komponen ini(wajib diisi)</small>
+                            </div>
+                            <div class="col-md-6 form-group">
+                                <label class="form-text" for="input_max"><b>Maksimal Input</b></label>
+                                <input class="form-control" type="number" name="input_max" id="input_max" required step="1" aria-describedby="input_maxhelp">
+                                <small id="input_maxhelp" class="form-text text-muted">nilai input maksimal untuk mendapatkan nilai target (wajib diisi)</small>
+                            </div>
+                        </div>
+                        <div>
+                            <button type="submit" name="submit" class="btn btn-primary my-1 mr-2">Tambah</button>
+                            <a data-toggle="collapse" href="#petugas" role="button" aria-expanded="false" aria-controls="komponen">batal</a>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+        <hr>
+        <div>
+            {% for j, komp in komponen.items() %}
+            <i class="fa fa-user"></i>
+            <b>{{ j.upper() }}</b><br>
+            <table class="table table-bordered">
+                {% if komp %}
+                <thead>
+                    <tr>
+                        <th>Deskripsi</th>
+                        <th>Target</th>
+                        <th>Input Maksimal</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for k in komp %}
+                    <tr>
+                        <td>{{ k.deskripsi }}</td>
+                        <td align="right">{{ k.nilai_max }}%</td>
+                        <td align="right">{{ k.input_max }}</td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+                {% else %}
+                ---- Belum Ada ----
+                {% endif %}
+            </table>
+            {% endfor %}
+        </div>
+    </div>
+{% endblock %}
+
+{% block js %}
+<script src="{{ url_for('static', filename='js/bootstrap-editable.min.js') }}"></script>
+<script>
+    function deletePetugas(pet_id){
+        var result = confirm("Anda yakin ingin menghapus data petugas ini?");
+        if (result) {
+            $.post("{{ url_for('admin.petugas_delete') }}", {pet_id:pet_id}).done(function(result){
+                var a = result;
+                if(a == "ok"){
+                    alert("Berhasil dihapus");
+                    location.reload();
+                }
+            });
+        }
+
+    }
+
+    $(document).ready(function() {
+        // resolve package confict
+        let datepicker = $.fn.datepicker.noConflict();
+        $.fn.bootstrapDP = datepicker;
+
+        $('#tgl_lahir').datepicker({
+            todayHighlight: true,
+            autoclose: true,
+            format:  'yyyy-mm-dd'
+        });
+        $('#tgl_lahir').on('changeDate', function () {
+            let date = $('#tgl_lahir').datepicker('getFormattedDate');
+            $('#tgl_lahir').text(moment(date).format('DD MMM YYYY'));
+            $('#datepicker').attr('value', moment(date).format('YYYY-MM-DD'));
+            $('.datepicker').hide();
+        });
+
+        let tgls = document.querySelectorAll("#tgl");
+        tgls.forEach(function(el){
+            console.log(el.value);
+            el.innerText = moment(el.innerText).format('MMMM YYYY');
+        });
+
+        $('#search').on('keyup change', function() {
+            let query = this.value;
+            let bends = document.querySelectorAll("#bendungan");
+            bends.forEach(function(el){
+                let nama = el.querySelector("#nama").innerHTML;
+                nama = nama.toLowerCase()
+                console.log(query);
+                if (!nama.includes(query)) {
+                    el.style.display = "none";
+                }
+                if (!query) {
+                    el.style.display = "block";
+                }
+            });
+        });
+
+        //turn to popup mode
+        $.fn.editable.defaults.mode = 'popup';
+        $(document).ready(function() {
+            $('.editable').editable({
+                error: function(response, newValue) {
+                    if (response.status === 500) {
+                        return 'Terjadi error, gagal update data.';
+                    }
+                 }
+            });
+            $('.tugas').editable({
+                prepend: "pilih",
+                source: [
+                    {value: 'Koordinator', text: 'Koordinator'},
+                    {value: 'Keamanan', text: 'Keamanan'},
+                    {value: 'Pemantauan', text: 'Pemantauan'},
+                    {value: 'Operasi', text: 'Operasi'},
+                    {value: 'Pemeliharaan', text: 'Pemeliharaan'}
+                ]
+            });
+        });
+    });
+</script>
+{% endblock %}

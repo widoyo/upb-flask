@@ -62,6 +62,14 @@ kategori = [
     ('berat', 'Berat')
 ]
 daftar_petugas = [(f"{p.id}", p.nama) for p in Petugas.query.filter(Petugas.is_active == '1').all()]
+kinerja_petugas = [
+    ("all", "All"),
+    ("koordinator", "Koordinator"),
+    ("keamanan", "Keamanan"),
+    ("pemantauan", "Pemantauan"),
+    ("operasi", "Operasi"),
+    ("pemeliharaan", "Pemeliharaan")
+]
 
 
 class LoginForm(FlaskForm):
@@ -222,4 +230,13 @@ class PencapaianEmbung(FlaskForm):
     selesai = StringField('Selesai', validators=[DataRequired()])
     pencapaian = StringField('Pencapaian Kerja', validators=[DataRequired()])
     kendala = StringField('Kendala', default="Tidak Ada")
+    submit = SubmitField('Kirim')
+
+
+class AddKinerjaKomponen(FlaskForm):
+    deskripsi = StringField('Deskripsi', validators=[DataRequired()])
+    jabatan = SelectField("Jabatan", choices=kinerja_petugas, validators=[DataRequired()], default=kinerja_petugas[0][0])
+    nilai_max = DecimalField('Target', validators=[DataRequired()])
+    input_max = DecimalField('Nilai Max', validators=[DataRequired()])
+    obj_type = StringField('Obj Type', validators=[DataRequired()])
     submit = SubmitField('Kirim')

@@ -4,10 +4,11 @@ from flask_wtf.csrf import generate_csrf
 from upb_app.admin.kegiatan import save_image
 from upb_app.models import Kerusakan, Bendungan, Asset, Foto
 from upb_app.forms import LaporKerusakan, AddAsset
-from upb_app import db, admin_only, petugas_only, role_check
+from upb_app import app, db, admin_only, petugas_only, role_check
 from sqlalchemy.exc import IntegrityError
 import datetime
 import base64
+import os
 
 from upb_app.admin import bp
 # bp = Blueprint('kinerja', __name__)
@@ -71,7 +72,7 @@ def kinerja():
                 'nama': bend.name,
                 'id': bend.id
             }
-    print(kerusakan)
+    # print(kerusakan)
 
     return render_template('kinerja/index.html',
                             kinerja=kinerja)
@@ -91,19 +92,16 @@ def kinerja_bendungan(bendungan_id):
                                 ).all()
     ids = []
     komponens = []
+    foto = {}
     for ker in kerusakan:
         ids.append(ker.id)
         if ker.komponen not in komponens:
             komponens.append(ker.komponen)
-
-    foto = {}
-    fotos = Foto.query.filter(Foto.obj_type == 'kerusakan').all()
-    for f in fotos:
-        fid = f.obj_id
-        if fid in ids:
-            if fid not in foto:
-                foto[fid] = []
-            foto[fid].append({
+        for f in ker.fotos:
+            if ker.id not in foto:
+                foto[ker.id] = []
+            foto[ker.id].append({
+                'id': f.id,
                 'url': f.url[7:],
                 'keterangan': f.keterangan
             })
@@ -253,6 +251,25 @@ def kinerja_foto(bendungan_id):
         print(e)
         flash(f"Error : {e}", 'danger')
         return redirect(url_for('admin.kinerja_bendungan', bendungan_id=bendungan_id))
+
+
+@bp.route('/bendungan/<bendungan_id>/kinerja/foto/del', methods=['POST'])
+@login_required
+@role_check
+def kinerja_delete_foto(bendungan_id):
+    foto_id = int(request.values.get('foto_id'))
+    print(f"ID Foto : {foto_id}")
+
+    foto = Foto.query.get(foto_id)
+    filepath = os.path.join(app.config['SAVE_DIR'], foto.url)
+
+    db.session.delete(foto)
+    db.session.commit()
+
+    if os.path.exists(filepath):
+        os.remove(filepath)
+
+    return "ok"
 
 
 @bp.route('/bendungan/kinerja/<ker_id>/tanggapan', methods=['POST'])

@@ -1,0 +1,272 @@
+{% extends 'master/base_adm.html' %}
+
+{% set title = "Petugas" %}
+
+{% block css %}
+<link rel="stylesheet" href="{{ url_for('static', filename='css/bootstrap-datepicker.css') }}">
+<style>
+    .datepicker {
+        z-index: 10000 !important;
+        display: inherit;
+    }
+    .prev:before {
+        content: "\2190 ";
+    }
+    .next:before {
+        content: "\2192 ";
+    }
+</style>
+<link href="{{ url_for('static', filename='css/bootstrap-editable.css') }}" rel="stylesheet"/>
+{% endblock %}
+
+{% block content %}
+    <div class="container">
+        <h1>
+            Kinerja Petugas Bendungan
+        </h1>
+        <h4><i class="fas fa-calendar"></i> <span id="tgl">{{ sampling }}</span></h4>
+        <div class="form-group">
+            <input type="text" class="form-control" id="search" placeholder="Cari Bendungan">
+        </div>
+        {% for id, d in data.items() %}
+        <div class="card border-secondary mb-3" id="bendungan">
+            <div class="card-header">
+              <b><span class="nama" id="nama">{{ d.nama }}</span></b>
+            </div>
+            <div class="card-body">
+                {% if d.is_empty %}
+                <b>Tidak Ada Petugas</b>
+                {% else %}
+                <i class="fa fa-user"></i>
+                <b>Koordinator</b><br>
+                <table class="table table-bordered">
+                    <tbody>
+                        <tr>
+                            <td>{{ d.koordinator.nama }}</td>
+                            <td align="center">
+                                {% with nilai, maks, ket = d.koordinator.get_kinerja(sampling) %}
+                                {% if nilai %}
+                                <span>{{ nilai }}/{{ maks }} ({{ ket }})</span>
+                                <i class="fas fa-pen"></i>
+                                {% else %}
+
+                                <a data-toggle="modal" href="#form-nilai-{{ d.koordinator.id }}" class="btn btn-primary" role="button" aria-expanded="false" aria-controls="form-nilai-{{ d.koordinator.id }}">
+                                  Penilaian
+                                </a>
+
+                                <!-- Modal Penilaian -->
+                                <div class="modal fade" id="form-nilai-{{ d.koordinator.id }}" tabindex="-1" role="dialog" aria-labelledby="form-nilai-{{ d.koordinator.id }}" aria-hidden="true">
+                                  <div class="modal-dialog" role="document">
+                                    <div class="modal-content">
+                                      <form action="{{ url_for('admin.petugas_bendungan_kinerja_add') }}" method="post">
+                                          <input id="sampling" name="sampling" type="hidden" value="{{ sampling.strftime('%Y-%m') }}">
+                                          <input id="petugas_id" name="petugas_id" type="hidden" value="{{ d.koordinator.id }}">
+                                          <div class="modal-header">
+                                            <h5 class="modal-title" id="form-nilai-{{ d.koordinator.id }}">{{ d.koordinator.nama }} ({{ d.koordinator.bendungan.name }})</h5>
+                                            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                              <span aria-hidden="true">&times;</span>
+                                            </button>
+                                          </div>
+                                          <div class="modal-body">
+                                              <h6><b>SIKAP KERJA</b></h6>
+                                              {% for k in komponen['all'] %}
+                                              <div class="form-group">
+                                                  <label class="form-text" for="komponen-{{ k.id }}"><i>{{ k.deskripsi }}</i></label>
+                                                  <input class="form-control" type="number" name="komponen-{{ k.id }}" id="komponen-{{ k.id }}" step="0.1" aria-describedby="kinerjahelp">
+                                                  <small id="kinerjahelp" class="form-text text-muted">Input Maksimal = {{ k.input_max }}</small>
+                                              </div>
+                                              {% endfor %}
+                                              <hr>
+                                              <h6><b>KINERJA PELAYANAN</b></h6>
+                                              <p><b>Koordinator</b></p>
+                                              {% for k in komponen[d.koordinator.tugas.lower().strip()] %}
+                                              <div class="form-group">
+                                                  <label class="form-text" for="komponen-{{ k.id }}"><i>{{ k.deskripsi }}</i></label>
+                                                  <input class="form-control" type="number" name="komponen-{{ k.id }}" id="komponen-{{ k.id }}" step="0.1" aria-describedby="kinerjahelp">
+                                                  <small id="kinerjahelp" class="form-text text-muted">Input Maksimal = {{ k.input_max }}</small>
+                                              </div>
+                                              {% endfor %}
+                                          </div>
+                                          <div class="modal-footer">
+                                              <!-- <input type="button" value="Kirim" onclick="" class="btn btn-primary"> -->
+                                              <input type="submit" name="submit" value="Kirim" class="btn btn-primary">
+                                              <button type="button" class="btn btn-danger" data-dismiss="modal">Batal</button>
+                                          </div>
+                                      </form>
+                                    </div>
+                                  </div>
+                                </div>
+                                {% endif %}
+                                {% endwith %}
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+                {% for t, petugas in d.petugas.items() %}
+                    {% if petugas %}
+                    <i class="fa fa-user"></i>
+                    <b>{{ t.title() }}</b><br>
+                    <table class="table table-bordered">
+                        <tbody>
+                            {% for p in petugas %}
+                            <tr>
+                                <td>{{ p.nama }}</td>
+                                <td align="center">
+                                    {% with nilai, maks, ket = p.get_kinerja(sampling) %}
+                                    {% if nilai %}
+                                    <span>{{ nilai }}/{{ maks }} ({{ ket }})</span>
+                                    <i class="fas fa-pen"></i>
+                                    {% else %}
+
+                                    <a data-toggle="modal" href="#form-nilai-{{ p.id }}" class="btn btn-primary" role="button" aria-expanded="false" aria-controls="form-nilai-{{ p.id }}">
+                                      Penilaian
+                                    </a>
+
+                                    <!-- Modal Penilaian -->
+                                    <div class="modal fade" id="form-nilai-{{ p.id }}" tabindex="-1" role="dialog" aria-labelledby="form-nilai-{{ p.id }}" aria-hidden="true">
+                                      <div class="modal-dialog" role="document">
+                                        <div class="modal-content">
+                                          <form action="{{ url_for('admin.petugas_bendungan_kinerja_add') }}" method="post">
+                                              <input id="sampling" name="sampling" type="hidden" value="{{ sampling.strftime('%Y-%m') }}">
+                                              <input id="petugas_id" name="petugas_id" type="hidden" value="{{ p.id }}">
+                                              <div class="modal-header">
+                                                <h5 class="modal-title" id="form-nilai-{{ p.id }}">{{ p.nama }} ({{ p.bendungan.name }})</h5>
+                                                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                                  <span aria-hidden="true">&times;</span>
+                                                </button>
+                                              </div>
+                                              <div class="modal-body">
+                                                  <h6><b>SIKAP KERJA</b></h6>
+                                                  {% for k in komponen['all'] %}
+                                                  <div class="form-group">
+                                                      <label class="form-text" for="komponen-{{ k.id }}"><i>{{ k.deskripsi }}</i></label>
+                                                      <input class="form-control" type="number" name="komponen-{{ k.id }}" id="komponen-{{ k.id }}" step="0.1" aria-describedby="kinerjahelp">
+                                                      <small id="kinerjahelp" class="form-text text-muted">Input Maksimal = {{ k.input_max }}</small>
+                                                  </div>
+                                                  {% endfor %}
+                                                  <hr>
+                                                  <h6><b>KINERJA PELAYANAN</b></h6>
+                                                  <p><b>{{ p.tugas.title().strip() }}</b></p>
+                                                  {% for k in komponen[p.tugas.lower().strip()] %}
+                                                  <div class="form-group">
+                                                      <label class="form-text" for="komponen-{{ k.id }}"><i>{{ k.deskripsi }}</i></label>
+                                                      <input class="form-control" type="number" name="komponen-{{ k.id }}" id="komponen-{{ k.id }}" step="0.1" aria-describedby="kinerjahelp">
+                                                      <small id="kinerjahelp" class="form-text text-muted">Input Maksimal = {{ k.input_max }}</small>
+                                                  </div>
+                                                  {% endfor %}
+                                              </div>
+                                              <div class="modal-footer">
+                                                  <!-- <input type="button" value="Kirim" onclick="" class="btn btn-primary"> -->
+                                                  <input type="submit" name="submit" value="Kirim" class="btn btn-primary">
+                                                  <button type="button" class="btn btn-danger" data-dismiss="modal">Batal</button>
+                                              </div>
+                                          </form>
+                                        </div>
+                                      </div>
+                                    </div>
+                                    {% endif %}
+                                    {% endwith %}
+                                </td>
+                            </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                    {% endif %}
+                {% endfor %}
+                {% endif %}
+            </div>
+        </div>
+        {% endfor %}
+        <!-- <a data-url="{{ url_for('admin.petugas_update') }}"
+            class="editable"
+            data-name="nama"
+            data-type="text"
+            data-title="Nama"
+            data-pk="1">
+
+        </a> -->
+    </div>
+{% endblock %}
+
+{% block js %}
+<script src="{{ url_for('static', filename='js/moment.min.js') }}"></script>
+<script src="{{ url_for('static', filename='js/id.js') }}"></script>
+<script src="{{ url_for('static', filename='js/bootstrap-editable.min.js') }}"></script>
+<script src="{{ url_for('static', filename='js/bootstrap-datepicker.min.js') }}"></script>
+<script>
+    function deletePetugas(pet_id){
+        var result = confirm("Anda yakin ingin menghapus data petugas ini?");
+        if (result) {
+            $.post("{{ url_for('admin.petugas_delete') }}", {pet_id:pet_id}).done(function(result){
+                var a = result;
+                if(a == "ok"){
+                    alert("Berhasil dihapus");
+                    location.reload();
+                }
+            });
+        }
+
+    }
+
+    $(document).ready(function() {
+        // resolve package confict
+        let datepicker = $.fn.datepicker.noConflict();
+        $.fn.bootstrapDP = datepicker;
+
+        $('#tgl_lahir').datepicker({
+            todayHighlight: true,
+            autoclose: true,
+            format:  'yyyy-mm-dd'
+        });
+        $('#tgl_lahir').on('changeDate', function () {
+            let date = $('#tgl_lahir').datepicker('getFormattedDate');
+            $('#tgl_lahir').text(moment(date).format('DD MMM YYYY'));
+            $('#datepicker').attr('value', moment(date).format('YYYY-MM-DD'));
+            $('.datepicker').hide();
+        });
+
+        let tgls = document.querySelectorAll("#tgl");
+        tgls.forEach(function(el){
+            console.log(el.value);
+            el.innerText = moment(el.innerText).format('MMMM YYYY');
+        });
+
+        $('#search').on('keyup change', function() {
+            let query = this.value;
+            let bends = document.querySelectorAll("#bendungan");
+            bends.forEach(function(el){
+                let nama = el.querySelector("#nama").innerHTML;
+                nama = nama.toLowerCase()
+                console.log(query);
+                if (!nama.includes(query)) {
+                    el.style.display = "none";
+                } else {
+                    el.style.display = "block";
+                }
+            });
+        });
+
+        //turn to popup mode
+        $.fn.editable.defaults.mode = 'popup';
+        $(document).ready(function() {
+            $('.editable').editable({
+                error: function(response, newValue) {
+                    if (response.status === 500) {
+                        return 'Terjadi error, gagal update data.';
+                    }
+                 }
+            });
+            $('.tugas').editable({
+                prepend: "pilih",
+                source: [
+                    {value: 'Koordinator', text: 'Koordinator'},
+                    {value: 'Keamanan', text: 'Keamanan'},
+                    {value: 'Pemantauan', text: 'Pemantauan'},
+                    {value: 'Operasi', text: 'Operasi'},
+                    {value: 'Pemeliharaan', text: 'Pemeliharaan'}
+                ]
+            });
+        });
+    });
+</script>
+{% endblock %}
