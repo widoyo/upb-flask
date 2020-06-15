@@ -136,7 +136,7 @@ def petugas_bendungan_kinerja():
         else:
             data[p.bendungan.id]['petugas'][p.tugas.lower().strip()].append(p)
 
-    kinerjakomponen = KinerjaKomponen.query.all()
+    kinerjakomponen = KinerjaKomponen.query.filter(KinerjaKomponen.is_active=='1').all()
     komponen = {
         'all': [],
         'koordinator': [],
@@ -245,7 +245,7 @@ def petugas_bendungan_kinerja_detail():
         else:
             data['sikap'].append(k)
 
-    kinerjakomponen = KinerjaKomponen.query.all()
+    kinerjakomponen = KinerjaKomponen.query.filter(KinerjaKomponen.is_active=='1').all()
     komponen = {
         'all': [],
         'koordinator': [],
@@ -277,7 +277,7 @@ def petugas_bendungan_komponen():
         'pemantauan',
         'keamanan'
     ]
-    all_komponen = KinerjaKomponen.query.all()
+    all_komponen = KinerjaKomponen.query.filter(KinerjaKomponen.is_active=='1').all()
     komponen = {}
     for t in tugas:
         komponen[t] = []
@@ -303,10 +303,24 @@ def kinerja_komponen_add():
             jabatan=form.jabatan.data,
             nilai_max=form.nilai_max.data,
             input_max=form.input_max.data,
-            obj_type=form.obj_type.data
+            obj_type=form.obj_type.data,
+            is_active='1'
         )
         db.session.add(new_obj)
         db.session.commit()
 
     flash(f"Komponen kinerja petugas berhasil ditambah", 'success')
     return redirect(url_for('admin.petugas_bendungan_komponen'))
+
+
+@bp.route('/bendungan/petugas/kinerja/komponen/del', methods=['POST'])
+@login_required
+@admin_only
+def kinerja_komponen_del():
+    komponen_id = request.values.get('komponen_id')
+
+    komponen = KinerjaKomponen.query.get(komponen_id)
+    komponen.is_active = '0'
+    db.session.commit()
+
+    return "ok"

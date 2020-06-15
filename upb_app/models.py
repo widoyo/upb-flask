@@ -509,6 +509,7 @@ class KinerjaKomponen(BaseLog):
     nilai_max = db.Column(db.Float)
     input_max = db.Column(db.Float)
     obj_type = db.Column(db.Text)   # endungan or embung
+    is_active = db.Column(db.String(1))
 
     kinerja_nilai = relationship('KinerjaNilai', back_populates='kinerja_komponen')
 

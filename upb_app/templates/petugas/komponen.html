@@ -80,6 +80,7 @@
                         <th>Deskripsi</th>
                         <th>Target</th>
                         <th>Input Maksimal</th>
+                        <th></th>
                     </tr>
                 </thead>
                 <tbody>
@@ -88,6 +89,9 @@
                         <td>{{ k.deskripsi }}</td>
                         <td align="right">{{ k.nilai_max }}%</td>
                         <td align="right">{{ k.input_max }}</td>
+                        <td class="text-center">
+                            <a onclick="deactivate({{ k.id }})" class="btn btn-sm btn-danger">Deactivate</a>
+                        </td>
                     </tr>
                     {% endfor %}
                 </tbody>
@@ -103,10 +107,10 @@
 {% block js %}
 <script src="{{ url_for('static', filename='js/bootstrap-editable.min.js') }}"></script>
 <script>
-    function deletePetugas(pet_id){
-        var result = confirm("Anda yakin ingin menghapus data petugas ini?");
+    function deactivate(kom_id){
+        var result = confirm("Anda yakin ingin menonaktifkan data Komponen ini?");
         if (result) {
-            $.post("{{ url_for('admin.petugas_delete') }}", {pet_id:pet_id}).done(function(result){
+            $.post("{{ url_for('admin.kinerja_komponen_del') }}", {komponen_id:kom_id}).done(function(result){
                 var a = result;
                 if(a == "ok"){
                     alert("Berhasil dihapus");
