@@ -118,6 +118,7 @@ def petugas_bendungan_kinerja():
     data = {}
     for w in waduk:
         data[w.id] = {
+            'bend_id': w.id,
             'nama': w.name,
             'koordinator': None,
             'petugas': {
@@ -146,13 +147,21 @@ def petugas_bendungan_kinerja():
     }
     for k in kinerjakomponen:
         komponen[k.jabatan].append(k)
+    badge_color = {
+        'Sangat Baik': 'lime',
+        'Baik': 'palegreen',
+        'Cukup': 'yellow',
+        'Kurang': 'orange',
+        'Buruk': 'red',
+    }
 
     return render_template('petugas/kinerja.html',
                             bendungan=waduk,
                             data=data,
                             komponen=komponen,
                             csrf=generate_csrf(),
-                            sampling=sampling)
+                            sampling=sampling,
+                            badge_color=badge_color)
 
 
 @bp.route('/bendungan/petugas/kinerja/add', methods=['POST'])
@@ -174,9 +183,10 @@ def petugas_bendungan_kinerja_add():
 
         komponen_id = k.split('-')[1]
         komponen = KinerjaKomponen.query.get(int(komponen_id))
+        nilai = min(max(0, float(v)), komponen.input_max)
         new_obj = KinerjaNilai(
             sampling=sampling,
-            nilai=min(max(0, float(v)), komponen.input_max),
+            nilai=nilai,
             kinerja_komponen_id=int(komponen_id),
             petugas_id=int(petugas_id)
         )
@@ -189,7 +199,70 @@ def petugas_bendungan_kinerja_add():
         return redirect(url_for('admin.petugas_bendungan_kinerja'))
 
     flash(f"Penilaian Kinerja Petugas berhasil disimpan", 'success')
-    return redirect(url_for('admin.petugas_bendungan_kinerja'))
+    return redirect(url_for('admin.petugas_bendungan_kinerja', sampling=sampling.strftime("%Y-%m-%d")))
+
+
+@bp.route('/bendungan/petugas/kinerja/update', methods=['POST'])  # @login_required
+def petugas_bendungan_kinerja_update():
+    pk = request.values.get('pk')
+    attr = request.values.get('name')
+    val = request.values.get('value')
+
+    row = KinerjaNilai.query.get(pk)
+    nilai = min(max(0, float(val)), row.kinerja_komponen.input_max)
+    setattr(row, attr, nilai)
+    db.session.commit()
+
+    result = {
+        "name": attr,
+        "pk": pk,
+        "value": nilai
+    }
+    return jsonify(result)
+
+
+@bp.route('/bendungan/petugas/kinerja/detail')
+@login_required
+@admin_only
+def petugas_bendungan_kinerja_detail():
+    petugas_id = request.values.get('petugas_id')
+    date = request.values.get('sampling')
+    sampling = datetime.datetime.strptime(date, "%Y-%m-%d") if date else datetime.datetime.utcnow()
+
+    if not petugas_id:
+        flash(f"Data Petugas tidak ditemukan", 'success')
+        return redirect(url_for('admin.petugas_bendungan_kinerja', sampling=sampling.strftime("%Y-%m-%d")))
+
+    petugas = Petugas.query.get(petugas_id)
+    kinerja = petugas.get_kinerja(sampling)
+    data = {
+        'sikap': [],
+        'pelayanan': []
+    }
+    for k in kinerja:
+        if k.kinerja_komponen.jabatan == petugas.tugas.lower().strip():
+            data['pelayanan'].append(k)
+        else:
+            data['sikap'].append(k)
+
+    kinerjakomponen = KinerjaKomponen.query.all()
+    komponen = {
+        'all': [],
+        'koordinator': [],
+        'operasi': [],
+        'pemeliharaan': [],
+        'pemantauan': [],
+        'keamanan': []
+    }
+    for k in kinerjakomponen:
+        komponen[k.jabatan].append(k)
+
+    return render_template('petugas/petugas.html',
+                            petugas=petugas,
+                            all_petugas=Petugas.query.order_by(Petugas.bendungan_id).all(),
+                            data=data,
+                            komponen=komponen,
+                            sampling=sampling)
 
 
 @bp.route('/bendungan/petugas/kinerja/komponen')

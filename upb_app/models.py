@@ -263,11 +263,20 @@ class Petugas(BaseLog):
 
         kinerja = KinerjaNilai.query.filter(
                                         KinerjaNilai.sampling == sampling,
+                                        KinerjaNilai.petugas_id == self.id
+                                    ).order_by(KinerjaNilai.kinerja_komponen_id).all()
+        return kinerja
+
+    def get_kinerja_summary(self, sampling):
+        sampling = sampling.strftime("%Y-%m-01")
+
+        kinerja = KinerjaNilai.query.filter(
+                                        KinerjaNilai.sampling == sampling,
                                         KinerjaNilai.petugas_id == self.id).all()
         if not kinerja:
             return None, None, None
         else:
-            nilai = sum([k.nilai for k in kinerja])
+            nilai = sum([k.points for k in kinerja])
             nilai_max = sum([k.kinerja_komponen.nilai_max for k in kinerja])
             return nilai, nilai_max, self.get_kinerja_str(nilai)
 
@@ -509,7 +518,7 @@ class KinerjaNilai(BaseLog):
 
     id = db.Column(db.Integer, primary_key=True)
     sampling = db.Column(db.DateTime)
-    nilai = db.Column(db.Float)
+    nilai = db.Column(db.Float)  # nilai input
     kinerja_komponen_id = db.Column(db.Integer, db.ForeignKey('kinerja_komponen.id'))
     petugas_id = db.Column(db.Integer, db.ForeignKey('petugas.id'))
 
@@ -519,9 +528,25 @@ class KinerjaNilai(BaseLog):
     __table_args__ = (db.UniqueConstraint('sampling', 'kinerja_komponen_id', 'petugas_id',
                                           name='sampling_kinerja_komponen_petugas'),)
 
+    @property
+    def points(self):
+        points = (self.nilai/self.kinerja_komponen.input_max) * self.kinerja_komponen.nilai_max
+        return round(points, 2)
+
     def set_nilai(self, nilai):
-        nilai = min(max(0, nilai), self.kinerja_komponen.input_max)
-        self.nilai = (nilai/self.kinerja_komponen.input_max) * self.kinerja_komponen.nilai_max
+        self.nilai = min(max(0, nilai), self.kinerja_komponen.input_max)
+
+    def get_kinerja_str(self):
+        if self.points > 0.9 * self.kinerja_komponen.nilai_max:
+            return "Sangat Baik"
+        elif self.points > 0.8 * self.kinerja_komponen.nilai_max:
+            return "Baik"
+        elif self.points > 0.7 * self.kinerja_komponen.nilai_max:
+            return "Cukup"
+        elif self.points > 0.54 * self.kinerja_komponen.nilai_max:
+            return "Kurang"
+        else:
+            return "Buruk"
 
 
 class Rencana(BaseLog):
