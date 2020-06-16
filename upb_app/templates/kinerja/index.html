@@ -64,8 +64,9 @@
             <div class="thumbnail border-{% if k.kerusakan %}red{% else %}grey{% endif %}">
                 <div class="row caption">
                     <div class="col-md-3">
+                        {{ k.bendungan.nama }}
                         <a href="{{ url_for('admin.kinerja_bendungan_tabel', bendungan_id=k.bendungan.id) }}">
-                            {{ k.bendungan.nama }} <i class="fas fa-clipboard"></i>
+                            <i class="fas fa-clipboard float-right"></i>
                         </a>
                     </div>
                     <div class="col-md-7">
@@ -78,7 +79,7 @@
                                 {% endif %}
                             </a>
                         {% else %}
-                            Tidak Ada Kerusakan
+                            Tidak Ada Laporan Kerusakan
                         {% endif %}
                     </div>
                     <div class="col-md-2">

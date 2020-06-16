@@ -72,6 +72,15 @@ def kinerja():
                 'nama': bend.name,
                 'id': bend.id
             }
+        else:
+            kinerja[bend.id] = {
+                'bendungan': {
+                    'nama': bend.name,
+                    'id': bend.id
+                },
+                'kerusakan': [],
+                'kategori': {}
+            }
     # print(kerusakan)
 
     return render_template('kinerja/index.html',

@@ -1,6 +1,7 @@
 from flask import request, render_template, redirect, url_for, jsonify, flash
 from flask_login import login_required, current_user
 from flask_wtf.csrf import generate_csrf
+from sqlalchemy import extract
 from sqlalchemy.exc import IntegrityError
 from upb_app.models import Bendungan, Petugas, KinerjaKomponen, KinerjaNilai
 from upb_app.forms import AddPetugas, AddKinerjaKomponen
@@ -156,7 +157,6 @@ def petugas_bendungan_kinerja():
     }
 
     return render_template('petugas/kinerja.html',
-                            bendungan=waduk,
                             data=data,
                             komponen=komponen,
                             csrf=generate_csrf(),
@@ -324,3 +324,35 @@ def kinerja_komponen_del():
     db.session.commit()
 
     return "ok"
+
+
+@bp.route('/bendungan/petugas/kinerja/chart')
+@login_required
+@admin_only
+def petugas_bendungan_chart():
+    bendungan_id = request.values.get('bendungan_id')
+    date = request.values.get('sampling')
+    sampling = datetime.datetime.strptime(date, "%Y-%m-%d") if date else datetime.datetime.utcnow()
+
+    if not bendungan_id:
+        flash(f"Data bendungan tidak ditemukan", 'success')
+        return redirect(url_for('admin.petugas_bendungan_kinerja'))
+
+    bendungan = Bendungan.query.get(bendungan_id)
+    petugas = bendungan.get_active_petugas()
+
+    month_labels = "'Jan', 'Feb', 'Mar', 'Apr', 'Mei', 'Jun', 'Jul', 'Agu', 'Sep', 'Okt', 'Nov', 'Des'"
+    keterangan = [
+        [[5.5 for i in range(12)], 'Buruk', '255, 0, 0', 'origin'],
+        [[7 for i in range(12)], 'Kurang', '255, 165, 0', -1],
+        [[8 for i in range(12)], 'Cukup', '255, 255, 0', -1],
+        [[9 for i in range(12)], 'Baik', '152, 251, 0', -1],
+        [[10 for i in range(12)], 'Sangat Baik', '50, 255, 50', -1]
+    ]
+
+    return render_template('petugas/chart.html',
+                            sampling=sampling,
+                            bendungan=bendungan,
+                            petugas=petugas,
+                            month_labels=month_labels,
+                            keterangan=keterangan)

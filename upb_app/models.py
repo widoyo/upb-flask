@@ -6,7 +6,7 @@ from upb_app import login
 from upb_app import db
 from sqlalchemy.dialects.postgresql import JSONB
 from sqlalchemy.orm import relationship
-from sqlalchemy import desc
+from sqlalchemy import desc, extract
 import datetime
 import hashlib
 import re
@@ -280,6 +280,12 @@ class Petugas(BaseLog):
             nilai_max = sum([k.kinerja_komponen.nilai_max for k in kinerja])
             return nilai, nilai_max, self.get_kinerja_str(nilai)
 
+    def get_kinerja_yearly(self, sampling):
+        kinerja = KinerjaNilai.query.filter(
+                                        extract('year', KinerjaNilai.sampling) == sampling.year,
+                                        KinerjaNilai.id == self.id
+                                    ).order_by(KinerjaNilai.kinerja_komponen_id).all()
+
     def get_kinerja_str(self, nilai):
         if nilai > 90:
             return "Sangat Baik"
@@ -332,6 +338,9 @@ class Bendungan(BaseLog):
     def name(self):
         arr = self.nama.split('_')
         return " ".join(a.title() for a in arr)
+
+    def get_active_petugas(self):
+        return Petugas.query.filter(Petugas.is_active == '1').all()
 
 
 class Foto(BaseLog):

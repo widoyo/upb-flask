@@ -24,7 +24,7 @@
         <h1>
             Kinerja Petugas Bendungan
         </h1>
-        <div class="sticky-top pt-2 pb-1" style="background-color: white; width: 100%">
+        <div class="sticky-top pt-2" style="background-color: white; width: 100%">
             <h4>
                 <a href="#">
                     <i class="fas fa-calendar"></i> <span id="tgl">{{ sampling }}</span>
@@ -33,12 +33,19 @@
             <div class="form-group">
                 <input type="text" class="form-control" id="search" placeholder="Cari Bendungan">
             </div>
+            <hr>
         </div>
         <div class="row pr-3 pl-3">
             {% for id, d in data.items() %}
             <div class="card border-secondary mb-3 mr-1 flex-grow-1" style="width: auto;" id="bendungan">
                 <div class="card-header">
-                  <b><span class="nama" id="nama">{{ d.nama }}</span></b>
+                  <h5 class="d-inline">
+                      <b><span class="nama" id="nama">{{ d.nama }}</span></b>
+                  </h5>
+                  <span class="d-inline float-right">
+                      <!-- <a href="#" class="btn btn-sm btn-outline-primary"><i class="fa fa-download"></i></a> -->
+                      <a href="{{ url_for('admin.petugas_bendungan_chart', bendungan_id=d.bend_id) }}" class="btn btn-sm btn-outline-primary"><i class="fas fa-chart-bar"></i></a>
+                  </span>
                 </div>
                 <div class="card-body">
                     {% if d.is_empty %}
