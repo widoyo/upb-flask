@@ -379,6 +379,10 @@ class Kerusakan(BaseLog):
                             Foto.obj_type == 'kerusakan',
                             Foto.obj_id == self.id).all()
 
+    @property
+    def tgl_lapor_gmt7(self):
+        return self.tgl_lapor + datetime.timedelta(hours=7)
+
 
 class BagianEmbung(BaseLog):
     __tablename__ = 'bagian_embung'
