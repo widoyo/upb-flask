@@ -356,3 +356,25 @@ def kinerja_update():
         "value": val
     }
     return jsonify(result)
+
+
+@bp.route('/bendungan/<bendungan_id>/kinerja/delete', methods=['POST'])
+@login_required
+@role_check
+def kinerja_delete(bendungan_id):
+    ker_id = int(request.values.get('ker_id'))
+
+    kerusakan = Kerusakan.query.get(ker_id)
+
+    fotos = kerusakan.fotos
+    for f in fotos:
+        filepath = os.path.join(app.config['SAVE_DIR'], f.url)
+
+        db.session.delete(f)
+        if os.path.exists(filepath):
+            os.remove(filepath)
+    db.session.delete(kerusakan)
+
+    db.session.commit()
+
+    return "ok"

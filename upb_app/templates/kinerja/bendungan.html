@@ -125,22 +125,20 @@
                 </div>
                 <div class="col-md-1">
                     <h3 align="center">
-                        <a href="javascript:void(0);" data-toggle="collapse" data-target="#photo-gallery-{{ k.id }}">
-                            <i class="fas fa-angle-down mr-2"></i>
-                        </a>
+                        <input type="button" value="Hapus" onclick="deleteKerusakan({{ k.id }})" class="btn btn-sm btn-danger">
                     </h3>
                 </div>
             </div>
-            <div class="collapse text-center" id="photo-gallery-{{ k.id }}">
-                <ul class="list-inline">
+            <div class="card-footer pr-2 pl-2">
+                <div class="row justify-content-center ">
                     {% for f in foto[k.id] %}
-                        <li>
+                        <div class="ml-1">
                             <a data-toggle="modal" href="#preview-foto-{{ f.id }}"
                                 role="button" aria-expanded="false"
                                 class="card-link">
                                 <img class="img-card" id="foto-{{ f.id }}" src="{{ url_for('static', filename=f.url) }}" alt="" style="width: 5rem;height: 5rem;">
                             </a>
-                        </li>
+                        </div>
 
                         <!-- Modal Preview Foto -->
                         <div class="modal fade" id="preview-foto-{{ f.id }}" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
@@ -171,18 +169,18 @@
                           </div>
                         </div>
                     {% endfor %}
-                    {% if user.bendungan_id == bend_id %}
-                    <li>
-                        <hr class="d-md-none d-lg-block">
-                        <a class="ml-2"
-                            data-toggle="modal" href="#form-add-foto-{{ k.id }}"
-                            role="button" aria-expanded="false"
-                            aria-controls="">
-                            <big><i class="fas fa-plus mr-2"></i></big>
-                        </a>
-                    </li>
-                    {% endif %}
-                </ul>
+                </div>
+                {% if user.bendungan_id == bend_id %}
+                <br>
+                <div class="text-center">
+                    <a class="ml-2"
+                        data-toggle="modal" href="#form-add-foto-{{ k.id }}"
+                        role="button" aria-expanded="false"
+                        aria-controls="">
+                        <big><i class="fas fa-plus mr-2"></i></big>
+                    </a>
+                </div>
+                {% endif %}
             </div>
         </div>
 
@@ -390,5 +388,19 @@
             }
         }
     };
+
+    function deleteKerusakan(ker_id){
+        console.log(ker_id);
+        var result = confirm("Anda yakin ingin menghapus laporan kerusakan ini?");
+        if (result) {
+            $.post("{{ url_for('admin.kinerja_delete', bendungan_id=bend_id) }}", {ker_id:ker_id}).done(function(result){
+                var a = result;
+                if(a == "ok"){
+                    alert("Berhasil dihapus");
+                    location.reload();
+                }
+            });
+        }
+    }
 </script>
 {% endblock %}
