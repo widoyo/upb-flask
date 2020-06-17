@@ -806,5 +806,3 @@ def kegiatan_embung_csv(embung_id):
                     headers={
                         "Content-Disposition": f"attachment;filename={embung.nama}-{sampling.strftime('%B %Y')}.csv"
                     })
-
-    return "ok"

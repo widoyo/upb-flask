@@ -1,4 +1,4 @@
-from flask import request, render_template, redirect, url_for, jsonify, flash
+from flask import request, render_template, redirect, url_for, jsonify, flash, Response
 from flask_login import login_required, current_user
 from flask_wtf.csrf import generate_csrf
 from sqlalchemy import extract
@@ -7,6 +7,8 @@ from upb_app.models import Bendungan, Petugas, KinerjaKomponen, KinerjaNilai
 from upb_app.forms import AddPetugas, AddKinerjaKomponen
 from upb_app import db, admin_only
 import datetime
+import csv
+import io
 
 from upb_app.admin import bp
 
@@ -339,20 +341,114 @@ def petugas_bendungan_chart():
         return redirect(url_for('admin.petugas_bendungan_kinerja'))
 
     bendungan = Bendungan.query.get(bendungan_id)
-    petugas = bendungan.get_active_petugas()
+    petugas = bendungan.petugas
+
+    result = []
+    for p in petugas:
+        kinerja = ['null' if not n else str(n) for n in p.get_kinerja_yearly(sampling)]
+        kinerja = ",".join(kinerja)
+
+        if p.is_active == '1':
+            if p.tugas.lower().strip() == 'koordinator':
+                color = '255, 0, 0'
+            else:
+                color = '255, 0, 255'
+        else:
+            color = '255, 255, 255'
+
+        result.append({
+            'data': kinerja,
+            'label': f"{p.nama} ({p.tugas.strip()})",
+            'color': color
+        })
 
     month_labels = "'Jan', 'Feb', 'Mar', 'Apr', 'Mei', 'Jun', 'Jul', 'Agu', 'Sep', 'Okt', 'Nov', 'Des'"
     keterangan = [
-        [[5.5 for i in range(12)], 'Buruk', '255, 0, 0', 'origin'],
-        [[7 for i in range(12)], 'Kurang', '255, 165, 0', -1],
-        [[8 for i in range(12)], 'Cukup', '255, 255, 0', -1],
-        [[9 for i in range(12)], 'Baik', '152, 251, 0', -1],
-        [[10 for i in range(12)], 'Sangat Baik', '50, 255, 50', -1]
+        [[55 for i in range(12)], 'Buruk', '255, 0, 0', 'origin'],
+        [[70 for i in range(12)], 'Kurang', '255, 165, 0', -1],
+        [[80 for i in range(12)], 'Cukup', '255, 255, 0', -1],
+        [[90 for i in range(12)], 'Baik', '152, 251, 0', -1],
+        [[100 for i in range(12)], 'Sangat Baik', '50, 255, 50', -1]
     ]
 
     return render_template('petugas/chart.html',
                             sampling=sampling,
+                            result=result,
                             bendungan=bendungan,
                             petugas=petugas,
                             month_labels=month_labels,
                             keterangan=keterangan)
+
+
+@bp.route('/bendungan/petugas/kinerja/csv')
+@login_required
+@admin_only
+def petugas_bendungan_kinerja_csv():
+    bendungan_id = request.values.get('bendungan_id')
+    date = request.values.get('sampling')
+    sampling = datetime.datetime.strptime(date, "%Y-%m-%d") if date else datetime.datetime.utcnow()
+
+    if not bendungan_id:
+        return "Data bendungan tidak ditemukan"
+
+    bendungan = Bendungan.query.get(bendungan_id)
+    petugas = bendungan.get_active_petugas()
+
+    pre_csv = []
+    pre_csv.append(["DATA KINERJA PETUGAS"])
+    pre_csv.append(['BENDUNGAN', bendungan.name])
+    pre_csv.append(['BULAN', sampling.strftime("%B %Y")])
+    pre_csv.append([])
+
+    for p in petugas:
+        kinerja = p.get_kinerja(sampling)
+
+        if not kinerja:
+            continue
+
+        sikap = []
+        pelayanan = []
+        for k in kinerja:
+            if k.kinerja_komponen.jabatan == 'all':
+                sikap.append(k)
+            else:
+                pelayanan.append(k)
+
+        pre_csv.append(['Nama', p.nama])
+        pre_csv.append(['Jabatan', p.tugas.strip()])
+        pre_csv.append(['No', 'Komponen Kinerja', 'Nilai', 'Poin', 'Target', 'Keterangan'])
+
+        pre_csv.append(['Sikap Kerja'])
+        for i, k in enumerate(sikap):
+            pre_csv.append([
+                i+1,
+                k.kinerja_komponen.deskripsi,
+                f"{k.nilai} / {k.kinerja_komponen.input_max}",
+                k.points,
+                k.kinerja_komponen.nilai_max,
+                k.get_kinerja_str()
+            ])
+
+        pre_csv.append(['Kinerja Pelayanan'])
+        for i, k in enumerate(pelayanan):
+            pre_csv.append([
+                i+1,
+                k.kinerja_komponen.deskripsi,
+                f"{k.nilai} / {k.kinerja_komponen.input_max}",
+                k.points,
+                k.kinerja_komponen.nilai_max,
+                k.get_kinerja_str()
+            ])
+        pre_csv.append([])
+
+    output = io.StringIO()
+    writer = csv.writer(output, delimiter='\t')
+    for l in pre_csv:
+        writer.writerow(l)
+    output.seek(0)
+
+    return Response(output,
+                    mimetype="text/csv",
+                    headers={
+                        "Content-Disposition": f"attachment;filename=kinerja_petugas_{bendungan.nama}-{sampling.strftime('%B %Y')}.csv"
+                    })

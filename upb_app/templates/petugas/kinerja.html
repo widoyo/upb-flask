@@ -43,7 +43,7 @@
                       <b><span class="nama" id="nama">{{ d.nama }}</span></b>
                   </h5>
                   <span class="d-inline float-right">
-                      <!-- <a href="#" class="btn btn-sm btn-outline-primary"><i class="fa fa-download"></i></a> -->
+                      <a onclick="downloads({{ d.bend_id }}, '{{ d.nama }}')" href="#" class="btn btn-sm btn-outline-primary"><i class="fa fa-download"></i></a>
                       <a href="{{ url_for('admin.petugas_bendungan_chart', bendungan_id=d.bend_id) }}" class="btn btn-sm btn-outline-primary"><i class="fas fa-chart-bar"></i></a>
                   </span>
                 </div>
@@ -67,7 +67,6 @@
                                             petugas_id=d.koordinator.id,
                                             bendungan_id=d.bend_id) }}">{{ nilai }}</a>
                                 <span class="badge badge-pill" style="background-color: {{ badge_color[ket] }};">{{ ket }}</span>
-                                <!-- <i class="fas fa-pen"></i> -->
                             {% else %}
                                 <a data-toggle="modal" href="#form-nilai-{{ d.koordinator.id }}" role="button" aria-expanded="false" aria-controls="form-nilai-{{ d.koordinator.id }}">
                                   <i class="fas fa-pen"></i>
@@ -215,6 +214,24 @@
 <script src="{{ url_for('static', filename='js/bootstrap-editable.min.js') }}"></script>
 <script src="{{ url_for('static', filename='js/bootstrap-datepicker.min.js') }}"></script>
 <script>
+    function downloads(bend_id, bend_nama){
+        let sampling = "{{ sampling.strftime('%Y-%m-%d') }}";
+        let date = document.querySelector("#tgl").innerText;
+        let result = confirm(`Download data kinerja petugas ${bend_nama} bulan ${date}?`);
+        if (result) {
+            // $.post("{{ url_for('admin.petugas_bendungan_kinerja_csv') }}", {bendungan_id:bend_id, sampling:sampling}).done(function(result){
+            //     console.log("Downloading");
+            //     // let a = result;
+            //     // if(a == "ok"){
+            //     //     alert("Berhasil download");
+            //     // } else {
+            //     //     alert("Gagal download");
+            //     // }
+            // });
+            window.open(`{{ url_for('admin.petugas_bendungan_kinerja_csv') }}?bendungan_id=${bend_id}&sampling={{ sampling.strftime('%Y-%m-%d') }}`);
+        }
+    }
+
     $(document).ready(function() {
         // resolve package confict
         let datepicker = $.fn.datepicker.noConflict();

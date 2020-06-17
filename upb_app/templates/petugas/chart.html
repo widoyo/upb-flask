@@ -47,17 +47,16 @@
           $('#tgl').datepicker({
               todayHighlight: true,
               autoclose: true,
-              format: "yyyy",
+              format: "yyyy-mm-dd",
               viewMode: "years",
               minViewMode: "years"
           });
           $('#tgl').on('changeDate', function () {
-              window.location = "{{ url_for('admin.petugas_bendungan_chart', bendungan_id=bendungan.id) }}&sampling=" + $('#datepicker').datepicker('getFormattedDate')
+              window.location = "{{ url_for('admin.petugas_bendungan_chart', bendungan_id=bendungan.id) }}&sampling=" + $('#tgl').datepicker('getFormattedDate')
           });
 
           let tgls = document.querySelectorAll("#tgl");
           tgls.forEach(function(el){
-              console.log(el.value);
               el.innerText = moment(el.innerText).format('YYYY');
           });
 
@@ -66,11 +65,12 @@
               legend: {
                   labels: {
                       usePointStyle: true,
+                      filter: function(item, chart) {
+                          // Logic to remove a particular legend item goes here
+                          // console.log(item.text);
+                          return !['Buruk', 'Kurang', 'Cukup', 'Baik', 'Sangat Baik'].includes(item.text);
+                      }
                   },
-                  filter: function(item, chart) {
-                      // Logic to remove a particular legend item goes here
-                      return !item.text.includes('Buruk');
-                  }
               },
               scales: {
                   yAxes: [{
@@ -96,6 +96,11 @@
                   callbacks: {
                       label: (item, data) => `${data.datasets[item.datasetIndex].label} : ${item.yLabel}`,
                   },
+                  filter: function(item, data) {
+                      // Logic to remove a particular legend item goes here
+                      let label = data.datasets[item.datasetIndex].label;
+                      return !['Buruk', 'Kurang', 'Cukup', 'Baik', 'Sangat Baik'].includes(label);
+                  }
               },
           };
 
@@ -115,6 +120,17 @@
                           borderWidth: 1,
                           fill: '{{ k[3] }}',
                           pointRadius: 0
+                      },
+                      {% endfor %}
+                      {% for r in result %}
+                      {
+                          label: "{{ r.label }}",
+                          data: [{{ r.data }}],
+                          backgroundColor: 'rgba({{ r.color }},1)',
+                          borderColor: 'rgba({{ r.color }},0.7)',
+                          borderWidth: 1,
+                          fill: false,
+                          pointStyle: 'round'
                       },
                       {% endfor %}
                   ]

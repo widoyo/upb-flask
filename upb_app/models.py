@@ -264,7 +264,8 @@ class Petugas(BaseLog):
         kinerja = KinerjaNilai.query.filter(
                                         KinerjaNilai.sampling == sampling,
                                         KinerjaNilai.petugas_id == self.id
-                                    ).order_by(KinerjaNilai.kinerja_komponen_id).all()
+                                    ).order_by(
+                                        KinerjaNilai.kinerja_komponen_id).all()
         return kinerja
 
     def get_kinerja_summary(self, sampling):
@@ -281,10 +282,19 @@ class Petugas(BaseLog):
             return nilai, nilai_max, self.get_kinerja_str(nilai)
 
     def get_kinerja_yearly(self, sampling):
+        ''' return list of monthly kinerja summary '''
         kinerja = KinerjaNilai.query.filter(
                                         extract('year', KinerjaNilai.sampling) == sampling.year,
-                                        KinerjaNilai.id == self.id
+                                        KinerjaNilai.petugas_id == self.id
                                     ).order_by(KinerjaNilai.kinerja_komponen_id).all()
+        nilai = [None for i in range(12)]
+        for k in kinerja:
+            if nilai[int(k.sampling.month) - 1]:
+                nilai[int(k.sampling.month) - 1] += k.points
+            else:
+                nilai[int(k.sampling.month) - 1] = k.points
+
+        return nilai
 
     def get_kinerja_str(self, nilai):
         if nilai > 90:
@@ -340,7 +350,9 @@ class Bendungan(BaseLog):
         return " ".join(a.title() for a in arr)
 
     def get_active_petugas(self):
-        return Petugas.query.filter(Petugas.is_active == '1').all()
+        return Petugas.query.filter(
+                                Petugas.is_active == '1',
+                                Petugas.bendungan_id == self.id).all()
 
 
 class Foto(BaseLog):
