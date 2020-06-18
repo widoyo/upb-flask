@@ -124,9 +124,11 @@
                     <hr class="d-none d-md-block d-lg-none">
                 </div>
                 <div class="col-md-1">
+                    {% if user.bendungan_id == bend_id %}
                     <h3 align="center">
                         <input type="button" value="Hapus" onclick="deleteKerusakan({{ k.id }})" class="btn btn-sm btn-danger">
                     </h3>
+                    {% endif %}
                 </div>
             </div>
             <div class="card-footer pr-2 pl-2">
@@ -391,16 +393,18 @@
 
     function deleteKerusakan(ker_id){
         console.log(ker_id);
-        var result = confirm("Anda yakin ingin menghapus laporan kerusakan ini?");
-        if (result) {
+        customConfirm("Anda yakin ingin menghapus laporan kerusakan ini?", function(){
+            console.log("Deleting");
             $.post("{{ url_for('admin.kinerja_delete', bendungan_id=bend_id) }}", {ker_id:ker_id}).done(function(result){
-                var a = result;
+                let a = result;
+                console.log(a);
                 if(a == "ok"){
-                    alert("Berhasil dihapus");
-                    location.reload();
+                    customAlert("Berhasil dihapus", function() {
+                        location.reload();
+                    });
                 }
             });
-        }
+        });
     }
 </script>
 {% endblock %}
