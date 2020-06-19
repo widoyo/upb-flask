@@ -797,45 +797,44 @@
 
     function deleteFoto(foto_id){
         console.log(foto_id);
-        var result = confirm("Anda yakin ingin menghapus foto ini?");
-        if (result) {
+        customConfirm("Anda yakin ingin menghapus foto ini?", function() {
             $.post("{{ url_for('admin.pemeliharaan_delete_foto', bendungan_id=bend.id) }}", {foto_id:foto_id}).done(function(result){
                 var a = result;
                 if(a == "ok"){
-                    alert("Berhasil dihapus");
-                    location.reload();
+                    customAlert("Berhasil dihapus", function() {
+                        location.reload();
+                    });
                 }
             });
-        }
-
+        });
     }
 
     function deleteLaporan(pem_id){
         console.log(pem_id);
-        var result = confirm("Anda yakin ingin menghapus laporan ini?");
-        if (result) {
+        customConfirm("Anda yakin ingin menghapus laporan ini?", function() {
             $.post("{{ url_for('admin.pemeliharaan_delete', bendungan_id=bend.id) }}", {pem_id:pem_id}).done(function(result){
                 var a = result;
                 if(a == "ok"){
-                    alert("Berhasil dihapus");
-                    location.reload();
+                    customAlert("Berhasil dihapus", function() {
+                        location.reload();
+                    });
                 }
             });
-        }
+        });
     }
 
     function deleteRencana(pem_id){
         console.log(pem_id);
-        var result = confirm("Menghapus rencana ini juga akan menghapus laporan rencana ini.\nAnda yakin ingin menghapus rencana ini?");
-        if (result) {
+        customConfirm("Menghapus rencana ini juga akan menghapus laporan rencana ini.\nAnda yakin ingin menghapus rencana ini?", function(){
             $.post("{{ url_for('admin.pemeliharaan_delete', bendungan_id=bend.id) }}", {pem_id:pem_id}).done(function(result){
                 var a = result;
                 if(a == "ok"){
-                    alert("Berhasil dihapus");
-                    location.reload();
+                    customAlert("Berhasil dihapus", function() {
+                        location.reload();
+                    });
                 }
             });
-        }
+        });
     }
 </script>
 {% endblock %}

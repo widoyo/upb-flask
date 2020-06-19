@@ -342,17 +342,16 @@
 
     function deleteFoto(foto_id){
         console.log(foto_id);
-        var result = confirm("Anda yakin ingin menghapus foto ini?");
-        if (result) {
+        customConfirm("Anda yakin ingin menghapus foto ini?", function(){
             $.post("{{ url_for('admin.kinerja_delete_foto', bendungan_id=bend_id) }}", {foto_id:foto_id}).done(function(result){
                 var a = result;
                 if(a == "ok"){
-                    alert("Berhasil dihapus");
-                    location.reload();
+                    customAlert("Berhasil dihapus", function() {
+                        location.reload();
+                    });
                 }
             });
-        }
-
+        });
     }
 
     function tanggapan_upb(kerusakan_id,) {

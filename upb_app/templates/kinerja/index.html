@@ -60,11 +60,17 @@
 {% block content %}
     <div class="container">
         <h1>Kinerja Asset Bendungan</h1>
+        <div class="sticky-top pt-2" style="background-color: white; width: 100%">
+            <div class="form-group">
+                <input type="text" class="form-control" id="search" placeholder="Cari Bendungan">
+            </div>
+            <hr>
+        </div>
         {% for i, k in kinerja.items() %}
-            <div class="thumbnail border-{% if k.kerusakan %}red{% else %}grey{% endif %}">
+            <div class="thumbnail border-{% if k.kerusakan %}red{% else %}grey{% endif %}" id="bendungan">
                 <div class="row caption">
                     <div class="col-md-3">
-                        {{ k.bendungan.nama }}
+                        <span id="nama">{{ k.bendungan.nama }}</span>
                         <a href="{{ url_for('admin.kinerja_bendungan_tabel', bendungan_id=k.bendungan.id) }}">
                             <i class="fas fa-clipboard float-right"></i>
                         </a>
@@ -148,6 +154,21 @@
       $('.hari').each(function (i, e) {
         console.log($(e).prepend(moment($(e).data('tgl')).fromNow()));
       });
+    });
+
+    $('#search').on('keyup change', function() {
+        let query = this.value;
+        let bends = document.querySelectorAll("#bendungan");
+        bends.forEach(function(el){
+            let nama = el.querySelector("#nama").innerHTML;
+            nama = nama.toLowerCase()
+            console.log(query);
+            if (!nama.includes(query)) {
+                el.style.display = "none";
+            } else {
+                el.style.display = "block";
+            }
+        });
     });
 </script>
 {% endblock %}

@@ -964,30 +964,29 @@
     }
     function deleteKegiatan(keg_id, date){
         console.log(keg_id);
-        var result = confirm(`Anda yakin ingin menghapus kegiatan tgl ${date}?`);
-        if (result) {
+        customConfirm(`Anda yakin ingin menghapus kegiatan tgl ${date}?`, function(){
             $.post("{{ url_for('admin.kegiatan_embung_delete', embung_id=emb_id) }}", {keg_id:keg_id}).done(function(result){
                 var a = result;
                 if(a == "ok"){
-                    alert("Berhasil dihapus");
-                    location.reload();
+                    customAlert("Berhasil dihapus", function(){
+                        location.reload();
+                    });
                 }
             });
-        }
+        });
     }
     function deleteFoto(foto_id){
         console.log(foto_id);
-        var result = confirm("Anda yakin ingin menghapus foto ini?");
-        if (result) {
+        customConfirm("Anda yakin ingin menghapus foto ini?", function(){
             $.post("{{ url_for('admin.kegiatan_embung_delete_foto', embung_id=emb_id) }}", {foto_id:foto_id}).done(function(result){
                 var a = result;
                 if(a == "ok"){
-                    alert("Berhasil dihapus");
-                    location.reload();
+                    customAlert("Berhasil dihapus", function(){
+                        location.reload();
+                    });
                 }
             });
-        }
-
+        });
     }
 
     function srcnull(){
