@@ -350,9 +350,17 @@ class Bendungan(BaseLog):
         return " ".join(a.title() for a in arr)
 
     def get_active_petugas(self):
-        return Petugas.query.filter(
-                                Petugas.is_active == '1',
-                                Petugas.bendungan_id == self.id).all()
+        petugas = Petugas.query.filter(
+                                    Petugas.is_active == '1',
+                                    Petugas.bendungan_id == self.id
+                                ).order_by(Petugas.tugas).all()
+        result = []
+        for p in petugas:
+            if p.tugas.lower().strip() == 'koordinator':
+                result.insert(0, p)
+            else:
+                result.append(p)
+        return result
 
 
 class Foto(BaseLog):

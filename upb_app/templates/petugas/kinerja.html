@@ -29,6 +29,7 @@
                 <a href="#">
                     <i class="fas fa-calendar"></i> <span id="tgl">{{ sampling }}</span>
                 </a>
+                <a onclick="download_all()" href="#" class="btn btn-sm btn-outline-primary ml-2"><i class="fa fa-download"></i></a>
             </h4>
             <div class="form-group">
                 <input type="text" class="form-control" id="search" placeholder="Cari Bendungan">
@@ -43,7 +44,7 @@
                       <b><span class="nama" id="nama">{{ d.nama }}</span></b>
                   </h5>
                   <span class="d-inline float-right">
-                      <a onclick="downloads({{ d.bend_id }}, '{{ d.nama }}')" href="#" class="btn btn-sm btn-outline-primary"><i class="fa fa-download"></i></a>
+                      <!-- <a onclick="downloads({{ d.bend_id }}, '{{ d.nama }}')" href="#" class="btn btn-sm btn-outline-primary"><i class="fa fa-download"></i></a> -->
                       <a href="{{ url_for('admin.petugas_bendungan_chart', bendungan_id=d.bend_id) }}" class="btn btn-sm btn-outline-primary"><i class="fas fa-chart-bar"></i></a>
                   </span>
                 </div>
@@ -217,19 +218,16 @@
     function downloads(bend_id, bend_nama){
         let sampling = "{{ sampling.strftime('%Y-%m-%d') }}";
         let date = document.querySelector("#tgl").innerText;
-        let result = confirm(`Download data kinerja petugas ${bend_nama} bulan ${date}?`);
-        if (result) {
-            // $.post("{{ url_for('admin.petugas_bendungan_kinerja_csv') }}", {bendungan_id:bend_id, sampling:sampling}).done(function(result){
-            //     console.log("Downloading");
-            //     // let a = result;
-            //     // if(a == "ok"){
-            //     //     alert("Berhasil download");
-            //     // } else {
-            //     //     alert("Gagal download");
-            //     // }
-            // });
+        customConfirm(`Download data kinerja petugas ${bend_nama} bulan ${date}?`, function(){
             window.open(`{{ url_for('admin.petugas_bendungan_kinerja_csv') }}?bendungan_id=${bend_id}&sampling={{ sampling.strftime('%Y-%m-%d') }}`);
-        }
+        });
+    }
+    function download_all(){
+        let sampling = "{{ sampling.strftime('%Y-%m-%d') }}";
+        let date = document.querySelector("#tgl").innerText;
+        customConfirm(`Download data kinerja petugas untuk bulan ${date}?`, function(){
+            window.open(`{{ url_for('admin.petugas_bendungan_kinerja_csv_all') }}?sampling={{ sampling.strftime('%Y-%m-%d') }}`);
+        });
     }
 
     $(document).ready(function() {

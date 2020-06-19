@@ -3,7 +3,7 @@ from flask_login import login_required, current_user
 from flask_wtf.csrf import generate_csrf
 from sqlalchemy import extract
 from sqlalchemy.exc import IntegrityError
-from upb_app.models import Bendungan, Petugas, KinerjaKomponen, KinerjaNilai
+from upb_app.models import Bendungan, Petugas, KinerjaKomponen, KinerjaNilai, wil_sungai
 from upb_app.forms import AddPetugas, AddKinerjaKomponen
 from upb_app import db, admin_only
 import datetime
@@ -451,4 +451,47 @@ def petugas_bendungan_kinerja_csv():
                     mimetype="text/csv",
                     headers={
                         "Content-Disposition": f"attachment;filename=kinerja_petugas_{bendungan.nama}-{sampling.strftime('%B %Y')}.csv"
+                    })
+
+
+@bp.route('/bendungan/petugas/kinerja/csv/all')
+@login_required
+@admin_only
+def petugas_bendungan_kinerja_csv_all():
+    date = request.values.get('sampling')
+    sampling = datetime.datetime.strptime(date, "%Y-%m-%d") if date else datetime.datetime.utcnow()
+
+    bendungan = Bendungan.query.all()
+    wilayah = {
+        '1': [],
+        '2': [],
+        '3': []
+    }
+    for b in bendungan:
+        wilayah[b.wil_sungai].append(b)
+
+    pre_csv = []
+    pre_csv.append(["DATA KINERJA PETUGAS"])
+    pre_csv.append(['BULAN', sampling.strftime("%B %Y")])
+
+    i = 0
+    for wil, bends in wilayah.items():
+        pre_csv.append([f"PETUGAS OP WILAYAH {wil_sungai[wil].upper()}"])
+        pre_csv.append(['No', 'Nama Bendungan', 'Nama Petugas', 'Jabatan', 'Nilai', 'Keterangan'])
+        for b in bends:
+            i += 1
+            for p in b.get_active_petugas():
+                nilai, nmax, nstr = p.get_kinerja_summary(sampling)
+                pre_csv.append([i, b.name, p.nama, p.tugas, nilai or '-', nstr or '-'])
+
+    output = io.StringIO()
+    writer = csv.writer(output, delimiter='\t')
+    for l in pre_csv:
+        writer.writerow(l)
+    output.seek(0)
+
+    return Response(output,
+                    mimetype="text/csv",
+                    headers={
+                        "Content-Disposition": f"attachment;filename=kinerja_petugas_{sampling.strftime('%B %Y')}.csv"
                     })
