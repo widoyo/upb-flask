@@ -255,7 +255,7 @@
         });
 
         $('#search').on('keyup change', function() {
-            let query = this.value;
+            let query = this.value.toLowerCase();
             let bends = document.querySelectorAll("#bendungan");
             bends.forEach(function(el){
                 let nama = el.querySelector("#nama").innerHTML;
