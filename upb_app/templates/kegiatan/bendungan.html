@@ -57,7 +57,7 @@
                                   <input type="text" name="keterangan" class="form-control" required placeholder="Kegiatan Babat Rumput = 80%">
                               </div>
                               <div>
-                                  <button class="btn btn-primary my-1 mr-2" onclick="go_upload()">Kirim</button>
+                                  <button name="btnkirim" class="btn btn-primary my-1 mr-2" onclick="go_upload()">Kirim</button>
                                   <a data-toggle="collapse" href="#addkeg" role="button" aria-expanded="false" aria-controls="addkeg" onclick="srcnull()">batal</a>
                               </div>
                           </div>
@@ -231,7 +231,7 @@
 
         reader.onloadend = function(e){
             console.log(`onload function called, parameter : ${e}`);
-			MinifyJpegAsync.minify(e.target.result, 1280, function(data) {
+			MinifyJpegAsync.minify(e.target.result, 920, function(data) {
 				enc_img = "data:image/jpeg;base64," + btoa(data);
 				let img = new Image();
 				img.src = enc_img;
@@ -253,6 +253,13 @@
             alert('Harap masukkan keterangan foto kegiatan');
             $('input[name="keterangan"]').focus();
         } else {
+            // change button to loading
+            $('button[name="btnkirim"]').prop('disabled', true);
+            $('button[name="btnkirim"]').html(
+                `<span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span> Mengirim...`
+            );
+
+            // send data
             let fields = 'keterangan_waktu'.split('_');
             let formData = {
                 csrf_token: '{{ csrf }}',
@@ -264,12 +271,20 @@
             };
             console.log("Posting Photo");
             console.log(formData);
-            $.post("{{ url_for('admin.kegiatan_add', bendungan_id=bend_id) }}", formData,
-                function (res) {
-                    console.log(res);
-                    location.reload();
-                }
-            );
+            $.ajax({
+                url : "{{ url_for('admin.kegiatan_add', bendungan_id=bend_id) }}",
+                data: formData,
+                type: 'POST'
+            }).done(function(res) {
+                console.log(res);
+                location.reload();
+            }).fail(function() {
+                alert('Gagal Mengirim');
+                $('button[name="btnkirim"]').prop('disabled', false);
+                $('button[name="btnkirim"]').html(
+                    `Kirim`
+                );
+            });
         }
     }
 
