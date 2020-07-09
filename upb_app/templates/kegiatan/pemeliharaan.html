@@ -777,12 +777,6 @@
             };
             console.log("Posting Photo");
             console.log(formData);
-            // $.post("{{ url_for('admin.pemeliharaan_lapor', bendungan_id=bend.id) }}", formData,
-            //     function (res) {
-            //         console.log(res);
-            //         location.href = "{{ url_for('admin.pemeliharaan', bendungan_id=bend.id, rencana='off') }}";
-            //     }
-            // );
             $.ajax({
                 url : "{{ url_for('admin.pemeliharaan_lapor', bendungan_id=bend.id) }}",
                 data: formData,
