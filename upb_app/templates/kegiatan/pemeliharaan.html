@@ -130,7 +130,7 @@
                               <small id="fotohelp" class="form-text text-muted">Foto bisa ditambah di tabel harian</small>
                           </div>
                           <div>
-                              <button type="submit" name="submit" onclick="uploadlaporan()" class="btn btn-primary my-1 mr-2">Kirim</button>
+                              <button type="submit" name="btnlaporan" onclick="uploadlaporan()" class="btn btn-primary my-1 mr-2">Kirim</button>
                               <a data-toggle="collapse" href="#pemeliharaan" role="button" aria-expanded="false" aria-controls="pemeliharaan" onclick="srcnull()">batal</a>
                           </div>
                         </div>
@@ -606,7 +606,7 @@
 
         reader.onloadend = function(e){
             console.log(`onload function called, parameter : ${e}`);
-            MinifyJpegAsync.minify(e.target.result, 1280, function(data) {
+            MinifyJpegAsync.minify(e.target.result, 920, function(data) {
                 imgFoto = "data:image/jpeg;base64," + btoa(data);
                 let img = new Image();
                 img.src = imgFoto;
@@ -726,7 +726,7 @@
 
         reader.onloadend = function(e){
             console.log(`onload function called, parameter : ${e}`);
-			MinifyJpegAsync.minify(e.target.result, 1280, function(data) {
+			MinifyJpegAsync.minify(e.target.result, 920, function(data) {
 				enc_img = "data:image/jpeg;base64," + btoa(data);
 				let img = new Image();
 				img.src = enc_img;
@@ -757,6 +757,12 @@
         } else if ($('#blah').attr('src') == "{{ url_for('static', filename='img/null.jpg') }}"){
             alert('Pilih foto terlebih dahulu');
         } else {
+            // change button to loading
+            $('button[name="btnlaporan"]').prop('disabled', true);
+            $('button[name="btnlaporan"]').html(
+                `<span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span> Mengirim...`
+            );
+
             let petugas = $('select[name="petugas"]').val().join(',');
             let formData = {
                 csrf_token: '{{ csrf }}',
@@ -771,12 +777,26 @@
             };
             console.log("Posting Photo");
             console.log(formData);
-            $.post("{{ url_for('admin.pemeliharaan_lapor', bendungan_id=bend.id) }}", formData,
-                function (res) {
-                    console.log(res);
-                    location.href = "{{ url_for('admin.pemeliharaan', bendungan_id=bend.id, rencana='off') }}";
-                }
-            );
+            // $.post("{{ url_for('admin.pemeliharaan_lapor', bendungan_id=bend.id) }}", formData,
+            //     function (res) {
+            //         console.log(res);
+            //         location.href = "{{ url_for('admin.pemeliharaan', bendungan_id=bend.id, rencana='off') }}";
+            //     }
+            // );
+            $.ajax({
+                url : "{{ url_for('admin.pemeliharaan_lapor', bendungan_id=bend.id) }}",
+                data: formData,
+                type: 'POST'
+            }).done(function(res) {
+                console.log(res);
+                location.href = "{{ url_for('admin.pemeliharaan', bendungan_id=bend.id, rencana='off') }}";
+            }).fail(function() {
+                alert('Gagal Mengirim');
+                $('button[name="btnkirim"]').prop('disabled', false);
+                $('button[name="btnkirim"]').html(
+                    `Kirim`
+                );
+            });
         }
     }
 
