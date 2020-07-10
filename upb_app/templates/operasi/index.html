@@ -16,10 +16,24 @@
     <section class="content-header">
         <h2>Bendungan</h2>
     </section>
-    <h3>
-        <span id="datepicker" style="color: #18bc9c"><i class="fa fa-calendar"></i> {{ sampling.strftime('%d %B %Y') }}</span>
-        <a href="{{ url_for('admin.bendungan_harian_csv') }}?sampling={{ sampling.strftime('%Y-%m-%d') }}">CSV</a>
-    </h3>
+    <div name="filter">
+        <h4>
+            <a id="datepicker" style="color: blue" href="#">
+                <span class="badge badge-primary">
+                    <i class="fa fa-calendar"></i>
+                </span>
+                {{ sampling.strftime('%d %B %Y') }}
+            </a>
+            &nbsp;
+            <a href="{{ url_for('admin.bendungan_harian_csv') }}?sampling={{ sampling.strftime('%Y-%m-%d') }}">
+                <span class="badge badge-primary">
+                    <i class="fa fa-download"></i>
+                </span>
+                CSV
+            </a>
+        </h4>
+
+    </div>
     <table class="table table-hover table-bordered">
         <thead>
             <tr class="table-active">
