@@ -231,6 +231,7 @@
                     <th>No</th>
                     <th>Nama</th>
                     <th>Status</th>
+                    <th>Koordinat</th>
                     <th>Desa</th>
                     <th>Kec.</th>
                     <th>Kab.</th>
@@ -281,6 +282,16 @@
                                 </div>
                               </div>
                           {% endif %}
+                      </td>
+                      <td>
+                          <a data-url="/admin/embung/update"
+                              class="editable"
+                              data-name="ll"
+                              data-type="text"
+                              data-title="{{ e.nama }}, Lat Long"
+                              data-pk="{{ e.id }}">
+                              <span style="color: blue">{{ e.ll }}</span>
+                          </a>
                       </td>
                       <td>
                           <a data-url="/admin/embung/update"
