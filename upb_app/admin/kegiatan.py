@@ -64,7 +64,7 @@ def kegiatan():
     for keg in kegiatan:
         results[keg.bendungan_id][keg.petugas].append(keg)
     for pem in pemeliharaan:
-        print(pem)
+        # print(pem)
         results[pem.bendungan_id]['pemeliharaan'].append(pem)
     return render_template('kegiatan/index.html',
                             bends=bends,
@@ -422,8 +422,8 @@ def pemeliharaan_foto(bendungan_id, pem_id):
     img_file = os.path.join(app.config['UPLOAD_FOLDER'], filename)
     save_file = os.path.join(app.config['SAVE_DIR'], img_file)
 
-    print(imageStr)
-    print(filename)
+    # print(imageStr)
+    # print(filename)
     print(request.form.get(f"keterangan"))
 
     try:
@@ -482,7 +482,7 @@ def pemeliharaan_delete(bendungan_id):
                             Pemeliharaan.bendungan_id == bendungan_id
                         ).all()
         pem_list += laporan
-    print(pem_list)
+    # print(pem_list)
 
     for pem in pem_list:
         fotos = pem.fotos
@@ -620,7 +620,7 @@ def kegiatan_embung_add(embung_id):
         }
         if form.bagian.data:
             obj_dict['bagian_id'] = int(form.bagian.data)
-        print(obj_dict)
+        # print(obj_dict)
 
         row = KegiatanEmbung.query.filter(
                                         KegiatanEmbung.sampling == form.sampling.data,
@@ -665,7 +665,7 @@ def kegiatan_embung_update(embung_id):
         }
         if form.bagian.data:
             obj_dict['bagian_id'] = int(form.bagian.data)
-        print(obj_dict)
+        # print(obj_dict)
 
         for key, value in obj_dict.items():
             setattr(row, key, value)
@@ -687,8 +687,8 @@ def kegiatan_embung_foto(embung_id):
     img_file = os.path.join(app.config['UPLOAD_FOLDER'], filename)
     save_file = os.path.join(app.config['SAVE_DIR'], img_file)
 
-    print(imageStr)
-    print(filename)
+    # print(imageStr)
+    # print(filename)
     print(request.form.get(f"keterangan"))
 
     try:

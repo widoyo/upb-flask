@@ -231,7 +231,7 @@
 
         reader.onloadend = function(e){
             console.log(`onload function called, parameter : ${e}`);
-			MinifyJpegAsync.minify(e.target.result, 920, function(data) {
+			MinifyJpegAsync.minify(e.target.result, 720, function(data) {
 				enc_img = "data:image/jpeg;base64," + btoa(data);
 				let img = new Image();
 				img.src = enc_img;
