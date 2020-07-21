@@ -1,0 +1,22 @@
+{% extends 'master/base_adm.html' %}
+
+{% set title = "Alert" %}
+
+{% block css %}
+
+{% endblock %}
+
+{% block content %}
+<div class="text-center">
+    <br>
+    <a href="{{ url_for('admin.alert_test') }}" class="btn btn-warning">Peringatan</a>
+</div>
+{% endblock %}
+
+{% block js %}
+<script>
+    $(document).ready(function() {
+
+    });
+</script>
+{% endblock %}

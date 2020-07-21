@@ -7,6 +7,8 @@ from upb_app.helper import day_range
 from sqlalchemy import and_
 import datetime
 
+import paho.mqtt.client as mqtt
+
 bp = Blueprint('admin', __name__)
 
 
@@ -166,6 +168,34 @@ def embung_harian():
                             wil_sungai=wilayah,
                             embung_a=embung_a,
                             embung_b=embung_b)
+
+
+@bp.route('/alert/button')
+@login_required
+@admin_only
+def alert_button():
+    ''' Return html with button to trigger alert notice '''
+    return render_template('operasi/alert.html')
+
+
+@bp.route('/alert/test')
+@login_required
+@admin_only
+def alert_test():
+    ''' Return html with button to trigger alert notice '''
+    MQTT_HOST = "mqtt.bbws-bsolo.net"
+    MQTT_PORT = 14983
+    client = mqtt.Client("overseer")
+
+    print("connecting to broker")
+    client.connect(MQTT_HOST, port=MQTT_PORT)
+
+    client.loop_start()
+    print("sending alert")
+    client.publish("alert/test", "ON")
+    client.loop_stop()
+
+    return redirect(url_for('admin.alert_button'))
 
 
 import upb_app.admin.keamanan
