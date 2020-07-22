@@ -5,6 +5,7 @@ from upb_app import db
 from upb_app import admin_only
 from upb_app.helper import day_range
 from sqlalchemy import and_
+from telegram import Bot
 import datetime
 
 import paho.mqtt.client as mqtt
@@ -194,6 +195,12 @@ def alert_test():
     print("sending alert")
     client.publish("alert/test", "ON")
     client.loop_stop()
+
+    # send telegram
+    with open('telegram_token.txt', 'r') as openfile:
+        token = openfile.read()
+    bot = Bot(token=token.strip())
+    bot.sendMessage(chat_id='@ewsbbwspj', text="*Status awas bendungan Logung*\nSirine desa Sintru dibunyikan.", parse_mode='Markdown')
 
     return redirect(url_for('admin.alert_button'))
 
