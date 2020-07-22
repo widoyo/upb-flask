@@ -197,10 +197,14 @@ def alert_test():
     client.loop_stop()
 
     # send telegram
-    with open('telegram_token.txt', 'r') as openfile:
-        token = openfile.read()
-    bot = Bot(token=token.strip())
-    bot.sendMessage(chat_id='@ewsbbwspj', text="*Status awas bendungan Logung*\nSirine desa Sintru dibunyikan.", parse_mode='Markdown')
+    try:
+        desa = request.values.get('desa')
+        with open('telegram_token.txt', 'r') as openfile:
+            token = openfile.read()
+        bot = Bot(token=token.strip())
+        bot.sendMessage(chat_id='@ewsbbwspj', text=f"*Status AWAS bendungan Logung*\nSirine {desa} dibunyikan.", parse_mode='Markdown')
+    except Exception as e:
+        print(e)
 
     return redirect(url_for('admin.alert_button'))
 

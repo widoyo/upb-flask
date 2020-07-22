@@ -39,20 +39,24 @@
     <body>
         <div class="container">
             <br>
-            <div class="row">
+            <h4>
+                Bendungan Logung
+                <small>
+                    <span class="badge badge-warning">AWAS</span>
+                </small>
+            </h4>
+            <hr>
+            <div class="row text-center">
                 <div class="col">
-                    <h4>
-                        Bendungan Logung
-                        <small>
-                            <span class="badge badge-warning">Awas</span>
-                        </small>
-                    </h4>
+                    <a href="{{ url_for('admin.alert_test', desa='Sintru') }}" class="btn btn-sm btn-warning">Sirine Sintru</a>
                 </div>
-                <div class="col text-center">
-                    <a href="{{ url_for('admin.alert_test') }}" class="btn btn-sm btn-warning">Sirine Sintru</a>
+                <div class="col">
+                    <a href="{{ url_for('admin.alert_test', desa='Desa 1') }}" class="btn btn-sm btn-warning">Sirine Desa 1</a>
+                </div>
+                <div class="col">
+                    <a href="{{ url_for('admin.alert_test', desa='Desa 2') }}" class="btn btn-sm btn-warning">Sirine Desa 2</a>
                 </div>
             </div>
-            <hr>
         </div>
 
         <script src="https://code.jquery.com/jquery-3.2.1.min.js"></script>
