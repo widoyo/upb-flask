@@ -213,9 +213,11 @@
                                 <div>
                                     Kendala: {{ k.kendala }}
                                 </div>
-                                <div>
-                                     - dilaporkan oleh <i>{{ k.petugas }}</i>
-                                </div>
+                                    {% if k.petugas %}
+                                    <div>
+                                         - dilaporkan oleh <i>{{ k.petugas }}</i>
+                                    </div>
+                                    {% endif %}
                                 {% endif %}
                                 <hr>
                             </div>
