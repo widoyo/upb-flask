@@ -230,6 +230,7 @@ class PencapaianEmbung(FlaskForm):
     selesai = StringField('Selesai', validators=[DataRequired()])
     pencapaian = StringField('Pencapaian Kerja', validators=[DataRequired()])
     kendala = StringField('Kendala', default="Tidak Ada")
+    pelapor = StringField('Petugas', validators=[DataRequired()])
     submit = SubmitField('Kirim')
 
 

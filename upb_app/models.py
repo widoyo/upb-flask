@@ -427,6 +427,7 @@ class KegiatanEmbung(BaseLog):
     selesai = db.Column(db.String(5))
     kendala = db.Column(db.Text)
     nilai = db.Column(db.Float)
+    petugas = db.Column(db.Text)
     bagian_id = db.Column(db.Integer, db.ForeignKey('bagian_embung.id'), nullable=True)
     embung_id = db.Column(db.Integer, db.ForeignKey('embung.id'), nullable=True)
 

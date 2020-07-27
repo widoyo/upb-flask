@@ -126,6 +126,10 @@
                               <label class="form-text" for="kendala"><b>Kendala</b></label>
                               <input type="text" name="kendala" class="form-control" placeholder="Tidak Ada">
                           </div>
+                          <div class="form-group">
+                              <label class="form-text" for="pelapor"><b>Petugas</b></label>
+                              <input type="text" name="pelapor" class="form-control" placeholder="Nama Petugas">
+                          </div>
                           <div class="">
                               <p><i>Upload Dokumentasi dilakukan setelah laporan pencapaian</i></p>
                               <p><i>Dilakukan di tab kegiatan</i></p>
@@ -208,6 +212,9 @@
                                 </div>
                                 <div>
                                     Kendala: {{ k.kendala }}
+                                </div>
+                                <div>
+                                     - dilaporkan oleh <i>{{ k.petugas }}</i>
                                 </div>
                                 {% endif %}
                                 <hr>
@@ -473,6 +480,7 @@
                             <th rowspan="2" class="text-center align-middle">Pencapaian</th>
                             <th colspan="2" class="text-center align-middle">Jam Kerja</th>
                             <th rowspan="2" class="text-center align-middle">Kendala</th>
+                            <th rowspan="2" class="text-center align-middle">Petugas</th>
                             <th colspan="3" class="text-center align-middle">Dokumentasi</th>
                         </tr>
                         <tr class="table-active">
@@ -503,6 +511,7 @@
                             <td class="text-center">{{ keg.0.mulai or "-" }}</td>
                             <td class="text-center">{{ keg.0.selesai or "-" }}</td>
                             <td>{{ keg.0.kendala or "-" }}</td>
+                            <td>{{ keg.0.petugas or "-" }}</td>
 
                             {% if keg.0.fotos['0'] %}
                             {% with f = keg.0.fotos['0'] %}
@@ -616,7 +625,7 @@
                             {% endif %}
 
                             {% else %}
-                            <td colspan="10" class="text-center">Tidak Ada Kegiatan</td>
+                            <td colspan="11" class="text-center">Tidak Ada Kegiatan</td>
                             {% endif %}
                         </tr>
 
@@ -634,6 +643,7 @@
                                 <td class="text-center">{{ k.mulai or "-" }}</td>
                                 <td class="text-center">{{ k.selesai or "-" }}</td>
                                 <td>{{ k.kendala or "-" }}</td>
+                                <td>{{ k.petugas or "-" }}</td>
                                 {% if k.fotos['0'] %}
                                 {% with f = k.fotos['0'] %}
                                 <td class="text-center">
@@ -746,7 +756,7 @@
                                 {% endif %}
 
                                 {% else %}
-                                <td colspan="10" class="text-center">Tidak Ada Kegiatan</td>
+                                <td colspan="11" class="text-center">Tidak Ada Kegiatan</td>
                                 {% endif %}
                             </tr>
                             {% endfor %}
@@ -911,7 +921,10 @@
             $('input[name="pencapaian"]').focus();
         } else if ($('input[name="kendala"]').val() == ''){
             alert('Harap masukkan kendala');
-            $('input[name="pencapaian"]').focus();
+            $('input[name="kendala"]').focus();
+        } else if ($('input[name="pelapor"]').val() == ''){
+            alert('Harap masukkan nama Petugas');
+            $('input[name="pelapor"]').focus();
         } else {
             let fields = 'keterangan_waktu'.split('_');
             let formData = {
@@ -921,6 +934,7 @@
                 selesai: $('input[name="selesai"]').val(),
                 pencapaian: $('input[name="pencapaian"]').val(),
                 kendala: $('input[name="kendala"]').val(),
+                pelapor: $('input[name="pelapor"]').val(),
                 sampling: $('input[name="sampling_p"]').val()
             };
             console.log("Update Kegiatan Embung");

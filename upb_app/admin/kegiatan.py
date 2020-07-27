@@ -643,6 +643,11 @@ def kegiatan_embung_add(embung_id):
 @role_check_embung
 def kegiatan_embung_update(embung_id):
     form = PencapaianEmbung()
+    print(request.form)
+    print(form.validate_on_submit())
+    for fieldName, errorMessages in form.errors.items():
+        for err in errorMessages:
+            print(fieldName, err)
 
     if form.validate_on_submit():
         print("Validated")
@@ -662,6 +667,7 @@ def kegiatan_embung_update(embung_id):
             'selesai': form.selesai.data,
             'pencapaian': form.pencapaian.data,
             'kendala': form.kendala.data,
+            'petugas': form.pelapor.data,
         }
         if form.bagian.data:
             obj_dict['bagian_id'] = int(form.bagian.data)

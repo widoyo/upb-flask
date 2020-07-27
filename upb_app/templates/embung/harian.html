@@ -47,6 +47,7 @@
                     <th rowspan="2" class="align-middle">Pencapaian</th>
                     <th rowspan="2" class="align-middle">Jam Kerja</th>
                     <th rowspan="2" class="align-middle">Kendala</th>
+                    <th rowspan="2" class="align-middle">Petugas</th>
                     <th colspan="3" class="text-center">Dokumentasi</th>
                 </tr>
                 <tr>
@@ -59,7 +60,7 @@
                 {% for wil, embungs in embung_b.items() %}
                     {% if embungs %}
                     <tr class="table-active">
-                        <td colspan="9" class="text-center">{{ wil_sungai[wil] }}</td>
+                        <td colspan="10" class="text-center">{{ wil_sungai[wil] }}</td>
                     </tr>
                     {% endif %}
                     {% for i, emb in embungs.items() %}
@@ -83,6 +84,10 @@
                               </td>
                               <td>
                                   {% if e.kendala %}{{ e.kendala }}
+                                  {% else %} - {% endif %}
+                              </td>
+                              <td>
+                                  {% if e.petugas %}{{ e.petugas }}
                                   {% else %} - {% endif %}
                               </td>
                               {% if e.fotos['0'] %}
@@ -197,7 +202,7 @@
                               {% endif %}
                             {% endfor %}
                           {% else %}
-                            <td colspan="7" class="text-center">Tidak Ada Kegiatan</td>
+                            <td colspan="8" class="text-center">Tidak Ada Kegiatan</td>
                           {% endif %}
                         </tr>
                     {% endfor %}
@@ -217,6 +222,7 @@
                     <th rowspan="2" class="align-middle">Pencapaian</th>
                     <th rowspan="2" class="align-middle">Jam Kerja</th>
                     <th rowspan="2" class="align-middle">Kendala</th>
+                    <th rowspan="2" class="align-middle">Petugas</th>
                     <th colspan="3" class="text-center">Dokumentasi</th>
                 </tr>
                 <tr>
@@ -229,7 +235,7 @@
                 {% for wil, embungs in embung_a.items() %}
                     {% if embungs %}
                     <tr class="table-active">
-                        <td colspan="9" class="text-center">{{ wil_sungai[wil] }}</td>
+                        <td colspan="10" class="text-center">{{ wil_sungai[wil] }}</td>
                     </tr>
                     {% endif %}
                     {% for i, emb in embungs.items() %}
@@ -254,8 +260,11 @@
                                   <td>
                                       {{ e.kendala }}
                                   </td>
+                                  <td>
+                                      {{ e.petugas }}
+                                  </td>
                               {% else %}
-                                <td colspan="3">Belum Dilaporkan</td>
+                                <td colspan="4">Belum Dilaporkan</td>
                               {% endif %}
 
                               {% if e.fotos['0'] %}
@@ -371,7 +380,7 @@
                               {% if loop.index < emb.kegiatan|length %}</tr>{% endif %}
                             {% endfor %}
                           {% else %}
-                            <td colspan="7" class="text-center">Tidak Ada Kegiatan</td>
+                            <td colspan="8" class="text-center">Tidak Ada Kegiatan</td>
                           {% endif %}
                         </tr>
                     {% endfor %}
