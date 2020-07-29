@@ -1,6 +1,6 @@
 from flask import Blueprint, jsonify, request, render_template, redirect, url_for, flash
 from flask_login import login_required
-from upb_app.models import Bendungan, Embung, Users, KegiatanEmbung, wil_sungai
+from upb_app.models import Bendungan, Embung, Users, KegiatanEmbung, Foto, wil_sungai
 from upb_app import db
 from upb_app import admin_only
 from upb_app.helper import day_range
@@ -169,6 +169,25 @@ def embung_harian():
                             wil_sungai=wilayah,
                             embung_a=embung_a,
                             embung_b=embung_b)
+
+
+@bp.route('/showcase/toggle', methods=['POST'])
+@login_required
+@admin_only
+def showcase_toggle():
+    ''' Home Embung '''
+    foto_id = request.form.get('foto_id')
+
+    foto = Foto.query.get(foto_id)
+    if foto.showcase:
+        foto.showcase = False
+        msg = "hide"
+    else:
+        foto.showcase = True
+        msg = "show"
+    db.session.commit()
+
+    return msg
 
 
 @bp.route('/alert/button')

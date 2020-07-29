@@ -12,16 +12,6 @@ from upb_app.forms import LoginForm
 
 bp = Blueprint('about', __name__)
 
-gallery_img_ids = [
-    48752, 47947, 49966, 47887, 41000,
-    46767, 46070, 48406, 43659, 43915,
-    43927, 45482, 49740, 45113
-]
-# gallery_img_ids = [
-#     18800, 18813, 18797, 18882,
-#     18765, 18791, 18884, 18895
-# ]
-
 
 @app.context_processor
 def always_on():
@@ -86,9 +76,10 @@ def index():
             rtow['outflow'] += r.po_outflow_deb if r.po_outflow_deb else 0
             bend_ids.append(r.bendungan_id)
 
-    gallery_of_8 = random.sample(gallery_img_ids, 8)
-    gallery = Foto.query.filter(Foto.id.in_(gallery_of_8)).all()
-    print(gallery)
+    showcased_foto = Foto.query.filter(Foto.showcase).all()
+    gallery = []
+    if showcased_foto:
+        gallery = random.sample(showcased_foto, min(8, len(showcased_foto)))
 
     return render_template('index.html',
                             vol_potensi=vol_potensi,

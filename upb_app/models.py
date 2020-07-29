@@ -371,6 +371,7 @@ class Foto(BaseLog):
     keterangan = db.Column(db.Text)
     obj_type = db.Column(db.Text)
     obj_id = db.Column(db.Integer)
+    showcase = db.Column(db.Boolean, default=False)
 
 
 class Kerusakan(BaseLog):

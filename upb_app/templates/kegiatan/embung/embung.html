@@ -256,6 +256,17 @@
                                                                   <p class="text-center">{{ f.keterangan }}</p>
                                                               </div>
                                                           </div>
+                                                          {% if user.role in ['1', '4'] %}
+                                                          <div class="text-center">
+                                                              <button type="button" class="btn btn-sm btn-info" onclick="toggleShowcase({{ f.id }})">
+                                                              {% if f.showcase %}
+                                                                  <i class="fas fa-eye-slash" id="showcase-btn-{{ f.id }}"></i>
+                                                              {% else %}
+                                                                  <i class="fas fa-eye" id="showcase-btn-{{ f.id }}"></i>
+                                                              {% endif %}
+                                                              </button>
+                                                          </div>
+                                                          {% endif %}
                                                       </div>
                                                       <div class="modal-footer">
                                                           <input type="button" value="Hapus" onclick="deleteFoto({{ f.id }})" class="btn btn-danger">
@@ -335,6 +346,17 @@
                                                                   <p class="text-center">{{ f.keterangan }}</p>
                                                               </div>
                                                           </div>
+                                                          {% if user.role in ['1', '4'] %}
+                                                          <div class="text-center">
+                                                              <button type="button" class="btn btn-sm btn-info" onclick="toggleShowcase({{ f.id }})">
+                                                              {% if f.showcase %}
+                                                                  <i class="fas fa-eye-slash" id="showcase-btn-{{ f.id }}"></i>
+                                                              {% else %}
+                                                                  <i class="fas fa-eye" id="showcase-btn-{{ f.id }}"></i>
+                                                              {% endif %}
+                                                              </button>
+                                                          </div>
+                                                          {% endif %}
                                                       </div>
                                                       <div class="modal-footer">
                                                           <input type="button" value="Hapus" onclick="deleteFoto({{ f.id }})" class="btn btn-danger">
@@ -414,6 +436,17 @@
                                                                   <p class="text-center">{{ f.keterangan }}</p>
                                                               </div>
                                                           </div>
+                                                          {% if user.role in ['1', '4'] %}
+                                                          <div class="text-center">
+                                                              <button type="button" class="btn btn-sm btn-info" onclick="toggleShowcase({{ f.id }})">
+                                                              {% if f.showcase %}
+                                                                  <i class="fas fa-eye-slash" id="showcase-btn-{{ f.id }}"></i>
+                                                              {% else %}
+                                                                  <i class="fas fa-eye" id="showcase-btn-{{ f.id }}"></i>
+                                                              {% endif %}
+                                                              </button>
+                                                          </div>
+                                                          {% endif %}
                                                       </div>
                                                       <div class="modal-footer">
                                                           <input type="button" value="Hapus" onclick="deleteFoto({{ f.id }})" class="btn btn-danger">
@@ -518,34 +551,7 @@
                             {% if keg.0.fotos['0'] %}
                             {% with f = keg.0.fotos['0'] %}
                             <td class="text-center">
-                                <a data-toggle="modal" href="#preview-foto-{{ f.id }}"
-                                    role="button" aria-expanded="false"
-                                    class="card-link">
-                                    <img class="img-card" id="foto-{{ f.id }}" src="{{ url_for('static', filename=f.url[7:]) }}" alt="" style="width: 8rem;height: 8rem;">
-                                </a>
-                                <div class="modal fade" id="preview-foto-{{ f.id }}" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
-                                  <div class="modal-dialog" role="document">
-                                    <div class="modal-content">
-                                      <div class="modal-header">
-                                        <h5 class="modal-title" id="exampleModalLabel">{{ keg.0.rencana }} {{ keg.0.sampling.strftime('%d %b %Y') }}</h5>
-                                        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                                          <span aria-hidden="true">&times;</span>
-                                        </button>
-                                      </div>
-                                      <div class="modal-body">
-                                          <div class="form-group">
-                                              <img class="img-fluid" src="{{ url_for('static', filename=f.url[7:]) }}" id="foto-modal-show">
-                                              <div style="position: absolute;top: 70%;left: 0;width: 100%;background-color: rgba(255, 255, 255, 0.6);">
-                                                  <p class="text-center">{{ f.keterangan }}</p>
-                                              </div>
-                                          </div>
-                                      </div>
-                                      <div class="modal-footer">
-                                          <button type="button" class="btn btn-secondary" data-dismiss="modal">Tutup</button>
-                                      </div>
-                                    </div>
-                                  </div>
-                                </div>
+                                <img class="img-card" id="foto-{{ f.id }}" src="{{ url_for('static', filename=f.url[7:]) }}" alt="" style="width: 8rem;height: 8rem;">
                             </td>
                             {% endwith %}
                             {% else %}
@@ -555,34 +561,7 @@
                             {% if keg.0.fotos['50'] %}
                             {% with f = keg.0.fotos['50'] %}
                             <td class="text-center">
-                                <a data-toggle="modal" href="#preview-foto-{{ f.id }}"
-                                    role="button" aria-expanded="false"
-                                    class="card-link">
-                                    <img class="img-card" id="foto-{{ f.id }}" src="{{ url_for('static', filename=f.url[7:]) }}" alt="" style="width: 8rem;height: 8rem;">
-                                </a>
-                                <div class="modal fade" id="preview-foto-{{ f.id }}" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
-                                  <div class="modal-dialog" role="document">
-                                    <div class="modal-content">
-                                      <div class="modal-header">
-                                        <h5 class="modal-title" id="exampleModalLabel">{{ keg.0.rencana }} {{ keg.0.sampling.strftime('%d %b %Y') }}</h5>
-                                        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                                          <span aria-hidden="true">&times;</span>
-                                        </button>
-                                      </div>
-                                      <div class="modal-body">
-                                          <div class="form-group">
-                                              <img class="img-fluid" src="{{ url_for('static', filename=f.url[7:]) }}" id="foto-modal-show">
-                                              <div style="position: absolute;top: 70%;left: 0;width: 100%;background-color: rgba(255, 255, 255, 0.6);">
-                                                  <p class="text-center">{{ f.keterangan }}</p>
-                                              </div>
-                                          </div>
-                                      </div>
-                                      <div class="modal-footer">
-                                          <button type="button" class="btn btn-secondary" data-dismiss="modal">Tutup</button>
-                                      </div>
-                                    </div>
-                                  </div>
-                                </div>
+                                <img class="img-card" id="foto-{{ f.id }}" src="{{ url_for('static', filename=f.url[7:]) }}" alt="" style="width: 8rem;height: 8rem;">
                             </td>
                             {% endwith %}
                             {% else %}
@@ -592,34 +571,7 @@
                             {% if keg.0.fotos['100'] %}
                             {% with f = keg.0.fotos['100'] %}
                             <td class="text-center">
-                                <a data-toggle="modal" href="#preview-foto-{{ f.id }}"
-                                    role="button" aria-expanded="false"
-                                    class="card-link">
-                                    <img class="img-card" id="foto-{{ f.id }}" src="{{ url_for('static', filename=f.url[7:]) }}" alt="" style="width: 8rem;height: 8rem;">
-                                </a>
-                                <div class="modal fade" id="preview-foto-{{ f.id }}" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
-                                  <div class="modal-dialog" role="document">
-                                    <div class="modal-content">
-                                      <div class="modal-header">
-                                        <h5 class="modal-title" id="exampleModalLabel">{{ keg.0.rencana }} {{ keg.0.sampling.strftime('%d %b %Y') }}</h5>
-                                        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                                          <span aria-hidden="true">&times;</span>
-                                        </button>
-                                      </div>
-                                      <div class="modal-body">
-                                          <div class="form-group">
-                                              <img class="img-fluid" src="{{ url_for('static', filename=f.url[7:]) }}" id="foto-modal-show">
-                                              <div style="position: absolute;top: 70%;left: 0;width: 100%;background-color: rgba(255, 255, 255, 0.6);">
-                                                  <p class="text-center">{{ f.keterangan }}</p>
-                                              </div>
-                                          </div>
-                                      </div>
-                                      <div class="modal-footer">
-                                          <button type="button" class="btn btn-secondary" data-dismiss="modal">Tutup</button>
-                                      </div>
-                                    </div>
-                                  </div>
-                                </div>
+                                <img class="img-card" id="foto-{{ f.id }}" src="{{ url_for('static', filename=f.url[7:]) }}" alt="" style="width: 8rem;height: 8rem;">
                             </td>
                             {% endwith %}
                             {% else %}
@@ -649,34 +601,7 @@
                                 {% if k.fotos['0'] %}
                                 {% with f = k.fotos['0'] %}
                                 <td class="text-center">
-                                    <a data-toggle="modal" href="#preview-foto-{{ f.id }}"
-                                        role="button" aria-expanded="false"
-                                        class="card-link">
-                                        <img class="img-card" id="foto-{{ f.id }}" src="{{ url_for('static', filename=f.url[7:]) }}" alt="" style="width: 8rem;height: 8rem;">
-                                    </a>
-                                    <div class="modal fade" id="preview-foto-{{ f.id }}" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
-                                      <div class="modal-dialog" role="document">
-                                        <div class="modal-content">
-                                          <div class="modal-header">
-                                            <h5 class="modal-title" id="exampleModalLabel">{{ keg.0.rencana }} {{ keg.0.sampling.strftime('%d %b %Y') }}</h5>
-                                            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                                              <span aria-hidden="true">&times;</span>
-                                            </button>
-                                          </div>
-                                          <div class="modal-body">
-                                              <div class="form-group">
-                                                  <img class="img-fluid" src="{{ url_for('static', filename=f.url[7:]) }}" id="foto-modal-show">
-                                                  <div style="position: absolute;top: 70%;left: 0;width: 100%;background-color: rgba(255, 255, 255, 0.6);">
-                                                      <p class="text-center">{{ f.keterangan }}</p>
-                                                  </div>
-                                              </div>
-                                          </div>
-                                          <div class="modal-footer">
-                                              <button type="button" class="btn btn-secondary" data-dismiss="modal">Tutup</button>
-                                          </div>
-                                        </div>
-                                      </div>
-                                    </div>
+                                    <img class="img-card" id="foto-{{ f.id }}" src="{{ url_for('static', filename=f.url[7:]) }}" alt="" style="width: 8rem;height: 8rem;">
                                 </td>
                                 {% endwith %}
                                 {% else %}
@@ -686,34 +611,7 @@
                                 {% if k.fotos['50'] %}
                                 {% with f = k.fotos['50'] %}
                                 <td class="text-center">
-                                    <a data-toggle="modal" href="#preview-foto-{{ f.id }}"
-                                        role="button" aria-expanded="false"
-                                        class="card-link">
-                                        <img class="img-card" id="foto-{{ f.id }}" src="{{ url_for('static', filename=f.url[7:]) }}" alt="" style="width: 8rem;height: 8rem;">
-                                    </a>
-                                    <div class="modal fade" id="preview-foto-{{ f.id }}" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
-                                      <div class="modal-dialog" role="document">
-                                        <div class="modal-content">
-                                          <div class="modal-header">
-                                            <h5 class="modal-title" id="exampleModalLabel">{{ keg.0.rencana }} {{ keg.0.sampling.strftime('%d %b %Y') }}</h5>
-                                            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                                              <span aria-hidden="true">&times;</span>
-                                            </button>
-                                          </div>
-                                          <div class="modal-body">
-                                              <div class="form-group">
-                                                  <img class="img-fluid" src="{{ url_for('static', filename=f.url[7:]) }}" id="foto-modal-show">
-                                                  <div style="position: absolute;top: 70%;left: 0;width: 100%;background-color: rgba(255, 255, 255, 0.6);">
-                                                      <p class="text-center">{{ f.keterangan }}</p>
-                                                  </div>
-                                              </div>
-                                          </div>
-                                          <div class="modal-footer">
-                                              <button type="button" class="btn btn-secondary" data-dismiss="modal">Tutup</button>
-                                          </div>
-                                        </div>
-                                      </div>
-                                    </div>
+                                    <img class="img-card" id="foto-{{ f.id }}" src="{{ url_for('static', filename=f.url[7:]) }}" alt="" style="width: 8rem;height: 8rem;">
                                 </td>
                                 {% endwith %}
                                 {% else %}
@@ -723,34 +621,7 @@
                                 {% if k.fotos['100'] %}
                                 {% with f = k.fotos['100'] %}
                                 <td class="text-center">
-                                    <a data-toggle="modal" href="#preview-foto-{{ f.id }}"
-                                        role="button" aria-expanded="false"
-                                        class="card-link">
-                                        <img class="img-card" id="foto-{{ f.id }}" src="{{ url_for('static', filename=f.url[7:]) }}" alt="" style="width: 8rem;height: 8rem;">
-                                    </a>
-                                    <div class="modal fade" id="preview-foto-{{ f.id }}" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
-                                      <div class="modal-dialog" role="document">
-                                        <div class="modal-content">
-                                          <div class="modal-header">
-                                            <h5 class="modal-title" id="exampleModalLabel">{{ keg.0.rencana }} {{ keg.0.sampling.strftime('%d %b %Y') }}</h5>
-                                            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                                              <span aria-hidden="true">&times;</span>
-                                            </button>
-                                          </div>
-                                          <div class="modal-body">
-                                              <div class="form-group">
-                                                  <img class="img-fluid" src="{{ url_for('static', filename=f.url[7:]) }}" id="foto-modal-show">
-                                                  <div style="position: absolute;top: 70%;left: 0;width: 100%;background-color: rgba(255, 255, 255, 0.6);">
-                                                      <p class="text-center">{{ f.keterangan }}</p>
-                                                  </div>
-                                              </div>
-                                          </div>
-                                          <div class="modal-footer">
-                                              <button type="button" class="btn btn-secondary" data-dismiss="modal">Tutup</button>
-                                          </div>
-                                        </div>
-                                      </div>
-                                    </div>
+                                    <img class="img-card" id="foto-{{ f.id }}" src="{{ url_for('static', filename=f.url[7:]) }}" alt="" style="width: 8rem;height: 8rem;">
                                 </td>
                                 {% endwith %}
                                 {% else %}
@@ -1023,6 +894,25 @@
     	$('input[name="kegiatan"]').val("");
         $('input[name="target"]').val("");
     	// $('#rencana').collapse('hide');
+    }
+
+    function toggleShowcase(foto_id){
+        $.post("{{ url_for('admin.showcase_toggle') }}", {foto_id:foto_id}).done(function(result){
+            var a = result;
+            if(a == "show"){
+                customAlert("Foto Akan ditampilkan di Galeri halaman depan", function(){
+                    eye_el = document.getElementById(`showcase-btn-${ foto_id }`);
+                    eye_el.classList.remove("fa-eye");
+                    eye_el.classList.add("fa-eye-slash");
+                });
+            } else {
+                customAlert("Foto Akan ditarik dari Galeri halaman depan", function(){
+                    eye_el = document.getElementById(`showcase-btn-${ foto_id }`);
+                    eye_el.classList.remove("fa-eye-slash");
+                    eye_el.classList.add("fa-eye");
+                });
+            }
+        });
     }
 </script>
 {% endblock %}
