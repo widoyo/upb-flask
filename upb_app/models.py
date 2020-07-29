@@ -527,6 +527,7 @@ class Pemeliharaan(BaseLog):
         result = []
         for f in self.fotos:
             result.append({
+                'pemeliharaan': self,
                 'foto': f,
                 'keterangan': f"{self.jenis}, {f.keterangan}"
             })
