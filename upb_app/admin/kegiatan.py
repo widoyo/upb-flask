@@ -115,9 +115,8 @@ def kegiatan_bendungan(bendungan_id):
         kegiatan[keg.sampling]['id'] = keg.id
         kegiatan[keg.sampling][keg.petugas.lower()].append(keg.uraian)
     for pem in pemeliharaan:
-        for f in pem.get_fotos_description():
-            kegiatan[pem.sampling]['id'] = pem.id
-            kegiatan[pem.sampling]['pemeliharaan'].append(f['keterangan'])
+        kegiatan[pem.sampling]['id'] = pem.id
+        kegiatan[pem.sampling]['pemeliharaan'].append(f"{pem.jenis}, {pem.keterangan}")
 
     return render_template('kegiatan/bendungan.html',
                             csrf=generate_csrf(),
