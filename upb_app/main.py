@@ -1,4 +1,5 @@
 import datetime
+import random
 from urllib.parse import urlparse, urljoin
 from flask import render_template, redirect, url_for, flash, request, abort, Blueprint
 from flask_login import current_user, login_required, login_user, logout_user
@@ -6,10 +7,20 @@ from sqlalchemy import and_, extract
 from pytz import timezone
 
 from upb_app import app
-from upb_app.models import Rencana, Bendungan, Embung, ManualTma, ManualDaily, Users
+from upb_app.models import Rencana, Bendungan, Embung, ManualTma, ManualDaily, Users, Foto
 from upb_app.forms import LoginForm
 
 bp = Blueprint('about', __name__)
+
+gallery_img_ids = [
+    48752, 47947, 49966, 47887, 41000,
+    46767, 46070, 48406, 43659, 43915,
+    43927, 45482, 49740, 45113
+]
+# gallery_img_ids = [
+#     18800, 18813, 18797, 18882,
+#     18765, 18791, 18884, 18895
+# ]
 
 
 @app.context_processor
@@ -75,6 +86,10 @@ def index():
             rtow['outflow'] += r.po_outflow_deb if r.po_outflow_deb else 0
             bend_ids.append(r.bendungan_id)
 
+    gallery_of_8 = random.sample(gallery_img_ids, 8)
+    gallery = Foto.query.filter(Foto.id.in_(gallery_of_8)).all()
+    print(gallery)
+
     return render_template('index.html',
                             vol_potensi=vol_potensi,
                             real=real,
@@ -82,6 +97,7 @@ def index():
                             vol_embung=vol_embung,
                             tgl=today,
                             count=count,
+                            gallery=gallery,
                             title='Home')
 
 

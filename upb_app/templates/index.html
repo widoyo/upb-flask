@@ -5,9 +5,76 @@
 {% endblock %}
 
 {% block content %}
+<div class="text-center">
+    <h3>GALLERY</h3>
+    <div class="card m-2">
+        <div class="row">
+            {% for gal in gallery %}
+            <div class="col-md-3 align-middle pt-1 pb-1">
+                <a data-toggle="modal" href="#gallery-scroll"
+                    role="button" aria-expanded="false"
+                    class="card-link" onclick="openGallery({{ gal.id }})">
+                    <img class="img-fluid" id="foto-{{ gal.id }}" src="{{ url_for('static', filename=gal.url[7:]) }}" alt="NO IMAGE" style="width: 100%; height: 11rem;">
+                </a>
+            </div>
 
+                {% if loop.index % 4 == 0 %}
+                </div>
+                <div class="row">
+                {% endif %}
+
+            {% endfor %}
+        </div>
+
+        <!-- MODAL + CAROUSEL -->
+        <div class="modal fade" id="gallery-scroll" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+          <div class="modal-dialog modal-dialog-centered" role="document">
+            <div class="modal-content">
+              <div class="modal-header">
+                  <h5 class="modal-title" id="gallery_name">Gallery Kegiatan</h5>
+                  <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                  </button>
+              </div>
+              <div class="modal-body">
+                <div id="carouselExampleControls" class="carousel slide" data-ride="carousel">
+                    <div class="carousel-inner">
+                        {% for gal in gallery %}
+                        <div class="carousel-item" id="img-show-{{ gal.id }}" name="img-show">
+                            <img class="img-fluid" src="{{ url_for('static', filename=gal.url[7:]) }}" id="foto-modal-show">
+                        </div>
+                        {% endfor %}
+                    </div>
+                    <a class="carousel-control-prev" href="#carouselExampleControls" role="button" data-slide="prev">
+                        <span class="carousel-control-prev-icon" aria-hidden="true"></span>
+                        <span class="sr-only">Previous</span>
+                    </a>
+                    <a class="carousel-control-next" href="#carouselExampleControls" role="button" data-slide="next">
+                        <span class="carousel-control-next-icon" aria-hidden="true"></span>
+                        <span class="sr-only">Next</span>
+                    </a>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+    </div>
+</div>
+<br>
 {% endblock %}
 
 {% block js %}
+<script>
+    function clearActive(){
+        document.getElementsByName("img-show").forEach(function (el) {
+            el.classList.remove("active");
+        });
+    }
 
+    function openGallery(img_id) {
+        console.log("Opening Gallery");
+        clearActive();
+        document.getElementById(`img-show-${ img_id }`).classList.add("active");
+    }
+</script>
 {% endblock %}
