@@ -42,8 +42,10 @@
                                     <option>Keamanan</option>
                                     <option>Pemantauan</option>
                                     <option>Operasi</option>
-                                    <option>Pemeliharaan</option>
                                   </select>
+                                  <small id="petugashelp" class="form-text text-muted">
+                                      Laporan Pemeliharaan klik <a href="{{ url_for('admin.pemeliharaan', bendungan_id=bend_id) }}">disini</a>.
+                                  </small>
                               </div>
                               <div class="form-group">
                                   <label for="foto"><b>Foto</b></label>

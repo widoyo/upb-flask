@@ -84,6 +84,12 @@ def kegiatan_bendungan(bendungan_id):
                                     extract('month', Kegiatan.sampling) == sampling.month,
                                     extract('year', Kegiatan.sampling) == sampling.year
                                 ).all()
+    pemeliharaan = Pemeliharaan.query.filter(
+                                    Pemeliharaan.bendungan_id == bendungan_id,
+                                    Pemeliharaan.is_rencana == '0',
+                                    extract('month', Pemeliharaan.sampling) == sampling.month,
+                                    extract('year', Pemeliharaan.sampling) == sampling.year
+                                ).all()
     kegiatan = {}
     for i in range(day, 0, -1):
         sampl = datetime.datetime.strptime(f"{sampling.year}-{sampling.month}-{i}", "%Y-%m-%d")
@@ -108,6 +114,10 @@ def kegiatan_bendungan(bendungan_id):
             }
         kegiatan[keg.sampling]['id'] = keg.id
         kegiatan[keg.sampling][keg.petugas.lower()].append(keg.uraian)
+    for pem in pemeliharaan:
+        for f in pem.get_fotos_description():
+            kegiatan[pem.sampling]['id'] = pem.id
+            kegiatan[pem.sampling]['pemeliharaan'].append(f['keterangan'])
 
     return render_template('kegiatan/bendungan.html',
                             csrf=generate_csrf(),
@@ -136,16 +146,28 @@ def kegiatan_paper(bendungan_id):
                                     extract('month', Kegiatan.sampling) == sampling.month,
                                     extract('year', Kegiatan.sampling) == sampling.year
                                 ).all()
+    pemeliharaan = Pemeliharaan.query.filter(
+                                    Pemeliharaan.bendungan_id == bendungan_id,
+                                    Pemeliharaan.is_rencana == '0',
+                                    extract('day', Pemeliharaan.sampling) == sampling.day,
+                                    extract('month', Pemeliharaan.sampling) == sampling.month,
+                                    extract('year', Pemeliharaan.sampling) == sampling.year
+                                ).all()
     data = []
     for keg in kegiatan:
         data.append({
             'kegiatan': keg,
             'foto': Foto.query.get(keg.foto_id)
         })
+    data2 = []
+    for pem in pemeliharaan:
+        for f in pem.get_fotos_description():
+            data2.append(f)
 
     return render_template('kegiatan/paper.html',
                             bend=bend,
                             kegiatan=data,
+                            pemeliharaan=data2,
                             sampling=sampling)
 
 

@@ -523,6 +523,15 @@ class Pemeliharaan(BaseLog):
             petugas.append(pp.petugas)
         return petugas
 
+    def get_fotos_description(self):
+        result = []
+        for f in self.fotos:
+            result.append({
+                'foto': f,
+                'keterangan': f"{self.jenis}, {f.keterangan}"
+            })
+        return result
+
 
 class PemeliharaanPetugas(BaseLog):
     __tablename__ = 'pemeliharaan_petugas'

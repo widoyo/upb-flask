@@ -105,7 +105,27 @@
                         {% endif %}
 
                         <img src="{{ url_for('static', filename=keg.foto.url[7:]) }}" style="width: 50%; height: auto;">
-                        <div style="vertical-align: top">{{ keg.kegiatan.uraian }}, {{ keg.kegiatan.petugas.title() }}</div>
+                        <div style="vertical-align: top">{{ keg.kegiatan.uraian }} - {{ keg.kegiatan.petugas.title() }}</div>
+                    </td>
+                </tr>
+              {% endfor %}
+              {% for pem in pemeliharaan %}
+                <tr>
+                    <td>
+                        {% if user.role in ['1', '4'] %}
+                        <div class="text-center">
+                            <button id="no-print" style="float: right;" type="button" class="btn btn-info" onclick="toggleShowcase({{ pem['foto'].id }})">
+                            {% if pem['foto'].showcase %}
+                                <i class="fas fa-eye-slash" id="showcase-btn-{{ pem['foto'].id }}"></i>
+                            {% else %}
+                                <i class="fas fa-eye" id="showcase-btn-{{ pem['foto'].id }}"></i>
+                            {% endif %}
+                            </button>
+                        </div>
+                        {% endif %}
+
+                        <img src="{{ url_for('static', filename=pem['foto'].url[7:]) }}" style="width: 50%; height: auto;">
+                        <div style="vertical-align: top">{{ pem['keterangan'] }} - Pemeliharaan</div>
                     </td>
                 </tr>
               {% endfor %}
