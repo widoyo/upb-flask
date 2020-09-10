@@ -81,14 +81,14 @@ def kegiatan_bendungan(bendungan_id):
     sampling, end, day = month_range(request.values.get('sampling'))
     all_kegiatan = Kegiatan.query.filter(
                                     Kegiatan.bendungan_id == bendungan_id,
-                                    extract('month', Kegiatan.sampling) == sampling.month,
-                                    extract('year', Kegiatan.sampling) == sampling.year
+                                    Kegiatan.sampling >= sampling.strftime("%Y-%m-%d"),
+                                    Kegiatan.sampling <= end.strftime("%Y-%m-%d")
                                 ).all()
     pemeliharaan = Pemeliharaan.query.filter(
                                     Pemeliharaan.bendungan_id == bendungan_id,
                                     Pemeliharaan.is_rencana == '0',
-                                    extract('month', Pemeliharaan.sampling) == sampling.month,
-                                    extract('year', Pemeliharaan.sampling) == sampling.year
+                                    Pemeliharaan.sampling >= sampling.strftime("%Y-%m-%d"),
+                                    Pemeliharaan.sampling <= end.strftime("%Y-%m-%d")
                                 ).all()
     kegiatan = {}
     for i in range(day, 0, -1):
@@ -103,20 +103,9 @@ def kegiatan_bendungan(bendungan_id):
         }
 
     for keg in all_kegiatan:
-        if keg.sampling not in kegiatan:
-            kegiatan[keg.sampling] = {
-                'id': 0,
-                'koordinator': [],
-                'keamanan': [],
-                'pemantauan': [],
-                'operasi': [],
-                'pemeliharaan': []
-            }
         kegiatan[keg.sampling]['id'] = keg.id
         kegiatan[keg.sampling][keg.petugas.lower()].append(keg.uraian)
     for pem in pemeliharaan:
-        if pem.sampling not in kegiatan:
-            continue
         kegiatan[pem.sampling]['id'] = pem.id
         kegiatan[pem.sampling]['pemeliharaan'].append(f"{pem.jenis}, {pem.keterangan}")
 
@@ -358,6 +347,18 @@ def pemeliharaan_lapor(bendungan_id):
     if not request.form.get('jenis'):
         flash(f"Rencana Pemeliharaan kosong", 'danger')
         return "error"
+
+    # check if rencana exist
+    date, start, end = week_range(date=request.form.get('sampling'))
+    rencana = row = Pemeliharaan.query.filter(
+                                Pemeliharaan.sampling >= start.strftime("%Y-%m-%d"),
+                                Pemeliharaan.sampling <= end.strftime("%Y-%m-%d"),
+                                Pemeliharaan.is_rencana == '1',
+                                Pemeliharaan.bendungan_id == bendungan_id,
+                                Pemeliharaan.jenis == request.form.get('jenis')
+                            ).first()
+    if not rencana:
+        return "rencana_not_found"
 
     row = Pemeliharaan.query.filter(
                                 Pemeliharaan.sampling == request.form.get('sampling'),

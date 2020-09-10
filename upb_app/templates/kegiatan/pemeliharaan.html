@@ -794,11 +794,19 @@
                 type: 'POST'
             }).done(function(res) {
                 console.log(res);
-                location.href = "{{ url_for('admin.pemeliharaan', bendungan_id=bend.id, rencana='off') }}";
+                if (res == "success"){
+                    location.href = "{{ url_for('admin.pemeliharaan', bendungan_id=bend.id, rencana='off') }}";
+                } else {
+                    alert(`Gagal Mengirim : ${res}`);
+                    $('button[name="btnlaporan"]').prop('disabled', false);
+                    $('button[name="btnlaporan"]').html(
+                        `Kirim`
+                    );
+                }
             }).fail(function() {
                 alert('Gagal Mengirim');
-                $('button[name="btnkirim"]').prop('disabled', false);
-                $('button[name="btnkirim"]').html(
+                $('button[name="btnlaporan"]').prop('disabled', false);
+                $('button[name="btnlaporan"]').html(
                     `Kirim`
                 );
             });
