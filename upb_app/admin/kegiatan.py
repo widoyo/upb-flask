@@ -115,6 +115,8 @@ def kegiatan_bendungan(bendungan_id):
         kegiatan[keg.sampling]['id'] = keg.id
         kegiatan[keg.sampling][keg.petugas.lower()].append(keg.uraian)
     for pem in pemeliharaan:
+        if pem.sampling not in kegiatan:
+            continue
         kegiatan[pem.sampling]['id'] = pem.id
         kegiatan[pem.sampling]['pemeliharaan'].append(f"{pem.jenis}, {pem.keterangan}")
 
