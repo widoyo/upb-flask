@@ -69,7 +69,7 @@ def index():
         flood = 0
         time = ""
         for t in tma:
-            vol = t.vol/1000000 if t.vol else None
+            vol = t.vol/1000000 if t.vol else vol
             if t.tma:
                 spill = t.tma - w.muka_air_normal
                 if spill >= flood:
