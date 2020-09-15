@@ -120,7 +120,7 @@ def tma(lokasi_id):
     date = request.values.get('sampling')
     def_date = datetime.datetime.utcnow()
     sampling = datetime.datetime.strptime(date, "%Y-%m-%d") if date else def_date
-    end = sampling + datetime.timedelta(days=1)
+    end = datetime.datetime.now() + datetime.timedelta(hours=7)
 
     pos = Bendungan.query.get(lokasi_id)
     tma = ManualTma.query.filter(
