@@ -33,14 +33,14 @@ logging.basicConfig(
         filename='/tmp/upbflask.log',
         level=logging.DEBUG, format='%(asctime)s [%(levelname)s] %(message)s')
 
-mydb = mysql.connector.connect(
-    host="localhost",
-    user=os.environ['MYSQL_USER'],
-    passwd=os.environ['MYSQL_PASS'],
-    port=3306,
-    database=os.environ['MYSQL_DB']
-)
-mycursor = mydb.cursor()
+# mydb = mysql.connector.connect(
+#     host="localhost",
+#     user=os.environ['MYSQL_USER'],
+#     passwd=os.environ['MYSQL_PASS'],
+#     port=3306,
+#     database=os.environ['MYSQL_DB']
+# )
+# mycursor = mydb.cursor()
 
 
 @app.cli.command()
