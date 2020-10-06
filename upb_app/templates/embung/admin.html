@@ -9,413 +9,217 @@
 {% block content %}
 <div class="container">
     <h1>Embung</h1>
-    <nav>
-      <div class="nav nav-tabs" id="nav-tab" role="tablist">
-        <a class="nav-item nav-link active"
-            id="nav-home-tab" data-toggle="tab"
-            href="#nav-home" role="tab"
-            aria-controls="penampung-air" aria-selected="true">
-            <h4>Penampung Air <small><span class="badge badge-pill badge-secondary" id="eb_len"></span></small></h4>
-        </a>
-        <a class="nav-item nav-link"
-            id="nav-profile-tab" data-toggle="tab"
-            href="#nav-profile" role="tab"
-            aria-controls="air-baku" aria-selected="false">
-            <h4>Air Baku <small><span class="badge badge-pill badge-secondary" id="ea_len"></span></small></h4>
-        </a>
-      </div>
-    </nav>
-    <div class="tab-content" id="nav-tabContent">
-      <div class="tab-pane fade show active mt-2"
-        id="nav-home" role="tabpanel"
-        aria-labelledby="penampung-air-tab">
-        <br>
-        <table id="bpa" class="table table-bordered">
-            <thead>
-                <tr class="table-active">
-                    <th>No</th>
-                    <th>Nama</th>
-                    <th>Status</th>
-                    <th>Koordinat</th>
-                    <th>Desa</th>
-                    <th>Kec.</th>
-                    <th>Kab.</th>
-                    <th>Sumber Air</th>
-                    <th>Tampungan (m<sup>3</sup>)</th>
-                    <th>Debit (L/det)</th>
-                    <th>Pipa Transmisi (m)</th>
-                    <th>Saluran Transmisi (m)</th>
-                    <th>Air Baku (KK)</th>
-                    <th>Irigasi (Ha)</th>
-                </tr>
-            </thead>
-            <tbody>
-                {% for e in embung_b %}
-                    <tr>
-                      <td>{{ loop.index }}</td>
-                      <td>{{ e.nama }}</td>
-                      <td class="text-center">
-                          {% if e.is_verified == '1' %}
-                          <i>Verified</i>
-                          {% else %}
-                          <i>Unverified</i><br>
-                          <a href="#form-verify-{{ e.id }}" class="btn btn-sm btn-success" data-toggle="modal">Verify</a>
+    <div id="embung">
+      <br>
+      <table id="bpa" class="table table-bordered">
+          <thead>
+              <tr class="table-active">
+                  <th>No</th>
+                  <th>Nama</th>
+                  <th>Jenis</th>
+                  <th>Status</th>
+                  <th>Koordinat</th>
+                  <th>Desa</th>
+                  <th>Kec.</th>
+                  <th>Kab.</th>
+                  <th>Sumber Air</th>
+                  <th>Tampungan (m<sup>3</sup>)</th>
+                  <th>Debit (L/det)</th>
+                  <th>Pipa Transmisi (m)</th>
+                  <th>Saluran Transmisi (m)</th>
+                  <th>Air Baku (KK)</th>
+                  <th>Irigasi (Ha)</th>
+              </tr>
+          </thead>
+          <tbody>
+              {% for e in embung %}
+                  <tr>
+                    <td>{{ loop.index }}</td>
+                    <td>{{ e.nama }}</td>
+                    <td>
+                      <a data-url="/admin/embung/update"
+                          class="emb_jenis"
+                          data-name="jenis"
+                          data-type="select"
+                          data-title="{{ e.nama }}, Jenis"
+                          data-pk="{{ e.id }}">
+                          <span style="color: blue">
+                            {% if e.jenis == "a" %}
+                              Air Baku
+                            {% elif e.jenis == "b" %}
+                              BPA
+                            {% else %}
+                              Belum Diketahui
+                            {% endif %}
+                          </span>
+                      </a>
+                    </td>
+                    <td class="text-center">
+                        {% if e.is_verified == '1' %}
+                        <i>Verified</i>
+                        {% else %}
+                        <i>Unverified</i><br>
+                        <a href="#form-verify-{{ e.id }}" class="btn btn-sm btn-success" data-toggle="modal">Verify</a>
 
-                          <!-- Modal Verifikasi Embung -->
-                          <div class="modal fade" id="form-verify-{{ e.id }}" tabindex="-1" role="dialog" aria-labelledby="modalVerifikasi" aria-hidden="true">
-                            <div class="modal-dialog" role="document">
-                              <div class="modal-content">
-                                  <form method="POST" action="{{ url_for('admin.embung_verify', emb_id=e.id) }}">
-                                    <div class="modal-header">
-                                      <h5 class="modal-title" id="modalVerifikasi">Verifikasi {{ e.nama }}</h5>
-                                      <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                                        <span aria-hidden="true">&times;</span>
-                                      </button>
-                                    </div>
-                                    <div class="modal-body">
-                                        <div class="form-group">
-                                            <label class="form-text" for="password-{{ e.id }}">Password untuk user <b>{{ e.gen_username() }}</b></label>
-                                            <input class="form-control" type="text" name="password" id="password-{{ e.id }}" required value="">
-                                        </div>
-                                    </div>
-                                    <div class="modal-footer">
-                                        <input type="submit" name="submit" value="Verify" class="btn btn-success">
-                                        <button type="button" class="btn btn-danger" data-dismiss="modal">Batal</button>
-                                    </div>
-                                  </form>
-                              </div>
+                        <!-- Modal Verifikasi Embung -->
+                        <div class="modal fade" id="form-verify-{{ e.id }}" tabindex="-1" role="dialog" aria-labelledby="modalVerifikasi" aria-hidden="true">
+                          <div class="modal-dialog" role="document">
+                            <div class="modal-content">
+                                <form method="POST" action="{{ url_for('admin.embung_verify', emb_id=e.id) }}">
+                                  <div class="modal-header">
+                                    <h5 class="modal-title" id="modalVerifikasi">Verifikasi {{ e.nama }}</h5>
+                                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                      <span aria-hidden="true">&times;</span>
+                                    </button>
+                                  </div>
+                                  <div class="modal-body">
+                                      <div class="form-group">
+                                          <label class="form-text" for="password-{{ e.id }}">Password untuk user <b>{{ e.gen_username() }}</b></label>
+                                          <input class="form-control" type="text" name="password" id="password-{{ e.id }}" required value="">
+                                      </div>
+                                  </div>
+                                  <div class="modal-footer">
+                                      <input type="submit" name="submit" value="Verify" class="btn btn-success">
+                                      <button type="button" class="btn btn-danger" data-dismiss="modal">Batal</button>
+                                  </div>
+                                </form>
                             </div>
                           </div>
-                          {% endif %}
-                      </td>
-                      <td>
-                          <a data-url="/admin/embung/update"
-                              class="editable"
-                              data-name="ll"
-                              data-type="text"
-                              data-title="{{ e.nama }}, Lat Long"
-                              data-pk="{{ e.id }}">
-                              <span style="color: blue">{{ e.ll }}</span>
-                          </a>
-                      </td>
-                      <td>
-                          <a data-url="/admin/embung/update"
-                              class="editable"
-                              data-name="desa"
-                              data-type="text"
-                              data-title="{{ e.nama }}, Desa"
-                              data-pk="{{ e.id }}">
-                              <span style="color: blue">{{ e.desa }}</span>
-                          </a>
-                      </td>
-                      <td>
-                          <a data-url="/admin/embung/update"
-                              class="editable"
-                              data-name="kec"
-                              data-type="text"
-                              data-title="{{ e.nama }}, Kecamatan"
-                              data-pk="{{ e.id }}">
-                              <span style="color: blue">{{ e.kec }}</span>
-                          </a>
-                      </td>
-                      <td>
-                          <a data-url="/admin/embung/update"
-                              class="editable"
-                              data-name="kab"
-                              data-type="text"
-                              data-title="{{ e.nama }}, Kabupaten"
-                              data-pk="{{ e.id }}">
-                              <span style="color: blue">{{ e.kab }}</span>
-                          </a>
-                      </td>
-                      <td>
-                          <a data-url="/admin/embung/update"
-                              class="editable"
-                              data-name="sumber_air"
-                              data-type="text"
-                              data-title="{{ e.nama }}, Sumber Air"
-                              data-pk="{{ e.id }}">
-                              <span style="color: blue">{{ e.sumber_air }}</span>
-                          </a>
-                      </td>
-                      <td class="text-right">
-                          <a data-url="/admin/embung/update"
-                              class="editable"
-                              data-name="tampungan"
-                              data-type="number"
-                              data-title="{{ e.nama }}, Tampungan"
-                              data-step=".01"
-                              data-pk="{{ e.id }}">
-                              {% if e.tampungan %}
-                              <span style="color: blue">{{ e.tampungan }}</span>
-                              {% else %}<span style="color: red">Empty</span>{% endif %}
-                          </a>
-                      </td>
-                      <td class="text-right">
-                          <a data-url="/admin/embung/update"
-                              class="editable"
-                              data-name="debit"
-                              data-type="number"
-                              data-title="{{ e.nama }}, Debit"
-                              data-step=".01"
-                              data-pk="{{ e.id }}">
-                              {% if e.debit %}
-                              <span style="color: blue">{{ e.debit }}</span>
-                              {% else %}<span style="color: red">Empty</span>{% endif %}
-                          </a>
-                      </td>
-                      <td class="text-right">
-                          <a data-url="/admin/embung/update"
-                              class="editable"
-                              data-name="pipa_transmisi"
-                              data-type="number"
-                              data-title="{{ e.nama }}, Pipa Transmisi"
-                              data-step=".01"
-                              data-pk="{{ e.id }}">
-                              {% if e.pipa_transmisi %}
-                              <span style="color: blue">{{ e.pipa_transmisi }}</span>
-                              {% else %}<span style="color: red">Empty</span>{% endif %}
-                          </a>
-                      </td>
-                      <td class="text-right">
-                          <a data-url="/admin/embung/update"
-                              class="editable"
-                              data-name="saluran_transmisi"
-                              data-type="number"
-                              data-title="{{ e.nama }}, Saluran Transmisi"
-                              data-step=".01"
-                              data-pk="{{ e.id }}">
-                              {% if e.saluran_transmisi %}
-                              <span style="color: blue">{{ e.saluran_transmisi }}</span>
-                              {% else %}<span style="color: red">Empty</span>{% endif %}
-                          </a>
-                      </td>
-                      <td class="text-right">
-                          <a data-url="/admin/embung/update"
-                              class="editable"
-                              data-name="air_baku"
-                              data-type="number"
-                              data-title="{{ e.nama }}, Air Baku"
-                              data-step=".01"
-                              data-pk="{{ e.id }}">
-                              {% if e.air_baku %}
-                              <span style="color: blue">{{ e.air_baku }}</span>
-                              {% else %}<span style="color: red">Empty</span>{% endif %}
-                          </a>
-                      </td>
-                      <td class="text-right">
-                          <a data-url="/admin/embung/update"
-                              class="editable"
-                              data-name="irigasi"
-                              data-type="number"
-                              data-title="{{ e.nama }}, Irigasi"
-                              data-step=".01"
-                              data-pk="{{ e.id }}">
-                              {% if e.irigasi %}
-                              <span style="color: blue">{{ e.irigasi }}</span>
-                              {% else %}<span style="color: red">Empty</span>{% endif %}
-                          </a>
-                      </td>
-                    </tr>
-                {% endfor %}
-            </tbody>
-        </table>
-      </div>
-      <div class="tab-pane fade mt-2"
-        id="nav-profile" role="tabpanel"
-        aria-labelledby="air-baku-tab">
-        <br>
-        <table id="ab" class="table table-bordered ">
-            <thead>
-                <tr class="table-active">
-                    <th>No</th>
-                    <th>Nama</th>
-                    <th>Status</th>
-                    <th>Koordinat</th>
-                    <th>Desa</th>
-                    <th>Kec.</th>
-                    <th>Kab.</th>
-                    <th>Sumber Air</th>
-                    <th>Tampungan (m<sup>3</sup>)</th>
-                    <th>Debit (L/det)</th>
-                    <th>Pipa Transmisi (m)</th>
-                    <th>Saluran Transmisi (m)</th>
-                    <th>Air Baku (KK)</th>
-                    <th>Irigasi (Ha)</th>
-                </tr>
-            </thead>
-            <tbody>
-                {% for e in embung_a %}
-                    <tr>
-                      <td>{{ loop.index }}</td>
-                      <td>{{ e.nama }}</td>
-                      <td class="text-center">
-                          {% if e.is_verified == '1' %}
-                          <i>Verified</i>
-                          {% else %}
-                          <i>Unverified</i><br>
-                          <a href="#form-verify-{{ e.id }}" class="btn btn-sm btn-success" data-toggle="modal">Verify</a>
-
-                              <!-- Modal Verifikasi Embung -->
-                              <div class="modal fade" id="form-verify-{{ e.id }}" tabindex="-1" role="dialog" aria-labelledby="modalVerifikasi" aria-hidden="true">
-                                <div class="modal-dialog" role="document">
-                                  <div class="modal-content">
-                                      <form method="POST" action="{{ url_for('admin.embung_verify', emb_id=e.id) }}">
-                                        <div class="modal-header">
-                                          <h5 class="modal-title" id="modalVerifikasi">Verifikasi {{ e.nama }}</h5>
-                                          <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                                            <span aria-hidden="true">&times;</span>
-                                          </button>
-                                        </div>
-                                        <div class="modal-body">
-                                            <div class="form-group">
-                                                <label class="form-text" for="password-{{ e.id }}">Password untuk user <b>{{ e.gen_username() }}</b></label>
-                                                <input class="form-control" type="text" name="password" id="password-{{ e.id }}" required value="">
-                                            </div>
-                                        </div>
-                                        <div class="modal-footer">
-                                            <input type="submit" name="submit" value="Verify" class="btn btn-success">
-                                            <button type="button" class="btn btn-danger" data-dismiss="modal">Batal</button>
-                                        </div>
-                                      </form>
-                                  </div>
-                                </div>
-                              </div>
-                          {% endif %}
-                      </td>
-                      <td>
-                          <a data-url="/admin/embung/update"
-                              class="editable"
-                              data-name="ll"
-                              data-type="text"
-                              data-title="{{ e.nama }}, Lat Long"
-                              data-pk="{{ e.id }}">
-                              <span style="color: blue">{{ e.ll }}</span>
-                          </a>
-                      </td>
-                      <td>
-                          <a data-url="/admin/embung/update"
-                              class="editable"
-                              data-name="desa"
-                              data-type="text"
-                              data-title="{{ e.nama }}, Desa"
-                              data-pk="{{ e.id }}">
-                              <span style="color: blue">{{ e.desa }}</span>
-                          </a>
-                      </td>
-                      <td>
-                          <a data-url="/admin/embung/update"
-                              class="editable"
-                              data-name="kec"
-                              data-type="text"
-                              data-title="{{ e.nama }}, Kecamatan"
-                              data-pk="{{ e.id }}">
-                              <span style="color: blue">{{ e.kec }}</span>
-                          </a>
-                      </td>
-                      <td>
-                          <a data-url="/admin/embung/update"
-                              class="editable"
-                              data-name="kab"
-                              data-type="text"
-                              data-title="{{ e.nama }}, Kabupaten"
-                              data-pk="{{ e.id }}">
-                              <span style="color: blue">{{ e.kab }}</span>
-                          </a>
-                      </td>
-                      <td>
-                          <a data-url="/admin/embung/update"
-                              class="editable"
-                              data-name="sumber_air"
-                              data-type="text"
-                              data-title="{{ e.nama }}, Sumber Air"
-                              data-pk="{{ e.id }}">
-                              <span style="color: blue">{{ e.sumber_air }}</span>
-                          </a>
-                      </td>
-                      <td class="text-right">
-                          <a data-url="/admin/embung/update"
-                              class="editable"
-                              data-name="tampungan"
-                              data-type="number"
-                              data-title="{{ e.nama }}, Tampungan"
-                              data-step=".01"
-                              data-pk="{{ e.id }}">
-                              {% if e.tampungan %}
-                              <span style="color: blue">{{ e.tampungan }}</span>
-                              {% else %}<span style="color: red">Empty</span>{% endif %}
-                          </a>
-                      </td>
-                      <td class="text-right">
-                          <a data-url="/admin/embung/update"
-                              class="editable"
-                              data-name="debit"
-                              data-type="number"
-                              data-title="{{ e.nama }}, Debit"
-                              data-step=".01"
-                              data-pk="{{ e.id }}">
-                              {% if e.debit %}
-                              <span style="color: blue">{{ e.debit }}</span>
-                              {% else %}<span style="color: red">Empty</span>{% endif %}
-                          </a>
-                      </td>
-                      <td class="text-right">
-                          <a data-url="/admin/embung/update"
-                              class="editable"
-                              data-name="pipa_transmisi"
-                              data-type="number"
-                              data-title="{{ e.nama }}, Pipa Transmisi"
-                              data-step=".01"
-                              data-pk="{{ e.id }}">
-                              {% if e.pipa_transmisi %}
-                              <span style="color: blue">{{ e.pipa_transmisi }}</span>
-                              {% else %}<span style="color: red">Empty</span>{% endif %}
-                          </a>
-                      </td>
-                      <td class="text-right">
-                          <a data-url="/admin/embung/update"
-                              class="editable"
-                              data-name="saluran_transmisi"
-                              data-type="number"
-                              data-title="{{ e.nama }}, Saluran Transmisi"
-                              data-step=".01"
-                              data-pk="{{ e.id }}">
-                              {% if e.saluran_transmisi %}
-                              <span style="color: blue">{{ e.saluran_transmisi }}</span>
-                              {% else %}<span style="color: red">Empty</span>{% endif %}
-                          </a>
-                      </td>
-                      <td class="text-right">
-                          <a data-url="/admin/embung/update"
-                              class="editable"
-                              data-name="air_baku"
-                              data-type="number"
-                              data-title="{{ e.nama }}, Air Baku"
-                              data-step=".01"
-                              data-pk="{{ e.id }}">
-                              {% if e.air_baku %}
-                              <span style="color: blue">{{ e.air_baku }}</span>
-                              {% else %}<span style="color: red">Empty</span>{% endif %}
-                          </a>
-                      </td>
-                      <td class="text-right">
-                          <a data-url="/admin/embung/update"
-                              class="editable"
-                              data-name="irigasi"
-                              data-type="number"
-                              data-title="{{ e.nama }}, Irigasi"
-                              data-step=".01"
-                              data-pk="{{ e.id }}">
-                              {% if e.irigasi %}
-                              <span style="color: blue">{{ e.irigasi }}</span>
-                              {% else %}<span style="color: red">Empty</span>{% endif %}
-                          </a>
-                      </td>
-                    </tr>
-                {% endfor %}
-            </tbody>
-        </table>
-      </div>
+                        </div>
+                        {% endif %}
+                    </td>
+                    <td>
+                        <a data-url="/admin/embung/update"
+                            class="editable"
+                            data-name="ll"
+                            data-type="text"
+                            data-title="{{ e.nama }}, Lat Long"
+                            data-pk="{{ e.id }}">
+                            <span style="color: blue">{{ e.ll }}</span>
+                        </a>
+                    </td>
+                    <td>
+                        <a data-url="/admin/embung/update"
+                            class="editable"
+                            data-name="desa"
+                            data-type="text"
+                            data-title="{{ e.nama }}, Desa"
+                            data-pk="{{ e.id }}">
+                            <span style="color: blue">{{ e.desa }}</span>
+                        </a>
+                    </td>
+                    <td>
+                        <a data-url="/admin/embung/update"
+                            class="editable"
+                            data-name="kec"
+                            data-type="text"
+                            data-title="{{ e.nama }}, Kecamatan"
+                            data-pk="{{ e.id }}">
+                            <span style="color: blue">{{ e.kec }}</span>
+                        </a>
+                    </td>
+                    <td>
+                        <a data-url="/admin/embung/update"
+                            class="editable"
+                            data-name="kab"
+                            data-type="text"
+                            data-title="{{ e.nama }}, Kabupaten"
+                            data-pk="{{ e.id }}">
+                            <span style="color: blue">{{ e.kab }}</span>
+                        </a>
+                    </td>
+                    <td>
+                        <a data-url="/admin/embung/update"
+                            class="editable"
+                            data-name="sumber_air"
+                            data-type="text"
+                            data-title="{{ e.nama }}, Sumber Air"
+                            data-pk="{{ e.id }}">
+                            <span style="color: blue">{{ e.sumber_air }}</span>
+                        </a>
+                    </td>
+                    <td class="text-right">
+                        <a data-url="/admin/embung/update"
+                            class="editable"
+                            data-name="tampungan"
+                            data-type="number"
+                            data-title="{{ e.nama }}, Tampungan"
+                            data-step=".01"
+                            data-pk="{{ e.id }}">
+                            {% if e.tampungan %}
+                            <span style="color: blue">{{ e.tampungan }}</span>
+                            {% else %}<span style="color: red">Empty</span>{% endif %}
+                        </a>
+                    </td>
+                    <td class="text-right">
+                        <a data-url="/admin/embung/update"
+                            class="editable"
+                            data-name="debit"
+                            data-type="number"
+                            data-title="{{ e.nama }}, Debit"
+                            data-step=".01"
+                            data-pk="{{ e.id }}">
+                            {% if e.debit %}
+                            <span style="color: blue">{{ e.debit }}</span>
+                            {% else %}<span style="color: red">Empty</span>{% endif %}
+                        </a>
+                    </td>
+                    <td class="text-right">
+                        <a data-url="/admin/embung/update"
+                            class="editable"
+                            data-name="pipa_transmisi"
+                            data-type="number"
+                            data-title="{{ e.nama }}, Pipa Transmisi"
+                            data-step=".01"
+                            data-pk="{{ e.id }}">
+                            {% if e.pipa_transmisi %}
+                            <span style="color: blue">{{ e.pipa_transmisi }}</span>
+                            {% else %}<span style="color: red">Empty</span>{% endif %}
+                        </a>
+                    </td>
+                    <td class="text-right">
+                        <a data-url="/admin/embung/update"
+                            class="editable"
+                            data-name="saluran_transmisi"
+                            data-type="number"
+                            data-title="{{ e.nama }}, Saluran Transmisi"
+                            data-step=".01"
+                            data-pk="{{ e.id }}">
+                            {% if e.saluran_transmisi %}
+                            <span style="color: blue">{{ e.saluran_transmisi }}</span>
+                            {% else %}<span style="color: red">Empty</span>{% endif %}
+                        </a>
+                    </td>
+                    <td class="text-right">
+                        <a data-url="/admin/embung/update"
+                            class="editable"
+                            data-name="air_baku"
+                            data-type="number"
+                            data-title="{{ e.nama }}, Air Baku"
+                            data-step=".01"
+                            data-pk="{{ e.id }}">
+                            {% if e.air_baku %}
+                            <span style="color: blue">{{ e.air_baku }}</span>
+                            {% else %}<span style="color: red">Empty</span>{% endif %}
+                        </a>
+                    </td>
+                    <td class="text-right">
+                        <a data-url="/admin/embung/update"
+                            class="editable"
+                            data-name="irigasi"
+                            data-type="number"
+                            data-title="{{ e.nama }}, Irigasi"
+                            data-step=".01"
+                            data-pk="{{ e.id }}">
+                            {% if e.irigasi %}
+                            <span style="color: blue">{{ e.irigasi }}</span>
+                            {% else %}<span style="color: red">Empty</span>{% endif %}
+                        </a>
+                    </td>
+                  </tr>
+              {% endfor %}
+          </tbody>
+      </table>
     </div>
 </div>
 {% endblock %}
@@ -427,6 +231,14 @@
     $.fn.editable.defaults.mode = 'popup';
     $(document).ready(function() {
         $('.editable').editable();
+        $('.emb_jenis').editable({
+            prepend: "pilih",
+            source: [
+                {value: 'a', text: 'Air Baku'},
+                {value: 'b', text: 'BPA'},
+                {value: 'z', text: 'Belum Diketahui'}
+            ]
+        });
     });
 </script>
 {% endblock %}
