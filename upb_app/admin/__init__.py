@@ -55,14 +55,11 @@ def bend_update():
 @admin_only
 def embung():
     ''' Home Embung '''
-    all_embung = Embung.query.order_by(Embung.is_verified.desc(), Embung.id).all()
+    embung = Embung.query.order_by(Embung.is_verified.desc(), Embung.id).all()
 
-    embung = []
-    for e in all_embung:
-        if e.jenis == 'a':
-            embung.append(e)
-        elif e.jenis == 'b':
-            embung.append(e)
+    # embung = []
+    # for e in all_embung:
+    #     embung.append(e)
     return render_template('embung/admin.html',
                             embung=embung)
 
