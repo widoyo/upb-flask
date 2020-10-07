@@ -7,8 +7,8 @@ from sqlalchemy.exc import IntegrityError
 from upb_app.helper import month_range, day_range
 from upb_app.models import ManualDaily, ManualTma, ManualPiezo, ManualVnotch
 from upb_app.models import Bendungan, BendungAlert, CurahHujanTerkini
-from upb_app.models import Embung, ManualTmaEmbung, ManualDailyEmbung
-from upb_app.forms import AddDaily, AddTma, LaporBanjir, CHTerkini
+from upb_app.models import Embung, ManualTmaEmbung, ManualDailyEmbung, wil_sungai
+from upb_app.forms import AddDaily, AddTma, LaporBanjir, CHTerkini, AddDailyEmbung
 from upb_app import app, db, admin_only, petugas_only, role_check, role_check_embung
 import datetime
 import calendar
@@ -566,23 +566,70 @@ def operasi_harian_embung():
     all_embung = Embung.query.filter(Embung.is_verified == '1').order_by(Embung.wil_sungai, Embung.id).all()
     sampling, end = day_range(request.values.get('sampling'))
 
-    embung = {
-        'b': [],
-        'a': [],
-        'tbd': []
+    all_daily = ManualDailyEmbung.query.filter(
+                                and_(
+                                    ManualDailyEmbung.sampling >= sampling,
+                                    ManualDailyEmbung.sampling <= end)
+                                ).all()
+    all_tma = ManualTmaEmbung.query.filter(
+                                and_(
+                                    ManualTmaEmbung.sampling >= sampling,
+                                    ManualTmaEmbung.sampling <= end)
+                                ).all()
+
+    all_periodik = {
+        'tma': {},
+        'daily': {}
     }
+    for d in all_daily:
+        all_periodik['daily'][d.embung_id] = d
+    for t in all_tma:
+        all_periodik['tma'][d.embung_id] = t
+
+    embung_a = {
+        '1': {},
+        '2': {},
+        '3': {},
+        '4': {}
+    }
+    embung_b = {
+        '1': {},
+        '2': {},
+        '3': {},
+        '4': {}
+    }
+    wilayah = wil_sungai
+    wilayah['4'] = "Lain-Lain"
+    count_a = 0
+    count_b = 0
     for e in all_embung:
         if e.jenis == 'a':
-            embung['a'].append(e)
+            count_a += 1
+            embung_a[e.wil_sungai or '4'][e.id] = {
+                'embung': e,
+                'daily': all_periodik['daily'].get(e.id, None),
+                'tma': all_periodik['tma'].get(e.id, None),
+                'no': count_a
+            }
         elif e.jenis == 'b':
-            embung['b'].append(e)
-        else:
-            embung['tbd'].append(e)
+            count_b += 1
+            embung_b[e.wil_sungai or '4'][e.id] = {
+                'embung': e,
+                'daily': all_periodik['daily'].get(e.id, None),
+                'tma': all_periodik['tma'].get(e.id, None),
+                'no': count_b
+            }
+    embung = {
+        'b': embung_b,
+        'a': embung_a
+    }
+    print(embung_a['3'][174])
 
     return render_template('operasi/index_embung.html',
                             csrf=generate_csrf(),
                             embung=embung,
-                            sampling=sampling)
+                            sampling=sampling,
+                            wil_sungai=wil_sungai)
 
 
 @bp.route('/embung/<embung_id>/operasi')
@@ -590,14 +637,69 @@ def operasi_harian_embung():
 @role_check_embung
 def operasi_embung(embung_id):
     emb = Embung.query.get(embung_id)
-    start, end, day = month_range(request.values.get('sampling'))
-    sampling, day_end = day_range(request.values.get('sampling'))
+    sampling, end, day = month_range(request.values.get('sampling'))
+
+    manual_daily = ManualDailyEmbung.query.filter(
+                                        ManualDailyEmbung.embung_id == embung_id,
+                                        ManualDailyEmbung.sampling.between(sampling, end)
+                                    ).all()
+    tma = ManualTmaEmbung.query.filter(
+                                    ManualTmaEmbung.embung_id == embung_id,
+                                    ManualTmaEmbung.sampling.between(sampling, end)
+                                ).all()
+
+    periodik = {}
+    for i in range(day, 0, -1):
+        sampl = datetime.datetime.strptime(f"{sampling.year}-{sampling.month}-{i}", "%Y-%m-%d")
+        periodik[sampl] = {
+            'daily': None,
+            'tma': {
+                '06': None,
+                '12': None,
+                '18': None
+            }
+        }
+    for d in manual_daily:
+        periodik[d.sampling]['daily'] = d
+    for t in tma:
+        sampl = t.sampling.replace(hour=0)
+        jam = t.sampling.strftime("%H")
+        periodik[sampl]['tma'][jam] = t
 
     return render_template('operasi/embung.html',
                             csrf=generate_csrf(),
                             embung=emb,
-                            sampling=sampling,
-                            start=start)
+                            sampling=end,
+                            sampling_dt=sampling,
+                            periodik=periodik)
+
+
+def insert_tma_embung(emb_id, hari, jam, tma, vol):
+    s_string = f"{hari} {jam}:00:00"
+    sampling = datetime.datetime.strptime(s_string, "%Y-%m-%d %H:%M:%S")
+    try:
+        obj_dict = {
+            "sampling": sampling,
+            "tma": tma,
+            "vol": vol,
+            "embung_id": emb_id
+        }
+        row = ManualTmaEmbung.query.filter(
+                                    ManualTmaEmbung.sampling == obj_dict['sampling'],
+                                    ManualTmaEmbung.embung_id == obj_dict['embung_id']
+                                ).first()
+        if row:
+            for key, value in obj_dict.items():
+                setattr(row, key, value)
+        else:
+            tma = ManualTmaEmbung(**obj_dict)
+            db.session.add(tma)
+        db.session.commit()
+        flash('TMA Embung berhasil ditambahkan !', 'success')
+    except Exception as e:
+        db.session.rollback()
+        print(f"TMA Embung Manual Error : {e.__class__.__name__}")
+        flash(f"Terjadi kesalahan saat mencoba menyimpan data", 'danger')
 
 
 @bp.route('/embung/<embung_id>/operasi/daily', methods=['POST'])
@@ -605,6 +707,47 @@ def operasi_embung(embung_id):
 @role_check_embung
 def operasi_daily_embung_add(embung_id):
     emb = Embung.query.get(embung_id)
+
+    form = AddDailyEmbung()
+    if form.validate_on_submit():
+        # insert tma
+        insert_tma_embung(
+            emb_id=emb.id,
+            hari=form.sampling.data,
+            jam=form.jam.data,
+            tma=form.tma.data,
+            vol=form.vol.data
+        )
+        # insert daily
+        try:
+            obj_dict = {
+                "sampling": form.sampling.data,
+                "inflow_deb": form.inflow_deb.data,
+                "inflow_vol": form.inflow_vol.data,
+                "intake_deb": form.intake_deb.data,
+                "intake_vol": form.intake_vol.data,
+                "spillway_deb": form.spillway_deb.data,
+                "spillway_vol": form.spillway_vol.data,
+                "embung_id": emb.id
+            }
+            row = ManualDailyEmbung.query.filter(
+                                        ManualDailyEmbung.sampling == obj_dict['sampling'],
+                                        ManualDailyEmbung.embung_id == obj_dict['embung_id']
+                                    ).first()
+            if row:
+                for key, value in obj_dict.items():
+                    setattr(row, key, value)
+            else:
+                daily = ManualDailyEmbung(**obj_dict)
+                db.session.add(daily)
+            db.session.commit()
+            flash('Data Harian berhasil ditambahkan !', 'success')
+            return redirect(url_for('admin.operasi_embung', embung_id=emb.id))
+
+        except Exception as e:
+            db.session.rollback()
+            print(f"Daily Manual Error : {e}")
+            flash(f"Terjadi kesalahan saat mencoba menyimpan data", 'danger')
 
     return redirect(url_for('admin.operasi_embung', embung_id=emb.id))
 

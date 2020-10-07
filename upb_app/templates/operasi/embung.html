@@ -17,7 +17,7 @@
 
 {% block content %}
     <div>
-        <h1>{{ embung.name }}</h1>
+        <h1>Operasi {{ embung.nama }}</h1><br>
         <div class="forms">
             <div class="row">
                 <div class="col-md-4">
@@ -101,7 +101,7 @@
         <h3>
             Data Harian
             <span id="datepicker" style="color: #18bc9c">
-                <i class="fa fa-calendar"></i> {{ sampling.strftime('%B %Y') }}
+                <i class="fa fa-calendar"></i> {{ sampling_dt.strftime('%B %Y') }}
             </span>
             <a href="{{ url_for('admin.operasi_csv', bendungan_id=bend_id) }}?sampling={{ sampling.strftime('%Y-%m-%d') }}">CSV</a>
         </h3>
@@ -110,6 +110,7 @@
                 <tr class="table-active">
                     <th rowspan="3" class="text-center align-middle">Tanggal</th>
                     <th rowspan="3" class="text-center align-middle">TMA</th>
+                    <th rowspan="3" class="text-center align-middle">Volume</th>
                     <th colspan="2" class="text-center align-middle">Inflow</th>
                     <th colspan="4" class="text-center align-middle">Outflow</th>
                 </tr>
@@ -127,16 +128,115 @@
                 </tr>
             </thead>
             <tbody>
-                <tr>
-                  <td></td>
-                  <td></td>
-                  <td></td>
-                  <td></td>
-                  <td></td>
-                  <td></td>
-                  <td></td>
-                  <td></td>
-                </tr>
+                {% for date, per in periodik.items() %}
+                    <tr>
+                        <td id="tgl">{{ date.strftime("%Y-%m-%d") }}</td>
+                        <td class="text-right">
+                            <a data-url="{{ url_for('admin.operasi_tma_embung_update') }}"
+                                class="editable"
+                                data-name="tma"
+                                data-type="number"
+                                data-title="TMA"
+                                data-step=".01"
+                                data-pk="{{ per.tma['06'].id }}">
+                                {% if per.tma['06'] %}
+                                <span style="color: blue">{{ per.tma['06'].tma }}</span>
+                                {% else %}<span style="color: red">Empty</span>{% endif %}
+                            </a>
+                        </td>
+                        <td class="text-right">
+                            <a data-url="{{ url_for('admin.operasi_tma_embung_update') }}"
+                                class="editable"
+                                data-name="vol"
+                                data-type="number"
+                                data-title="Vol"
+                                data-step=".01"
+                                data-pk="{{ per.tma['06'].id }}">
+                                {% if per.tma['06'] %}
+                                <span style="color: blue">{{ per.tma['06'].vol }}</span>
+                                {% else %}<span style="color: red">Empty</span>{% endif %}
+                            </a>
+                        </td>
+                        <td class="text-right">
+                            <a data-url="{{ url_for('admin.operasi_daily_embung_update') }}"
+                                class="editable"
+                                data-name="inflow_deb"
+                                data-type="number"
+                                data-title="Q Inflow"
+                                data-step=".01"
+                                data-pk="{{ per.daily.id }}">
+                                {% if per.daily %}
+                                <span style="color: blue">{{ per.daily.inflow_deb }}</span>
+                                {% else %}<span style="color: red">Empty</span>{% endif %}
+                            </a>
+                        </td>
+                        <td class="text-right">
+                            <a data-url="{{ url_for('admin.operasi_daily_embung_update') }}"
+                                class="editable"
+                                data-name="inflow_vol"
+                                data-type="number"
+                                data-title="V Inflow"
+                                data-step=".01"
+                                data-pk="{{ per.daily.id }}">
+                                {% if per.daily %}
+                                <span style="color: blue">{{ per.daily.inflow_vol }}</span>
+                                {% else %}<span style="color: red">Empty</span>{% endif %}
+                            </a>
+                        </td>
+                        <td class="text-right">
+                            <a data-url="{{ url_for('admin.operasi_daily_embung_update') }}"
+                                class="editable"
+                                data-name="intake_deb"
+                                data-type="number"
+                                data-title="Q Intake"
+                                data-step=".01"
+                                data-pk="{{ per.daily.id }}">
+                                {% if per.daily %}
+                                <span style="color: blue">{{ per.daily.intake_deb }}</span>
+                                {% else %}<span style="color: red">Empty</span>{% endif %}
+                            </a>
+                        </td>
+                        <td class="text-right">
+                            <a data-url="{{ url_for('admin.operasi_daily_embung_update') }}"
+                                class="editable"
+                                data-name="intake_vol"
+                                data-type="number"
+                                data-title="V Intake"
+                                data-step=".01"
+                                data-pk="{{ per.daily.id }}">
+                                {% if per.daily %}
+                                <span style="color: blue">{{ per.daily.intake_vol }}</span>
+                                {% else %}<span style="color: red">Empty</span>{% endif %}
+                            </a>
+                        </td>
+                        <td class="text-right">
+                            <a data-url="{{ url_for('admin.operasi_daily_embung_update') }}"
+                                class="editable"
+                                data-name="spillway_deb"
+                                data-type="number"
+                                data-title="Q Spillway"
+                                data-step=".01"
+                                data-pk="{{ per.daily.id }}">
+                                {% if per.daily %}
+                                <span style="color: blue">{{ per.daily.spillway_deb }}</span>
+                                {% else %}<span style="color: red">Empty</span>{% endif %}
+                            </a>
+                        </td>
+                        <td class="text-right">
+                            <a data-url="{{ url_for('admin.operasi_daily_embung_update') }}"
+                                class="editable"
+                                data-name="spillway_vol"
+                                data-type="number"
+                                data-title="V Spillway"
+                                data-step=".01"
+                                data-pk="{{ per.daily.id }}">
+                                {% if per.daily %}
+                                <span style="color: blue">{{ per.daily.spillway_vol }}</span>
+                                {% else %}<span style="color: red">Empty</span>{% endif %}
+                            </a>
+                        </td>
+                    </tr>
+                {% endfor %}
             </tbody>
         </table>
     </div>

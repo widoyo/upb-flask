@@ -58,50 +58,98 @@
           </div>
         </nav> 
         <div class="tab-content" id="nav-tabContent">
-          {% for jenis in embung %}
+          {% for jenis, embungs in embung.items() %}
             <div class="tab-pane fade {% if jenis == 'b' %}show active{% endif %} mt-2"
               id="nav-{{ jenis }}" role="tabpanel"
               aria-labelledby="nav-{{ jenis }}-tab">
-                <h3>{{ jenis }}</h3>
+                <table class="table table-hover table-bordered">
+                  <thead>
+                      <tr class="table-active">
+                          <th rowspan="3" class="text-center align-middle">No</th>
+                          <th rowspan="3" class="text-center align-middle">Embung</th>
+                          <th rowspan="3" class="text-center align-middle">TMA</th>
+                          <th rowspan="3" class="text-center align-middle">Vol</th>
+                          <th colspan="2" class="text-center align-middle">Inflow</th>
+                          <th colspan="4" class="text-center align-middle">Outflow</th>
+                      </tr>
+                      <tr class="table-active">
+                          <th rowspan="2" class="text-center align-middle">Debit</th>
+                          <th rowspan="2" class="text-center align-middle">Volume</th>
+                          <th colspan="2" class="text-center align-middle">Intake</th>
+                          <th colspan="2" class="text-center align-middle">Spillway</th>
+                      </tr>
+                      <tr class="table-active">
+                          <th class="text-center align-middle">Q</th>
+                          <th class="text-center align-middle">V</th>
+                          <th class="text-center align-middle">Q</th>
+                          <th class="text-center align-middle">V</th>
+                      </tr>
+                  </thead>
+                  <tbody>
+                    {% for wil, embs in embungs.items() if embs %}
+                      <tr>
+                        <td colspan="10" align="center">
+                          <b>
+                            {% if wil %}
+                            {{ wil_sungai[wil].upper() }}
+                            {% else %}Belum Ditetapkan{% endif %}
+                          </b>
+                        </td>
+                      </tr>
+                      {% for id, emb in embs.items() %}
+                        <tr>
+                          <td>{{ emb.no }}</td>
+                          <td>
+                            <a href="{{ url_for('admin.operasi_embung', embung_id=emb.embung.id) }}">{{ emb.embung.nama }}</a>
+                          </td>
+                          <td align="right">
+                            {% if emb.tma %}
+                            {{ emb.tma.tma }}
+                            {% endif %}
+                          </td>
+                          <td align="right">
+                            {% if emb.tma %}
+                            {{ emb.tma.vol }}
+                            {% endif %}
+                          </td>
+                          <td align="right">
+                            {% if emb.daily %}
+                            {{ emb.daily.inflow_deb }}
+                            {% endif %}
+                          </td>
+                          <td align="right">
+                            {% if emb.daily %}
+                            {{ emb.daily.inflow_vol }}
+                            {% endif %}
+                          </td>
+                          <td align="right">
+                            {% if emb.daily %}
+                            {{ emb.daily.intake_deb }}
+                            {% endif %}
+                          </td>
+                          <td align="right">
+                            {% if emb.daily %}
+                            {{ emb.daily.intake_vol }}
+                            {% endif %}
+                          </td>
+                          <td align="right">
+                            {% if emb.daily %}
+                            {{ emb.daily.spillway_deb }}
+                            {% endif %}
+                          </td>
+                          <td align="right">
+                            {% if emb.daily %}
+                            {{ emb.daily.spillway_vol }}
+                            {% endif %}
+                          </td>
+                        </tr>
+                      {% endfor %}
+                    {% endfor %}
+                  </tbody>
+              </table>
             </div>
           {% endfor %}
         </div>
-        <!-- <table class="table table-hover table-bordered">
-            <thead>
-                <tr class="table-active">
-                    <th rowspan="3" class="text-center align-middle">Tanggal</th>
-                    <th rowspan="3" class="text-center align-middle">TMA</th>
-                    <th colspan="2" class="text-center align-middle">Vol</th>
-                    <th colspan="2" class="text-center align-middle">Inflow</th>
-                    <th colspan="5" class="text-center align-middle">Outflow</th>
-                </tr>
-                <tr class="table-active">
-                    <th rowspan="2" class="text-center align-middle">Debit</th>
-                    <th rowspan="2" class="text-center align-middle">Volume</th>
-                    <th colspan="2" class="text-center align-middle">Intake</th>
-                    <th colspan="2" class="text-center align-middle">Spillway</th>
-                </tr>
-                <tr class="table-active">
-                    <th class="text-center align-middle">Q</th>
-                    <th class="text-center align-middle">V</th>
-                    <th class="text-center align-middle">Q</th>
-                    <th class="text-center align-middle">V</th>
-                </tr>
-            </thead>
-            <tbody>
-                <tr>
-                  <td></td>
-                  <td></td>
-                  <td></td>
-                  <td></td>
-                  <td></td>
-                  <td></td>
-                  <td></td>
-                  <td></td>
-                  <td></td>
-                </tr>
-            </tbody>
-        </table> -->
     </div>
 {% endblock %}
 
