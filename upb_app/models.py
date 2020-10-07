@@ -192,6 +192,38 @@ class CurahHujanTerkini(BaseLog):
     bendungan_id = db.Column(db.Integer, db.ForeignKey('bendungan.id'), nullable=True)
 
 
+class ManualDailyEmbung(BaseLog):
+    __tablename__ = 'manual_daily_embung'
+
+    id = db.Column(db.Integer, primary_key=True)
+    sampling = db.Column(db.DateTime, index=True)
+    inflow_vol = db.Column(db.Float, nullable=True)
+    inflow_deb = db.Column(db.Float, nullable=True)
+    intake_vol = db.Column(db.Float, nullable=True)
+    intake_deb = db.Column(db.Float, nullable=True)
+    spillway_vol = db.Column(db.Float, nullable=True)
+    spillway_deb = db.Column(db.Float, nullable=True)
+    embung_id = db.Column(db.Integer, db.ForeignKey('embung.id'), nullable=True)
+
+    __table_args__ = (db.UniqueConstraint('embung_id', 'sampling',
+                                          name='manualdaily_embung_sampling'),)
+
+
+class ManualTmaEmbung(BaseLog):
+    __tablename__ = 'manual_tma_embung'
+
+    id = db.Column(db.Integer, primary_key=True)
+    sampling = db.Column(db.DateTime, index=True)
+    embung_id = db.Column(db.Integer, db.ForeignKey('embung.id'), nullable=True)
+    tma = db.Column(db.Float)
+    vol = db.Column(db.Float)
+    __table_args__ = (db.UniqueConstraint('embung_id', 'sampling',
+                                          name='manualtma_embung_sampling'),)
+
+    def local_cdate(self):
+        return self.c_date + datetime.timedelta(hours=7)
+
+
 class Asset(BaseLog):
     __tablename__ = 'asset'
 
