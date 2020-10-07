@@ -62,23 +62,24 @@
                             User
                         </a>
                     </li>
-                    <li class="nav-item {% if title == 'Operasi' %}active{% endif %}">
-                        <a class="nav-link" href="{{ url_for('admin.operasi_harian') }}">
-                            Bendungan
-                        </a>
-                    </li>
-                    <li class="nav-item {% if title == 'Embung' %}active{% endif %}">
-                        <a class="nav-link" href="{{ url_for('admin.embung_harian') }}">
-                            Embung
-                        </a>
+                    <li class="nav-item dropdown">
+                      <a class="nav-link dropdown-toggle {% if title == 'Bendungan' %}active{% endif %}" href="#" id="bendunganDropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                          Bendungan
+                      </a>
+                        <div class="dropdown-menu" aria-labelledby="bendunganDropdown">
+                          <a class="dropdown-item" href="{{ url_for('admin.bendungan') }}">Teknis</a>
+                          <a class="dropdown-item" href="{{ url_for('admin.operasi_harian') }}">Operasi</a>
+                          <a class="dropdown-item" href="{{ url_for('admin.kegiatan') }}">Kegiatan</a>
+                        </div>
                     </li>
                     <li class="nav-item dropdown">
-                      <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                          Data Teknis
+                      <a class="nav-link dropdown-toggle {% if title == 'Embung' %}active{% endif %}" href="#" id="bendunganDropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                          Embung
                       </a>
-                        <div class="dropdown-menu" aria-labelledby="navbarDropdown">
-                          <a class="dropdown-item" href="{{ url_for('admin.bendungan') }}">Bendungan</a>
-                          <a class="dropdown-item" href="{{ url_for('admin.embung') }}">Embung</a>
+                        <div class="dropdown-menu" aria-labelledby="bendunganDropdown">
+                          <a class="dropdown-item" href="{{ url_for('admin.embung') }}">Teknis</a>
+                          <!-- <a class="dropdown-item" href="{{ url_for('admin.embung_harian') }}">Operasi</a> -->
+                          <a class="dropdown-item" href="{{ url_for('admin.kegiatan_index_embung') }}">Kegiatan</a>
                         </div>
                     </li>
                     <li class="nav-item dropdown {% if title == 'Petugas' %}active{% endif %}">
@@ -94,20 +95,6 @@
                         <a class="nav-link" href="{{ url_for('admin.rtow') }}">
                             RTOW
                         </a>
-                    </li>
-                    <!-- <li class="nav-item {% if title == 'Kegiatan' %}active{% endif %}">
-                        <a class="nav-link" href="{{ url_for('admin.kegiatan') }}">
-                            Foto Kegiatan
-                        </a>
-                    </li> -->
-                    <li class="nav-item dropdown">
-                      <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                          Foto Kegiatan
-                      </a>
-                        <div class="dropdown-menu" aria-labelledby="navbarDropdown">
-                          <a class="dropdown-item" href="{{ url_for('admin.kegiatan') }}">Bendungan</a>
-                          <a class="dropdown-item" href="{{ url_for('admin.kegiatan_index_embung') }}">Embung</a>
-                        </div>
                     </li>
                     <li class="nav-item {% if title == 'Kinerja' %}active{% endif %}">
                         <a class="nav-link" href="{{ url_for('admin.kinerja') }}">
