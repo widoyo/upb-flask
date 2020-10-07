@@ -57,9 +57,6 @@ def embung():
     ''' Home Embung '''
     embung = Embung.query.order_by(Embung.is_verified.desc(), Embung.id).all()
 
-    # embung = []
-    # for e in all_embung:
-    #     embung.append(e)
     return render_template('embung/admin.html',
                             embung=embung)
 

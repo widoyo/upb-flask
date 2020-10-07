@@ -1,0 +1,207 @@
+{% extends 'master/base_adm.html' %}
+
+{% set title = "Embung" %}
+{% set subtitle = "Operasi" %}
+
+{% block css %}
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-datepicker/1.9.0/css/bootstrap-datepicker.css">
+<style>
+    .datepicker {
+        z-index: 10000 !important;
+        display: inherit;
+    }
+</style>
+<link href="{{ url_for('static', filename='css/bootstrap-editable.css') }}" rel="stylesheet"/>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/tempusdominus-bootstrap-4/5.0.1/css/tempusdominus-bootstrap-4.min.css" />
+{% endblock %}
+
+{% block content %}
+    <div>
+        <h1>{{ embung.name }}</h1>
+        <div class="forms">
+            <div class="row">
+                <div class="col-md-4">
+                    <h5>
+                      <a data-toggle="collapse" href="#tmaharian" role="button" aria-expanded="false" aria-controls="tmaharian">
+                        Form Data Harian <small><i class="fas fa-play"></i></small>
+                      </a>
+                    </h5>
+                    <hr>
+                    <form action="{{ url_for('admin.operasi_daily_embung_add', embung_id=embung.id) }}" method="POST">
+                        <input id="csrf_token" name="csrf_token" type="hidden" value="{{ csrf }}">
+                        <div class="collapse" id="tmaharian">
+                          <div>
+                              <div class="form-group">
+                                  <label class="form-text" for="sampling"><b>Tanggal</b></label>
+                                  <input class="form-control" type="text" name="sampling" id="datepicker_harian" hidden required value="{{ sampling.strftime('%Y-%m-%d') }}">
+                                  <p class="ml-2" id="sampling-harian"><i class="fas fa-calendar"></i> {{ sampling.strftime('%d %B %Y') }}</p>
+                                  <input class="form-control" type="text" name="jam" hidden required value="06">
+                              </div>
+                          </div>
+                          <div class="row">
+                              <div class="col-md-6 form-group">
+                                  <label class="form-text" for="tma-harian"><b>TMA</b></label>
+                                  <input class="form-control" type="number" name="tma" id="tma-harian" required placeholder="contoh:123.45" step="0.01" aria-describedby="tmaharianhelp">
+                                  <small id="tmaharianhelp" class="form-text text-muted">m(wajib diisi)</small>
+                              </div>
+                              <div class="col-md-6 form-group">
+                                  <label class="form-text" for="vol-harian"><b>Volume</b></label>
+                                  <input class="form-control" type="number" name="vol" id="vol-harian" required placeholder="contoh:12345" step="1" aria-describedby="volharianhelp">
+                                  <small id="volharianhelp" class="form-text text-muted">m<sup>3</sup>(wajib diisi)</small>
+                              </div>
+                          </div>
+                          <h5>Inflow</h5>
+                          <div class="row">
+                              <div class="col-md-6 form-group">
+                                  <label class="form-text" for="in-deb-harian"><b>Debit</b></label>
+                                  <input class="form-control" type="number" name="inflow_deb" id="in-deb-harian" required value="0" step="0.001" aria-describedby="in-debharianhelp">
+                                  <small id="in-debharianhelp" class="form-text text-muted">m<sup>3</sup>/detik</small>
+                              </div>
+                              <div class="col-md-6 form-group">
+                                  <label class="form-text" for="in-vol-harian"><b>Volume</b></label>
+                                  <input class="form-control" type="number" name="inflow_vol" id="in-vol-harian" required value="0" step="0.001" aria-describedby="in-volharianhelp">
+                                  <small id="in-volharianhelp" class="form-text text-muted">m<sup>3</sup></small>
+                              </div>
+                          </div>
+                          <h5>Outflow</h5>
+                          <div class="row">
+                              <div class="col-md-6 form-group">
+                                  <label class="form-text" for="out-deb-harian"><b>Intake Debit</b></label>
+                                  <input class="form-control" type="number" name="intake_deb" id="out-deb-harian" required value="0" step="0.001" aria-describedby="out-debharianhelp">
+                                  <small id="out-debharianhelp" class="form-text text-muted">m<sup>3</sup>/detik</small>
+                              </div>
+                              <div class="col-md-6 form-group">
+                                  <label class="form-text" for="out-vol-harian"><b>Intake Volume</b></label>
+                                  <input class="form-control" type="number" name="intake_vol" id="out-vol-harian" required value="0" step="0.001" aria-describedby="out-volharianhelp">
+                                  <small id="out-volharianhelp" class="form-text text-muted">m<sup>3</sup></small>
+                              </div>
+                          </div>
+                          <div class="row">
+                              <div class="col-md-6 form-group">
+                                  <label class="form-text" for="spill-deb-harian"><b>Spillway Debit</b></label>
+                                  <input class="form-control" type="number" name="spillway_deb" id="spill-deb-harian" required value="0" step="0.001" aria-describedby="spill-debharianhelp">
+                                  <small id="spill-debharianhelp" class="form-text text-muted">m<sup>3</sup>/detik</small>
+                              </div>
+                              <div class="col-md-6 form-group">
+                                  <label class="form-text" for="spill-vol-harian"><b>Spillway Volume</b></label>
+                                  <input class="form-control" type="number" name="spillway_vol" id="spill-vol-harian" required value="0" step="0.001" aria-describedby="spill-volharianhelp">
+                                  <small id="spill-volharianhelp" class="form-text text-muted">m<sup>3</sup></small>
+                              </div>
+                          </div>
+                          <div>
+                              <button type="submit" name="submit" class="btn btn-primary my-1 mr-2">Kirim</button>
+                              <a data-toggle="collapse" href="#tmaharian" role="button" aria-expanded="false" aria-controls="tmaharian">batal</a>
+                          </div>
+                        </div>
+                    </form>
+                </div>
+              </div>
+            <br>
+        </div>
+        <h3>
+            Data Harian
+            <span id="datepicker" style="color: #18bc9c">
+                <i class="fa fa-calendar"></i> {{ sampling.strftime('%B %Y') }}
+            </span>
+            <a href="{{ url_for('admin.operasi_csv', bendungan_id=bend_id) }}?sampling={{ sampling.strftime('%Y-%m-%d') }}">CSV</a>
+        </h3>
+        <table class="table table-hover table-bordered">
+            <thead>
+                <tr class="table-active">
+                    <th rowspan="3" class="text-center align-middle">Tanggal</th>
+                    <th rowspan="3" class="text-center align-middle">TMA</th>
+                    <th colspan="2" class="text-center align-middle">Inflow</th>
+                    <th colspan="4" class="text-center align-middle">Outflow</th>
+                </tr>
+                <tr class="table-active">
+                    <th rowspan="2" class="text-center align-middle">Debit</th>
+                    <th rowspan="2" class="text-center align-middle">Volume</th>
+                    <th colspan="2" class="text-center align-middle">Intake</th>
+                    <th colspan="2" class="text-center align-middle">Spillway</th>
+                </tr>
+                <tr class="table-active">
+                    <th class="text-center align-middle">Deb</th>
+                    <th class="text-center align-middle">Vol</th>
+                    <th class="text-center align-middle">Deb</th>
+                    <th class="text-center align-middle">Vol</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                  <td></td>
+                  <td></td>
+                  <td></td>
+                  <td></td>
+                  <td></td>
+                  <td></td>
+                  <td></td>
+                  <td></td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+{% endblock %}
+
+{% block js %}
+<script src="{{ url_for('static', filename='js/moment.min.js') }}"></script>
+<script src="{{ url_for('static', filename='js/id.js') }}"></script>
+<script src="{{ url_for('static', filename='js/bootstrap-editable.min.js') }}"></script>
+<script src="{{ url_for('static', filename='js/bootstrap-datepicker.min.js') }}"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/tempusdominus-bootstrap-4/5.0.1/js/tempusdominus-bootstrap-4.min.js"></script>
+<script>
+    $(document).ready(function() {
+        // resolve package confict
+        let datepicker = $.fn.datepicker.noConflict();
+        $.fn.bootstrapDP = datepicker;
+
+        $('#datepicker').datepicker({
+            autoclose: true,
+            format: 'yyyy-mm-dd',
+            startView: "months",
+            minViewMode: "months"
+        });
+        $('#datepicker').on('changeDate', function () {
+            window.location = "{{ url_for('admin.operasi_embung', embung_id=embung.id) }}?sampling=" + $('#datepicker').datepicker('getFormattedDate')
+        });
+
+        $('#sampling-harian').datepicker({
+            todayHighlight: true,
+            autoclose: true,
+            format:  'yyyy-mm-dd'
+        });
+        $('#sampling-harian').on('changeDate', function () {
+            let date = $('#sampling-harian').datepicker('getFormattedDate');
+            $('#sampling-harian').text(moment(date).format('DD MMMM YYYY'));
+            $('#datepicker_harian').attr('value', moment(date).format('YYYY-MM-DD'));
+            $('.datepicker').hide();
+        });
+
+        let tgls = document.querySelectorAll("#tgl");
+        tgls.forEach(function(el){
+            console.log(el.value);
+            el.innerText = moment(el.innerText).format('ddd, D');
+        });
+
+        //turn to popup mode
+        $.fn.editable.defaults.mode = 'popup';
+        $(document).ready(function() {
+            $('.editable').editable({
+                error: function(response, newValue) {
+                    if(response.status === 500) {
+                        return 'Tidak bisa update, Tambah data pakai form.';
+                    }
+                 },
+            });
+            // $('.intake_ket').editable({
+            //     prepend: "pilih",
+            //     source: [
+            //         {value: 'pemenuhan kebutuhan air irigasi', text: 'Pemenuhan Kebutuhan Air Irigasi'},
+            //         {value: 'pengendalian banjir', text: 'Pengendalian Banjir'},
+            //         {value: 'kebocoran intake', text: 'Kebocoran Intake'},
+            //         {value: 'kejadian luar biasa', text: 'Kejadian Luar Biasa'}
+            //     ]
+            // });
+        });
+    });
+</script>
+{% endblock %}

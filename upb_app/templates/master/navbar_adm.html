@@ -18,7 +18,7 @@
             <!-- Sidebar -->
             <ul class="nav navbar-nav navbar-center">
                 {% if user.role == "2" %}
-                    <li class="nav-item {% if title == 'Operasi' %}active{% endif %}">
+                    <li class="nav-item {% if subtitle == 'Operasi' %}active{% endif %}">
                         <a class="nav-link" href="{{ url_for('admin.operasi_bendungan', bendungan_id=user.bendungan_id) }}">
                             <!-- <i class="fas fa-home mr-2"></i> -->
                             <span class="h4">Operasi</span>
@@ -26,7 +26,7 @@
                         </a>
                     </li>
 
-                    <li class="nav-item {% if title == 'Keamanan' %}active{% endif %}">
+                    <li class="nav-item {% if subtitle == 'Keamanan' %}active{% endif %}">
                         <a class="nav-link" href="{{ url_for('admin.keamanan_bendungan', bendungan_id=user.bendungan_id) }}">
                             <!-- <i class="fas fa-home mr-2"></i> -->
                             <span class="h4">Keamanan</span>
@@ -34,7 +34,7 @@
                         </a>
                     </li>
 
-                    <li class="nav-item {% if title == 'Kegiatan' %}active{% endif %}">
+                    <li class="nav-item {% if subtitle == 'Kegiatan' %}active{% endif %}">
                         <a class="nav-link" href="{{ url_for('admin.kegiatan_bendungan', bendungan_id=user.bendungan_id) }}">
                             <!-- <i class="fas fa-home mr-2"></i> -->
                             <span class="h4">Kegiatan</span>
@@ -42,7 +42,7 @@
                         </a>
                     </li>
 
-                    <li class="nav-item {% if title == 'Kinerja' %}active{% endif %}">
+                    <li class="nav-item {% if subtitle == 'Kinerja' %}active{% endif %}">
                         <a class="nav-link" href="{{ url_for('admin.asset', bendungan_id=user.bendungan_id) }}">
                             <!-- <i class="fas fa-home mr-2"></i> -->
                             <span class="h4">Kinerja</span>
@@ -50,7 +50,13 @@
                         </a>
                     </li>
                 {% elif user.role == '3' %}
-                    <li class="nav-item {% if title == 'Kegiatan' %}active{% endif %}">
+                    <li class="nav-item {% if subtitle == 'Operasi' %}active{% endif %}">
+                        <a class="nav-link" href="{{ url_for('admin.operasi_embung', embung_id=user.embung_id) }}">
+                            <span class="h4">Operasi</span>
+                            <div><small>TMA, Debit</small></div>
+                        </a>
+                    </li>
+                    <li class="nav-item {% if subtitle == 'Kegiatan' %}active{% endif %}">
                         <a class="nav-link" href="{{ url_for('admin.kegiatan_embung', embung_id=user.embung_id) }}">
                             <span class="h4">Kegiatan</span>
                             <div><small>Foto kegiatan</small></div>
@@ -78,7 +84,7 @@
                       </a>
                         <div class="dropdown-menu" aria-labelledby="bendunganDropdown">
                           <a class="dropdown-item" href="{{ url_for('admin.embung') }}">Teknis</a>
-                          <!-- <a class="dropdown-item" href="{{ url_for('admin.embung_harian') }}">Operasi</a> -->
+                          <a class="dropdown-item" href="{{ url_for('admin.operasi_harian_embung') }}">Operasi</a>
                           <a class="dropdown-item" href="{{ url_for('admin.kegiatan_index_embung') }}">Kegiatan</a>
                         </div>
                     </li>
@@ -91,7 +97,7 @@
                             <a class="dropdown-item" href="{{ url_for('admin.petugas_bendungan_kinerja') }}">Kinerja</a>
                           </div>
                     </li>
-                    <li class="nav-item {% if title == 'RTOW' %}active{% endif %}">
+                    <li class="nav-item {% if title == 'Rencana' %}active{% endif %}">
                         <a class="nav-link" href="{{ url_for('admin.rtow') }}">
                             RTOW
                         </a>

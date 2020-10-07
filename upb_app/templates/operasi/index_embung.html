@@ -1,0 +1,161 @@
+{% extends 'master/base_adm.html' %}
+
+{% set title = "Embung" %}
+
+{% block css %}
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-datepicker/1.9.0/css/bootstrap-datepicker.css">
+<style>
+    .datepicker {
+        z-index: 10000 !important;
+        display: inherit;
+    }
+</style>
+<link href="{{ url_for('static', filename='css/bootstrap-editable.css') }}" rel="stylesheet"/>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/tempusdominus-bootstrap-4/5.0.1/css/tempusdominus-bootstrap-4.min.css" />
+{% endblock %}
+
+{% block content %}
+    <div>
+        <section class="content-header">
+            <h2>Operasi Embung</h2>
+        </section>
+        <div name="filter">
+            <h4>
+                <a id="datepicker" style="color: blue" href="#">
+                    <span class="badge badge-primary">
+                        <i class="fa fa-calendar"></i>
+                    </span>
+                    {{ sampling.strftime('%d %B %Y') }}
+                </a>
+                <!-- &nbsp; -->
+                <!-- <a href="#?sampling={{ sampling.strftime('%Y-%m-%d') }}">
+                    <span class="badge badge-primary">
+                        <i class="fa fa-download"></i>
+                    </span>
+                    CSV
+                </a> -->
+            </h4>
+
+        </div>
+        <nav>
+          <div class="nav nav-tabs" id="nav-tab" role="tablist">
+            {% for jenis in embung %}
+              <a class="nav-item nav-link {% if jenis == 'b' %}active{% endif %}"
+                  id="nav-{{ jenis }}-tab" data-toggle="tab"
+                  href="#nav-{{ jenis }}" role="tab"
+                  aria-controls="{{ jenis }}" aria-selected="true">
+                  <h4>
+                    {% if jenis == 'a' %}
+                      Air Baku
+                    {% elif jenis == 'b' %}
+                      Penampung Air
+                    {% else %}
+                      Belum Diketahui
+                    {% endif %}
+                  </h4>
+              </a>
+            {% endfor %}
+          </div>
+        </nav> 
+        <div class="tab-content" id="nav-tabContent">
+          {% for jenis in embung %}
+            <div class="tab-pane fade {% if jenis == 'b' %}show active{% endif %} mt-2"
+              id="nav-{{ jenis }}" role="tabpanel"
+              aria-labelledby="nav-{{ jenis }}-tab">
+                <h3>{{ jenis }}</h3>
+            </div>
+          {% endfor %}
+        </div>
+        <!-- <table class="table table-hover table-bordered">
+            <thead>
+                <tr class="table-active">
+                    <th rowspan="3" class="text-center align-middle">Tanggal</th>
+                    <th rowspan="3" class="text-center align-middle">TMA</th>
+                    <th colspan="2" class="text-center align-middle">Vol</th>
+                    <th colspan="2" class="text-center align-middle">Inflow</th>
+                    <th colspan="5" class="text-center align-middle">Outflow</th>
+                </tr>
+                <tr class="table-active">
+                    <th rowspan="2" class="text-center align-middle">Debit</th>
+                    <th rowspan="2" class="text-center align-middle">Volume</th>
+                    <th colspan="2" class="text-center align-middle">Intake</th>
+                    <th colspan="2" class="text-center align-middle">Spillway</th>
+                </tr>
+                <tr class="table-active">
+                    <th class="text-center align-middle">Q</th>
+                    <th class="text-center align-middle">V</th>
+                    <th class="text-center align-middle">Q</th>
+                    <th class="text-center align-middle">V</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                  <td></td>
+                  <td></td>
+                  <td></td>
+                  <td></td>
+                  <td></td>
+                  <td></td>
+                  <td></td>
+                  <td></td>
+                  <td></td>
+                </tr>
+            </tbody>
+        </table> -->
+    </div>
+{% endblock %}
+
+{% block js %}
+<script src="{{ url_for('static', filename='js/moment.min.js') }}"></script>
+<script src="{{ url_for('static', filename='js/id.js') }}"></script>
+<script src="{{ url_for('static', filename='js/bootstrap-editable.min.js') }}"></script>
+<script src="{{ url_for('static', filename='js/bootstrap-datepicker.min.js') }}"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/tempusdominus-bootstrap-4/5.0.1/js/tempusdominus-bootstrap-4.min.js"></script>
+<script>
+    $(document).ready(function() {
+        // resolve package confict
+        let datepicker = $.fn.datepicker.noConflict();
+        $.fn.bootstrapDP = datepicker;
+
+        $('#datepicker').datepicker({
+          todayHighlight: true,
+          autoclose: true,
+          format: 'yyyy-mm-dd'
+        });
+        $('#datepicker').on('changeDate', function () {
+          window.location = "{{ url_for('admin.operasi_harian_embung') }}?sampling=" + $('#datepicker').datepicker('getFormattedDate')
+        });
+
+        $(function () {
+          $('[data-toggle="popover"]').popover()
+        })
+
+        let tgls = document.querySelectorAll("#tgl");
+        tgls.forEach(function(el){
+            console.log(el.value);
+            el.innerText = moment(el.innerText).format('ddd, D');
+        });
+
+        //turn to popup mode
+        $.fn.editable.defaults.mode = 'popup';
+        $(document).ready(function() {
+            $('.editable').editable({
+                error: function(response, newValue) {
+                    if(response.status === 500) {
+                        return 'Tidak bisa update, Tambah data pakai form.';
+                    }
+                 },
+            });
+            // $('.intake_ket').editable({
+            //     prepend: "pilih",
+            //     source: [
+            //         {value: 'pemenuhan kebutuhan air irigasi', text: 'Pemenuhan Kebutuhan Air Irigasi'},
+            //         {value: 'pengendalian banjir', text: 'Pengendalian Banjir'},
+            //         {value: 'kebocoran intake', text: 'Kebocoran Intake'},
+            //         {value: 'kejadian luar biasa', text: 'Kejadian Luar Biasa'}
+            //     ]
+            // });
+        });
+    });
+</script>
+{% endblock %}

@@ -7,8 +7,9 @@ from sqlalchemy.exc import IntegrityError
 from upb_app.helper import month_range, day_range
 from upb_app.models import ManualDaily, ManualTma, ManualPiezo, ManualVnotch
 from upb_app.models import Bendungan, BendungAlert, CurahHujanTerkini
+from upb_app.models import Embung, ManualTmaEmbung, ManualDailyEmbung
 from upb_app.forms import AddDaily, AddTma, LaporBanjir, CHTerkini
-from upb_app import app, db, admin_only, petugas_only, role_check
+from upb_app import app, db, admin_only, petugas_only, role_check, role_check_embung
 import datetime
 import calendar
 import csv
@@ -556,3 +557,89 @@ def operasi_csv(bendungan_id):
                     headers={
                         "Content-Disposition": f"attachment;filename={bend.nama}-{sampling.strftime('%d %B %Y')}.csv"
                     })
+
+
+@bp.route('/embung/operasi')
+@login_required  # @petugas_only
+@admin_only
+def operasi_harian_embung():
+    all_embung = Embung.query.filter(Embung.is_verified == '1').order_by(Embung.wil_sungai, Embung.id).all()
+    sampling, end = day_range(request.values.get('sampling'))
+
+    embung = {
+        'b': [],
+        'a': [],
+        'tbd': []
+    }
+    for e in all_embung:
+        if e.jenis == 'a':
+            embung['a'].append(e)
+        elif e.jenis == 'b':
+            embung['b'].append(e)
+        else:
+            embung['tbd'].append(e)
+
+    return render_template('operasi/index_embung.html',
+                            csrf=generate_csrf(),
+                            embung=embung,
+                            sampling=sampling)
+
+
+@bp.route('/embung/<embung_id>/operasi')
+@login_required  # @petugas_only
+@role_check_embung
+def operasi_embung(embung_id):
+    emb = Embung.query.get(embung_id)
+    start, end, day = month_range(request.values.get('sampling'))
+    sampling, day_end = day_range(request.values.get('sampling'))
+
+    return render_template('operasi/embung.html',
+                            csrf=generate_csrf(),
+                            embung=emb,
+                            sampling=sampling,
+                            start=start)
+
+
+@bp.route('/embung/<embung_id>/operasi/daily', methods=['POST'])
+@login_required
+@role_check_embung
+def operasi_daily_embung_add(embung_id):
+    emb = Embung.query.get(embung_id)
+
+    return redirect(url_for('admin.operasi_embung', embung_id=emb.id))
+
+
+@bp.route('/embung/operasi/tma/update', methods=['POST'])  # @login_required
+def operasi_tma_embung_update():
+    pk = request.values.get('pk')
+    attr = request.values.get('name')
+    val = request.values.get('value')
+
+    row = ManualTmaEmbung.query.get(pk)
+    setattr(row, attr, val)
+    db.session.commit()
+
+    result = {
+        "name": attr,
+        "pk": pk,
+        "value": val
+    }
+    return jsonify(result)
+
+
+@bp.route('/embung/operasi/daily/update', methods=['POST'])  # @login_required
+def operasi_daily_embung_update():
+    pk = request.values.get('pk')
+    attr = request.values.get('name')
+    val = request.values.get('value')
+
+    row = ManualDailyEmbung.query.get(pk)
+    setattr(row, attr, val)
+    db.session.commit()
+
+    result = {
+        "name": attr,
+        "pk": pk,
+        "value": val
+    }
+    return jsonify(result)
