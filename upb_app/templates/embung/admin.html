@@ -10,6 +10,10 @@
 <div class="container">
     <h1>Embung</h1>
     <h3>Data Teknis</h3>
+    <div class="form-group">
+      <input type="text" class="form-control" id="search" placeholder="Cari Embung">
+    </div>
+    <hr>
     <div id="embung">
       <table id="bpa" class="table table-bordered">
           <thead>
@@ -17,6 +21,7 @@
                   <th>No</th>
                   <th>Nama</th>
                   <th>Jenis</th>
+                  <th>Wilayah</th>
                   <th>Status</th>
                   <th>Koordinat</th>
                   <th>Desa</th>
@@ -33,9 +38,9 @@
           </thead>
           <tbody>
               {% for e in embung %}
-                  <tr>
+                  <tr id="emb_data">
                     <td>{{ loop.index }}</td>
-                    <td>{{ e.nama }}</td>
+                    <td id="emb_nama">{{ e.nama }}</td>
                     <td>
                       <a data-url="/admin/embung/update"
                           class="emb_jenis"
@@ -50,6 +55,26 @@
                               BPA
                             {% else %}
                               Belum Diketahui
+                            {% endif %}
+                          </span>
+                      </a>
+                    </td>
+                    <td>
+                      <a data-url="/admin/embung/update"
+                          class="emb_wil"
+                          data-name="wil_sungai"
+                          data-type="select"
+                          data-title="{{ e.nama }}, Wilayah Sungai"
+                          data-pk="{{ e.id }}">
+                          <span style="color: blue">
+                            {% if e.wil_sungai == "1" %}
+                              Hulu
+                            {% elif e.wil_sungai == "2" %}
+                              Madiun
+                            {% elif e.wil_sungai == "3" %}
+                              Hilir
+                            {% else %}
+                              Belum Tercatat
                             {% endif %}
                           </span>
                       </a>
@@ -238,6 +263,30 @@
                 {value: 'b', text: 'BPA'},
                 {value: 'z', text: 'Belum Diketahui'}
             ]
+        });
+        $('.emb_wil').editable({
+            prepend: "pilih",
+            source: [
+                {value: '1', text: 'Hulu'},
+                {value: '2', text: 'Madiun'},
+                {value: '2', text: 'Hilir'},
+                {value: '4', text: 'Belum Dicatat'}
+            ]
+        });
+
+        $('#search').on('keyup change', function() {
+            let query = this.value.toLowerCase();
+            let bends = document.querySelectorAll("#emb_data");
+            bends.forEach(function(el){
+                let nama = el.querySelector("#emb_nama").innerHTML;
+                nama = nama.toLowerCase()
+                console.log(query);
+                if (!nama.includes(query)) {
+                    el.style.display = "none";
+                } else {
+                    el.style.display = "table-row";
+                }
+            });
         });
     });
 </script>
