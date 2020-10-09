@@ -584,7 +584,7 @@ def operasi_harian_embung():
     for d in all_daily:
         all_periodik['daily'][d.embung_id] = d
     for t in all_tma:
-        all_periodik['tma'][d.embung_id] = t
+        all_periodik['tma'][t.embung_id] = t
 
     embung_a = {
         '1': {},
