@@ -6,7 +6,10 @@ from upb_app import admin_only
 from upb_app.helper import day_range
 from sqlalchemy import and_
 from telegram import Bot
+from upb_app import app
 import datetime
+import base64
+import os
 
 import paho.mqtt.client as mqtt
 
@@ -167,7 +170,6 @@ def embung_harian():
 @login_required
 @admin_only
 def showcase_toggle():
-    ''' Home Embung '''
     foto_id = request.form.get('foto_id')
 
     foto = Foto.query.get(foto_id)
@@ -180,6 +182,79 @@ def showcase_toggle():
     db.session.commit()
 
     return msg
+
+
+@bp.route('/galeri')
+@login_required
+@admin_only
+def galeri():
+    showcased_foto = Foto.query.filter(Foto.showcase).all()
+
+    special = []
+    picked_photos = []
+    for foto in showcased_foto:
+        if not foto.obj_id:
+            special.append(foto)
+        else:
+            picked_photos.append(foto)
+
+    return render_template('about/galeri.html',
+                            embung=embung,
+                            special=special,
+                            picked_photos=picked_photos)
+
+
+@bp.route('/galery/add', methods=['POST'])
+@login_required
+@admin_only
+def add_galeri():
+    latest = Foto.query.order_by(Foto.id.desc()).first()
+    raw = request.form.get('foto')
+    imageStr = raw.split(',')[1]
+    filename = f"galeri_{latest.id}_{request.form.get('filename')}"
+    img_file = os.path.join(app.config['UPLOAD_FOLDER'], filename)
+    save_file = os.path.join(app.config['SAVE_DIR'], img_file)
+
+    # print(imageStr)
+    # print(filename)
+
+    try:
+        # convert base64 into image file and then save it
+        imgdata = base64.b64decode(imageStr)
+        with open(save_file, 'wb') as f:
+            f.write(imgdata)
+
+        foto = Foto(
+            url=img_file,
+            obj_type="gallery",
+            showcase=True
+        )
+        db.session.add(foto)
+        db.session.commit()
+
+        return "success"
+    except Exception as e:
+        print(f"error : {e}")
+        return "error"
+
+
+@bp.route('/gallery/delete', methods=['POST'])
+@login_required
+@admin_only
+def delete_galeri_special():
+    foto_id = int(request.values.get('foto_id'))
+    print(f"ID Foto : {foto_id}")
+
+    foto = Foto.query.get(foto_id)
+    filepath = os.path.join(app.config['SAVE_DIR'], foto.url)
+
+    db.session.delete(foto)
+    db.session.commit()
+
+    if os.path.exists(filepath):
+        os.remove(filepath)
+
+    return "ok"
 
 
 @bp.route('/alert/button')

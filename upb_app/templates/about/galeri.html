@@ -1,0 +1,224 @@
+{% extends 'master/base_adm.html' %}
+
+{% set title = "Galeri" %}
+
+{% block css %}
+
+{% endblock %}
+
+{% block content %}
+<div class="container">
+    <h3>Manajemen Galeri</h3>
+    <div>
+        <h5>
+            Foto Khusus
+            <a data-toggle="modal" href="#tambah-foto"
+                role="button" aria-expanded="false"
+                class="btn btn-sm btn-primary">
+                Tambah
+            </a>
+        </h5>
+        <!-- Tambah Foto Dokumentasi -->
+        <div class="modal fade" id="tambah-foto" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+          <div class="modal-dialog" role="document">
+            <div class="modal-content">
+              <div class="modal-header">
+                <h5 class="modal-title" id="exampleModalLabel">
+                    <b>Tambah Foto Galeri</b>
+                </h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                  <span aria-hidden="true">&times;</span>
+                </button>
+              </div>
+              <div class="modal-body">
+                  <div class="form-group">
+                      <div class="custom-file" style="height: 100%;">
+                          <input type="file" class="custom-file-input" id="fotoFile">
+                          <label class="custom-file-label" for="customFile">Choose file</label>
+                          <div>
+                              <img id="blah" src="{{ url_for('static', filename='images/null.jpg') }}" class="img-responsive" style="width: 100%;border: solid 1px #ccc" alt=" pra tinjau gambar">
+                          </div>
+                      </div>
+                  </div>
+              </div>
+              <div class="modal-footer">
+                  <input type="button" value="Upload" onclick="uploadFoto()" class="btn btn-primary">
+                  <button type="button" class="btn btn-danger" data-dismiss="modal">Batal</button>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="row">
+            {% for photo in special %}
+            <div class="col-md-3 align-middle pt-1 pb-1">
+                <a data-toggle="modal" href="#preview-special-{{ photo.id }}"
+                    role="button" aria-expanded="false"
+                    class="card-link">
+                    <img class="img-fluid" id="special-{{ photo.id }}" src="{{ url_for('static', filename=photo.url[7:]) }}" alt="NO IMAGE" style="width: 100%; height: 11rem;">
+                </a>
+            </div>
+
+            <div class="modal fade" id="preview-special-{{ photo.id }}" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+              <div class="modal-dialog" role="document">
+                <div class="modal-content">
+                  <div class="modal-body">
+                      <div class="form-group">
+                          <img class="img-fluid" src="{{ url_for('static', filename=photo.url[7:]) }}" id="foto-modal-show">
+                      </div>
+                      {% if user.role in ['1', '4'] %}
+                      <div class="text-center">
+                          <button type="button" class="btn btn-sm btn-danger" onclick="removeSpecialShowcase({{ photo.id }})">
+                            <i class="fas fa-trash" id="showcase-btn-{{ photo.id }}"></i>
+                          </button>
+                      </div>
+                      {% endif %}
+                  </div>
+                  <div class="modal-footer">
+                      <button type="button" class="btn btn-secondary" data-dismiss="modal">Tutup</button>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+                {% if loop.index % 4 == 0 %}
+                </div>
+                <div class="row">
+                {% endif %}
+
+            {% endfor %}
+        </div>
+    </div>
+    <hr>
+    <div>
+        <h5>Foto Kegiatan Bendungan/Embung Pilihan</h5>
+        <div class="row">
+            {% for photo in picked_photos %}
+            <div class="col-md-3 align-middle pt-1 pb-1">
+                <a data-toggle="modal" href="#preview-foto-{{ photo.id }}"
+                    role="button" aria-expanded="false"
+                    class="card-link" onclick="openGallery({{ photo.id }})">
+                    <img class="img-fluid" id="foto-{{ photo.id }}" src="{{ url_for('static', filename=photo.url[7:]) }}" alt="NO IMAGE" style="width: 100%; height: 11rem;">
+                </a>
+            </div>
+
+            <div class="modal fade" id="preview-foto-{{ photo.id }}" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+              <div class="modal-dialog" role="document">
+                <div class="modal-content">
+                  <div class="modal-body">
+                      <div class="form-group">
+                          <img class="img-fluid" src="{{ url_for('static', filename=photo.url[7:]) }}" id="foto-modal-show">
+                      </div>
+                      {% if user.role in ['1', '4'] %}
+                      <div class="text-center">
+                          <button type="button" class="btn btn-sm btn-info" onclick="removeShowcase({{ photo.id }})">
+                          {% if photo.showcase %}
+                              <i class="fas fa-eye-slash" id="showcase-btn-{{ photo.id }}"></i>
+                          {% else %}
+                              <i class="fas fa-eye" id="showcase-btn-{{ photo.id }}"></i>
+                          {% endif %}
+                          </button>
+                      </div>
+                      {% endif %}
+                  </div>
+                  <div class="modal-footer">
+                      <button type="button" class="btn btn-secondary" data-dismiss="modal">Tutup</button>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+                {% if loop.index % 4 == 0 %}
+                </div>
+                <div class="row">
+                {% endif %}
+
+            {% endfor %}
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block js %}
+<script src="{{ url_for('static', filename='js/MinifyJpegAsync.js') }}"></script>
+<script>
+    function removeShowcase(foto_id){
+        $.post("{{ url_for('admin.showcase_toggle') }}", {foto_id:foto_id}).done(function(result){
+            var a = result;
+            alert("Foto akan ditarik dari Galeri halaman depan");
+            window.location.reload();
+        });
+    }
+
+    function removeSpecialShowcase(foto_id){
+        $.post("{{ url_for('admin.delete_galeri_special') }}", {foto_id:foto_id}).done(function(result){
+            var a = result;
+            alert("Foto dihapus dari Galeri halaman depan");
+            window.location.reload();
+        });
+    }
+
+    function readURL(event, blah_id) {
+        let f = event.target.files[0];
+        filenameFoto = f.name;
+        let reader = new FileReader();
+
+        reader.onloadend = function(e){
+            console.log(`onload function called, parameter : ${e}`);
+            MinifyJpegAsync.minify(e.target.result, 480, function(data) {
+                imgFoto = "data:image/jpeg;base64," + btoa(data);
+                let img = new Image();
+                img.src = imgFoto;
+
+                // document.getElementById(blah_id).src = enc_img;
+                // console.log('Hasil proses minify') ;
+            });
+            MinifyJpegAsync.minify(e.target.result, 480, function(data) {
+                let temp_img = "data:image/jpeg;base64," + btoa(data);
+
+                document.getElementById(blah_id).src = temp_img;
+                console.log('Hasil proses minify') ;
+            });
+        };  // (function(theFile))(f)
+        reader.readAsDataURL(f);
+    };
+
+    let imgFoto = "";
+    let filenameFoto = "";
+
+    $('#fotoFile').on('change', function(event) {
+        // console.log("Input Change Detected");
+        readURL(event, 'blah');
+    });
+
+    function uploadFoto() {
+        if ($(`#blah`).attr('src') == "{{ url_for('static', filename='img/null.jpg') }}"){
+            alert('Pilih foto terlebih dahulu');
+        } else {
+            let formData = {
+                foto: imgFoto,
+                filename: filenameFoto
+            };
+            console.log("Posting Photo");
+            // console.log(formData);
+            $.post("{{ url_for('admin.add_galeri') }}", formData,
+                function (res) {
+                    if (res == 'success') {
+                        console.log(res);
+                        location.reload();
+                    } else {
+                        alert("Gagal Upload Dokumentasi");
+                    }
+                }
+            );
+        }
+    }
+
+    function srcnull(){
+        $('#fotoFile').val('');
+        $('#blah').attr('src', "{{ url_for('static', filename='images/null.jpg') }}");
+    }
+
+</script>
+
+{% endblock %}
