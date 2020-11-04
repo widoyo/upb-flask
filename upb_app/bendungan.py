@@ -201,6 +201,9 @@ def operasi(lokasi_id):
                                     ManualTma.bendungan_id == lokasi_id
                                     ).first()
 
+            day_interval = ((cond and cond3) and 10) or 15
+            real_in, real_out = get_avg_inflow_outflow(lokasi_id, rt.sampling, day_interval)
+
             tgl_str = rt.sampling.strftime("%d %b %Y")
             tanggal += f"'{tgl_str}'"
             operasi['po_bona'] += f"{rt.po_bona}" if rt.po_bona else "0"
@@ -211,8 +214,8 @@ def operasi(lokasi_id):
             operasi['sedimen'] += f"{pos.sedimen or '0'}"
             operasi['po_outflow'] += '0' if not rt.po_outflow_deb else str(rt.po_outflow_deb)
             operasi['po_inflow'] += '0' if not rt.po_inflow_deb else str(rt.po_inflow_deb)
-            operasi['real_outflow'] += str(daily.intake_deb) if daily and daily.intake_deb else "0"
-            operasi['real_inflow'] += str(daily.inflow_deb) if daily and daily.inflow_deb else "0"
+            operasi['real_outflow'] += str(real_out)
+            operasi['real_inflow'] += str(real_in)
             i += 1
 
     return render_template('bendungan/operasi.html',
@@ -407,3 +410,18 @@ def kegiatan():
     return render_template('bendungan/kegiatan.html',
                             data=data,
                             sampling=sampling)
+
+
+def get_avg_inflow_outflow(bendungan_id, sampling, interval):
+    start = sampling - datetime.timedelta(days = interval-1)
+    manual_daily = ManualDaily.query.filter(
+                                        ManualDaily.bendungan_id == bendungan_id,
+                                        ManualDaily.sampling.between(start, sampling)
+                                    ).all()
+    inflow_val = 0
+    outflow_val = 0
+    for daily in manual_daily:
+        inflow_val += daily.inflow_deb or 0
+        outflow_val += daily.intake_deb or 0
+
+    return round(inflow_val/interval, 3), round(outflow_val/interval, 3)
