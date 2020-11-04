@@ -54,8 +54,16 @@
         </li>
 
         {% if user.is_authenticated %}
-            <li>
-                <a class="nav-link" href="/logout"><b>Logout</b></a>
+            <li class="nav-item dropdown">
+              <!-- <a class="nav-link dropdown" href="/admin/">Admin</a> -->
+              <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                  <i class="fas fa-user"></i>
+                  <b>{{ user.username }}</b>
+              </a>
+                <div class="dropdown-menu" aria-labelledby="navbarDropdown">
+                  <a class="dropdown-item" href="{{ url_for('admin.operasi') }}">Admin</a>
+                  <a class="dropdown-item" href="/logout">Logout</a>
+                </div>
             </li>
         {% else %}
             <li>
