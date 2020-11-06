@@ -40,6 +40,13 @@ jenis2atuan = {
     'tambal sulam kerusakan ringan': "m<sup>2</sup>",
     'penghijauan': "m<sup>2</sup>"
 }
+lokasi_jenis = {
+# 1 CH, 2 TMA, 3 Bendungan, 4 Klim
+    '1': "Curah Hujan",
+    '2': "TMA",
+    '3': "Bendungan",
+    '4': "Klimat"
+}
 
 
 class BaseLog(db.Model):
@@ -381,6 +388,22 @@ class Bendungan(BaseLog):
         arr = self.nama.split('_')
         return " ".join(a.title() for a in arr)
 
+    @property
+    def lokasi():
+        return Lokasi.query.filter(
+                                    Lokasi.jenis == '3',
+                                    Lokasi.jenis_id == self.id
+                                ).first()
+
+    @property
+    def primabots(self):
+        lokasi = self.lokasi
+
+        if not lokasi:
+            return None
+
+        return lokasi.devices
+
     def get_active_petugas(self):
         petugas = Petugas.query.filter(
                                     Petugas.is_active == '1',
@@ -687,6 +710,7 @@ class Lokasi(BaseLog):
     nama = db.Column(db.String(50), index=True, unique=True)
     ll = db.Column(db.String(35))
     jenis = db.Column(db.String(1))  # 1 CH, 2 TMA, 3 Bendungan, 4 Klim
+    jenis_id = db.Column(db.Integer, nullable=True)
     siaga1 = db.Column(db.Float)
     siaga2 = db.Column(db.Float)
     siaga3 = db.Column(db.Float)

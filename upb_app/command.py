@@ -19,19 +19,276 @@ from upb_app import app, db
 from upb_app.models import Bendungan, Embung, Rencana, Users, Asset
 from upb_app.models import Kerusakan, Kegiatan, Foto, BendungAlert, CurahHujanTerkini
 from upb_app.models import ManualDaily, ManualTma, ManualVnotch, ManualPiezo
+from upb_app.models import Device, Lokasi, Periodik, Raw, lokasi_jenis
 
-upbbendungan = ("upbuser", "upbsecret")
+upb_bendungan = ("upbbsolo", "upbbisa")
 
 UPB_API = ""
-URL = "https://prinus.net/api/sensor"
-MQTT_HOST = "mqtt.bbws-bsolo.net"
+PRINUS_URL = "https://prinus.net/api/sensor"
+MQTT_HOST = "mqtt.prinus.net"
 MQTT_PORT = 14983
-MQTT_TOPIC = "upbbendungan"
+MQTT_TOPIC = "upbbsolo"
 MQTT_CLIENT = ""
 
 logging.basicConfig(
         filename='/tmp/upbflask.log',
         level=logging.DEBUG, format='%(asctime)s [%(levelname)s] %(message)s')
+
+
+@app.cli.command()
+@click.argument('command')
+def listen(command):
+    daemon = daemonocle.Daemon(worker=subscribe_topic, pidfile='listener.pid')
+    daemon.do_action(command)
+
+
+def subscribe_topic():
+    logging.debug('Start listen...')
+    # MQTT_TOPICS = [ten.slug for ten in Tenant.query.all()]
+    logging.debug(f"Topics : {MQTT_TOPIC}")
+    subscribe.callback(on_mqtt_message, MQTT_TOPIC,
+                       hostname=MQTT_HOST, port=MQTT_PORT)
+    logging.debug('Subscribed')
+
+
+def on_mqtt_message(client, userdata, msg):
+    data = json.loads(msg.payload.decode('utf-8'))
+    # logging.debug(data.get('device'))
+    # logging.debug('Message Received')
+    # logging.debug(f"Topic : {msg.topic}")
+    result = recordperiodic(data)
+    logging.debug(result)
+
+
+def recordperiodic(raw, is_new=True):
+    sn = str(raw.get('device').split('/')[1])
+    try:
+        device = Device.query.filter_by(sn=sn).first()
+        if device:
+            # check if sampling exist
+            sampling = datetime.datetime.fromtimestamp(raw.get('sampling'))
+            up_since = datetime.datetime.fromtimestamp(raw.get('up_since'))
+            check_periodik = Periodik.query.filter_by(sampling=sampling, device_sn=device.sn).first()
+            if check_periodik:
+                return f"Device {device.sn}, Exception : Periodik with sampling {sampling} already exist"
+
+            # insert data
+            try:
+                new_periodik = Periodik(
+                    device_sn=sn,
+                    lokasi_id=device.lokasi_id or None,
+                    mdpl=raw.get('altitude') or None,
+                    apre=raw.get('pressure') or None,
+                    sq=raw.get('signal_quality') or None,
+                    temp=(raw.get('temperature') + device.temp_cor) if raw.get('temperature') and device.temp_cor else raw.get('temperature'),
+                    humi=(raw.get('humidity') + device.humi_cor) if raw.get('humidity') and device.humi_cor else raw.get('humidity'),
+                    batt=(raw.get('battery') + device.batt_cor) if raw.get('battery') and device.batt_cor else raw.get('battery'),
+                    rain=(raw.get('tick') * (device.tipp_fac or 0.2)) if raw.get('tick') else None,
+                    wlev=((device.ting_son or 100) - (raw.get('distance') * 0.1)) if raw.get('distance') else None,
+                    sampling=datetime.datetime.fromtimestamp(raw.get('sampling')),
+                    up_s=datetime.datetime.fromtimestamp(raw.get('up_since')),
+                    ts_a=datetime.datetime.fromtimestamp(raw.get('time_set_at')),
+                )
+
+                if is_new:
+                    content = Raw(content=raw)
+                    db.session.add(content)
+                db.session.add(new_periodik)
+                # db.session.flush()
+                db.session.commit()
+                return f"Device {device.sn} data recorded, sampling {sampling}"  # on {device.location.nama}
+            except Exception as e:
+                db.session.rollback()
+                db.session.flush()
+                return f"Device {device.sn}, Exception (while trying to record data) : {e}"
+        else:
+            return f"({sn}), Exception : Device data not found in database."
+    except Exception as e:
+        db.session.rollback()
+        db.session.flush()
+        return f"({sn}) Errors : {e}"
+
+
+@app.cli.command()
+def check_listener():
+    if not os.path.exists(os.path.join(os.getcwd(), "listener.pid")):
+        os.system(f"flask listen start")
+    else:
+        print("Listener already listening")
+
+
+@app.cli.command()
+@click.argument('command')
+@click.option('-j', '--jenis', default='3', help='Jenis: 3 - Bendungan')
+@click.option('-id', '--jenis-id', default='', help='Jenis Object ID')
+def lokasi(command, jenis, jenis_id):
+    if command == "list":
+        print("Lokasi List :")
+        lokasi_list()
+    elif command == "create":
+        lokasi_create(jenis, jenis_id)
+
+
+def lokasi_list():
+    lokasis = Lokasi.query.all()
+
+    print("ID\t Nama\t Jenis\t Jenis ID\t Number of Devices")
+    for lokasi in lokasis:
+        print(f"{lokasi.id}\t {lokasi.nama}\t {lokasi_jenis[lokasi.jenis]}\t \
+                {lokasi.jenis_id}\t {len(lokasi.devices)}")
+
+
+def lokasi_create(jenis, jenis_id):
+    if not jenis_id:
+        print("Failed : ID not defined")
+        return
+    lokasi = Lokasi.query.filter(
+                                Lokasi.jenis == jenis,
+                                Lokasi.jenis_id == jenis_id
+                            ).first()
+    if lokasi:
+        print("Lokasi already Exist")
+        return
+
+    if jenis == '3':
+        jenis_obj = Bendungan.query.get(int(jenis_id))
+    else:
+        print("Jenis not supported")
+        return
+
+    new_lokasi = Lokasi(
+        nama=jenis_obj.nama,
+        ll=jenis_obj.ll,
+        jenis='3',
+        jenis_id=jenis_obj.id
+    )
+    db.session.add(new_lokasi)
+    db.session.commit()
+    print(f"Create Lokasi '{jenis}', for {jenis_obj.name}")
+
+
+@app.cli.command()
+@click.argument('command')
+@click.option('-sn', '--device-sn', default='', help='Device SN')
+@click.option('-l', '--lokasi-id', default='', help='Lokasi ID')
+def device(command, device_sn, lokasi_id):
+    if command == "fetch":
+        print("Fetching Device")
+        fetch_device()
+    elif command == "list":
+        print("Devices List :")
+        device_list()
+    elif command == "assign":
+        print("Devices Assignment :")
+        device_assignment(device_sn, lokasi_id)
+
+
+def device_list():
+    devices = Device.query.all()
+
+    print("ID\t SN\t Type\t Lokasi ID\t Latest Data")
+    for device in devices:
+        print(f"{device.id}\t {device.sn}\t {device.tipe}\t {device.lokasi_id}\t {device.latest_sampling}")
+
+
+def fetch_device():
+    res = requests.get(PRINUS_URL, auth=upb_bendungan)
+
+    if res.status_code == 200:
+        device = json.loads(res.text)
+        local_device = [d.sn for d in Device.query.all()]
+        if len(local_device) != len(device):
+            for l in device:
+                if l.get('sn') not in local_device:
+                    new_device = Device(sn=l.get('sn'))
+                    db.session.add(new_device)
+                    db.session.commit()
+                    print('Tambah:', new_device.sn)
+    else:
+        print(res.status_code)
+
+
+def device_assignment(device_sn, lokasi_id):
+    if not device_sn or not Device.query.filter(Device.sn == device_sn).first():
+        print("Device SN not found")
+        return
+
+    if not lokasi_id or not Lokasi.query.filter(Lokasi.id == lokasi_id).first():
+        print("Lokasi not found")
+        return
+
+    device = Device.query.filter(Device.sn == device_sn).first()
+    device.lokasi_id = lokasi_id
+    db.session.commit()
+    print(f"Device {device.sn} assigned to Lokasi {lokasi_id}")
+
+
+@app.cli.command()
+@click.argument('sn')
+@click.option('-s', '--sampling', default='', help='Awal waktu sampling')
+def fetch_periodic(sn, sampling):
+    sampling_param = ''
+    if sampling:
+        sampling_param = '&sampling=' + sampling
+    fetch_api = PRINUS_URL + '/' + sn + '?robot=1' + sampling_param
+
+    print(f"- Fetching with {fetch_api}")
+    res = requests.get(fetch_api, auth=upb_bendungan)
+    data = json.loads(res.text)
+    for d in data:
+        try:
+            result = recordperiodic(d)
+            print(result)
+        except Exception as e:
+            db.session.rollback()
+            print("ERROR:", e)
+        # print(datetime.datetime.fromtimestamp(d.get('sampling')), d.get('temperature'))
+
+
+@app.cli.command()
+def raw2periodik():
+    all_raw = Raw.query.all()
+    for raw in all_raw:
+        result = recordperiodic(raw.content, is_new=False)
+        print(result)
+        # break
+
+
+@app.cli.command()
+@click.option('-s', '--sampling', default='', help='Awal waktu sampling')
+def fetch_periodic_today(sampling):
+    devices = Device.query.all()
+    today = datetime.datetime.today()
+    if not sampling:
+        sampling = today.strftime("%Y-%m-%d")
+    print(f"Fetch Periodic Data at {sampling}")
+    for d in devices:
+        try:
+            print(f"Fetch Periodic for {d.sn}")
+            logging.debug(f"Fetch Periodic for {d.sn}")
+            os.system(f"flask fetch-periodic {d.sn} -s {sampling}")
+        except Exception as e:
+            print(f"!!Fetch Periodic ({d.sn}) ERROR : {str(e)}")
+            logging.debug(f"!!Fetch Periodic ({d.sn}) ERROR : {str(e)}")
+
+
+@app.cli.command()
+@click.option('-s', '--start', default='', help='Awal waktu sampling')
+@click.option('-e', '--end', default='', help='Akhir waktu sampling')
+def fetch_periodic_all(start, end):
+    today = datetime.datetime.today()
+    start = today if not start else datetime.datetime.strptime(start, "%Y-%m-%d")
+    end = today if not end else datetime.datetime.strptime(end, "%Y-%m-%d")
+
+    # print(f"Fetch Periodic Data at {sampling}")
+    while True:
+        sampling = start.strftime("%Y-%m-%d")
+        os.system(f"flask fetch-periodic-today -s {sampling}")
+        # print(sampling)
+        start += datetime.timedelta(days=1)
+        if start > end:
+            break
+
 
 # mydb = mysql.connector.connect(
 #     host="localhost",
