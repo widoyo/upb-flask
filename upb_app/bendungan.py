@@ -1,8 +1,9 @@
 from flask import Blueprint, render_template, request
-from upb_app.helper import day_range
+from upb_app.helper import day_range, wib2utc, utc2wib, get_current_or_latest
 from upb_app.models import Bendungan, Petugas
 from upb_app.models import ManualDaily, ManualTma, ManualVnotch, ManualPiezo
 from upb_app.models import Kegiatan, Rencana, BendungAlert, CurahHujanTerkini, wil_sungai
+from upb_app.models import Device, Periodik
 from sqlalchemy import and_, desc, cast, Date, extract
 from pprint import pprint
 from pytz import timezone
@@ -89,6 +90,7 @@ def index():
         data[w.wil_sungai].append({
             'id': w.id,
             'no': count,
+            'lokasi': w.lokasi,
             'nama': w.name,
             'kab': w.kab,
             'volume': "{:,.3f}".format(w.volume/1000000),
@@ -351,6 +353,60 @@ def piezo(lokasi_id):
                             sampling=sampling,
                             tgl_labels=tgl_labels,
                             piezodata=piezodata)
+
+
+@bp.route('/<lokasi_id>/telemetri', methods=['GET'])
+def telemetri(lokasi_id):
+    sampling = request.values.get('sampling')
+    current = datetime.datetime.utcnow() + datetime.timedelta(hours=7)
+    sampling = sampling or current.strftime("%Y-%m-%d")
+
+    start = datetime.datetime.strptime(f"{sampling} 00:00:00", "%Y-%m-%d %H:%M:%S")
+    start = wib2utc(start)
+
+    end = datetime.datetime.strptime(f"{sampling} 23:59:00", "%Y-%m-%d %H:%M:%S")
+    end = wib2utc(end)
+    end = get_current_or_latest(end)
+
+    pos = Bendungan.query.get(lokasi_id)
+    telemetri = []
+    for dev in pos.primabots:
+        periodik_raw = Periodik.query.filter(
+                                    and_(
+                                        Periodik.sampling >= start,
+                                        Periodik.sampling <= end),
+                                ).order_by(Periodik.sampling).all()
+        periodik = {}
+        result = {
+            'labels': [],
+            'data': []
+        }
+        for per in periodik_raw:
+            periodik[per.sampling] = per
+
+        relay = start
+        while True:
+            if relay >= end:
+                break
+
+            sampl = utc2wib(relay)
+            result['labels'].append(sampl.strftime("'%d %b, %H:%M'"))
+            if relay in periodik:
+                result['data'].append(str(round(periodik[relay].wlev, 4)))
+            else:
+                result['data'].append("0")
+            relay = relay + datetime.timedelta(minutes=5)
+        result['labels'] = ",".join(result['labels'])
+        result['data'] = ",".join(result['data'])
+        telemetri.append({
+            'device': dev,
+            'result': result
+        })
+
+    return render_template('bendungan/telemetri.html',
+                            sampling=utc2wib(start),
+                            waduk=pos,
+                            telemetri=telemetri)
 
 
 @bp.route('/petugas')

@@ -200,7 +200,15 @@ def fetch_device():
         if len(local_device) != len(device):
             for l in device:
                 if l.get('sn') not in local_device:
-                    new_device = Device(sn=l.get('sn'))
+                    new_device = Device(
+                        sn=l.get('sn'),
+                        tipe=l.get('tipe', 'arr'),
+                        temp_cor=l.get('temp_cor', None),
+                        humi_cor=l.get('humi_cor', None),
+                        batt_cor=l.get('batt_cor', None),
+                        tipp_fac=l.get('tipp_fac', None),
+                        ting_son=l.get('ting_son', None)
+                    )
                     db.session.add(new_device)
                     db.session.commit()
                     print('Tambah:', new_device.sn)

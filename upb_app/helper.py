@@ -54,3 +54,25 @@ def day_range(date=None):
     end = start + datetime.timedelta(hours=23, minutes=55)
 
     return start, end
+
+
+def utc2wib(date):
+    ''' date : python datetime object '''
+    return date + datetime.timedelta(hours=7)
+
+
+def wib2utc(date):
+    ''' date : python datetime object '''
+    return date - datetime.timedelta(hours=7)
+
+
+def get_current_or_latest(date):
+    '''
+    date : python datetime object (utc)
+    return : the same datetime or current datetime if input is in future
+    '''
+    now = datetime.datetime.utcnow()
+    if date > now:
+        return now
+    else:
+        return date

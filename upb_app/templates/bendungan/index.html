@@ -55,7 +55,10 @@
                             <td>{{ w.no }}</td>
                             <td>
                                 <a href="{{ url_for('bendungan.tma', lokasi_id=w.id, sampling=sampling.strftime('%Y-%m-%d')) }}">{{ w.nama }}</a><br>
-                                ({{ w.kab }})
+                                ({{ w.kab }})<br>
+                                {% if w.lokasi %}
+                                  <!-- <a href="{{ url_for('bendungan.telemetri', lokasi_id=w.id) }}"><small>Primabot</small></a> -->
+                                {% endif %}
                             </td>
                             <td class="text-center">{{ w.kondisi|safe }}</td>
                             <td class="text-right">{% if w.volume %}{{ w.volume }}{% else %}-{% endif %}</td>

@@ -231,6 +231,22 @@ class ManualTmaEmbung(BaseLog):
         return self.c_date + datetime.timedelta(hours=7)
 
 
+# class PiketBanjir(BaseLog):
+#     __tablename__ = 'piket_banjir'
+#
+#     id = db.Column(db.Integer, primary_key=True)
+#     sampling = db.Column(db.DateTime, index=True)
+#     obj_type = db.Column(db.String, default="bendungan")
+#     obj_id = db.Column(db.Integer)
+#     tma = db.Column(db.Float)
+#     vol = db.Column(db.Float)
+#     __table_args__ = (db.UniqueConstraint('embung_id', 'sampling',
+#                                           name='manualtma_embung_sampling'),)
+#
+#     def local_cdate(self):
+#         return self.c_date + datetime.timedelta(hours=7)
+
+
 class Asset(BaseLog):
     __tablename__ = 'asset'
 
@@ -389,7 +405,7 @@ class Bendungan(BaseLog):
         return " ".join(a.title() for a in arr)
 
     @property
-    def lokasi():
+    def lokasi(self):
         return Lokasi.query.filter(
                                     Lokasi.jenis == '3',
                                     Lokasi.jenis_id == self.id
