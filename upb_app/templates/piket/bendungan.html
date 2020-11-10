@@ -21,82 +21,110 @@
             <div class="row">
                 <div class="col-md-4">
                     <h5>
-                      <a data-toggle="collapse" href="#vnotch" role="button" aria-expanded="false" aria-controls="vnotch">
+                      <a data-toggle="collapse" href="#piket_banjir" role="button" aria-expanded="false" aria-controls="piket_banjir">
                         Piket Banjir <small><i class="fas fa-play"></i></small>
                       </a>
                     </h5>
                     <hr>
-                    <form action="{{ url_for('admin.keamanan_vnotch', bendungan_id=bend_id) }}" method="POST">
+                    <form action="{{ url_for('admin.piket_banjir_add', bendungan_id=bend.id) }}" method="POST">
                         <input id="csrf_token" name="csrf_token" type="hidden" value="{{ csrf }}">
-                        <div class="collapse" id="vnotch">
+                        <div class="collapse" id="piket_banjir">
                           <div>
                               <div class="form-group">
                                   <label class="form-text" for="sampling"><b>Tanggal</b></label>
-                                  <input class="form-control" type="text" name="sampling" id="datepicker-pb" hidden required value="{{ now }}">
+                                  <input class="form-control" type="text" name="sampling" id="sampling" hidden required value="{{ now.strftime('%Y-%m-%d') }}">
                                   <p class="ml-2" id="form-datepicker"><i class="fas fa-calendar"></i> <span id="sampling-pb-text">{{ now }}</span></p>
                               </div>
                           </div>
-                          <h5>V-Notch</h5>
-                          <div>
-                              <b>Satu</b>
+                          <div class="row">
+                              <div class="col-md-6 form-group">
+                                  <label class="form-text" for="cuaca"><b>Cuaca Terkini</b></label>
+                                  <select id="cuaca" name="cuaca" class="form-control" required>
+                                    <option value="">- pilih -</option>
+                                    <option value="cerah">Cerah</option>
+                                    <option value="berawan">Berawan</option>
+                                    <option value="mendung">Mendung</option>
+                                    <option value="gerimis">Gerimis</option>
+                                    <option value="hujan">Hujan</option>
+                                  </select>
+                                  <small id="cuaca_help" class="form-text text-muted">(wajib)</small>
+                              </div>
+                              <div class="col-md-6 form-group">
+                                  <label class="form-text" for="curahhujan"><b>Curah Hujan</b></label>
+                                  <input class="form-control" type="number"
+                                        name="curahhujan" id="curahhujan" value="0.0"
+                                        step="0.01" required aria-describedby="curahhujan_help">
+                                  <small id="curahhujan_help" class="form-text text-muted">mm (wajib)</small>
+                              </div>
+                          </div>
+                          <div class="row">
+                              <div class="col-md-12 form-group">
+                                  <label class="form-text" for="durasi"><b>Durasi</b></label>
+                                  <input class="form-control" type="text"
+                                        name="durasi" id="durasi" placeholder="contoh: 16.03-sekarang" required
+                                        aria-describedby="durasi_help">
+                                  <small id="durasi_help" class="form-text text-muted">contoh : "15.45-18.42" atau "16.03-sekarang" dsb (wajib)</small>
+                              </div>
                           </div>
                           <div class="row">
                               <div class="col-md-6 form-group">
-                                  <label class="form-text" for="vn1_tma"><b>Tinggi Muka Air</b></label>
+                                  <label class="form-text" for="tma"><b>TMA Terkini</b></label>
                                   <input class="form-control" type="number"
-                                        name="vn1_tma" id="vn1_tma" placeholder="contoh: 0.45"
-                                        step="0.01" aria-describedby="vn1_tma_help">
-                                  <small id="vn1_tma_help" class="form-text text-muted">cm</small>
+                                        name="tma" id="tma" placeholder="contoh: 40.45"
+                                        step="0.01" aria-describedby="tma_help" required>
+                                  <small id="tma_help" class="form-text text-muted">m (wajib)</small>
                               </div>
                               <div class="col-md-6 form-group">
-                                  <label class="form-text" for="vn1_deb"><b>Debit</b></label>
+                                  <label class="form-text" for="volume"><b>Volume Terkini</b></label>
                                   <input class="form-control" type="number"
-                                        name="vn1_deb" id="vn1_deb" placeholder="12.34"
-                                        step="0.01" aria-describedby="vn1_deb_help">
-                                  <small id="vn1_deb_help" class="form-text text-muted">L/det</small>
+                                        name="volume" id="volume" placeholder="contoh: 12345.6"
+                                        step="0.01" aria-describedby="volume_help">
+                                  <small id="volume_help" class="form-text text-muted">m<sup>3</sup> (wajib)</small>
                               </div>
                           </div>
                           <div>
-                              <b>Dua</b>
+                              <b>Spillway</b>
                           </div>
                           <div class="row">
                               <div class="col-md-6 form-group">
-                                  <label class="form-text" for="vn2_tma"><b>Tinggi Muka Air</b></label>
+                                  <label class="form-text" for="spillway_tma"><b>Tinggi Limpasan</b></label>
                                   <input class="form-control" type="number"
-                                        name="vn2_tma" id="vn2_tma" placeholder="contoh: 0.45"
-                                        step="0.01" aria-describedby="vn2_tma_help">
-                                  <small id="vn2_tma_help" class="form-text text-muted">cm</small>
+                                        name="spillway_tma" id="spillway_tma" placeholder="contoh: 0.45"
+                                        step="0.01" aria-describedby="spillway_tma_help">
+                                  <small id="spillway_tma_help" class="form-text text-muted">cm</small>
                               </div>
                               <div class="col-md-6 form-group">
-                                  <label class="form-text" for="vn2_deb"><b>Debit</b></label>
+                                  <label class="form-text" for="spillway_deb"><b>Debit Limpasan</b></label>
                                   <input class="form-control" type="number"
-                                        name="vn2_deb" id="vn2_deb" placeholder="12.34"
-                                        step="0.01" aria-describedby="vn2_deb_help">
-                                  <small id="vn2_deb_help" class="form-text text-muted">L/det</small>
+                                        name="spillway_deb" id="spillway_deb" placeholder="contoh: 1.234"
+                                        step="0.001" aria-describedby="spillway_deb_help">
+                                  <small id="spillway_deb_help" class="form-text text-muted">m<sup>3</sup>/det</small>
                               </div>
-                          </div>
-                          <div>
-                              <b>Tiga</b>
                           </div>
                           <div class="row">
-                              <div class="col-md-6 form-group">
-                                  <label class="form-text" for="vn3_tma"><b>Tinggi Muka Air</b></label>
-                                  <input class="form-control" type="number"
-                                        name="vn3_tma" id="vn3_tma" placeholder="contoh: 0.45"
-                                        step="0.01" aria-describedby="vn3_tma_help">
-                                  <small id="vn3_tma_help" class="form-text text-muted">cm</small>
-                              </div>
-                              <div class="col-md-6 form-group">
-                                  <label class="form-text" for="vn3_deb"><b>Debit</b></label>
-                                  <input class="form-control" type="number"
-                                        name="vn3_deb" id="vn3_deb" placeholder="12.34"
-                                        step="0.01" aria-describedby="vn3_deb_help">
-                                  <small id="vn3_deb_help" class="form-text text-muted">L/det</small>
+                              <div class="col-md-12 form-group">
+                                  <label class="form-text" for="kondisi"><b>Kondisi Visual Bendungan</b></label>
+                                  <input class="form-control" type="text"
+                                        name="kondisi" id="kondisi" required
+                                        aria-describedby="kondisi_help">
+                                  <small id="kondisi_help" class="form-text text-muted">contoh : "Aman" atau "Limpasan Aman" dsb (wajib)</small>
                               </div>
                           </div>
+                          <div class="row">
+                            <div class="col-md-12 form-group">
+                                <label class="form-text" for="petugas_id"><b>Petugas Piket</b></label>
+                                <select id="petugas_id" name="petugas_id" class="form-control" required>
+                                  <option value="">- pilih -</option>
+                                  {% for p in petugas %}
+                                    <option value="{{ p.id }}">{{ p.nama }}</option>
+                                  {% endfor %}
+                                </select>
+                                <small id="petugas_id_help" class="form-text text-muted">(wajib)</small>
+                            </div>
+                          </div>
                           <div>
-                              <button type="submit" name="submit" class="btn btn-primary my-1 mr-2">Kirim</button>
-                              <a data-toggle="collapse" href="#vnotch" role="button" aria-expanded="false" aria-controls="vnotch">batal</a>
+                              <button type="submit" name="submit" id="submit" class="btn btn-primary my-1 mr-2">Kirim</button>
+                              <a data-toggle="collapse" href="#piket_banjir" role="button" aria-expanded="false" aria-controls="piket_banjir">batal</a>
                           </div>
                         </div>
                     </form>
@@ -140,7 +168,7 @@
                             data-title="Cuaca Terkini"
                             data-pk="{{ report.id }}">
                             {% if report.piket_banjir != None %}
-                            <span style="color: blue">{{ report.piket_banjir.cuaca }}</span>
+                            <span style="color: blue">{{ report.piket_banjir.cuaca.title() }}</span>
                             {% else %}<span style="color: red">Empty</span>{% endif %}
                         </a>
                     </td>
@@ -225,7 +253,7 @@
                     </td>
                     <td class="text-right">
                       {% if report.piket_banjir != None %}
-                      <span style="color: blue">{{ report.piket_banjir.volume_percent }}%</span>
+                      <span>{{ report.piket_banjir.volume_percent }}%</span>
                       {% else %}<span style="color: red">Empty</span>{% endif %}
                     </td>
                     <td class="text-center">
@@ -294,8 +322,9 @@
         $('#form-datepicker').on('changeDate', function () {
             let date = $('#form-datepicker').datepicker('getFormattedDate');
             $('#sampling-pb-text').text(moment(date).format('DD MMMM YYYY'));
-            $('#sampling-pb').attr('value', moment(date).format('YYYY-MM-DD'));
+            $('#sampling').attr('value', moment(date).format('YYYY-MM-DD'));
             $('.datepicker').hide();
+            console.log($('#sampling').val());
         });
 
         let tgls = document.querySelectorAll("#tgl");

@@ -250,7 +250,7 @@ class PiketBanjir(BaseLog):
     volume = db.Column(db.Float)
     spillway_tma = db.Column(db.Float)
     spillway_deb = db.Column(db.Float)
-    kodisi = db.Column(db.Text)
+    kondisi = db.Column(db.Text)
 
     petugas_id = db.Column(db.Integer, db.ForeignKey('petugas.id'), nullable=True)
     petugas = relationship('Petugas', back_populates='piket_banjir')

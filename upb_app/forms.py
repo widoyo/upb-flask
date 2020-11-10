@@ -123,18 +123,16 @@ class AddTma(FlaskForm):
 
 
 class AddPiketBanjir(FlaskForm):
-    sampling = DateField("Hari", default=datetime.datetime.today())
-    curahhujan = DecimalField('Curah Hujan', validators=[Optional()])
-    intake_deb = DecimalField('Intake Debit', validators=[Optional()])
-    intake_vol = DecimalField('Intake Volume', validators=[Optional()])
-    intake_ket = StringField('Keterangan Intake', validators=[Optional()])
-    inflow_deb = DecimalField('Inflow Debit', validators=[Optional()])
-    inflow_vol = DecimalField('Inflow Volume', validators=[Optional()])
-    spillway_deb = DecimalField('Spillway Debit', validators=[Optional()])
-    spillway_vol = DecimalField('Spillway Volume', validators=[Optional()])
-    jam = SelectField("Jam", choices=jam, validators=[DataRequired()], default=jam[0][0])
-    tma = DecimalField('TMA')
-    vol = DecimalField('Volume')
+    sampling = DateField("Tanggal", default=datetime.datetime.today())
+    cuaca = StringField('Cuaca Terkini')
+    curahhujan = DecimalField('Curah Hujan Terkini')
+    durasi = StringField('Durasi Hujan')
+    tma = DecimalField('TMA Terkini')
+    volume = DecimalField('Volume Terkini')
+    spillway_tma = DecimalField('Tinggi Limpasan', validators=[Optional()])
+    spillway_deb = DecimalField('Debit Limpasan', validators=[Optional()])
+    kondisi = StringField('Kondisi Visual Bendungan')
+    petugas_id = StringField('Petugas')
     submit = SubmitField('Tambah')
 
 
