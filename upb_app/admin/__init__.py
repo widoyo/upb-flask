@@ -299,6 +299,7 @@ import upb_app.admin.keamanan
 import upb_app.admin.kegiatan
 import upb_app.admin.kinerja
 import upb_app.admin.operasi
+import upb_app.admin.piket
 import upb_app.admin.petugas
 import upb_app.admin.rencana
 import upb_app.admin.users

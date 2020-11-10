@@ -122,6 +122,22 @@ class AddTma(FlaskForm):
     submit = SubmitField('Kirim')
 
 
+class AddPiketBanjir(FlaskForm):
+    sampling = DateField("Hari", default=datetime.datetime.today())
+    curahhujan = DecimalField('Curah Hujan', validators=[Optional()])
+    intake_deb = DecimalField('Intake Debit', validators=[Optional()])
+    intake_vol = DecimalField('Intake Volume', validators=[Optional()])
+    intake_ket = StringField('Keterangan Intake', validators=[Optional()])
+    inflow_deb = DecimalField('Inflow Debit', validators=[Optional()])
+    inflow_vol = DecimalField('Inflow Volume', validators=[Optional()])
+    spillway_deb = DecimalField('Spillway Debit', validators=[Optional()])
+    spillway_vol = DecimalField('Spillway Volume', validators=[Optional()])
+    jam = SelectField("Jam", choices=jam, validators=[DataRequired()], default=jam[0][0])
+    tma = DecimalField('TMA')
+    vol = DecimalField('Volume')
+    submit = SubmitField('Tambah')
+
+
 class LaporBanjir(FlaskForm):
     tanggal = DateField("Tanggal", default=datetime.datetime.today())
     jam = StringField("Jam")

@@ -56,6 +56,10 @@ class BaseLog(db.Model):
     m_user = db.Column(db.String(30))
     m_date = db.Column(db.DateTime)
 
+    @property
+    def cdate_wib(self):
+        return self.c_date + datetime.timedelta(hours=7)
+
 
 class Users(UserMixin, db.Model):
     ''' Role { 2:petugas bendungan, 3:petugas embung, 1,4:admin balai} '''
@@ -231,20 +235,38 @@ class ManualTmaEmbung(BaseLog):
         return self.c_date + datetime.timedelta(hours=7)
 
 
-# class PiketBanjir(BaseLog):
-#     __tablename__ = 'piket_banjir'
-#
-#     id = db.Column(db.Integer, primary_key=True)
-#     sampling = db.Column(db.DateTime, index=True)
-#     obj_type = db.Column(db.String, default="bendungan")
-#     obj_id = db.Column(db.Integer)
-#     tma = db.Column(db.Float)
-#     vol = db.Column(db.Float)
-#     __table_args__ = (db.UniqueConstraint('embung_id', 'sampling',
-#                                           name='manualtma_embung_sampling'),)
-#
-#     def local_cdate(self):
-#         return self.c_date + datetime.timedelta(hours=7)
+class PiketBanjir(BaseLog):
+    __tablename__ = 'piket_banjir'
+
+    id = db.Column(db.Integer, primary_key=True)
+    sampling = db.Column(db.DateTime, index=True)
+    obj_type = db.Column(db.String, default="bendungan")
+    obj_id = db.Column(db.Integer)
+
+    cuaca = db.Column(db.Text)
+    ch = db.Column(db.Float)
+    durasi = db.Column(db.Text)
+    tma = db.Column(db.Float)
+    volume = db.Column(db.Float)
+    spillway_tma = db.Column(db.Float)
+    spillway_deb = db.Column(db.Float)
+    kodisi = db.Column(db.Text)
+
+    petugas_id = db.Column(db.Integer, db.ForeignKey('petugas.id'), nullable=True)
+    petugas = relationship('Petugas', back_populates='piket_banjir')
+
+    __table_args__ = (db.UniqueConstraint('obj_type', 'obj_id', 'sampling',
+                                          name='piket_banjir_obj_sampling'),)
+    @property
+    def object(self):
+        if self.obj_type == "bendungan":
+            return Bendungan.query.get(self.obj_id)
+        else:
+            return None
+
+    @property
+    def volume_percent(self):
+        return round((self.volume/self.object.volume)*100, 2)
 
 
 class Asset(BaseLog):
@@ -308,6 +330,7 @@ class Petugas(BaseLog):
     bendungan = relationship('Bendungan', back_populates='petugas')
     pemeliharaan_petugas = relationship('PemeliharaanPetugas', back_populates='petugas')
     kinerja_nilai = relationship('KinerjaNilai', back_populates='petugas')
+    piket_banjir = relationship('PiketBanjir', back_populates='petugas')
 
     @property
     def birthdate(self):

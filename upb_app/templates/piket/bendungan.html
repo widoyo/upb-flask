@@ -1,0 +1,344 @@
+{% extends 'master/base_adm.html' %}
+
+{% set title = "Bendungan" %}
+{% set subtitle = "Keamanan" %}
+
+{% block css %}
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-datepicker/1.9.0/css/bootstrap-datepicker.css">
+<style>
+    .datepicker {
+        z-index: 10000 !important;
+        display: inherit;
+    }
+</style>
+<link href="{{ url_for('static', filename='css/bootstrap-editable.css') }}" rel="stylesheet"/>
+{% endblock %}
+
+{% block content %}
+    <div>
+        <h1>{{ bend.name }}</h1>
+        <div class="forms">
+            <div class="row">
+                <div class="col-md-4">
+                    <h5>
+                      <a data-toggle="collapse" href="#vnotch" role="button" aria-expanded="false" aria-controls="vnotch">
+                        Piket Banjir <small><i class="fas fa-play"></i></small>
+                      </a>
+                    </h5>
+                    <hr>
+                    <form action="{{ url_for('admin.keamanan_vnotch', bendungan_id=bend_id) }}" method="POST">
+                        <input id="csrf_token" name="csrf_token" type="hidden" value="{{ csrf }}">
+                        <div class="collapse" id="vnotch">
+                          <div>
+                              <div class="form-group">
+                                  <label class="form-text" for="sampling"><b>Tanggal</b></label>
+                                  <input class="form-control" type="text" name="sampling" id="datepicker-pb" hidden required value="{{ now }}">
+                                  <p class="ml-2" id="form-datepicker"><i class="fas fa-calendar"></i> <span id="sampling-pb-text">{{ now }}</span></p>
+                              </div>
+                          </div>
+                          <h5>V-Notch</h5>
+                          <div>
+                              <b>Satu</b>
+                          </div>
+                          <div class="row">
+                              <div class="col-md-6 form-group">
+                                  <label class="form-text" for="vn1_tma"><b>Tinggi Muka Air</b></label>
+                                  <input class="form-control" type="number"
+                                        name="vn1_tma" id="vn1_tma" placeholder="contoh: 0.45"
+                                        step="0.01" aria-describedby="vn1_tma_help">
+                                  <small id="vn1_tma_help" class="form-text text-muted">cm</small>
+                              </div>
+                              <div class="col-md-6 form-group">
+                                  <label class="form-text" for="vn1_deb"><b>Debit</b></label>
+                                  <input class="form-control" type="number"
+                                        name="vn1_deb" id="vn1_deb" placeholder="12.34"
+                                        step="0.01" aria-describedby="vn1_deb_help">
+                                  <small id="vn1_deb_help" class="form-text text-muted">L/det</small>
+                              </div>
+                          </div>
+                          <div>
+                              <b>Dua</b>
+                          </div>
+                          <div class="row">
+                              <div class="col-md-6 form-group">
+                                  <label class="form-text" for="vn2_tma"><b>Tinggi Muka Air</b></label>
+                                  <input class="form-control" type="number"
+                                        name="vn2_tma" id="vn2_tma" placeholder="contoh: 0.45"
+                                        step="0.01" aria-describedby="vn2_tma_help">
+                                  <small id="vn2_tma_help" class="form-text text-muted">cm</small>
+                              </div>
+                              <div class="col-md-6 form-group">
+                                  <label class="form-text" for="vn2_deb"><b>Debit</b></label>
+                                  <input class="form-control" type="number"
+                                        name="vn2_deb" id="vn2_deb" placeholder="12.34"
+                                        step="0.01" aria-describedby="vn2_deb_help">
+                                  <small id="vn2_deb_help" class="form-text text-muted">L/det</small>
+                              </div>
+                          </div>
+                          <div>
+                              <b>Tiga</b>
+                          </div>
+                          <div class="row">
+                              <div class="col-md-6 form-group">
+                                  <label class="form-text" for="vn3_tma"><b>Tinggi Muka Air</b></label>
+                                  <input class="form-control" type="number"
+                                        name="vn3_tma" id="vn3_tma" placeholder="contoh: 0.45"
+                                        step="0.01" aria-describedby="vn3_tma_help">
+                                  <small id="vn3_tma_help" class="form-text text-muted">cm</small>
+                              </div>
+                              <div class="col-md-6 form-group">
+                                  <label class="form-text" for="vn3_deb"><b>Debit</b></label>
+                                  <input class="form-control" type="number"
+                                        name="vn3_deb" id="vn3_deb" placeholder="12.34"
+                                        step="0.01" aria-describedby="vn3_deb_help">
+                                  <small id="vn3_deb_help" class="form-text text-muted">L/det</small>
+                              </div>
+                          </div>
+                          <div>
+                              <button type="submit" name="submit" class="btn btn-primary my-1 mr-2">Kirim</button>
+                              <a data-toggle="collapse" href="#vnotch" role="button" aria-expanded="false" aria-controls="vnotch">batal</a>
+                          </div>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+        <br>
+        <h3>
+            Laporan Piket <span id="datepicker" style="color: #18bc9c"><i class="fa fa-calendar"></i> {{ sampling.strftime("%B %Y") }}</span>
+        </h3>
+        <table class="table table-hover table-bordered">
+            <thead>
+                <tr class="table-active">
+                    <th rowspan="2" class="text-center align-middle">Tanggal</th>
+                    <th rowspan="2" class="text-center align-middle">Cuaca Terkini</th>
+                    <th rowspan="2" class="text-center align-middle">Curah Hujan Terkini (mm)</th>
+                    <th rowspan="2" class="text-center align-middle">Durasi Hujan</th>
+                    <th rowspan="2" class="text-center align-middle">Elevasi Normal (meter)</th>
+                    <th rowspan="2" class="text-center align-middle">Volume Waduk Normal (m<sup>3</sup>)</th>
+                    <th rowspan="2" class="text-center align-middle">TMA Terkini</th>
+                    <th rowspan="2" class="text-center align-middle">Volume Waduk Terkini (m<sup>3</sup>)</th>
+                    <th colspan="2" class="text-center align-middle">Spillway</th>
+                    <th rowspan="2" class="text-center align-middle">Tampungan Waduk Saat Ini (%)</th>
+                    <th rowspan="2" class="text-center align-middle">Kondisi Visual Bendungan</th>
+                    <th rowspan="2" class="text-center align-middle">Nama Petugas Piket</th>
+                </tr>
+                <tr class="table-active">
+                    <th class="text-center align-middle">Tinggi Limpasan (cm)</th>
+                    <th class="text-center align-middle">Debit Limpasan (m<sup>3</sup>/detik)</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for report in reports %}
+                <tr>
+                    <td id="tgl">{{ report.sampling }}</td>
+                    <td class="text-center">
+                        <a data-url="{{ url_for('admin.piket_banjir_update') }}"
+                            class="cuaca_choice"
+                            data-name="cuaca"
+                            data-type="select"
+                            data-title="Cuaca Terkini"
+                            data-pk="{{ report.id }}">
+                            {% if report.piket_banjir != None %}
+                            <span style="color: blue">{{ report.piket_banjir.cuaca }}</span>
+                            {% else %}<span style="color: red">Empty</span>{% endif %}
+                        </a>
+                    </td>
+                    <td class="text-right">
+                      <a data-url="{{ url_for('admin.piket_banjir_update') }}"
+                          class="editable"
+                          data-name="ch"
+                          data-type="number"
+                          data-title="Curah Hujan Terkini"
+                          data-step=".01"
+                          data-pk="{{ report.id }}">
+                          {% if report.piket_banjir != None %}
+                          <span style="color: blue">{{ report.piket_banjir.ch }}</span>
+                          {% else %}<span style="color: red">Empty</span>{% endif %}
+                      </a>
+                    </td>
+                    <td class="text-center">
+                      <a data-url="{{ url_for('admin.piket_banjir_update') }}"
+                          class="editable"
+                          data-name="durasi"
+                          data-type="text"
+                          data-title="Durasi Hujan (pukul)"
+                          data-pk="{{ report.id }}">
+                          {% if report.piket_banjir != None %}
+                          <span style="color: blue">{{ report.piket_banjir.durasi }}</span>
+                          {% else %}<span style="color: red">Empty</span>{% endif %}
+                      </a>
+                    </td>
+                    <td class="text-right bg-light">{{ bend.muka_air_normal }}</td>
+                    <td class="text-right bg-light">{{ "%.0f"|format(bend.volume) }}</td>
+                    <td class="text-right">
+                      <a data-url="{{ url_for('admin.piket_banjir_update') }}"
+                          class="editable"
+                          data-name="tma"
+                          data-type="number"
+                          data-title="TMA Terkini"
+                          data-step=".01"
+                          data-pk="{{ report.id }}">
+                          {% if report.piket_banjir != None %}
+                          <span style="color: blue">{{ report.piket_banjir.tma }}</span>
+                          {% else %}<span style="color: red">Empty</span>{% endif %}
+                      </a>
+                    </td>
+                    <td class="text-right">
+                        <a data-url="{{ url_for('admin.piket_banjir_update') }}"
+                            class="editable"
+                            data-name="volume"
+                            data-type="number"
+                            data-title="Volume Terkini (m3)"
+                            data-step=".001"
+                            data-pk="{{ report.id }}">
+                            {% if report.piket_banjir != None %}
+                            <span style="color: blue">{{ report.piket_banjir.volume }}</span>
+                            {% else %}<span style="color: red">Empty</span>{% endif %}
+                        </a>
+                    </td>
+                    <td class="text-right">
+                        <a data-url="{{ url_for('admin.piket_banjir_update') }}"
+                            class="editable"
+                            data-name="spillway_tma"
+                            data-type="number"
+                            data-title="Tinggi Limpasan"
+                            data-step=".001"
+                            data-pk="{{ report.id }}">
+                            {% if report.piket_banjir != None %}
+                            <span style="color: blue">{{ report.piket_banjir.spillway_tma or 0 }}</span>
+                            {% else %}<span style="color: red">Empty</span>{% endif %}
+                        </a>
+                    </td>
+                    <td class="text-right">
+                      <a data-url="{{ url_for('admin.piket_banjir_update') }}"
+                          class="editable"
+                          data-name="spillway_deb"
+                          data-type="number"
+                          data-title="Debit Limpasan"
+                          data-step=".001"
+                          data-pk="{{ report.id }}">
+                          {% if report.piket_banjir != None %}
+                          <span style="color: blue">{{ report.piket_banjir.spillway_deb or '-' }}</span>
+                          {% else %}<span style="color: red">Empty</span>{% endif %}
+                      </a>
+                    </td>
+                    <td class="text-right">
+                      {% if report.piket_banjir != None %}
+                      <span style="color: blue">{{ report.piket_banjir.volume_percent }}%</span>
+                      {% else %}<span style="color: red">Empty</span>{% endif %}
+                    </td>
+                    <td class="text-center">
+                      <a data-url="{{ url_for('admin.piket_banjir_update') }}"
+                          class="editable"
+                          data-name="kondisi"
+                          data-type="text"
+                          data-title="Kondisi Visual Bendungan"
+                          data-pk="{{ report.id }}">
+                          {% if report.piket_banjir != None %}
+                          <span style="color: blue">{{ report.piket_banjir.kondisi }}</span>
+                          {% else %}<span style="color: red">Empty</span>{% endif %}
+                      </a>
+                    </td>
+                    <td class="text-center">
+                      <a data-url="{{ url_for('admin.piket_banjir_update') }}"
+                          class="petugas_choice"
+                          data-name="petugas_id"
+                          data-type="select"
+                          data-title="Petugas Piket"
+                          data-pk="{{ report.id }}">
+                          {% if report.piket_banjir != None %}
+                          <span style="color: blue">{{ report.piket_banjir.petugas.nama }}</span>
+                          {% else %}<span style="color: red">Empty</span>{% endif %}
+                      </a>
+                    </td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+{% endblock %}
+
+{% block js %}
+<script src="{{ url_for('static', filename='js/moment.min.js') }}"></script>
+<script src="{{ url_for('static', filename='js/id.js') }}"></script>
+<script src="{{ url_for('static', filename='js/bootstrap-editable.min.js') }}"></script>
+<script src="{{ url_for('static', filename='js/bootstrap-datepicker.min.js') }}"></script>
+<script>
+    function updateDate(){
+        let tgl2s = document.querySelectorAll("#tgl2");
+        tgl2s.forEach(function(el){
+            console.log(el.value);
+            el.innerText = moment(el.innerText).format("LL");
+        });
+    }
+    $(document).ready(function() {
+        // resolve package confict
+        let datepicker = $.fn.datepicker.noConflict();
+        $.fn.bootstrapDP = datepicker;
+
+        $('#datepicker').datepicker({
+            autoclose: true,
+            format: 'yyyy-mm-dd',
+            startView: "months",
+            minViewMode: "months"
+        });
+        $('#datepicker').on('changeDate', function () {
+            window.location = "{{ url_for('admin.piket_bendungan', bendungan_id=bend.id) }}?&sampling=" + $('#datepicker').datepicker('getFormattedDate')
+        });
+
+        $('#form-datepicker').datepicker({
+            autoclose: true,
+            format: 'yyyy-mm-dd'
+        });
+        $('#form-datepicker').on('changeDate', function () {
+            let date = $('#form-datepicker').datepicker('getFormattedDate');
+            $('#sampling-pb-text').text(moment(date).format('DD MMMM YYYY'));
+            $('#sampling-pb').attr('value', moment(date).format('YYYY-MM-DD'));
+            $('.datepicker').hide();
+        });
+
+        let tgls = document.querySelectorAll("#tgl");
+        tgls.forEach(function(el){
+            console.log(el.value);
+            el.innerText = moment(el.innerText).format('ddd, D');
+        });
+        $('#sampling-pb-text').text(moment("{{ now }}").format('DD MMMM YYYY'));
+        updateDate();
+
+        //turn to popup mode
+        $.fn.editable.defaults.mode = 'popup';
+        $(document).ready(function() {
+            $('.editable').editable({
+                error: function(response, newValue) {
+                    return 'Tidak bisa update, Tambah data pakai form.';
+                },
+            });
+            $('.cuaca_choice').editable({
+                prepend: "pilih",
+                source: [
+                    {value: 'cerah', text: 'Cerah'},
+                    {value: 'berawan', text: 'Berawan'},
+                    {value: 'mendung', text: 'Mendung'},
+                    {value: 'gerimis', text: 'Gerimis'},
+                    {value: 'hujan', text: 'Hujan'}
+                ],
+                error: function(response, newValue) {
+                    return 'Tidak bisa update, Tambah data pakai form.';
+                },
+            });
+            $('.petugas_choice').editable({
+                prepend: "pilih",
+                source: [
+                  {% for p in petugas %}
+                    {value: {{ p.id }}, text: '{{ p.nama }}'},
+                  {% endfor %}
+                ],
+                error: function(response, newValue) {
+                    return 'Tidak bisa update, Tambah data pakai form.';
+                },
+            });
+        });
+    });
+</script>
+{% endblock %}

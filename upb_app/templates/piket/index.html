@@ -1,0 +1,110 @@
+{% extends 'master/base_adm.html' %}
+
+{% set title = "Bendungan" %}
+
+{% block css %}
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-datepicker/1.9.0/css/bootstrap-datepicker.css">
+<style>
+    .datepicker {
+        z-index: 10000 !important;
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+<div>
+    <section class="content-header">
+        <h2>Piket Bendungan</h2>
+    </section>
+    <div name="filter">
+        <h4>
+            <a id="datepicker" style="color: blue" href="#">
+                <span class="badge badge-primary">
+                    <i class="fa fa-calendar"></i>
+                </span>
+                {{ sampling.strftime('%d %B %Y') }}
+            </a>
+            &nbsp;
+            <a href="{{ url_for('admin.bendungan_harian_csv') }}?sampling={{ sampling.strftime('%Y-%m-%d') }}">
+                <span class="badge badge-primary">
+                    <i class="fa fa-download"></i>
+                </span>
+                CSV
+            </a>
+        </h4>
+
+    </div>
+    <table class="table table-hover table-bordered">
+        <thead>
+          <tr class="table-active">
+              <th rowspan="2" class="text-center align-middle">No</th>
+              <th rowspan="2" class="text-center align-middle">Bendungan</th>
+              <th rowspan="2" class="text-center align-middle">Cuaca Terkini</th>
+              <th rowspan="2" class="text-center align-middle">Curah Hujan Terkini (mm)</th>
+              <th rowspan="2" class="text-center align-middle">Durasi Hujan</th>
+              <th rowspan="2" class="text-center align-middle">Elevasi Normal (meter)</th>
+              <th rowspan="2" class="text-center align-middle">Volume Waduk Normal (Juta m<sup>3</sup>)</th>
+              <th rowspan="2" class="text-center align-middle">TMA Terkini</th>
+              <th rowspan="2" class="text-center align-middle">Volume Waduk Terkini (Juta m<sup>3</sup>)</th>
+              <th colspan="2" class="text-center align-middle">Spillway</th>
+              <th rowspan="2" class="text-center align-middle">Tampungan Waduk Saat Ini (%)</th>
+              <th rowspan="2" class="text-center align-middle">Kondisi Visual Bendungan</th>
+              <th rowspan="2" class="text-center align-middle">Nama Petugas Piket</th>
+          </tr>
+          <tr class="table-active">
+              <th class="text-center align-middle">Tinggi Limpasan (cm)</th>
+              <th class="text-center align-middle">Debit Limpasan (m<sup>3</sup>/detik)</th>
+          </tr>
+        </thead>
+        <tbody>
+          {% for wil, data in bends.items() %}
+            <tr>
+                <td colspan="14" class="text-center"><b>{{ wil_sungai[wil] }}</b></td>
+            </tr>
+            {% for bend in data %}
+                <tr>
+                    <td>{{ bend.no }}</td>
+                    <td><a href="{{ url_for('admin.piket_bendungan', bendungan_id=bend.bendungan.id) }}">{{ bend.bendungan.name }}</a></td>
+                    <td class="text-center">{{ bend.piket_banjir.cuaca if bend.piket_banjir else '' }}</td>
+                    <td class="text-right">{{ bend.piket_banjir.ch if bend.piket_banjir else '' }}</td>
+                    <td class="text-center">{{ bend.piket_banjir.durasi if bend.piket_banjir else '' }}</td>
+                    <td class="text-right bg-light">{{ bend.bendungan.muka_air_normal }}</td>
+                    <td class="text-right bg-light">{{ "%.2f"|format(bend.bendungan.volume/1000000) }}</td>
+                    <td class="text-right">{{ bend.piket_banjir.tma if bend.piket_banjir else '' }}</td>
+                    <td class="text-right">{{ "%.2f"|format(bend.piket_banjir.volume/1000000) if bend.piket_banjir else '' }}</td>
+                    <td class="text-right">{{ bend.piket_banjir.spillway_tma if bend.piket_banjir else '' }}</td>
+                    <td class="text-right">{{ bend.piket_banjir.spillway_deb if bend.piket_banjir else '' }}</td>
+                    <td class="text-right">{{ bend.piket_banjir.volume_percent if bend.piket_banjir else '' }}</td>
+                    <td class="text-center">{{ bend.piket_banjir.kondisi if bend.piket_banjir else '' }}</td>
+                    <td class="text-center">{{ bend.piket_banjir.petugas.nama if bend.piket_banjir else '' }}</td>
+                </tr>
+            {% endfor %}
+          {% endfor %}
+        </tbody>
+    </table>
+</div>
+{% endblock %}
+
+{% block js %}
+<script src="{{ url_for('static', filename='js/bootstrap-datepicker.min.js') }}"></script>
+<script>
+    $(document).ready(function() {
+        // resolve package confict
+        // let datepicker = $.fn.datepicker.noConflict();
+        // $.fn.bootstrapDP = datepicker;
+
+        $('#datepicker').datepicker({
+          todayHighlight: true,
+          autoclose: true,
+          format: 'yyyy-mm-dd'
+        });
+        $('#datepicker').on('changeDate', function () {
+          window.location = "{{ url_for('admin.piket_index') }}?sampling=" + $('#datepicker').datepicker('getFormattedDate')
+        });
+
+        $(function () {
+          $('[data-toggle="popover"]').popover()
+        })
+    });
+</script>
+{% endblock %}
