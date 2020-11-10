@@ -166,7 +166,7 @@
                             data-name="cuaca"
                             data-type="select"
                             data-title="Cuaca Terkini"
-                            data-pk="{{ report.id }}">
+                            data-pk="{{ report.piket_banjir.id }}">
                             {% if report.piket_banjir != None %}
                             <span style="color: blue">{{ report.piket_banjir.cuaca.title() }}</span>
                             {% else %}<span style="color: red">Empty</span>{% endif %}
@@ -179,7 +179,7 @@
                           data-type="number"
                           data-title="Curah Hujan Terkini"
                           data-step=".01"
-                          data-pk="{{ report.id }}">
+                          data-pk="{{ report.piket_banjir.id }}">
                           {% if report.piket_banjir != None %}
                           <span style="color: blue">{{ report.piket_banjir.ch }}</span>
                           {% else %}<span style="color: red">Empty</span>{% endif %}
@@ -191,7 +191,7 @@
                           data-name="durasi"
                           data-type="text"
                           data-title="Durasi Hujan (pukul)"
-                          data-pk="{{ report.id }}">
+                          data-pk="{{ report.piket_banjir.id }}">
                           {% if report.piket_banjir != None %}
                           <span style="color: blue">{{ report.piket_banjir.durasi }}</span>
                           {% else %}<span style="color: red">Empty</span>{% endif %}
@@ -206,7 +206,7 @@
                           data-type="number"
                           data-title="TMA Terkini"
                           data-step=".01"
-                          data-pk="{{ report.id }}">
+                          data-pk="{{ report.piket_banjir.id }}">
                           {% if report.piket_banjir != None %}
                           <span style="color: blue">{{ report.piket_banjir.tma }}</span>
                           {% else %}<span style="color: red">Empty</span>{% endif %}
@@ -219,7 +219,7 @@
                             data-type="number"
                             data-title="Volume Terkini (m3)"
                             data-step=".001"
-                            data-pk="{{ report.id }}">
+                            data-pk="{{ report.piket_banjir.id }}">
                             {% if report.piket_banjir != None %}
                             <span style="color: blue">{{ report.piket_banjir.volume }}</span>
                             {% else %}<span style="color: red">Empty</span>{% endif %}
@@ -232,7 +232,7 @@
                             data-type="number"
                             data-title="Tinggi Limpasan"
                             data-step=".001"
-                            data-pk="{{ report.id }}">
+                            data-pk="{{ report.piket_banjir.id }}">
                             {% if report.piket_banjir != None %}
                             <span style="color: blue">{{ report.piket_banjir.spillway_tma or 0 }}</span>
                             {% else %}<span style="color: red">Empty</span>{% endif %}
@@ -245,7 +245,7 @@
                           data-type="number"
                           data-title="Debit Limpasan"
                           data-step=".001"
-                          data-pk="{{ report.id }}">
+                          data-pk="{{ report.piket_banjir.id }}">
                           {% if report.piket_banjir != None %}
                           <span style="color: blue">{{ report.piket_banjir.spillway_deb or '-' }}</span>
                           {% else %}<span style="color: red">Empty</span>{% endif %}
@@ -262,7 +262,7 @@
                           data-name="kondisi"
                           data-type="text"
                           data-title="Kondisi Visual Bendungan"
-                          data-pk="{{ report.id }}">
+                          data-pk="{{ report.piket_banjir.id }}">
                           {% if report.piket_banjir != None %}
                           <span style="color: blue">{{ report.piket_banjir.kondisi }}</span>
                           {% else %}<span style="color: red">Empty</span>{% endif %}
@@ -274,7 +274,7 @@
                           data-name="petugas_id"
                           data-type="select"
                           data-title="Petugas Piket"
-                          data-pk="{{ report.id }}">
+                          data-pk="{{ report.piket_banjir.id }}">
                           {% if report.piket_banjir != None %}
                           <span style="color: blue">{{ report.piket_banjir.petugas.nama }}</span>
                           {% else %}<span style="color: red">Empty</span>{% endif %}
