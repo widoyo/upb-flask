@@ -139,8 +139,7 @@ def piket_banjir_add(bendungan_id):
             print(f"Piket Banjir Error : {e}")
             flash(f"Terjadi kesalahan saat mencoba menyimpan laporan Piket Banjir", 'danger')
 
-    sent = utc2wib(pb_new.cdate_wib)
-    sent = sent.strftime("%H.%M")
+    sent = pb_new.cdate_wib.strftime("%H.%M")
     limpasan = "mengalami" if pb_new.spillway_tma else "tidak mengalami"
     notify = f"*LAPORAN PIKET*\n \
 Bendungan {bend.name.split(' ')[1]}\n \
