@@ -139,6 +139,26 @@ def piket_banjir_add(bendungan_id):
             print(f"Piket Banjir Error : {e}")
             flash(f"Terjadi kesalahan saat mencoba menyimpan laporan Piket Banjir", 'danger')
 
+    sent = utc2wib(pb_new.cdate_wib)
+    sent = sent.strftime("%H.%M")
+    limpasan = "mengalami" if pb_new.spillway_tma else "tidak mengalami"
+    notify = f"*LAPORAN PIKET*\n \
+Bendungan {bend.name.split(' ')[1]}\n \
+Pukul : {sent} WIB\n \
+*1. Data Bendungan dan Waduk*\n \
+Cuaca : {pb_new.cuaca.title()}\n \
+Curah hujan saat ini : {pb_new.ch} mm\n  \
+El. MA terkini : {pb_new.tma} m\n \
+Volume terkini : {pb_new.volume} m3\n \
+*2. Kondisi Spilway*\n \
+Saat ini kondisi Spillway *{limpasan}* limpasan\n \
+Ketinggian Limpasan : {pb_new.spillway_tma or '-'} cm\n \
+Debit Limpasan      : {pb_new.spillway_deb or '-'} m3/dt\n \
+*3. Kondisi visual bendungan : {pb_new.kondisi}*\n \
+*4. Nama petugas piket*\n \
+- {pb_new.petugas.nama}"
+    flash(notify, 'notify')
+
     return redirect(url_for('admin.piket_bendungan', bendungan_id=bendungan_id))
 
 

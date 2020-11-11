@@ -74,12 +74,34 @@
                         {% with messages = get_flashed_messages(with_categories=true) %}
                           {% if messages %}
                             {% for category, message in messages %}
+                              {% if category != 'notify' %}
                                 <div class="alert alert-{{ category }} alert-dismissible fade show" role="alert">
                                   {{ message }}
                                   <button type="button" class="close" data-dismiss="alert" aria-label="Close">
                                     <span aria-hidden="true">&times;</span>
                                   </button>
                                 </div>
+                              {% else %}
+                                <div class="modal fade" id="notify" tabindex="-1" role="dialog" aria-labelledby="notifyLabel">
+                                  <div class="modal-dialog" role="document">
+                                    <div class="modal-content">
+                                      <div class="modal-header">
+                                        <h5 class="modal-title" id="notifyLabel">Laporan</h5>
+                                        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                          <span aria-hidden="true">&times;</span>
+                                        </button>
+                                      </div>
+                                      <div class="modal-body">
+                                        <pre id='notify-text'>{{ message }}</pre>
+                                      </div>
+                                      <div class="modal-footer">
+                                        <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                                        <button type="button" class="btn btn-primary" onclick="copyClipboard()">Copy</button>
+                                      </div>
+                                    </div>
+                                  </div>
+                                </div>
+                              {% endif %}
                             {% endfor %}
                           {% endif %}
                         {% endwith %}
@@ -162,6 +184,22 @@
             });
             confirmBox.modal("toggle");
         }
+
+        function copyClipboard(){
+          var range = document.createRange();
+          range.selectNode(document.getElementById("notify-text"));
+          window.getSelection().removeAllRanges(); // clear current selection
+          window.getSelection().addRange(range); // to select text
+          document.execCommand("copy");
+          window.getSelection().removeAllRanges();// to deselect
+
+          /* Alert the copied text */
+          alert("Laporan Sudah ter-copy, silahkan paste di WA.");
+        }
+
+        $(document).ready(function() {
+          $('#notify').modal();
+        });
         </script>
         {% block js %}{% endblock %}
     </body>
