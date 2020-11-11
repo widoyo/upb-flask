@@ -121,14 +121,14 @@ def piket_banjir_add(bendungan_id):
                 'obj_type': 'bendungan',
                 'obj_id': bendungan_id
             }
-            piket_banjir = PiketBanjir.query.filter(
+            pb_new = PiketBanjir.query.filter(
                                         PiketBanjir.sampling == obj_dict['sampling'],
                                         PiketBanjir.obj_type == 'bendungan',
                                         PiketBanjir.obj_id == obj_dict['obj_id']
                                     ).first()
-            if piket_banjir:
+            if pb_new:
                 for key, value in obj_dict.items():
-                    setattr(piket_banjir, key, value)
+                    setattr(pb_new, key, value)
             else:
                 pb_new = PiketBanjir(**obj_dict)
                 db.session.add(pb_new)
