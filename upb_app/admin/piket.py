@@ -1,14 +1,17 @@
 from flask import Blueprint, request, render_template, redirect, url_for, jsonify, flash
+from flask import Response
 from flask_login import login_required, current_user
 from flask_wtf.csrf import generate_csrf
 from sqlalchemy import extract, and_
 from psycopg2 import IntegrityError
-from upb_app.helper import utc2wib, month_range, day_range
+from upb_app.helper import utc2wib, month_range, day_range, get_hari_tanggal
 from upb_app.models import PiketBanjir, Bendungan, Petugas, wil_sungai
 from upb_app.forms import AddPiketBanjir
 from upb_app import db, petugas_only, role_check, admin_only
 import datetime
 import calendar
+import csv
+import io
 
 from upb_app.admin import bp
 # bp = Blueprint('keamanan', __name__)
@@ -139,7 +142,7 @@ def piket_banjir_add(bendungan_id):
     return redirect(url_for('admin.piket_bendungan', bendungan_id=bendungan_id))
 
 
-@bp.route('/bendungan/keamanan/piket/update', methods=['POST'])  # @login_required
+@bp.route('/bendungan/piket/update', methods=['POST'])  # @login_required
 def piket_banjir_update():
     pk = request.values.get('pk')
     attr = request.values.get('name')
@@ -156,97 +159,71 @@ def piket_banjir_update():
     return jsonify(result)
 
 
-@bp.route('/bendungan/operasi/csv', methods=['GET'])
+@bp.route('/bendungan/piket/csv', methods=['GET'])
 @login_required
 @admin_only
 def piket_banjir_csv():
-    # waduk = Bendungan.query.order_by(Bendungan.wil_sungai, Bendungan.id).all()
-    # sampling, end = day_range(request.values.get('sampling'))
-    #
-    # pre_csv = []
-    # pre_csv.append(['Data Operasi Harian Bendungan'])
-    # pre_csv.append([sampling.strftime("%d %B %Y")])
-    # pre_csv.append([
-    #     'no', 'nama','curahhujan','tma6','vol6','tma12','vol12','tma18','vol18',
-    #     'inflow_q','intake_q','spillway_q','vnotch_tin1','vnotch_q1',
-    #     'piezo_1a','piezo_1b','piezo_1c',
-    #     'piezo_2a','piezo_2b','piezo_2c',
-    #     'piezo_3a','piezo_3b','piezo_3c',
-    #     'piezo_4a','piezo_4b','piezo_4c',
-    #     'piezo_5a','piezo_5b','piezo_5c'
-    # ])
-    # count = 1
-    # for w in waduk:
-    #     daily = ManualDaily.query.filter(
-    #                                 and_(
-    #                                     ManualDaily.sampling >= sampling,
-    #                                     ManualDaily.sampling <= end),
-    #                                 ManualDaily.bendungan_id == w.id
-    #                                 ).first()
-    #     vnotch = ManualVnotch.query.filter(
-    #                                 and_(
-    #                                     ManualVnotch.sampling >= sampling,
-    #                                     ManualVnotch.sampling <= end),
-    #                                 ManualVnotch.bendungan_id == w.id
-    #                                 ).first()
-    #     tma = ManualTma.query.filter(
-    #                                 and_(
-    #                                     ManualTma.sampling >= sampling,
-    #                                     ManualTma.sampling <= end),
-    #                                 ManualTma.bendungan_id == w.id
-    #                                 ).all()
-    #     piezo = ManualPiezo.query.filter(
-    #                                 and_(
-    #                                     ManualPiezo.sampling >= sampling,
-    #                                     ManualPiezo.sampling <= end),
-    #                                 ManualPiezo.bendungan_id == w.id
-    #                                 ).first()
-    #
-    #     tma_d = {
-    #         '6': {
-    #             'tma': None,
-    #             'vol': None
-    #         },
-    #         '12': {
-    #             'tma': None,
-    #             'vol': None
-    #         },
-    #         '18': {
-    #             'tma': None,
-    #             'vol': None
-    #         },
-    #     }
-    #     for t in tma:
-    #         tma_d[f"{t.sampling.hour}"]['tma'] = None if not t.tma else round(t.tma, 2)
-    #         tma_d[f"{t.sampling.hour}"]['vol'] = None if not t.vol else round(t.vol, 2)
-    #
-    #     pre_csv.append([
-    #         count, w.name, None if not daily else daily.ch,
-    #         tma_d['6']['tma'], tma_d['6']['vol'],
-    #         tma_d['12']['tma'], tma_d['12']['vol'],
-    #         tma_d['18']['tma'], tma_d['18']['vol'],
-    #         None if not daily else daily.inflow_deb,
-    #         None if not daily else daily.intake_deb,
-    #         None if not daily else daily.spillway_deb,
-    #         None if not vnotch else vnotch.vn1_tma,
-    #         None if not vnotch else vnotch.vn1_deb,
-    #         None if not piezo else piezo.p1a, None if not piezo else piezo.p1b, None if not piezo else piezo.p1c,
-    #         None if not piezo else piezo.p2a, None if not piezo else piezo.p2b, None if not piezo else piezo.p2c,
-    #         None if not piezo else piezo.p3a, None if not piezo else piezo.p3b, None if not piezo else piezo.p3c,
-    #         None if not piezo else piezo.p4a, None if not piezo else piezo.p4b, None if not piezo else piezo.p4c,
-    #         None if not piezo else piezo.p5a, None if not piezo else piezo.p5b, None if not piezo else piezo.p5c
-    #     ])
-    #     count += 1
-    # output = io.StringIO()
-    # writer = csv.writer(output, delimiter='\t')
-    # for l in pre_csv:
-    #     writer.writerow(l)
-    # output.seek(0)
+    waduk = Bendungan.query.order_by(Bendungan.wil_sungai, Bendungan.id).all()
+    sampling, end = day_range(request.values.get('sampling'))
 
-    return "Hello"
+    pre_csv = []
+    pre_csv.append(['REKAPITULASI LAPORAN PIKET'])
+    pre_csv.append(['PETUGAS UNIT PENGELOLA BENDUNGAN'])
+    pre_csv.append(['BALAI BESAR WILAYAH SUNGAI BENGAWAN SOLO'])
+    pre_csv.append(["Hari/Tanggal", get_hari_tanggal(sampling)])
+    pre_csv.append(['Waktu', '20.35 WIB'])
+    pre_csv.append([
+        'No','Nama Bendungan','Cuaca Terkini','Curah Hujan Terkini (mm)','Durasi Hujan','Elevasi Normal (meter)','Volume Waduk Normal (Juta m3)','TMA Terkini (meter)','Volume Waduk Terkini (Juta m3)','Tinggi Limpasan Spillway (cm)','Debit Limpasan Spillway (m3/detik)','Tampungan Waduk Saat Ini (%)','Kondisi Visual Bendungan','Nama Petugas Piket'
+    ])
+
+    data = {
+        '1': [],
+        '2': [],
+        '3': []
+    }
+    count = 1
+    for w in waduk:
+        piket_banjir = PiketBanjir.query.filter(
+                                        and_(
+                                            PiketBanjir.sampling >= sampling,
+                                            PiketBanjir.sampling <= end),
+                                        PiketBanjir.obj_type == 'bendungan',
+                                        PiketBanjir.obj_id == w.id
+                                    ).first()
+
+        data[w.wil_sungai].append({
+            'no': count,
+            'bendungan': w,
+            'piket_banjir': piket_banjir or {}
+        })
+        count += 1
+
+    for wil, da in data.items():
+        pre_csv.append([wil_sungai[wil]])
+        for d in da:
+            pre_csv.append([
+                d['no'], d['bendungan'].name,
+                None if not d['piket_banjir'] else d['piket_banjir'].cuaca.title(),
+                None if not d['piket_banjir'] else d['piket_banjir'].ch,
+                None if not d['piket_banjir'] else d['piket_banjir'].durasi,
+                d['bendungan'].muka_air_normal,
+                round(d['bendungan'].volume/1000000, 2),
+                None if not d['piket_banjir'] else d['piket_banjir'].tma,
+                None if not d['piket_banjir'] else round(d['piket_banjir'].volume/1000000, 2),
+                None if not d['piket_banjir'] else d['piket_banjir'].spillway_tma,
+                None if not d['piket_banjir'] else d['piket_banjir'].spillway_deb,
+                None if not d['piket_banjir'] else d['piket_banjir'].volume_percent,
+                None if not d['piket_banjir'] else d['piket_banjir'].kondisi,
+                None if not d['piket_banjir'] else d['piket_banjir'].petugas.nama
+            ])
+    output = io.StringIO()
+    writer = csv.writer(output, delimiter='\t')
+    for l in pre_csv:
+        writer.writerow(l)
+    output.seek(0)
 
     return Response(output,
                     mimetype="text/csv",
                     headers={
-                        "Content-Disposition": f"attachment;filename=operasi_harian_bendungan-{sampling.strftime('%d %B %Y')}.csv"
+                        "Content-Disposition": f"attachment;filename=rekap_laporan_piket-{sampling.strftime('%d %B %Y')}.csv"
                     })

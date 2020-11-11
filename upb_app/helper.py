@@ -1,6 +1,9 @@
 import datetime
 import calendar
 
+weekday_name = ["Minggu", "Senin", "Selasa", "Rabu", "Kamis", "Jum'at", "Sabtu"]
+month_name = ["Januari", "Februari", "Maret", "April", "Mei", "Juni", "Juli",
+                "Agustus", "September", "Oktober", "November", "Desember"]
 
 def to_date(datestring):
     """datestring harus berformat yyyy/mm/dd"""
@@ -76,3 +79,15 @@ def get_current_or_latest(date):
         return now
     else:
         return date
+
+
+def get_hari_tanggal(date):
+    '''
+    date : python datetime object
+    return : hari/tanggal bahasa indonesia
+    '''
+    hari = weekday_name[int(date.strftime("%w"))]
+    tanggal = date.strftime("%d")
+    bulan = month_name[int(date.strftime("%m")) - 1]
+    tahun = date.strftime("%Y")
+    return f"{hari}/{tanggal} {bulan} {tahun}"
