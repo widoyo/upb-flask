@@ -273,8 +273,8 @@
                     <td class="text-center">
                       <a data-url="{{ url_for('admin.piket_banjir_update') }}"
                           class="petugas_choice"
-                          data-name="petugas_id"
-                          data-type="select2"
+                          data-name="petugas"
+                          data-type="checklist"
                           data-title="Petugas Piket"
                           data-pk="{{ report.piket_banjir.id }}">
                           {% if report.piket_banjir != None %}
@@ -331,7 +331,7 @@
         });
 
         $('#petugas_names').on('change', function () {
-            $('#petugas').val($('#petugas_names').val().join(", "));
+            $('#petugas').val($('#petugas_names').val().slice(0, 2).join(", "));
             console.log($('#petugas').val());
         });
 
@@ -365,14 +365,25 @@
                 },
             });
             $('.petugas_choice').editable({
-                inputclass: 'input-large',
-                select2: {
-                    tags: [
-                      {% for p in petugas %}
-                        '{{ p.nama }}',
-                      {% endfor %}
-                    ],
-                    tokenSeparators: [",", " "]
+                source: [
+                  {% for p in petugas %}
+                    {value: '{{ p.nama }}', text: '{{ p.nama }}'},
+                  {% endfor %}
+                ],
+                params: function(params) {
+                    console.log(params.value);
+                    params.value = params.value.slice(0, 2).join(", ");
+                    return params;
+                },
+                display: function(value, sourceData) {
+                   //display checklist as comma-separated values
+                   var html = [],
+                       checked = $.fn.editableutils.itemsByValue(value, sourceData);
+
+                   if(checked.length) {
+                       $.each(checked.slice(0, 2), function(i, v) { html.push($.fn.editableutils.escape(v.text));});
+                       $(this).html(html.join(', '));
+                   }
                 },
                 error: function(response, newValue) {
                     return 'Tidak bisa update, Tambah data pakai form.';

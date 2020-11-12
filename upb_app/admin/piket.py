@@ -168,6 +168,7 @@ def piket_banjir_update():
     row = PiketBanjir.query.get(pk)
     setattr(row, attr, val)
     db.session.commit()
+    print(val)
 
     result = {
         "name": attr,
