@@ -102,7 +102,6 @@ def piket_bendungan(bendungan_id):
 def piket_banjir_add(bendungan_id):
     bend = Bendungan.query.get(bendungan_id)
     form = AddPiketBanjir()
-    print(form.data)
 
     if form.validate_on_submit():
         print("Validated")
@@ -117,7 +116,7 @@ def piket_banjir_add(bendungan_id):
                 'spillway_tma': form.spillway_tma.data,
                 'spillway_deb': form.spillway_deb.data,
                 'kondisi': form.kondisi.data,
-                'petugas_id': int(form.petugas_id.data),
+                'petugas': form.petugas.data,
                 'obj_type': 'bendungan',
                 'obj_id': bendungan_id
             }
@@ -155,7 +154,7 @@ Ketinggian Limpasan : {pb_new.spillway_tma or '-'} cm\n \
 Debit Limpasan      : {pb_new.spillway_deb or '-'} m3/dt\n \
 *3. Kondisi visual bendungan : {pb_new.kondisi}*\n \
 *4. Nama petugas piket*\n \
-- {pb_new.petugas.nama}"
+- {pb_new.petugas}"
     flash(notify, 'notify')
 
     return redirect(url_for('admin.piket_bendungan', bendungan_id=bendungan_id))
@@ -233,7 +232,7 @@ def piket_banjir_csv():
                 None if not d['piket_banjir'] else d['piket_banjir'].spillway_deb,
                 None if not d['piket_banjir'] else d['piket_banjir'].volume_percent,
                 None if not d['piket_banjir'] else d['piket_banjir'].kondisi,
-                None if not d['piket_banjir'] else d['piket_banjir'].petugas.nama
+                None if not d['piket_banjir'] else d['piket_banjir'].petugas
             ])
     output = io.StringIO()
     writer = csv.writer(output, delimiter='\t')

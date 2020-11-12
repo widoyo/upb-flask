@@ -132,7 +132,7 @@ class AddPiketBanjir(FlaskForm):
     spillway_tma = DecimalField('Tinggi Limpasan', validators=[Optional()])
     spillway_deb = DecimalField('Debit Limpasan', validators=[Optional()])
     kondisi = StringField('Kondisi Visual Bendungan')
-    petugas_id = StringField('Petugas')
+    petugas = StringField('Petugas')
     submit = SubmitField('Tambah')
 
 

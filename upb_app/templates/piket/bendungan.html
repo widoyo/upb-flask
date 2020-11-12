@@ -4,6 +4,7 @@
 {% set subtitle = "Keamanan" %}
 
 {% block css %}
+<link rel="stylesheet" href="{{ url_for('static', filename='css/bootstrap-select.min.css') }}">
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-datepicker/1.9.0/css/bootstrap-datepicker.css">
 <style>
     .datepicker {
@@ -112,14 +113,15 @@
                           </div>
                           <div class="row">
                             <div class="col-md-12 form-group">
-                                <label class="form-text" for="petugas_id"><b>Petugas Piket</b></label>
-                                <select id="petugas_id" name="petugas_id" class="form-control" required>
-                                  <option value="">- pilih -</option>
+                                <label class="form-text" for="petugas_ids"><b>Petugas Piket</b></label>
+                                <input class="form-control" type="text"
+                                      name="petugas" id="petugas" required hidden>
+                                <select id="petugas_names" name="petugas_names" class="selectpicker form-control" required multiple>
                                   {% for p in petugas %}
-                                    <option value="{{ p.id }}">{{ p.nama }}</option>
+                                    <option value="{{ p.nama }}">{{ p.nama }}</option>
                                   {% endfor %}
                                 </select>
-                                <small id="petugas_id_help" class="form-text text-muted">(wajib)</small>
+                                <small id="petugas_ids_help" class="form-text text-muted">(wajib)</small>
                             </div>
                           </div>
                           <div>
@@ -272,11 +274,11 @@
                       <a data-url="{{ url_for('admin.piket_banjir_update') }}"
                           class="petugas_choice"
                           data-name="petugas_id"
-                          data-type="select"
+                          data-type="select2"
                           data-title="Petugas Piket"
                           data-pk="{{ report.piket_banjir.id }}">
                           {% if report.piket_banjir != None %}
-                          <span style="color: blue">{{ report.piket_banjir.petugas.nama }}</span>
+                          <span style="color: blue">{{ report.piket_banjir.petugas or '-' }}</span>
                           {% else %}<span style="color: red">Empty</span>{% endif %}
                       </a>
                     </td>
@@ -288,6 +290,7 @@
 {% endblock %}
 
 {% block js %}
+<script src="{{ url_for('static', filename='js/bootstrap-select.min.js') }}"></script>
 <script src="{{ url_for('static', filename='js/moment.min.js') }}"></script>
 <script src="{{ url_for('static', filename='js/id.js') }}"></script>
 <script src="{{ url_for('static', filename='js/bootstrap-editable.min.js') }}"></script>
@@ -327,6 +330,11 @@
             console.log($('#sampling').val());
         });
 
+        $('#petugas_names').on('change', function () {
+            $('#petugas').val($('#petugas_names').val().join(", "));
+            console.log($('#petugas').val());
+        });
+
         let tgls = document.querySelectorAll("#tgl");
         tgls.forEach(function(el){
             console.log(el.value);
@@ -357,12 +365,15 @@
                 },
             });
             $('.petugas_choice').editable({
-                prepend: "pilih",
-                source: [
-                  {% for p in petugas %}
-                    {value: {{ p.id }}, text: '{{ p.nama }}'},
-                  {% endfor %}
-                ],
+                inputclass: 'input-large',
+                select2: {
+                    tags: [
+                      {% for p in petugas %}
+                        '{{ p.nama }}',
+                      {% endfor %}
+                    ],
+                    tokenSeparators: [",", " "]
+                },
                 error: function(response, newValue) {
                     return 'Tidak bisa update, Tambah data pakai form.';
                 },

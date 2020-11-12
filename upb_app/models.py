@@ -253,7 +253,7 @@ class PiketBanjir(BaseLog):
     kondisi = db.Column(db.Text)
 
     petugas_id = db.Column(db.Integer, db.ForeignKey('petugas.id'), nullable=True)
-    petugas = relationship('Petugas', back_populates='piket_banjir')
+    petugas = db.Column(db.Text)
 
     __table_args__ = (db.UniqueConstraint('obj_type', 'obj_id', 'sampling',
                                           name='piket_banjir_obj_sampling'),)
@@ -330,7 +330,6 @@ class Petugas(BaseLog):
     bendungan = relationship('Bendungan', back_populates='petugas')
     pemeliharaan_petugas = relationship('PemeliharaanPetugas', back_populates='petugas')
     kinerja_nilai = relationship('KinerjaNilai', back_populates='petugas')
-    piket_banjir = relationship('PiketBanjir', back_populates='petugas')
 
     @property
     def birthdate(self):
