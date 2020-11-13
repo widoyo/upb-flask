@@ -599,7 +599,7 @@
                             </a>
                         </td>
                         <td>
-                            {% if per.daily and per.daily.intake_vol > 0 %}
+                            {% if per.daily %}
                             <a data-url="{{ url_for('admin.operasi_daily_update') }}"
                                 class="intake_ket"
                                 data-name="intake_ket"
@@ -608,7 +608,7 @@
                                 data-pk="{{ per.daily.id }}">
                                 {% if per.daily.intake_ket %}
                                 <span style="color: blue">{{ per.daily.intake_ket.title() }}</span>
-                                {% else %}<span style="color: red">Empty</span>{% endif %}
+                                {% else %}<span style="color: red">-</span>{% endif %}
                             </a>
                             {% else %}
                             -
