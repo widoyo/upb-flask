@@ -20,8 +20,10 @@ from upb_app.admin import bp
 def rtow():
     sampling = request.values.get('sampling')
     sampling = datetime.datetime.strptime(sampling, "%Y-%m-%d") if sampling else datetime.datetime.now()
-    start = datetime.datetime.strptime(f"{sampling.year -1}-11-01", "%Y-%m-%d")
-    end = datetime.datetime.strptime(f"{sampling.year}-10-31", "%Y-%m-%d")
+
+    year = (sampling.year) if sampling.month < 11 else sampling.year + 1
+    start = datetime.datetime.strptime(f"{year - 1}-11-01", "%Y-%m-%d")
+    end = datetime.datetime.strptime(f"{year}-10-31", "%Y-%m-%d")
 
     bends = Bendungan.query.all()
     rencana = Rencana.query.filter(
@@ -77,7 +79,8 @@ def rtow():
     return render_template('rencana/index.html',
                             sampling=sampling,
                             rtow=rtow,
-                            wil_sungai=wil_sungai)
+                            wil_sungai=wil_sungai,
+                            year=year)
 
 
 @bp.route('/bendungan/<bendungan_id>/rtow/export', methods=['GET'])

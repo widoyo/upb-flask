@@ -139,8 +139,10 @@ def tma(lokasi_id):
 def operasi(lokasi_id):
     sampling = request.values.get('sampling')
     sampling = datetime.datetime.strptime(sampling, "%Y") if sampling else datetime.datetime.now()
-    start = datetime.datetime.strptime(f"{sampling.year -1}-11-01", "%Y-%m-%d")
-    end = datetime.datetime.strptime(f"{sampling.year}-10-31", "%Y-%m-%d")
+
+    year = (sampling.year) if sampling.month < 11 else sampling.year + 1
+    start = datetime.datetime.strptime(f"{year - 1}-11-01", "%Y-%m-%d")
+    end = datetime.datetime.strptime(f"{year}-10-31", "%Y-%m-%d")
 
     pos = Bendungan.query.get(lokasi_id)
     rtow = Rencana.query.filter(
@@ -224,7 +226,8 @@ def operasi(lokasi_id):
                             waduk=pos,
                             sampling=sampling,
                             operasi=operasi,
-                            tanggal=tanggal)
+                            tanggal=tanggal,
+                            year=year)
 
 
 @bp.route('/<lokasi_id>/vnotch', methods=['GET'])
