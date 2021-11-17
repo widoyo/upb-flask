@@ -150,6 +150,13 @@ class ManualTma(BaseLog):
     __table_args__ = (db.UniqueConstraint('bendungan_id', 'sampling',
                                           name='manualtma_bendungan_sampling'),)
 
+    @property
+    def foto_url(self):
+        foto = Foto.query.filter(
+                        Foto.obj_type == 'manual_tma',
+                        Foto.obj_id == self.id).first()
+        return None if not foto else foto.url
+
     def local_cdate(self):
         return self.c_date + datetime.timedelta(hours=7)
 

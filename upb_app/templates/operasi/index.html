@@ -40,9 +40,9 @@
                 <th rowspan="2" class="text-center align-middle">No</th>
                 <th rowspan="2" class="text-center align-middle">Nama</th>
                 <th rowspan="2" class="text-center align-middle">CH</th>
-                <th colspan="2" class="text-center align-middle">Pagi</th>
-                <th colspan="2" class="text-center align-middle">Siang</th>
-                <th colspan="2" class="text-center align-middle">Sore</th>
+                <th colspan="3" class="text-center align-middle">Pagi</th>
+                <th colspan="3" class="text-center align-middle">Siang</th>
+                <th colspan="3" class="text-center align-middle">Sore</th>
                 <th rowspan="2" class="text-center align-middle">Q Inflow</th>
                 <th colspan="2" class="text-center align-middle">Q Outflow</th>
                 <th colspan="2" class="text-center align-middle">VNotch</th>
@@ -51,10 +51,13 @@
             <tr class="table-active">
                 <th class="text-center align-middle">TMA</th>
                 <th class="text-center align-middle">Vol</th>
+                <th class="text-center align-middle">Foto</th>
                 <th class="text-center align-middle">TMA</th>
                 <th class="text-center align-middle">Vol</th>
+                <th class="text-center align-middle">Foto</th>
                 <th class="text-center align-middle">TMA</th>
                 <th class="text-center align-middle">Vol</th>
+                <th class="text-center align-middle">Foto</th>
                 <th class="text-center align-middle">Intake</th>
                 <th class="text-center align-middle">Spillway</th>
                 <th class="text-center align-middle">Tinggi</th>
@@ -87,10 +90,31 @@
                     <td class="text-right">{{ bend.curahhujan if bend.curahhujan != None }}</td>
                     <td class="text-right">{{ bend.tma6.tma if bend.tma6.tma != None }}</td>
                     <td class="text-right">{{ bend.tma6.vol if bend.tma6.vol != None }}</td>
+                    <td class="text-center">
+                        {% if bend.tma6.foto_url != None %}
+                            <a href="#" onclick="switchFoto('{{ bend.tma6.foto_url }}')" type="button" data-toggle="modal" data-target="#myModal">
+                                <i class="fas fa-image"></i>
+                            </a>
+                        {% endif %}
+                    </td>
                     <td class="text-right">{{ bend.tma12.tma if bend.tma12.tma != None }}</td>
                     <td class="text-right">{{ bend.tma12.vol if bend.tma12.vol != None }}</td>
+                    <td class="text-center">
+                        {% if bend.tma12.foto_url != None %}
+                            <a href="#" onclick="switchFoto('{{ bend.tma6.foto_url }}')" type="button" data-toggle="modal" data-target="#myModal">
+                                <i class="fas fa-image"></i>
+                            </a>
+                        {% endif %}
+                    </td>
                     <td class="text-right">{{ bend.tma18.tma if bend.tma18.tma != None }}</td>
                     <td class="text-right">{{ bend.tma18.vol if bend.tma18.vol != None }}</td>
+                    <td class="text-center">
+                        {% if bend.tma18.foto_url != None %}
+                            <a href="#" onclick="switchFoto('{{ bend.tma6.foto_url }}')" type="button" data-toggle="modal" data-target="#myModal">
+                                <i class="fas fa-image"></i>
+                            </a>
+                        {% endif %}
+                    </td>
                     <td class="text-right">{{ bend.inflow_deb if bend.inflow_deb != None }}</td>
                     <td class="text-right">
                         {{ bend.intake_deb if bend.intake_deb != None }}
@@ -134,10 +158,31 @@
                     <td class="text-right">{{ bend.curahhujan if bend.curahhujan != None }}</td>
                     <td class="text-right">{{ bend.tma6.tma if bend.tma6.tma != None }}</td>
                     <td class="text-right">{{ bend.tma6.vol if bend.tma6.vol != None }}</td>
+                    <td class="text-center">
+                        {% if bend.tma6.foto_url != None %}
+                            <a href="#" onclick="switchFoto('{{ bend.tma6.foto_url }}')" type="button" data-toggle="modal" data-target="#myModal">
+                                <i class="fas fa-image"></i>
+                            </a>
+                        {% endif %}
+                    </td>
                     <td class="text-right">{{ bend.tma12.tma if bend.tma12.tma != None }}</td>
                     <td class="text-right">{{ bend.tma12.vol if bend.tma12.vol != None }}</td>
+                    <td class="text-center">
+                        {% if bend.tma12.foto_url != None %}
+                            <a href="#" onclick="switchFoto('{{ bend.tma6.foto_url }}')" type="button" data-toggle="modal" data-target="#myModal">
+                                <i class="fas fa-image"></i>
+                            </a>
+                        {% endif %}
+                    </td>
                     <td class="text-right">{{ bend.tma18.tma if bend.tma18.tma != None }}</td>
                     <td class="text-right">{{ bend.tma18.vol if bend.tma18.vol != None }}</td>
+                    <td class="text-center">
+                        {% if bend.tma18.foto_url != None %}
+                            <a href="#" onclick="switchFoto('{{ bend.tma6.foto_url }}')" type="button" data-toggle="modal" data-target="#myModal">
+                                <i class="fas fa-image"></i>
+                            </a>
+                        {% endif %}
+                    </td>
                     <td class="text-right">{{ bend.inflow_deb if bend.inflow_deb != None }}</td>
                     <td class="text-right">{{ bend.intake_deb if bend.intake_deb != None }}</td>
                     <td class="text-right">{{ bend.spillway_deb if bend.spillway_deb != None }}</td>
@@ -170,10 +215,31 @@
                     <td class="text-right">{{ bend.curahhujan if bend.curahhujan != None }}</td>
                     <td class="text-right">{{ bend.tma6.tma if bend.tma6.tma != None }}</td>
                     <td class="text-right">{{ bend.tma6.vol if bend.tma6.vol != None }}</td>
+                    <td class="text-center">
+                        {% if bend.tma6.foto_url != None %}
+                            <a href="#" onclick="switchFoto('{{ bend.tma6.foto_url }}')" type="button" data-toggle="modal" data-target="#myModal">
+                                <i class="fas fa-image"></i>
+                            </a>
+                        {% endif %}
+                    </td>
                     <td class="text-right">{{ bend.tma12.tma if bend.tma12.tma != None }}</td>
                     <td class="text-right">{{ bend.tma12.vol if bend.tma12.vol != None }}</td>
+                    <td class="text-center">
+                        {% if bend.tma12.foto_url != None %}
+                            <a href="#" onclick="switchFoto('{{ bend.tma6.foto_url }}')" type="button" data-toggle="modal" data-target="#myModal">
+                                <i class="fas fa-image"></i>
+                            </a>
+                        {% endif %}
+                    </td>
                     <td class="text-right">{{ bend.tma18.tma if bend.tma18.tma != None }}</td>
                     <td class="text-right">{{ bend.tma18.vol if bend.tma18.vol != None }}</td>
+                    <td class="text-center">
+                        {% if bend.tma18.foto_url != None %}
+                            <a href="#" onclick="switchFoto('{{ bend.tma6.foto_url }}')" type="button" data-toggle="modal" data-target="#myModal">
+                                <i class="fas fa-image"></i>
+                            </a>
+                        {% endif %}
+                    </td>
                     <td class="text-right">{{ bend.inflow_deb if bend.inflow_deb != None }}</td>
                     <td class="text-right">{{ bend.intake_deb if bend.intake_deb != None }}</td>
                     <td class="text-right">{{ bend.spillway_deb if bend.spillway_deb != None }}</td>
@@ -198,6 +264,16 @@
             {% endfor %}
         </tbody>
     </table>
+
+    <div id="myModal" class="modal fade" tabindex="-1" role="dialog">
+      <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-body">
+                <img src="//placehold.it/1000x600" class="img-fluid" id="tma-foto">
+            </div>
+        </div>
+      </div>
+    </div>
 </div>
 {% endblock %}
 
@@ -222,5 +298,9 @@
           $('[data-toggle="popover"]').popover()
         })
     });
+
+    function switchFoto(url) {
+        document.getElementById(`tma-foto`).src = `/${url}`;
+    };
 </script>
 {% endblock %}
