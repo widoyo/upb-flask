@@ -8,3 +8,7 @@ upb_app/static/images/profil.jpg
 upb_app/static/img/foto/*
 test.db
 telegram_token*
+requirements.txt
+docker-compose.yml
+Dockerfile
+upbdb_backup.sql

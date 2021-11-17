@@ -57,6 +57,16 @@
                                   <small id="volpagihelp" class="form-text text-muted">m<sup>3</sup>(wajib diisi)</small>
                               </div>
                           </div>
+                          <div class="row">
+                              <div class="col-md-12 form-group">
+                                  <label for="foto"><b>Foto Peilshcaal</b></label>
+                                  <input type="file" class="form-control-file" id="fotoFile-pagi" name="foto_file">
+                                  <div>
+                                      <img class="img-fluid" id="foto-pagi" src="{{ url_for('static', filename='images/null.jpg') }}" alt="gambar disini">
+                                  </div>
+                                  <input type="text" id="fotoBase64-pagi" name="foto_base64" hidden>
+                              </div>
+                          </div>
                           <h5>Inflow</h5>
                           <div class="row">
                               <div class="col-md-6 form-group">
@@ -143,6 +153,16 @@
                                   <small id="volsianghelp" class="form-text text-muted">m<sup>3</sup>(wajib diisi)</small>
                               </div>
                           </div>
+                          <div class="row">
+                              <div class="col-md-12 form-group">
+                                  <label for="foto"><b>Foto Peilshcaal</b></label>
+                                  <input type="file" class="form-control-file" id="fotoFile-siang" name="foto_file">
+                                  <div>
+                                      <img class="img-fluid" id="foto-siang" src="{{ url_for('static', filename='images/null.jpg') }}" alt="gambar disini">
+                                  </div>
+                                  <input type="text" id="fotoBase64-siang" name="foto_base64" hidden>
+                              </div>
+                          </div>
                           <div>
                               <button type="submit" name="submit" class="btn btn-primary my-1 mr-2">Kirim</button>
                               <a data-toggle="collapse" href="#tmasiang" role="button" aria-expanded="false" aria-controls="tmasiang">batal</a>
@@ -178,6 +198,16 @@
                                   <label class="form-text" for="vol-sore"><b>Volume</b></label>
                                   <input class="form-control" type="number" name="vol" id="vol-sore" required placeholder="contoh:12345" step="1" aria-describedby="volsorehelp">
                                   <small id="volsorehelp" class="form-text text-muted">(wajib diisi)</small>
+                              </div>
+                          </div>
+                          <div class="row">
+                              <div class="col-md-12 form-group">
+                                  <label for="foto"><b>Foto Peilshcaal</b></label>
+                                  <input type="file" class="form-control-file" id="fotoFile-sore" name="foto_file">
+                                  <div>
+                                      <img class="img-fluid" id="foto-sore" src="{{ url_for('static', filename='images/null.jpg') }}" alt="gambar disini">
+                                  </div>
+                                  <input type="text" id="fotoBase64-sore" name="foto_base64" hidden>
                               </div>
                           </div>
                           <div>
@@ -653,6 +683,7 @@
 <script src="{{ url_for('static', filename='js/bootstrap-editable.min.js') }}"></script>
 <script src="{{ url_for('static', filename='js/bootstrap-datepicker.min.js') }}"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/tempusdominus-bootstrap-4/5.0.1/js/tempusdominus-bootstrap-4.min.js"></script>
+<script src="{{ url_for('static', filename='js/MinifyJpegAsync.js') }}"></script>
 <script>
     $(document).ready(function() {
         // resolve package confict
@@ -748,7 +779,6 @@
         });
         $("#timepicker").on("change.datetimepicker", function (e) {
             let time = e.date.format('LTS');
-            // console.log(time)
             $('#jam').attr('value', time);
         });
 
@@ -771,15 +801,40 @@
         });
         $("#timepicker-ch").on("change.datetimepicker", function (e) {
             let time = e.date.format('LTS');
-            // console.log(time)
             $('#jam').attr('value', time);
         });
 
         let tgls = document.querySelectorAll("#tgl");
         tgls.forEach(function(el){
-            console.log(el.value);
             el.innerText = moment(el.innerText).format('ddd, D');
         });
+
+        let imgFoto = '';
+        let filenameFoto = '';
+        function compressFoto(event, waktu) {
+            let f = event.target.files[0];
+            filenameFoto = f.name;
+            let reader = new FileReader();
+
+            reader.onloadend = function(e){
+                console.log(`onload function called, parameter : ${e}`);
+                MinifyJpegAsync.minify(e.target.result, 720, function(data) {
+                    imgFoto = "data:image/jpeg;base64," + btoa(data);
+                    let img = new Image();
+                    img.src = imgFoto;
+
+                    document.getElementById(`foto-${waktu}`).src = imgFoto;
+                    document.getElementById(`fotoBase64-${waktu}`).value = imgFoto;
+                });
+            };  // (function(theFile))(f)
+            reader.readAsDataURL(f);
+        };
+
+        {% for waktu in ['pagi', 'siang', 'sore'] %}
+            $('#fotoFile-{{ waktu }}').on('change', function(event) {
+                compressFoto(event, "{{ waktu }}");
+            });
+        {% endfor %}
 
         //turn to popup mode
         $.fn.editable.defaults.mode = 'popup';

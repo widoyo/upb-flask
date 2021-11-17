@@ -7,12 +7,15 @@ from sqlalchemy.exc import IntegrityError
 from upb_app.helper import month_range, day_range
 from upb_app.models import ManualDaily, ManualTma, ManualPiezo, ManualVnotch
 from upb_app.models import Bendungan, BendungAlert, CurahHujanTerkini
-from upb_app.models import Embung, ManualTmaEmbung, ManualDailyEmbung, wil_sungai
+from upb_app.models import Embung, ManualTmaEmbung, ManualDailyEmbung, Foto, wil_sungai
 from upb_app.forms import AddDaily, AddTma, LaporBanjir, CHTerkini, AddDailyEmbung
 from upb_app import app, db, admin_only, petugas_only, role_check, role_check_embung
 import datetime
 import calendar
+import base64
 import csv
+import sys
+import os
 import io
 
 from upb_app.admin import bp
@@ -170,13 +173,14 @@ def operasi_tma_add(bendungan_id):
             hari=form.hari.data,
             jam=form.jam.data,
             tma=form.tma.data,
-            vol=form.vol.data
+            vol=form.vol.data,
+            foto=form.foto_base64.data
         )
 
     return redirect(url_for('admin.operasi_bendungan', bendungan_id=bend.id))
 
 
-def insert_tma(bend_id, hari, jam, tma, vol):
+def insert_tma(bend_id, hari, jam, tma, vol, foto):
     s_string = f"{hari} {jam}:00:00"
     sampling = datetime.datetime.strptime(s_string, "%Y-%m-%d %H:%M:%S")
     try:
@@ -197,10 +201,34 @@ def insert_tma(bend_id, hari, jam, tma, vol):
             tma = ManualTma(**obj_dict)
             db.session.add(tma)
         db.session.commit()
+
+        # add foto
+        new_id = row.id if row else tma.id
+        latest = Foto.query.order_by(Foto.id.desc()).first()
+        f_ext = foto.split(':')[1].split('/')[1].split(';')[0]
+        imageStr = foto.split(',')[1]
+        filename = f"tma_peilschaal_{bend_id}_{hari}_{jam}.{f_ext}"
+        img_file = os.path.join(app.config['UPLOAD_FOLDER'], filename)
+        save_file = os.path.join(app.config['SAVE_DIR'], img_file)
+
+        # convert base64 into image file and then save it
+        imgdata = base64.b64decode(imageStr)
+        with open(save_file, 'wb') as f:
+            f.write(imgdata)
+
+        foto = Foto(
+            url=img_file,
+            obj_type="manual_tma",
+            obj_id=new_id
+        )
+        foto.keterangan = f"TMA Peilshcaal Bendungan <{bend_id}> {hari} {jam}"
+        db.session.add(foto)
+        db.session.commit()
+
         flash('TMA berhasil ditambahkan !', 'success')
     except Exception as e:
         db.session.rollback()
-        print(f"TMA Manual Error : {e.__class__.__name__}")
+        print(f"TMA Manual Error : {e}")
         flash(f"Terjadi kesalahan saat mencoba menyimpan data", 'danger')
 
 
@@ -235,7 +263,8 @@ def operasi_daily_add(bendungan_id):
             hari=form.sampling.data,
             jam=form.jam.data,
             tma=form.tma.data,
-            vol=form.vol.data
+            vol=form.vol.data,
+            foto=form.foto_base64.data
         )
         # insert daily
         try:

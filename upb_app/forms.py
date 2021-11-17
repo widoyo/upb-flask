@@ -111,6 +111,7 @@ class AddDaily(FlaskForm):
     jam = SelectField("Jam", choices=jam, validators=[DataRequired()], default=jam[0][0])
     tma = DecimalField('TMA')
     vol = DecimalField('Volume')
+    foto_base64 = StringField('Foto')
     submit = SubmitField('Tambah')
 
 
@@ -119,6 +120,7 @@ class AddTma(FlaskForm):
     jam = SelectField("Jam", choices=jam, validators=[DataRequired()], default=jam[0][0])
     tma = DecimalField('TMA')
     vol = DecimalField('Volume')
+    foto_base64 = StringField('Foto')
     submit = SubmitField('Kirim')
 
 
