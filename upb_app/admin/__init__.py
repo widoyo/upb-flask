@@ -266,8 +266,6 @@ def foto_update():
     redirect_url = request.values.get('redirect_url')
 
     foto = Foto.query.get(int(foto_id))
-    print(foto_id)
-    print(foto)
 
     if foto:
         imageStr = foto_base64.split(',')[1]
@@ -285,6 +283,7 @@ def foto_update():
         flash('Foto berhasil di update !', 'success')
     else:
         flash('Foto tidak ditemukan !', 'danger')
+
     return redirect(redirect_url)
 
 

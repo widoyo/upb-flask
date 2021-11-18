@@ -220,14 +220,16 @@ def insert_tma(bend_id, hari, jam, tma, vol, foto):
         with open(save_file, 'wb') as f:
             f.write(imgdata)
 
-        foto = Foto(
-            url=img_file,
-            obj_type="manual_tma",
-            obj_id=new_id
-        )
-        foto.keterangan = f"TMA Peilshcaal Bendungan <{bend_id}> {hari} {jam}"
-        db.session.add(foto)
-        db.session.commit()
+        foto = Foto.query.filter(Foto.obj_type=="manual_tma", Foto.obj_id==new_id).first()
+        if not foto:
+            foto = Foto(
+                url=img_file,
+                obj_type="manual_tma",
+                obj_id=new_id
+            )
+            foto.keterangan = f"TMA Peilshcaal Bendungan <{bend_id}> {hari} {jam}"
+            db.session.add(foto)
+            db.session.commit()
 
         flash('TMA berhasil ditambahkan !', 'success')
     except Exception as e:
