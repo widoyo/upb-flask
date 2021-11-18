@@ -60,11 +60,12 @@
                           <div class="row">
                               <div class="col-md-12 form-group">
                                   <label for="foto"><b>Foto Peilshcaal</b></label>
-                                  <input type="file" class="form-control-file" id="fotoFile-pagi">
+                                  <input type="file" class="form-control-file" id="fotoFile-pagi" required>
                                   <div>
                                       <img class="img-fluid" id="foto-pagi" src="{{ url_for('static', filename='images/null.jpg') }}" alt="gambar disini">
                                   </div>
                                   <input type="text" id="fotoBase64-pagi" name="foto_base64" hidden>
+                                  <small id="fotopagihelp" class="form-text text-muted">(wajib diisi)</small>
                               </div>
                           </div>
                           <h5>Inflow</h5>
@@ -156,11 +157,12 @@
                           <div class="row">
                               <div class="col-md-12 form-group">
                                   <label for="foto"><b>Foto Peilshcaal</b></label>
-                                  <input type="file" class="form-control-file" id="fotoFile-siang">
+                                  <input type="file" class="form-control-file" id="fotoFile-siang" required>
                                   <div>
                                       <img class="img-fluid" id="foto-siang" src="{{ url_for('static', filename='images/null.jpg') }}" alt="gambar disini">
                                   </div>
                                   <input type="text" id="fotoBase64-siang" name="foto_base64" hidden>
+                                  <small id="fotosianghelp" class="form-text text-muted">(wajib diisi)</small>
                               </div>
                           </div>
                           <div>
@@ -203,11 +205,12 @@
                           <div class="row">
                               <div class="col-md-12 form-group">
                                   <label for="foto"><b>Foto Peilshcaal</b></label>
-                                  <input type="file" class="form-control-file" id="fotoFile-sore">
+                                  <input type="file" class="form-control-file" id="fotoFile-sore" required>
                                   <div>
                                       <img class="img-fluid" id="foto-sore" src="{{ url_for('static', filename='images/null.jpg') }}" alt="gambar disini">
                                   </div>
                                   <input type="text" id="fotoBase64-sore" name="foto_base64" hidden>
+                                  <small id="fotosorehelp" class="form-text text-muted">(wajib diisi)</small>
                               </div>
                           </div>
                           <div>
@@ -455,19 +458,22 @@
                 <tr class="table-active">
                     <th rowspan="3" class="text-center align-middle">Tanggal</th>
                     <th rowspan="3" class="text-center align-middle">Curah Hujan</th>
-                    <th colspan="2" class="text-center align-middle">Jam 6</th>
-                    <th colspan="2" class="text-center align-middle">Jam 12</th>
-                    <th colspan="2" class="text-center align-middle">Jam 18</th>
+                    <th colspan="3" class="text-center align-middle">Jam 6</th>
+                    <th colspan="3" class="text-center align-middle">Jam 12</th>
+                    <th colspan="3" class="text-center align-middle">Jam 18</th>
                     <th colspan="2" class="text-center align-middle">Inflow</th>
                     <th colspan="5" class="text-center align-middle">Outflow</th>
                 </tr>
                 <tr class="table-active">
                     <th rowspan="2" class="text-center align-middle">TMA</th>
                     <th rowspan="2" class="text-center align-middle">Vol</th>
+                    <th rowspan="2" class="text-center align-middle">Foto</th>
                     <th rowspan="2" class="text-center align-middle">TMA</th>
                     <th rowspan="2" class="text-center align-middle">Vol</th>
+                    <th rowspan="2" class="text-center align-middle">Foto</th>
                     <th rowspan="2" class="text-center align-middle">TMA</th>
                     <th rowspan="2" class="text-center align-middle">Vol</th>
+                    <th rowspan="2" class="text-center align-middle">Foto</th>
                     <th rowspan="2" class="text-center align-middle">Debit</th>
                     <th rowspan="2" class="text-center align-middle">Volume</th>
                     <th colspan="3" class="text-center align-middle">Intake</th>
@@ -524,6 +530,15 @@
                                 {% else %}<span style="color: red">Empty</span>{% endif %}
                             </a>
                         </td>
+                        <td class="text-center">
+                            {% if per.tma['06'] %}
+                                {% if per.tma['06'].foto != None %}
+                                    <a href="#" onclick="switchFoto('{{ per.tma['06'].foto.url }}', '{{ per.tma['06'].readable_date() }}', {{ per.tma['06'].foto.id }})" type="button" data-toggle="modal" data-target="#fotoPeilschaal">
+                                        <i class="fas fa-image"></i>
+                                    </a>
+                                {% else %}<span>-</span>{% endif %}
+                            {% else %}<span>-</span>{% endif %}
+                        </td>
                         <td class="text-right">
                             <a data-url="{{ url_for('admin.operasi_tma_update') }}"
                                 class="editable"
@@ -550,6 +565,15 @@
                                 {% else %}<span style="color: red">Empty</span>{% endif %}
                             </a>
                         </td>
+                        <td class="text-center">
+                            {% if per.tma['12'] %}
+                                {% if per.tma['12'].foto != None %}
+                                    <a href="#" onclick="switchFoto('{{ per.tma['12'].foto.url }}', '{{ per.tma['12'].readable_date() }}', {{ per.tma['12'].foto.id }})" type="button" data-toggle="modal" data-target="#fotoPeilschaal">
+                                        <i class="fas fa-image"></i>
+                                    </a>
+                                {% else %}<span>-</span>{% endif %}
+                            {% else %}<span>-</span>{% endif %}
+                        </td>
                         <td class="text-right">
                             <a data-url="{{ url_for('admin.operasi_tma_update') }}"
                                 class="editable"
@@ -575,6 +599,15 @@
                                 <span style="color: blue">{{ per.tma['18'].vol }}</span>
                                 {% else %}<span style="color: red">Empty</span>{% endif %}
                             </a>
+                        </td>
+                        <td class="text-center">
+                            {% if per.tma['18'] %}
+                                {% if per.tma['18'].foto != None %}
+                                    <a href="#" onclick="switchFoto('{{ per.tma['18'].foto.url }}', '{{ per.tma['18'].readable_date() }}', {{ per.tma['18'].foto.id }})" type="button" data-toggle="modal" data-target="#fotoPeilschaal">
+                                        <i class="fas fa-image"></i>
+                                    </a>
+                                {% else %}<span>-</span>{% endif %}
+                            {% else %}<span>-</span>{% endif %}
                         </td>
                         <td class="text-right">
                             <a data-url="{{ url_for('admin.operasi_daily_update') }}"
@@ -674,6 +707,56 @@
                 {% endfor %}
             </tbody>
         </table>
+    </div>
+
+    <div id="fotoPeilschaal" class="modal fade" tabindex="-1" role="dialog">
+      <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-body">
+                <img src="//placehold.it/720x600" class="img-fluid" id="tma-foto">
+            </div>
+            <div class="modal-footer">
+                <a href="#" onclick="openChangeFoto()" class="btn btn-primary">Ganti</a>
+                <button type="button" class="btn btn-secondary" data-dismiss="modal">Tutup</button>
+            </div>
+        </div>
+      </div>
+    </div>
+
+    <div id="changeFoto" class="modal fade" tabindex="-1" role="dialog">
+      <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <form action="{{ url_for('admin.foto_update') }}" method="POST">
+                <div class="modal-header">
+                    <h5>Ganti Foto Peilschaal</h5>
+                </div>
+                <div class="modal-body">
+                        <div class="row">
+                            <div class="col-md-12 form-group">
+                                <h6 id="foto-change-detail">TMA Tanggal Jam XX</h6>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-md-12 form-group">
+                                <input type="number" id="foto-change-id" name="foto_id" step="1" hidden required>
+                                <input type="text" id="foto-change-redirect" name="redirect_url" hidden required
+                                    value="{{ url_for(request.endpoint, **request.view_args) }}">
+                                <input type="file" class="form-control-file" id="fotoFile-change" required>
+                                <div>
+                                    <img class="img-fluid" id="foto-change" src="{{ url_for('static', filename='images/null.jpg') }}" alt="gambar disini">
+                                </div>
+                                <input type="text" id="fotoBase64-change" name="foto_base64" hidden>
+                                <small id="fotochangehelp" class="form-text text-muted">(wajib diisi)</small>
+                            </div>
+                        </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="submit" name="submit" class="btn btn-primary my-1 mr-2">Ganti</button>
+                    <button type="button" class="btn btn-secondary" data-dismiss="modal">Tutup</button>
+                </div>
+            </form>
+        </div>
+      </div>
     </div>
 {% endblock %}
 
@@ -836,6 +919,28 @@
             });
         {% endfor %}
 
+        function changeFoto(event) {
+            let f = event.target.files[0];
+            filenameFoto = f.name;
+            let reader = new FileReader();
+
+            reader.onloadend = function(e){
+                MinifyJpegAsync.minify(e.target.result, 720, function(data) {
+                    imgFoto = "data:image/jpeg;base64," + btoa(data);
+                    let img = new Image();
+                    img.src = imgFoto;
+
+                    document.getElementById(`foto-change`).src = imgFoto;
+                    document.getElementById(`fotoBase64-change`).value = imgFoto;
+                });
+            };  // (function(theFile))(f)
+            reader.readAsDataURL(f);
+        };
+
+        $('#fotoFile-change').on('change', function(event) {
+            changeFoto(event);
+        });
+
         //turn to popup mode
         $.fn.editable.defaults.mode = 'popup';
         $(document).ready(function() {
@@ -857,5 +962,16 @@
             });
         });
     });
+
+    function switchFoto(url, detail, foto_id) {
+        document.getElementById(`tma-foto`).src = `/${url}`;
+        document.getElementById(`foto-change-id`).setAttribute('value', foto_id);
+        document.getElementById(`foto-change-detail`).innerHTML = detail;
+    };
+
+    function openChangeFoto(){
+        $('#fotoPeilschaal').modal('toggle');
+        $('#changeFoto').modal('toggle');
+    }
 </script>
 {% endblock %}

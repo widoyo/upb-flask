@@ -257,6 +257,37 @@ def delete_galeri_special():
     return "ok"
 
 
+@bp.route('/foto/update', methods=["POST"])
+@login_required
+def foto_update():
+    ''' Update Foto '''
+    foto_id = request.values.get('foto_id')
+    foto_base64 = request.values.get('foto_base64')
+    redirect_url = request.values.get('redirect_url')
+
+    foto = Foto.query.get(int(foto_id))
+    print(foto_id)
+    print(foto)
+
+    if foto:
+        imageStr = foto_base64.split(',')[1]
+        filename = foto.url.split("/")[-1]
+        img_file = os.path.join(app.config['UPLOAD_FOLDER'], filename)
+        save_file = os.path.join(app.config['SAVE_DIR'], img_file)
+
+        # convert base64 into image file and then save it
+        imgdata = base64.b64decode(imageStr)
+        with open(save_file, 'wb') as f:
+            f.write(imgdata)
+
+        db.session.commit()
+
+        flash('Foto berhasil di update !', 'success')
+    else:
+        flash('Foto tidak ditemukan !', 'danger')
+    return redirect(redirect_url)
+
+
 @bp.route('/alert/button')
 @login_required
 @admin_only

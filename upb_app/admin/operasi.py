@@ -75,23 +75,23 @@ def operasi_harian():
             '6': {
                 'tma': None,
                 'vol': None,
-                'foto_url': None
+                'foto': None
             },
             '12': {
                 'tma': None,
                 'vol': None,
-                'foto_url': None
+                'foto': None
             },
             '18': {
                 'tma': None,
                 'vol': None,
-                'foto_url': None
+                'foto': None
             },
         }
         for t in tma:
             tma_d[f"{t.sampling.hour}"]['tma'] = None if not t.tma else round(t.tma, 2)
             tma_d[f"{t.sampling.hour}"]['vol'] = None if not t.vol else round(t.vol, 2)
-            tma_d[f"{t.sampling.hour}"]['foto_url'] = None if not t.foto_url else t.foto_url
+            tma_d[f"{t.sampling.hour}"]['foto'] = None if not t.foto else t.foto
 
         data[w.wil_sungai].append({
             'no': count,

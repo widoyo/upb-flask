@@ -151,11 +151,14 @@ class ManualTma(BaseLog):
                                           name='manualtma_bendungan_sampling'),)
 
     @property
-    def foto_url(self):
+    def foto(self):
         foto = Foto.query.filter(
                         Foto.obj_type == 'manual_tma',
                         Foto.obj_id == self.id).first()
-        return None if not foto else foto.url
+        return foto
+
+    def readable_date(self):
+        return f"{self.sampling.strftime('%d %B %Y')}, Jam {self.sampling.hour}"
 
     def local_cdate(self):
         return self.c_date + datetime.timedelta(hours=7)
