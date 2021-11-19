@@ -59,7 +59,7 @@
                           </div>
                           <div class="row">
                               <div class="col-md-12 form-group">
-                                  <label for="foto"><b>Foto Peilshcaal</b></label>
+                                  <label for="foto"><b>Foto Bendungan</b></label>
                                   <input type="file" class="form-control-file" id="fotoFile-pagi" required>
                                   <div>
                                       <img class="img-fluid" id="foto-pagi" src="{{ url_for('static', filename='images/null.jpg') }}" alt="gambar disini">
@@ -156,7 +156,7 @@
                           </div>
                           <div class="row">
                               <div class="col-md-12 form-group">
-                                  <label for="foto"><b>Foto Peilshcaal</b></label>
+                                  <label for="foto"><b>Foto Bendungan</b></label>
                                   <input type="file" class="form-control-file" id="fotoFile-siang" required>
                                   <div>
                                       <img class="img-fluid" id="foto-siang" src="{{ url_for('static', filename='images/null.jpg') }}" alt="gambar disini">
@@ -204,7 +204,7 @@
                           </div>
                           <div class="row">
                               <div class="col-md-12 form-group">
-                                  <label for="foto"><b>Foto Peilshcaal</b></label>
+                                  <label for="foto"><b>Foto Bendungan</b></label>
                                   <input type="file" class="form-control-file" id="fotoFile-sore" required>
                                   <div>
                                       <img class="img-fluid" id="foto-sore" src="{{ url_for('static', filename='images/null.jpg') }}" alt="gambar disini">
@@ -716,7 +716,7 @@
                 <img src="//placehold.it/720x600" class="img-fluid" id="tma-foto">
             </div>
             <div class="modal-footer">
-                <a href="#" onclick="openChangeFoto()" class="btn btn-primary">Ganti</a>
+                <button onclick="openChangeFoto()" class="btn btn-primary">Ganti</button>
                 <button type="button" class="btn btn-secondary" data-dismiss="modal">Tutup</button>
             </div>
         </div>
@@ -728,7 +728,7 @@
         <div class="modal-content">
             <form action="{{ url_for('admin.foto_update') }}" method="POST">
                 <div class="modal-header">
-                    <h5>Ganti Foto Peilschaal</h5>
+                    <h5>Ganti Foto Bendungan</h5>
                 </div>
                 <div class="modal-body">
                         <div class="row">

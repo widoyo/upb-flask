@@ -14,7 +14,7 @@
                 <a data-toggle="modal" href="#gallery-scroll"
                     role="button" aria-expanded="false"
                     class="card-link" onclick="openGallery({{ gal.id }})">
-                    <img class="img-fluid" id="foto-{{ gal.id }}" src="{{ url_for('static', filename=gal.url[7:]) }}" alt="NO IMAGE" style="width: 100%; height: 11rem;">
+                    <img class="img-fluid" id="foto-{{ gal.id }}" src="{{ url_for('static', filename=gal.url[7:]) }}" alt="NO IMAGE" style="width: 100%; height: auto;">
                 </a>
             </div>
 
@@ -41,7 +41,7 @@
                     <div class="carousel-inner">
                         {% for gal in gallery %}
                         <div class="carousel-item" id="img-show-{{ gal.id }}" name="img-show">
-                            <img class="img-fluid" src="{{ url_for('static', filename=gal.url[7:]) }}" id="foto-modal-show">
+                            <img class="img-fluid w-100" src="{{ url_for('static', filename=gal.url[7:]) }}" id="foto-modal-show">
                         </div>
                         {% endfor %}
                     </div>
