@@ -18,7 +18,7 @@
             <div class="container">
                 <div class="card mt-2 mb-2 mr-4 ml-4" style="background: rgba(255, 255, 255, 0.8);">
                   <div class="card-body pt-1 pb-1">
-                      <h3 class="card-title">Volume Tampungan</h3>
+                      <h3 class="card-title">Volume Tampungan {{ count.waduk }} Bendungan</h3>
                       <div class="row">
                           <div class="col-md-6">
                               <canvas id="pieChart"></canvas>
@@ -127,9 +127,48 @@
 
 <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.9.4/Chart.js"></script>
 <script>
-    var xValues = ["Realisasi", "Potensial"];
-    var yValues = [{{ real.volume }}, {{ real.volume - vol_potensi }}];
-    var barColors = ["aqua", "grey"];
+    // var volumeData = {
+    //     Potensial: {{ vol_potensi }},
+    //     Realisasi: {{ real.volume }},
+    //     RTOW: {{ rtow.outflow }}
+    // };
+    var volumeData = [
+        ["Realisasi", 430000000],
+        ["Potensial", 750000000],
+        ["RTOW", 380000000]
+    ];
+    volumeData = volumeData.sort(function (a, b) {
+        return a[1] - b[1];
+    });
+    console.log(volumeData);
+
+    var xValues = [];
+    var yValues = [];
+    var barColors = [];
+    Object.values(volumeData).forEach(function(val, idx, arr) {
+        xValues.push(val[0]);
+
+        volEach = val[1];
+        if (idx - 1 >= 0) {
+            volEach -= arr[idx - 1][1];
+        }
+        yValues.push(volEach);
+
+        if (val[0] == "Potensial") {
+            barColors.push("white");
+        }
+        else if (val[0] == "Realisasi") {
+            barColors.push("blue");
+        }
+        else if (val[0] == "RTOW") {
+            barColors.push("aqua");
+        }
+        else {
+            barColors.push("grey");
+        }
+    });
+
+    // var yValues = [{{ real.volume }}, {{ real.volume - vol_potensi }}];
     new Chart("pieChart", {
       type: "pie",
       data: {
@@ -137,6 +176,7 @@
         datasets: [{
           backgroundColor: barColors,
           borderColor: "black",
+          borderWidth: 0,
           data: yValues
         }]
       },
@@ -152,7 +192,25 @@
                 boxWidth: 30,
                 padding: 30
             }
-        }
+        },
+        tooltips: {
+            enabled: true,
+            callbacks: {
+                label: function(tooltipItem, data) {
+                    var dataset = data.datasets[tooltipItem.datasetIndex];
+                    var total = dataset.data.reduce(function(previousValue, currentValue, currentIndex, array) {
+                        return previousValue + currentValue;
+                    });
+                    // var currentValue = dataset.data[tooltipItem.index];
+                    var currentValue = volumeData[tooltipItem.index][1];
+                    var percentage = Math.floor(((currentValue/total) * 100)+0.5);
+
+                    var name = data.labels[tooltipItem.index];
+
+                    return `${name} ${percentage} %`;
+                }
+            }
+        },
       }
     });
 </script>
