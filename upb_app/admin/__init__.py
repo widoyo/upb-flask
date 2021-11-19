@@ -9,6 +9,7 @@ from telegram import Bot
 from upb_app import app
 import datetime
 import base64
+import uuid
 import os
 
 import paho.mqtt.client as mqtt
@@ -269,8 +270,11 @@ def foto_update():
 
     if foto:
         imageStr = foto_base64.split(',')[1]
+        f_ext = foto_base64.split(':')[1].split('/')[1].split(';')[0]
+
         filename = foto.url.split("/")[-1]
-        img_file = os.path.join(app.config['UPLOAD_FOLDER'], filename)
+        new_filename = "_".join(filename.split("_")[:-1]) + f"_{str(uuid.uuid4())}.{f_ext}"
+        img_file = os.path.join(app.config['UPLOAD_FOLDER'], new_filename)
         save_file = os.path.join(app.config['SAVE_DIR'], img_file)
 
         # convert base64 into image file and then save it
@@ -278,6 +282,12 @@ def foto_update():
         with open(save_file, 'wb') as f:
             f.write(imgdata)
 
+        # delete the old file
+        old_file = os.path.join(app.config['SAVE_DIR'], foto.url)
+        if os.path.exists(old_file):
+            os.remove(old_file)
+
+        foto.url = img_file
         db.session.commit()
 
         flash('Foto berhasil di update !', 'success')

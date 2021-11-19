@@ -13,6 +13,7 @@ from upb_app import app, db, admin_only, petugas_only, role_check, role_check_em
 import datetime
 import calendar
 import base64
+import uuid
 import csv
 import sys
 import os
@@ -211,7 +212,8 @@ def insert_tma(bend_id, hari, jam, tma, vol, foto):
         latest = Foto.query.order_by(Foto.id.desc()).first()
         f_ext = foto.split(':')[1].split('/')[1].split(';')[0]
         imageStr = foto.split(',')[1]
-        filename = f"tma_peilschaal_{bend_id}_{hari}_{jam}.{f_ext}"
+        random_str = str(uuid.uuid4())
+        filename = f"tma_bendungan_{bend_id}_{hari}_{jam}_{random_str}.{f_ext}"
         img_file = os.path.join(app.config['UPLOAD_FOLDER'], filename)
         save_file = os.path.join(app.config['SAVE_DIR'], img_file)
 
@@ -221,15 +223,22 @@ def insert_tma(bend_id, hari, jam, tma, vol, foto):
             f.write(imgdata)
 
         foto = Foto.query.filter(Foto.obj_type=="manual_tma", Foto.obj_id==new_id).first()
-        if not foto:
+        if foto:
+            old_file = os.path.join(app.config['SAVE_DIR'], foto.url)
+            if os.path.exists(old_file):
+                os.remove(old_file)
+
+            foto.url = img_file
+        else:
             foto = Foto(
                 url=img_file,
                 obj_type="manual_tma",
                 obj_id=new_id
             )
-            foto.keterangan = f"TMA Peilshcaal Bendungan <{bend_id}> {hari} {jam}"
+            foto.keterangan = f"TMA Bendungan <{bend_id}> {hari} {jam}"
             db.session.add(foto)
-            db.session.commit()
+
+        db.session.commit()
 
         flash('TMA berhasil ditambahkan !', 'success')
     except Exception as e:
