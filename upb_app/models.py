@@ -131,6 +131,10 @@ class ManualVnotch(BaseLog):
     vn2_deb = db.Column(db.Float, nullable=True)
     vn3_tma = db.Column(db.Float, nullable=True)
     vn3_deb = db.Column(db.Float, nullable=True)
+    vn4_tma = db.Column(db.Float, nullable=True)
+    vn4_deb = db.Column(db.Float, nullable=True)
+    vn5_tma = db.Column(db.Float, nullable=True)
+    vn5_deb = db.Column(db.Float, nullable=True)
     bendungan_id = db.Column(db.Integer, db.ForeignKey('bendungan.id'), nullable=True)
 
     __table_args__ = (db.UniqueConstraint('bendungan_id', 'sampling',

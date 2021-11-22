@@ -84,6 +84,10 @@ def keamanan_vnotch(bendungan_id):
                 'vn2_deb': form.vn2_deb.data,
                 'vn3_tma': form.vn3_tma.data,
                 'vn3_deb': form.vn3_deb.data,
+                'vn4_tma': form.vn4_tma.data,
+                'vn4_deb': form.vn4_deb.data,
+                'vn5_tma': form.vn5_tma.data,
+                'vn5_deb': form.vn5_deb.data,
                 'bendungan_id': bendungan_id
             }
             vn = ManualVnotch.query.filter(

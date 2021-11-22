@@ -161,6 +161,10 @@ class AddVnotch(FlaskForm):
     vn2_deb = DecimalField('Vnotch 2 Debit', validators=[Optional()])
     vn3_tma = DecimalField('Vnotch 3 TMA', validators=[Optional()])
     vn3_deb = DecimalField('Vnotch 3 Debit', validators=[Optional()])
+    vn4_tma = DecimalField('Vnotch 4 TMA', validators=[Optional()])
+    vn4_deb = DecimalField('Vnotch 4 Debit', validators=[Optional()])
+    vn5_tma = DecimalField('Vnotch 5 TMA', validators=[Optional()])
+    vn5_deb = DecimalField('Vnotch 5 Debit', validators=[Optional()])
     submit = SubmitField('Kirim')
 
 
