@@ -1,6 +1,6 @@
 from flask import Blueprint, jsonify, request
 from upb_app.helper import day_range
-from upb_app.models import Bendungan, ManualDaily, ManualTma, ManualPiezo, ManualVnotch
+from upb_app.models import Bendungan, ManualDaily, ManualTma, ManualPiezo, ManualVnotch, Rencana
 from sqlalchemy import and_
 
 import datetime
@@ -95,4 +95,47 @@ def bendungan_periodic():
                 "vnotch_tin3": vnotch.vn3_tma if vnotch else None
             }
         )
+    return jsonify(result)
+
+
+@bp.route('/bendungan/volume')
+def bendungan_volume():
+    if request.values.get('sampling'):
+        param = request.values.get('sampling').replace('/', '-')
+    else:
+        param = datetime.datetime.now().strftime("%Y-%m-%d")
+    sampling, end = day_range(param)
+
+    result = []
+    bendungan = Bendungan.query.all()
+    for bend in bendungan:
+        daily = ManualDaily.query.filter(
+                                        and_(
+                                            ManualDaily.sampling >= sampling,
+                                            ManualDaily.sampling <= end),
+                                        ManualDaily.bendungan_id == bend.id
+                                    ).first()
+
+        tma = ManualTma.query.filter(
+                                    ManualTma.sampling == f"{sampling.strftime('%Y-%m-%d')} 06:00:00",
+                                    ManualTma.bendungan_id == bend.id
+                                ).first()
+
+        rotw = Rencana.query.filter(
+                                    Rencana.sampling >= sampling,
+                                    Rencana.po_tma > 0
+                                ).order_by(Rencana.sampling).first()
+
+        result.append(
+            {
+                "sampling": sampling.strftime("%Y-%m-%d %H:%M:%S"),
+                "name": " ".join([s.title() for s in bend.nama.split("_")]),
+                "volume_potensial": bend.volume,
+                "volume_real": tma.vol if tma else 0,
+                "volume_rotw": rotw.vol if rotw else 0,
+            }
+        )
+
+    result = sorted(result, key = lambda x: x['volume_real']/x['volume_potensial'], reverse=True)
+
     return jsonify(result)
