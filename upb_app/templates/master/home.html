@@ -20,44 +20,11 @@
                   <div class="card-body pt-1 pb-1">
                       <h3 class="card-title">Volume Tampungan {{ count.waduk }} Bendungan</h3>
                       <div class="row">
-                          <div class="col-md-6">
+                          <div class="col-md-6 mb-2">
                               <canvas id="pieChart"></canvas>
                           </div>
-                          <div class="col-md-6">
-                              <div class="row container ml-2">
-                                  <div class="col-4">
-                                      <div class="text-left">
-                                          <span>Potensial</span>
-                                      </div>
-                                  </div>
-                                  <div class="col-8">
-                                      <div class="text-right">
-                                          <h3>{{ "{:,.0f}".format(vol_potensi) }} M<sup>3</sup></h3>
-                                      </div>
-                                  </div>
-                              </div>
-                              <div class="row container ml-2">
-                                  <div class="col-4 float-left">
-                                      <span>Realisasi</span>
-                                  </div>
-                                  <div class="col-8">
-                                      <div class="text-right">
-                                          <h3>{{ "{:,.0f}".format(real.volume) }} M<sup>3</sup></h3>
-                                      </div>
-                                  </div>
-                              </div>
-                              <div class="row container ml-2">
-                                  <div class="col-4">
-                                      <div class="text-left">
-                                          <span>RTOW</span>
-                                      </div>
-                                  </div>
-                                  <div class="col-8">
-                                      <div class="text-right">
-                                          <h3>{{ "{:,.0f}".format(rtow.volume) }} M<sup>3</sup></h3>
-                                      </div>
-                                  </div>
-                              </div>
+                          <div class="col-md-6" id="chartLegend">
+                              
                           </div>
                       </div>
                   </div>
@@ -127,16 +94,20 @@
 
 <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.9.4/Chart.js"></script>
 <script>
-    // var volumeData = {
-    //     Potensial: {{ vol_potensi }},
-    //     Realisasi: {{ real.volume }},
-    //     RTOW: {{ rtow.outflow }}
-    // };
+    function add(accumulator, a) {
+        return accumulator + a;
+    }
+
     var volumeData = [
-        ["Realisasi", 430000000],
-        ["Potensial", 750000000],
-        ["RTOW", 380000000]
+        ["Potensial", {{ vol_potensi }}],
+        ["Realisasi", {{ real.volume }}],
+        ["RTOW", {{ rtow.volume }}]
     ];
+    // var volumeData = [
+    //     ["Realisasi", 430000000],
+    //     ["Potensial", 750000000],
+    //     ["RTOW", 380000000]
+    // ];
     volumeData = volumeData.sort(function (a, b) {
         return a[1] - b[1];
     });
@@ -169,7 +140,7 @@
     });
 
     // var yValues = [{{ real.volume }}, {{ real.volume - vol_potensi }}];
-    new Chart("pieChart", {
+    var allChart = new Chart("pieChart", {
       type: "pie",
       data: {
         labels: xValues,
@@ -186,12 +157,48 @@
           text: "Volume Realisasi"
         },
         legend: {
+            display: false,
             position: 'left',
             labels: {
                 fontColor: "black",
                 boxWidth: 30,
                 padding: 30
             }
+        },
+        legendCallback: function(chart) {
+            var colors = [];
+            chart.data.datasets[0].backgroundColor.forEach(function (c) {
+                if (c == "blue") {
+                    colors.push('primary');
+                } else if (c == "aqua") {
+                    colors.push('info');
+                } else if (c == "white") {
+                    colors.push('light');
+                } else {
+                    colors.push('secondary');
+                }
+            });
+
+            var volumes = [];
+            chart.data.datasets[0].data.forEach(function (v, idx, arr) {
+                var val = v + arr.slice(0, idx).reduce(add, 0);
+                volumes.push(val);
+            })
+
+            var text = [];
+            text.push('<div class="' + chart.id + '-legend">');
+            for (var i = 0; i < chart.data.datasets[0].data.length; i++) {
+                text.push('<div class="row container"><div class="col-5"><div class="text-left">');
+                if (chart.data.labels[i]) {
+                    text.push(`<span class="badge badge-${colors[i]}">Vol</span>`);
+                    text.push(`<span> ${chart.data.labels[i]}</span>`);
+                }
+                text.push('</div></div><div class="col-7"><div class="text-right"><h3>');
+                text.push(parseFloat(volumes[i]/1000000).toFixed(1).toLocaleString());
+                text.push(' Jt M<sup>3</sup></h3></div></div></div>');
+            }
+            text.push('</div>');
+            return text.join("");
         },
         tooltips: {
             enabled: true,
@@ -203,7 +210,7 @@
                     });
                     // var currentValue = dataset.data[tooltipItem.index];
                     var currentValue = volumeData[tooltipItem.index][1];
-                    var percentage = Math.floor(((currentValue/total) * 100)+0.5);
+                    var percentage = parseFloat((currentValue/total) * 100).toFixed(2);
 
                     var name = data.labels[tooltipItem.index];
 
@@ -213,4 +220,6 @@
         },
       }
     });
+
+    document.getElementById("chartLegend").innerHTML = allChart.generateLegend();
 </script>
