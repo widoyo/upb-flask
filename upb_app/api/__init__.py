@@ -109,6 +109,9 @@ def bendungan_volume():
     result = []
     bendungan = Bendungan.query.all()
     for bend in bendungan:
+        if bend.volume <= 0:
+            continue
+            
         daily = ManualDaily.query.filter(
                                         and_(
                                             ManualDaily.sampling >= sampling,
