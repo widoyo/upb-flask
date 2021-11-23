@@ -1,5 +1,6 @@
 import datetime
 import random
+import requests
 from urllib.parse import urlparse, urljoin
 from flask import render_template, redirect, url_for, flash, request, abort, Blueprint
 from flask_login import current_user, login_required, login_user, logout_user

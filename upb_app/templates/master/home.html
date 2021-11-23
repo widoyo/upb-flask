@@ -24,7 +24,7 @@
                               <canvas id="pieChart"></canvas>
                           </div>
                           <div class="col-md-6" id="chartLegend">
-                              
+
                           </div>
                       </div>
                   </div>
@@ -66,29 +66,27 @@
             </div>
         </div>
         <div class="col-md-6">
-            <!-- <div class="card mt-2 mb-2 mr-4 ml-4" style="background: rgba(255, 255, 255, 0.8);">
-                <div class="card-body row pt-1 pb-1">
-                    <div class="col-md-4">
-                        <h3 class="card-title">Volume Tampungan</h3>
-                    </div>
-                    <div class="col-md-8">
-                        <div class="row container ml-2">
-                            <div class="col-xs-4">
-                                <div class="text-left">
-                                    <span>Potensial</span>
-                                </div>
+            <div class="container">
+                <div class="card mt-2 mb-2 mr-4 ml-4 overflow-auto" style="background: rgba(255, 255, 255, 0.8); max-height: 600px">
+                  <div class="card-body pt-1 pb-1">
+                      <h3 class="card-title">Status Volume Bendungan</h3>
+                      {% for _ in range(count.waduk) %}
+                        {% if loop.index % 2 != 0 %}
+                            <div class="row">
+                        {% endif %}
+                          <div class="col-sm-6">
+                              <canvas id="pieChart-{{ loop.index0 }}"></canvas>
+                              <hr>
+                          </div>
+                        {% if loop.index % 2 == 0 %}
                             </div>
-                            <div class="col-xs-8">
-                                <div class="text-right">
-                                    <h3>{{ vol_embung }} M<sup>3</sup></h3>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
+                        {% endif %}
+                      {% endfor %}
+                  </div>
                 </div>
-            </div> -->
-          </div>
+            </div>
         </div>
+      </div>
     </div>
 </div>
 
@@ -117,8 +115,6 @@
     var yValues = [];
     var barColors = [];
     Object.values(volumeData).forEach(function(val, idx, arr) {
-        xValues.push(val[0]);
-
         volEach = val[1];
         if (idx - 1 >= 0) {
             volEach -= arr[idx - 1][1];
@@ -126,16 +122,20 @@
         yValues.push(volEach);
 
         if (val[0] == "Potensial") {
-            barColors.push("white");
+            xValues.push("Potensial");
+            barColors.push("grey");
         }
         else if (val[0] == "Realisasi") {
+            xValues.push("Realisasi");
             barColors.push("blue");
         }
         else if (val[0] == "RTOW") {
+            xValues.push("RTOW");
             barColors.push("aqua");
         }
         else {
-            barColors.push("grey");
+            xValues.push("TBA");
+            barColors.push("white");
         }
     });
 
@@ -172,10 +172,10 @@
                     colors.push('primary');
                 } else if (c == "aqua") {
                     colors.push('info');
-                } else if (c == "white") {
-                    colors.push('light');
-                } else {
+                } else if (c == "grey") {
                     colors.push('secondary');
+                } else {
+                    colors.push('light');
                 }
             });
 
@@ -214,7 +214,7 @@
 
                     var name = data.labels[tooltipItem.index];
 
-                    return `${name} ${percentage} %`;
+                    return `${name} : ${percentage} %`;
                 }
             }
         },
@@ -222,4 +222,95 @@
     });
 
     document.getElementById("chartLegend").innerHTML = allChart.generateLegend();
+
+    fetch('/api/bendungan/volume')
+        .then(response => response.json())
+        .then(data => {
+            data.forEach(function(bend, idx, bendungan) {
+                console.log();
+                var volumeData = [
+                    ["Potensial", bend['volume_potensial']],
+                    ["Realisasi", bend['volume_real']]
+                ];
+
+                volumeData = volumeData.sort(function (a, b) {
+                    return a[1] - b[1];
+                });
+                console.log(volumeData);
+
+                var xValues = [];
+                var yValues = [];
+                var barColors = [];
+                Object.values(volumeData).forEach(function(val, idx2, arr) {
+                    volEach = val[1];
+                    if (idx2 - 1 >= 0) {
+                        volEach -= arr[idx2 - 1][1];
+                    }
+                    yValues.push(volEach);
+
+                    if (val[0] == "Potensial") {
+                        xValues.push("Vol banjir yg dapat ditampung");
+                        barColors.push("grey");
+                    }
+                    else if (val[0] == "Realisasi") {
+                        xValues.push("Vol saat ini");
+                        barColors.push("blue");
+                    }
+                    else if (val[0] == "RTOW") {
+                        xValues.push("RTOW");
+                        barColors.push("aqua");
+                    }
+                    else {
+                        xValues.push("TBA");
+                        barColors.push("white");
+                    }
+                });
+
+                new Chart(`pieChart-${idx}`, {
+                  type: "pie",
+                  data: {
+                    labels: xValues,
+                    datasets: [{
+                      backgroundColor: barColors,
+                      borderColor: "black",
+                      borderWidth: 0,
+                      data: yValues
+                    }]
+                  },
+                  options: {
+                        title: {
+                          display: true,
+                          text: `${bend.name} (Vol. Normal : ${parseFloat(bend.volume_potensial/1000000).toFixed(2)} juta m3)`,
+                          fontColor: "black"
+                        },
+                        legend: {
+                            display: true,
+                            position: 'right',
+                            labels: {
+                                fontColor: "black",
+                                boxWidth: 30,
+                                padding: 30
+                            }
+                        },
+                        tooltips: {
+                            enabled: true,
+                            callbacks: {
+                                label: function(tooltipItem, data) {
+                                    var dataset = data.datasets[tooltipItem.datasetIndex];
+                                    var total = dataset.data.reduce(function(previousValue, currentValue, currentIndex, array) {
+                                        return previousValue + currentValue;
+                                    });
+                                    var currentValue = dataset.data[tooltipItem.index];
+                                    var percentage = parseFloat((currentValue/total) * 100).toFixed(2);
+
+                                    var name = data.labels[tooltipItem.index];
+
+                                    return `${percentage} %`;
+                                }
+                            }
+                        },
+                    }
+                });
+            });
+        });
 </script>

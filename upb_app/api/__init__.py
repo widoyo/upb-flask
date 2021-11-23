@@ -128,6 +128,7 @@ def bendungan_volume():
 
         result.append(
             {
+                "id": bend.id,
                 "sampling": sampling.strftime("%Y-%m-%d %H:%M:%S"),
                 "name": " ".join([s.title() for s in bend.nama.split("_")]),
                 "volume_potensial": bend.volume,
