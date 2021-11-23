@@ -97,19 +97,13 @@
     }
 
     var volumeData = [
-        ["Potensial", {{ vol_potensi }}],
+        ["RTOW", {{ rtow.volume }}],
         ["Realisasi", {{ real.volume }}],
-        ["RTOW", {{ rtow.volume }}]
+        ["Potensial", {{ vol_potensi }}]
     ];
-    // var volumeData = [
-    //     ["Realisasi", 430000000],
-    //     ["Potensial", 750000000],
-    //     ["RTOW", 380000000]
-    // ];
-    volumeData = volumeData.sort(function (a, b) {
-        return a[1] - b[1];
-    });
-    console.log(volumeData);
+    // volumeData = volumeData.sort(function (a, b) {
+    //     return a[1] - b[1];
+    // });
 
     var xValues = [];
     var yValues = [];
@@ -229,14 +223,12 @@
             data.forEach(function(bend, idx, bendungan) {
                 console.log();
                 var volumeData = [
-                    ["Potensial", bend['volume_potensial']],
-                    ["Realisasi", bend['volume_real']]
+                    ["Realisasi", bend['volume_real']],
+                    ["Potensial", bend['volume_potensial']]
                 ];
-
-                volumeData = volumeData.sort(function (a, b) {
-                    return a[1] - b[1];
-                });
-                console.log(volumeData);
+                // volumeData = volumeData.sort(function (a, b) {
+                //     return a[1] - b[1];
+                // });
 
                 var xValues = [];
                 var yValues = [];
