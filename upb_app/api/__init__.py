@@ -111,7 +111,7 @@ def bendungan_volume():
     for bend in bendungan:
         if bend.volume <= 0:
             continue
-            
+
         daily = ManualDaily.query.filter(
                                         and_(
                                             ManualDaily.sampling >= sampling,
@@ -136,7 +136,7 @@ def bendungan_volume():
                 "name": " ".join([s.title() for s in bend.nama.split("_")]),
                 "volume_potensial": bend.volume,
                 "volume_real": tma.vol if tma else 0,
-                "volume_rotw": rotw.vol if rotw else 0,
+                "volume_rotw": rotw.po_vol if rotw else 0,
             }
         )
 
