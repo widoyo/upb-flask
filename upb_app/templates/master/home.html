@@ -1,95 +1,28 @@
-
-<div style="height: 100%; width: 100%; background-size: inherit; background-image: url({{ url_for('static', filename='images/bd_cengklik_1.jpg') }})">
-    <div style="background-color: rgba(255,255,255,0.5);">
-        <div class="container text-left pb-2 pt-2">
-            <h1>
-                <span style="color: white; text-shadow: 2px 2px 5px #666;">
-                    <a style="color: white;" href="{{ url_for('bendungan.index') }}">
-                        Ringkasan {{ count.waduk }} Bendungan <!-- dan {{ count.embung }} Embung -->
-                        <br>
-                        Status: {{ tgl.strftime('%d %b %Y') }}
-                    </a>
-                </span>
-            </h1>
+<div class="container">
+    <div class="row">
+        <div class="col-md-6"><p>Status: {{ tgl.strftime('%d %b %Y') }}</p>
+            <h3>Volume</h3>
+            <canvas id="pieChart"></canvas>
         </div>
-    </div>
-    <div class="row mr-1">
-        <div class="col-md-6">
-            <div class="container">
-                <div class="card mt-2 mb-2 mr-4 ml-4" style="background: rgba(255, 255, 255, 0.8);">
-                  <div class="card-body pt-1 pb-1">
-                      <h3 class="card-title">Volume Tampungan {{ count.waduk }} Bendungan</h3>
-                      <div class="row">
-                          <div class="col-md-6 mb-2">
-                              <canvas id="pieChart"></canvas>
-                          </div>
-                          <div class="col-md-6" id="chartLegend">
-
-                          </div>
-                      </div>
-                  </div>
-                </div>
-                <div class="card mt-2 mb-2 mr-4 ml-4"  style="background: rgba(255, 255, 255, 0.8);">
-                  <div class="card-body row pt-0 pb-0">
-                      <table style="width: 100%" class="table table-bordered">
-                        <tr>
-                            <th colspan="2" style="text-align: center; border-bottom: solid 1px #999;"><span class="huge">Total Outflow</span></th>
-                        </tr>
-                        <tr>
-                            <td class="text-center" style="width: 50%;border-right: solid 1px black;"><span style="z-index: -99; float: left;vertical-align: middle;" class="">
-                                RTOW</span><span style="font-size: 200%">{{ "{:,.2f}".format(rtow.outflow) }}</span> (M<sup>3</sup>/detik)
-                            </td>
-                            <td class="text-center" style="width: 50%"><span style="z-index: -99; float: left;vertical-align: middle;" class="">
-                                Realisasi</span><span style="font-size: 200%">{{ "{:,.2f}".format(real.outflow) }}</span> (M<sup>3</sup>/detik)
-                            </td>
-                        </tr>
-                    </table>
-                  </div>
-                </div>
-                <div class="card mt-2 mb-2 mr-4 ml-4"  style="background: rgba(255, 255, 255, 0.8);">
-                  <div class="card-body row pt-0 pb-0">
-                      <table style="width: 100%" class="table table-bordered">
-                        <tr>
-                            <th colspan="2" style="text-align: center; border-bottom: solid 1px #999;"><span class="huge">Total Inflow</span></th>
-                        </tr>
-                        <tr>
-                            <td class="text-center" style="width: 50%;border-right: solid 1px black;"><span style="z-index: -99; float: left;vertical-align: middle;" class="">
-                                RTOW</span><span style="font-size: 200%">{{ "{:,.0f}".format(rtow.inflow) }}</span> (M<sup>3</sup>/detik)
-                            </td>
-                            <td class="text-center" style="width: 50%"><span style="z-index: -99; float: left;vertical-align: middle;" class="">
-                                Realisasi</span><span style="font-size: 200%">{{ "{:,.0f}".format(real.inflow) }}</span> (M<sup>3</sup>/detik)
-                            </td>
-                        </tr>
-                    </table>
-                  </div>
-                </div>
-            </div>
+        <div class="col-md-3">
+            <p>&nbsp;</p>
+            <h3>Outflow <small class="text-muted">(M<sup>3</sup>/detik)</small></h3>
+            <table class="table">
+                <tr><td>Rencana (RTOW)</td><td class="text-right">0.81</td></tr>
+                <tr><td>Realisasi</td><td class="text-right">16,225,130.16</td></tr>
+            </table>
         </div>
-        <div class="col-md-6">
-            <div class="container">
-                <div class="card mt-2 mb-2 mr-4 ml-4 overflow-auto" style="background: rgba(255, 255, 255, 0.8); max-height: 600px">
-                  <div class="card-body pt-1 pb-1">
-                      <h3 class="card-title">Status Volume Bendungan</h3>
-                      {% for _ in range(count.waduk) %}
-                        {% if loop.index % 2 != 0 %}
-                            <div class="row">
-                        {% endif %}
-                          <div class="col-sm-6">
-                              <canvas id="pieChart-{{ loop.index0 }}"></canvas>
-                              <hr>
-                          </div>
-                        {% if loop.index % 2 == 0 %}
-                            </div>
-                        {% endif %}
-                      {% endfor %}
-                  </div>
-                </div>
-            </div>
+        <div class="col-md-3">
+            <p>&nbsp;</p>
+            <h3>Inflow <small class="text-muted">(M<sup>3</sup>/detik)</small></h3>
+            
+            <table class="table">
+                <tr><td>Rencana (RTOW)</td><td class="text-right">0.81</td></tr>
+                <tr><td>Realisasi</td><td class="text-right">16,225,130.16</td></tr>
+            </table>
         </div>
-      </div>
     </div>
 </div>
-
 <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.9.4/Chart.js"></script>
 <script>
     function add(accumulator, a) {
@@ -117,11 +50,11 @@
 
         if (val[0] == "Potensial") {
             xValues.push("Potensial");
-            barColors.push("grey");
+            barColors.push("#eee");
         }
         else if (val[0] == "Realisasi") {
             xValues.push("Realisasi");
-            barColors.push("blue");
+            barColors.push("#0277bd");
         }
         else if (val[0] == "RTOW") {
             xValues.push("RTOW");
@@ -140,15 +73,19 @@
         labels: xValues,
         datasets: [{
           backgroundColor: barColors,
-          borderColor: "black",
-          borderWidth: 0,
+          borderColor: "#aaa",
+          borderWidth: 1,
           data: yValues
         }]
       },
       options: {
+        //borderAlign: 'inner',
         title: {
-          display: false,
-          text: "Volume Realisasi"
+          display: true,
+          text: "Volume Tampungan Bendungan",
+          fontColor: "#888",
+          fontSize: 16,
+          fontStyle: 'normal'
         },
         legend: {
             display: false,
@@ -215,7 +152,7 @@
       }
     });
 
-    document.getElementById("chartLegend").innerHTML = allChart.generateLegend();
+    //document.getElementById("chartLegend").innerHTML = allChart.generateLegend();
 
     fetch('/api/bendungan/volume')
         .then(response => response.json())

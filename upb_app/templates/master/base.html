@@ -43,10 +43,6 @@
 
             {% include 'master/navbar.html' %}
 
-            {% if title == "Home" %}
-                {% include 'master/home.html' %}
-            {% endif %}
-
             <!-- Content Wrapper -->
             <div class="container" id="content-wrapper">
 
@@ -66,10 +62,10 @@
                           {% endif %}
                         {% endwith %}
 
-                        {% block content %}{% endblock %}
 
                     </div>
                     <!-- /.container-fluid -->
+                    {% block content %}{% endblock %}
 
                 </div>
                 <!-- End of Main Content -->

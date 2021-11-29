@@ -134,6 +134,8 @@ def bendungan_volume():
                 "id": bend.id,
                 "sampling": sampling.strftime("%Y-%m-%d %H:%M:%S"),
                 "name": " ".join([s.title() for s in bend.nama.split("_")]),
+                "kab": bend.kab,
+                "wil": bend.wil_sungai,
                 "volume_potensial": bend.volume,
                 "volume_real": tma.vol if tma else 0,
                 "volume_rotw": rotw.po_vol if rotw else 0,

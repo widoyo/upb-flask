@@ -1,62 +1,103 @@
 {% extends 'master/base.html' %}
 
 {% block css %}
-
+<style>
+    .section {
+        margin-bottom: 60px;
+    }
+    .each_bd {
+        display: none;
+    }
+</style>
 {% endblock %}
 
 {% block content %}
-<div class="text-center">
-    <h3>GALERI</h3>
-    <div class="card m-2">
+<div class="row section">
+    <div class="col-md-6"><p>Status: {{ tgl.strftime('%d %b %Y') }}</p>
+        <h3>Volume Total</h3>
+        <canvas id="pieChart"></canvas>
+    </div>
+    <div class="col-md-3">
+        <p>&nbsp;</p>
+        <h3>Outflow </h3>
+        <p><small class="text-muted">(M<sup>3</sup>/detik)</small></p>
+        <table class="table">
+            <tr><td>Rencana (RTOW)</td><td class="text-right">0.81</td></tr>
+            <tr><td>Realisasi</td><td class="text-right">16,225,130.16</td></tr>
+        </table>
+    </div>
+    <div class="col-md-3">
+        <p>&nbsp;</p>
+        <h3>Inflow</h3>
+        <p> <small class="text-muted">(M<sup>3</sup>/detik)</small></p>
+        <table class="table">
+            <tr><td>Rencana (RTOW)</td><td class="text-right">0.81</td></tr>
+            <tr><td>Realisasi</td><td class="text-right">16,225,130.16</td></tr>
+        </table>
+    </div>
+</div>
+<div class="row">
+    <div class="col-md"><h3>Volume per Bendungan <small class="text-muted">[<a href="#" onClick="toggleEachBd()">sembunyikan</a>]</small></h3></div>
+</div>
+<div class="row section">
+    <div class="col-md-4 each_bd" id="wil_1"><h4>Hulu</h4>
+    </div>
+    <div class="col-md-4 each_bd" id="wil_2"><h4>Madiun</h4>
+    </div>
+    <div class="col-md-4 each_bd" id="wil_3"><h4>Hilir</h4>
+    </div>
+</div>
+<div class="row">
+    <div class="col"><h3>Kegiatan</h3></div>
+</div>
+<div class="row section">
+    {% for gal in gallery %}
+    <div class="col-md-3 align-middle pt-1 pb-1">
+        <a data-toggle="modal" href="#gallery-scroll"
+            role="button" aria-expanded="false"
+            class="card-link" onclick="openGallery({{ gal.id }})">
+            <img class="img-fluid" id="foto-{{ gal.id }}" src="{{ url_for('static', filename=gal.url[7:]) }}" alt="NO IMAGE" style="width: 100%; height: auto;">
+        </a>
+    </div>
+
+        {% if loop.index % 4 == 0 %}
+        </div>
         <div class="row">
-            {% for gal in gallery %}
-            <div class="col-md-3 align-middle pt-1 pb-1">
-                <a data-toggle="modal" href="#gallery-scroll"
-                    role="button" aria-expanded="false"
-                    class="card-link" onclick="openGallery({{ gal.id }})">
-                    <img class="img-fluid" id="foto-{{ gal.id }}" src="{{ url_for('static', filename=gal.url[7:]) }}" alt="NO IMAGE" style="width: 100%; height: auto;">
+        {% endif %}
+
+    {% endfor %}
+</div>
+
+    <!-- MODAL + CAROUSEL -->
+    <div class="modal fade" id="gallery-scroll" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+        <div class="modal-dialog modal-lg modal-dialog-centered" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="gallery_name">Galeri Kegiatan</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+            <div id="carouselExampleControls" class="carousel slide" data-ride="carousel">
+                <div class="carousel-inner">
+                    {% for gal in gallery %}
+                    <div class="carousel-item" id="img-show-{{ gal.id }}" name="img-show">
+                        <img class="img-fluid w-100" src="{{ url_for('static', filename=gal.url[7:]) }}" id="foto-modal-show">
+                    </div>
+                    {% endfor %}
+                </div>
+                <a class="carousel-control-prev" href="#carouselExampleControls" role="button" data-slide="prev">
+                    <span class="carousel-control-prev-icon" aria-hidden="true"></span>
+                    <span class="sr-only">Previous</span>
+                </a>
+                <a class="carousel-control-next" href="#carouselExampleControls" role="button" data-slide="next">
+                    <span class="carousel-control-next-icon" aria-hidden="true"></span>
+                    <span class="sr-only">Next</span>
                 </a>
             </div>
-
-                {% if loop.index % 4 == 0 %}
-                </div>
-                <div class="row">
-                {% endif %}
-
-            {% endfor %}
-        </div>
-
-        <!-- MODAL + CAROUSEL -->
-        <div class="modal fade" id="gallery-scroll" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
-          <div class="modal-dialog modal-lg modal-dialog-centered" role="document">
-            <div class="modal-content">
-              <div class="modal-header">
-                  <h5 class="modal-title" id="gallery_name">Galeri Kegiatan</h5>
-                  <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                    <span aria-hidden="true">&times;</span>
-                  </button>
-              </div>
-              <div class="modal-body">
-                <div id="carouselExampleControls" class="carousel slide" data-ride="carousel">
-                    <div class="carousel-inner">
-                        {% for gal in gallery %}
-                        <div class="carousel-item" id="img-show-{{ gal.id }}" name="img-show">
-                            <img class="img-fluid w-100" src="{{ url_for('static', filename=gal.url[7:]) }}" id="foto-modal-show">
-                        </div>
-                        {% endfor %}
-                    </div>
-                    <a class="carousel-control-prev" href="#carouselExampleControls" role="button" data-slide="prev">
-                        <span class="carousel-control-prev-icon" aria-hidden="true"></span>
-                        <span class="sr-only">Previous</span>
-                    </a>
-                    <a class="carousel-control-next" href="#carouselExampleControls" role="button" data-slide="next">
-                        <span class="carousel-control-next-icon" aria-hidden="true"></span>
-                        <span class="sr-only">Next</span>
-                    </a>
-                </div>
-              </div>
             </div>
-          </div>
+        </div>
         </div>
     </div>
 </div>
@@ -64,7 +105,241 @@
 {% endblock %}
 
 {% block js %}
+<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.9.4/Chart.js"></script>
 <script>
+    function add(accumulator, a) {
+        return accumulator + a;
+    }
+
+    function toggleEachBd() {
+        var x = document.getElementsByClassName('each_bd');
+        if (x.style.display === 'none') {
+            x.style.display = "block";
+        } else {
+            x.style.display = 'none';
+        }
+    }
+    var volumeData = [
+        ["RTOW", {{ rtow.volume }}],
+        ["Realisasi", {{ real.volume }}],
+        ["Potensial", {{ vol_potensi }}]
+    ];
+    // volumeData = volumeData.sort(function (a, b) {
+    //     return a[1] - b[1];
+    // });
+
+    var xValues = [];
+    var yValues = [];
+    var barColors = [];
+    Object.values(volumeData).forEach(function(val, idx, arr) {
+        volEach = val[1];
+        if (idx - 1 >= 0) {
+            volEach -= arr[idx - 1][1];
+        }
+        yValues.push(volEach);
+
+        if (val[0] == "Potensial") {
+            xValues.push("Potensial");
+            barColors.push("#eee");
+        }
+        else if (val[0] == "Realisasi") {
+            xValues.push("Realisasi");
+            barColors.push("#0277bd");
+        }
+        else if (val[0] == "RTOW") {
+            xValues.push("RTOW");
+            barColors.push("aqua");
+        }
+        else {
+            xValues.push("TBA");
+            barColors.push("white");
+        }
+    });
+
+    // var yValues = [{{ real.volume }}, {{ real.volume - vol_potensi }}];
+    var allChart = new Chart("pieChart", {
+      type: "pie",
+      data: {
+        labels: xValues,
+        datasets: [{
+          backgroundColor: barColors,
+          borderColor: "#aaa",
+          borderWidth: 1,
+          data: yValues
+        }]
+      },
+      options: {
+        //borderAlign: 'inner',
+        title: {
+          display: true,
+          text: "Rencana & Realisasi Volume Bendungan",
+          fontColor: "#888",
+          fontSize: 16,
+          fontStyle: 'normal'
+        },
+        legend: {
+            display: false,
+            position: 'left',
+            labels: {
+                fontColor: "black",
+                boxWidth: 30,
+                padding: 30
+            }
+        },
+        legendCallback: function(chart) {
+            var colors = [];
+            chart.data.datasets[0].backgroundColor.forEach(function (c) {
+                if (c == "blue") {
+                    colors.push('primary');
+                } else if (c == "aqua") {
+                    colors.push('info');
+                } else if (c == "grey") {
+                    colors.push('secondary');
+                } else {
+                    colors.push('light');
+                }
+            });
+
+            var volumes = [];
+            chart.data.datasets[0].data.forEach(function (v, idx, arr) {
+                var val = v + arr.slice(0, idx).reduce(add, 0);
+                volumes.push(val);
+            })
+
+            var text = [];
+            text.push('<div class="' + chart.id + '-legend">');
+            for (var i = 0; i < chart.data.datasets[0].data.length; i++) {
+                text.push('<div class="row container"><div class="col-5"><div class="text-left">');
+                if (chart.data.labels[i]) {
+                    text.push(`<span class="badge badge-${colors[i]}">Vol</span>`);
+                    text.push(`<span> ${chart.data.labels[i]}</span>`);
+                }
+                text.push('</div></div><div class="col-7"><div class="text-right"><h3>');
+                text.push(parseFloat(volumes[i]/1000000).toFixed(1).toLocaleString());
+                text.push(' Jt M<sup>3</sup></h3></div></div></div>');
+            }
+            text.push('</div>');
+            return text.join("");
+        },
+        tooltips: {
+            enabled: true,
+            callbacks: {
+                label: function(tooltipItem, data) {
+                    var dataset = data.datasets[tooltipItem.datasetIndex];
+                    var total = dataset.data.reduce(function(previousValue, currentValue, currentIndex, array) {
+                        return previousValue + currentValue;
+                    });
+                    // var currentValue = dataset.data[tooltipItem.index];
+                    var currentValue = volumeData[tooltipItem.index][1];
+                    var percentage = parseFloat((currentValue/total) * 100).toFixed(2);
+
+                    var name = data.labels[tooltipItem.index];
+
+                    return `${name} : ${percentage} %`;
+                }
+            }
+        },
+      }
+    });
+
+    //document.getElementById("chartLegend").innerHTML = allChart.generateLegend();
+    var wil_col = {'1': document.getElementById('wil_1'), 
+    '2': document.getElementById('wil_2'), 
+    '3': document.getElementById('wil_3')};
+    fetch('/api/bendungan/volume')
+        .then(response => response.json())
+        .then(data => {
+            data.forEach(function(bend, idx, bendungan) {
+                console.log();
+                var volumeData = [
+                    ["Realisasi", bend['volume_real']],
+                    ["Potensial", bend['volume_potensial']]
+                ];
+                var canv_el = document.createElement('canvas');
+                canv_el.setAttribute('id', `pieChart-${idx}`);
+                wil_col[`${bend.wil}`].appendChild(canv_el);
+                // volumeData = volumeData.sort(function (a, b) {
+                //     return a[1] - b[1];
+                // });
+
+                var xValues = [];
+                var yValues = [];
+                var barColors = [];
+                Object.values(volumeData).forEach(function(val, idx2, arr) {
+                    volEach = val[1];
+                    if (idx2 - 1 >= 0) {
+                        volEach -= arr[idx2 - 1][1];
+                    }
+                    yValues.push(volEach);
+
+                    if (val[0] == "Potensial") {
+                        xValues.push("Kap. Tampungan");
+                        barColors.push("#eee");
+                    }
+                    else if (val[0] == "Realisasi") {
+                        xValues.push("Vol saat ini");
+                        barColors.push("#0277bd");
+                    }
+                    else if (val[0] == "RTOW") {
+                        xValues.push("RTOW");
+                        barColors.push("aqua");
+                    }
+                    else {
+                        xValues.push("TBA");
+                        barColors.push("white");
+                    }
+                });
+
+                new Chart(`pieChart-${idx}`, {
+                  type: "pie",
+                  data: {
+                    labels: xValues,
+                    datasets: [{
+                      backgroundColor: barColors,
+                      borderColor: "black",
+                      borderWidth: 0,
+                      data: yValues
+                    }]
+                  },
+                  options: {
+                        title: {
+                          display: true,
+                          text: `${bend.name}`,
+                        },
+                        subtitle: {
+                            display: true,
+                            text: 'anu',
+                        },
+                        legend: {
+                            display: false,
+                            position: 'right',
+                            labels: {
+                                fontColor: "black",
+                                boxWidth: 30,
+                                padding: 30,
+                            }
+                        },
+                        tooltips: {
+                            enabled: true,
+                            callbacks: {
+                                label: function(tooltipItem, data) {
+                                    var dataset = data.datasets[tooltipItem.datasetIndex];
+                                    var total = dataset.data.reduce(function(previousValue, currentValue, currentIndex, array) {
+                                        return previousValue + currentValue;
+                                    });
+                                    var currentValue = dataset.data[tooltipItem.index];
+                                    var percentage = parseFloat((currentValue/total) * 100).toFixed(2);
+
+                                    var name = data.labels[tooltipItem.index];
+
+                                    return `${percentage} %`;
+                                }
+                            }
+                        },
+                    }
+                });
+            });
+        });
     function clearActive(){
         document.getElementsByName("img-show").forEach(function (el) {
             el.classList.remove("active");
