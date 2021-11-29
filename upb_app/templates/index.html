@@ -23,8 +23,8 @@
         <h3>Outflow </h3>
         <p><small class="text-muted">(M<sup>3</sup>/detik)</small></p>
         <table class="table">
-            <tr><td>Rencana (RTOW)</td><td class="text-right">{{ rtow.outflow }}</td></tr>
-            <tr><td>Realisasi</td><td class="text-right">{{ real.outflow }}</td></tr>
+            <tr><td>Rencana (RTOW)</td><td class="text-right">{{ "{:,.3f}".format(rtow.outflow) }}</td></tr>
+            <tr><td>Realisasi</td><td class="text-right">{{ "{:,.3f}".format(real.outflow) }}</td></tr>
         </table>
     </div>
     <div class="col-md-3">
@@ -32,8 +32,8 @@
         <h3>Inflow</h3>
         <p> <small class="text-muted">(M<sup>3</sup>/detik)</small></p>
         <table class="table">
-            <tr><td>Rencana (RTOW)</td><td class="text-right">{{ rtow.inflow }}</td></tr>
-            <tr><td>Realisasi</td><td class="text-right">{{ real.inflow }}</td></tr>
+            <tr><td>Rencana (RTOW)</td><td class="text-right">{{ "{:,.3f}".format(rtow.inflow) }}</td></tr>
+            <tr><td>Realisasi</td><td class="text-right">{{ "{:,.3f}".format(real.inflow) }}</td></tr>
         </table>
     </div>
 </div><hr>
