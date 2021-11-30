@@ -1,5 +1,5 @@
 from flask import Blueprint, request, render_template, redirect
-from flask import url_for, jsonify, flash, Response
+from flask import url_for, jsonify, flash, Response, abort
 from flask_login import login_required, current_user
 from flask_wtf.csrf import generate_csrf
 from sqlalchemy import and_, extract
@@ -667,7 +667,6 @@ def operasi_harian_embung():
         'b': embung_b,
         'a': embung_a
     }
-    print(embung_a['3'][174])
 
     return render_template('operasi/index_embung.html',
                             csrf=generate_csrf(),
@@ -681,6 +680,10 @@ def operasi_harian_embung():
 @role_check_embung
 def operasi_embung(embung_id):
     emb = Embung.query.get(embung_id)
+
+    if not emb:
+        abort(404)
+
     sampling, end, day = month_range(request.values.get('sampling'))
 
     manual_daily = ManualDailyEmbung.query.filter(

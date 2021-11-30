@@ -1,4 +1,4 @@
-from flask import Blueprint, request, render_template, redirect, url_for, jsonify, flash, Response
+from flask import Blueprint, request, render_template, redirect, url_for, jsonify, flash, Response, abort
 from flask_login import login_required, current_user
 from flask_wtf.csrf import generate_csrf
 from sqlalchemy import extract, and_
@@ -568,31 +568,6 @@ def save_image(imageStr, filename):
 @login_required
 @admin_only
 def kegiatan_index_embung():
-    # embung = Embung.query.filter(Embung.is_verified == '1').order_by(Embung.id).all()
-    #
-    # embung_a = {
-    #     '1': [],
-    #     '2': [],
-    #     '3': [],
-    #     '4': []
-    # }
-    # embung_b = {
-    #     '1': [],
-    #     '2': [],
-    #     '3': [],
-    #     '4': []
-    # }
-    # wilayah = wil_sungai
-    # wilayah['4'] = "Lain-Lain"
-    # for e in embung:
-    #     if e.jenis == 'a':
-    #         embung_a[e.wil_sungai or '4'].append(e)
-    #     elif e.jenis == 'b':
-    #         embung_b[e.wil_sungai or '4'].append(e)
-    # return render_template('kegiatan/embung/index.html',
-    #                         wil_sungai=wilayah,
-    #                         embung_a=embung_a,
-    #                         embung_b=embung_b)
     return redirect(url_for('admin.embung_harian'))
 
 
@@ -601,6 +576,9 @@ def kegiatan_index_embung():
 @role_check_embung
 def kegiatan_embung(embung_id):
     embung = Embung.query.get(embung_id)
+
+    if not embung:
+        abort(404)
 
     sampling, end, day = month_range(request.values.get('sampling'))
     all_kegiatan = KegiatanEmbung.query.filter(
