@@ -103,7 +103,10 @@ def embung_verify(emb_id):
             db.session.flush()
             db.session.commit()
         else:
-            flash(f"Username sudah ada", 'danger')
+            user.set_password(password)
+            db.session.commit()
+
+            flash(f"Username sudah ada, password updated.", 'success')
             return redirect(url_for('admin.embung'))
         flash(f"Berhasil verifikasi dan tambah user untuk {embung.nama}", 'success')
     else:
