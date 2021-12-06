@@ -61,8 +61,19 @@ def embung():
     ''' Home Embung '''
     embung = Embung.query.order_by(Embung.is_verified.desc(), Embung.id).all()
 
+    results = {
+        'Hulu': [],
+        'Madiun': [],
+        'Hilir': [],
+        'Belum Ada': []
+    }
+    wil_sungai = ['Hulu','Madiun','Hilir', 'Belum Ada']
+    for emb in embung:
+        wil_id = emb.wil_sungai or 4
+        results[wil_sungai[int(wil_id) - 1]].append(emb)
+
     return render_template('embung/admin.html',
-                            embung=embung)
+                            results=results)
 
 
 @bp.route('/embung/update', methods=['POST'])  # @login_required

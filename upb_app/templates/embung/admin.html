@@ -37,6 +37,10 @@
               </tr>
           </thead>
           <tbody>
+            {% for wil_sungai, embung in results.items() %}
+              <tr class="text-center">
+                <th colspan="16">{{ wil_sungai }}</th>
+              </tr>
               {% for e in embung %}
                   <tr id="emb_data">
                     <td>{{ loop.index }}</td>
@@ -243,6 +247,7 @@
                     </td>
                   </tr>
               {% endfor %}
+            {% endfor %}
           </tbody>
       </table>
     </div>
