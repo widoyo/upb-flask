@@ -695,9 +695,7 @@ def kegiatan_embung_foto(embung_id):
     img_file = os.path.join(app.config['UPLOAD_FOLDER'], filename)
     save_file = os.path.join(app.config['SAVE_DIR'], img_file)
 
-    # print(imageStr)
-    # print(filename)
-    print(request.form.get(f"keterangan"))
+    last_modified = datetime.datetime.strptime(request.form.get('last_modified'), "%Y-%m-%dT%H:%M:%S.%fZ")
 
     try:
         # convert base64 into image file and then save it
@@ -708,14 +706,16 @@ def kegiatan_embung_foto(embung_id):
         foto = Foto(
             url=img_file,
             obj_type="kegiatan_embung",
-            obj_id=keg_id
+            obj_id=keg_id,
+            origin_last_modified=last_modified
         )
         foto.keterangan = request.form.get(f"keterangan")
         db.session.add(foto)
         db.session.commit()
 
         return "success"
-    except Exception:
+    except Exception as e:
+        print(e)
         return "error"
 
 

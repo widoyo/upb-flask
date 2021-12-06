@@ -267,6 +267,12 @@
                                                               {% endif %}
                                                               </button>
                                                           </div>
+                                                          <div>
+                                                              <p>
+                                                                  Upload : {{ f.cdate_wib.strftime("%d %B %Y, %H:%M") }}<br>
+                                                                  Diambil : {{ f.origin_last_modified.strftime("%d %B %Y, %H:%M") }}
+                                                              </p>
+                                                          </div>
                                                           {% endif %}
                                                       </div>
                                                       <div class="modal-footer">
@@ -357,6 +363,12 @@
                                                               {% endif %}
                                                               </button>
                                                           </div>
+                                                          <div>
+                                                              <p>
+                                                                  Upload : {{ f.cdate_wib.strftime("%d %B %Y, %H:%M") }}<br>
+                                                                  Diambil : {{ f.origin_last_modified.strftime("%d %B %Y, %H:%M") }}
+                                                              </p>
+                                                          </div>
                                                           {% endif %}
                                                       </div>
                                                       <div class="modal-footer">
@@ -446,6 +458,12 @@
                                                                   <i class="fas fa-eye" id="showcase-btn-{{ f.id }}"></i>
                                                               {% endif %}
                                                               </button>
+                                                          </div>
+                                                          <div>
+                                                              <p>
+                                                                  Upload : {{ f.cdate_wib.strftime("%d %B %Y, %H:%M") }}<br>
+                                                                  Diambil : {{ f.origin_last_modified.strftime("%d %B %Y, %H:%M") }}
+                                                              </p>
                                                           </div>
                                                           {% endif %}
                                                       </div>
@@ -650,6 +668,7 @@
 <script src="{{ url_for('static', filename='js/bootstrap-editable.min.js') }}"></script>
 <script src="{{ url_for('static', filename='js/bootstrap-datepicker.min.js') }}"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/tempusdominus-bootstrap-4/5.0.1/js/tempusdominus-bootstrap-4.min.js"></script>
+<script src="https://requirejs.org/docs/release/2.3.5/minified/require.js"></script>
 <script src="{{ url_for('static', filename='js/MinifyJpegAsync.js') }}"></script>
 <script>
     $(document).on("change","select",function(){
@@ -758,10 +777,15 @@
 
     let imgFoto = "";
     let filenameFoto = "";
+    let fileLastModified = "";
+    let fileCreatedAt = "";
 	function readURL(event, blah_id) {
         let f = event.target.files[0];
 		filenameFoto = f.name;
         let reader = new FileReader();
+
+        fileLastModified = f.lastModifiedDate.toISOString();
+        console.log(fileCreatedAt);
 
         reader.onloadend = function(e){
             console.log(`onload function called, parameter : ${e}`);
@@ -834,7 +858,8 @@
                 keg_id: keg_id,
                 foto: imgFoto,
                 filename: filenameFoto,
-                keterangan: keterangan
+                keterangan: keterangan,
+                last_modified: fileLastModified
             };
             console.log("Posting Photo");
             // console.log(formData);

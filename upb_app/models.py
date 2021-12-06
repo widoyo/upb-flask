@@ -479,6 +479,7 @@ class Foto(BaseLog):
     obj_type = db.Column(db.Text)
     obj_id = db.Column(db.Integer)
     showcase = db.Column(db.Boolean, default=False)
+    origin_last_modified = db.Column(db.DateTime)
 
 
 class Kerusakan(BaseLog):
