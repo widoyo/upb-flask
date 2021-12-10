@@ -481,6 +481,10 @@ class Foto(BaseLog):
     showcase = db.Column(db.Boolean, default=False)
     origin_last_modified = db.Column(db.DateTime)
 
+    @property
+    def origin_lm_wib(self):
+        return self.origin_last_modified + datetime.timedelta(hours=7)
+
 
 class Kerusakan(BaseLog):
     __tablename__ = 'kerusakan'

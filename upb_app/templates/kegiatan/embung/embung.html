@@ -270,7 +270,7 @@
                                                           <div>
                                                               <p>
                                                                   Upload : {{ f.cdate_wib.strftime("%d %B %Y, %H:%M") }}<br>
-                                                                  Diambil : {{ 'Belum terdata' if not f.origin_last_modified else f.origin_last_modified.strftime("%d %B %Y, %H:%M") }}
+                                                                  Diambil : {{ 'Belum terdata' if not f.origin_last_modified else f.origin_lm_wib.strftime("%d %B %Y, %H:%M") }}
                                                               </p>
                                                           </div>
                                                           {% endif %}
@@ -366,7 +366,7 @@
                                                           <div>
                                                               <p>
                                                                   Upload : {{ f.cdate_wib.strftime("%d %B %Y, %H:%M") }}<br>
-                                                                  Diambil : {{ 'Belum terdata' if not f.origin_last_modified else f.origin_last_modified.strftime("%d %B %Y, %H:%M") }}
+                                                                  Diambil : {{ 'Belum terdata' if not f.origin_last_modified else f.origin_lm_wib.strftime("%d %B %Y, %H:%M") }}
                                                               </p>
                                                           </div>
                                                           {% endif %}
@@ -462,7 +462,7 @@
                                                           <div>
                                                               <p>
                                                                   Upload : {{ f.cdate_wib.strftime("%d %B %Y, %H:%M") }}<br>
-                                                                  Diambil : {{ 'Belum terdata' if not f.origin_last_modified else f.origin_last_modified.strftime("%d %B %Y, %H:%M") }}
+                                                                  Diambil : {{ 'Belum terdata' if not f.origin_last_modified else f.origin_lm_wib.strftime("%d %B %Y, %H:%M") }}
                                                               </p>
                                                           </div>
                                                           {% endif %}
