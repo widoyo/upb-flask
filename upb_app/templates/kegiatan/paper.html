@@ -173,6 +173,10 @@
                     if(a == "ok"){
                         alert("Berhasil dihapus");
                         window.location.reload();
+                    } else {
+                        customAlert(a, function(){
+                            location.reload();
+                        });
                     }
                 });
             }

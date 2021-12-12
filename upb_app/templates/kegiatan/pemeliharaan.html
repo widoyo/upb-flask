@@ -838,6 +838,10 @@
                     customAlert("Berhasil dihapus", function() {
                         location.reload();
                     });
+                } else {
+                    customAlert(a, function(){
+                        location.reload();
+                    });
                 }
             });
         });
@@ -852,6 +856,10 @@
                     customAlert("Berhasil dihapus", function() {
                         location.reload();
                     });
+                } else {
+                    customAlert(a, function(){
+                        location.reload();
+                    });
                 }
             });
         });
@@ -864,6 +872,10 @@
                 var a = result;
                 if(a == "ok"){
                     customAlert("Berhasil dihapus", function() {
+                        location.reload();
+                    });
+                } else {
+                    customAlert(a, function(){
                         location.reload();
                     });
                 }

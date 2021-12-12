@@ -534,6 +534,9 @@ def pemeliharaan_delete_foto(bendungan_id):
     print(f"ID Foto : {foto_id}")
 
     foto = Foto.query.get(foto_id)
+    if not foto:
+        return "Data foto tidak ditemukan atau sudah terhapus."
+
     filepath = os.path.join(app.config['SAVE_DIR'], foto.url)
 
     db.session.delete(foto)
@@ -749,6 +752,9 @@ def kegiatan_embung_delete_foto(embung_id):
     print(f"ID Foto : {foto_id}")
 
     foto = Foto.query.get(foto_id)
+    if not foto:
+        return "Data foto tidak ditemukan atau sudah terhapus."
+
     filepath = os.path.join(app.config['SAVE_DIR'], foto.url)
 
     db.session.delete(foto)
