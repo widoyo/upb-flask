@@ -726,20 +726,21 @@ def kegiatan_embung_foto(embung_id):
 @login_required
 @role_check_embung
 def kegiatan_embung_delete(embung_id):
-    keg_id = int(request.values.get('keg_id'))
-
-    kegiatan = KegiatanEmbung.query.get(keg_id)
-
-    fotos = kegiatan.fotos
-
-    for tag, f in fotos.items():
-        filepath = os.path.join(app.config['SAVE_DIR'], f.url)
-
-        db.session.delete(f)
-        if os.path.exists(filepath):
-            os.remove(filepath)
-    db.session.delete(kegiatan)
-    db.session.commit()
+    # keg_id = int(request.values.get('keg_id'))
+    #
+    # kegiatan = KegiatanEmbung.query.get(keg_id)
+    #
+    # fotos = kegiatan.fotos
+    #
+    # for tag, f in fotos.items():
+    #     filepath = os.path.join(app.config['SAVE_DIR'], f.url)
+    #
+    #     db.session.delete(f)
+    #     if os.path.exists(filepath):
+    #         os.remove(filepath)
+    # db.session.delete(kegiatan)
+    # db.session.commit()
+    raise Exception(f"User {current_user.username} try to delete kegiatan embung")
 
     return "ok"
 
@@ -748,20 +749,21 @@ def kegiatan_embung_delete(embung_id):
 @login_required
 @role_check_embung
 def kegiatan_embung_delete_foto(embung_id):
-    foto_id = int(request.values.get('foto_id'))
-    print(f"ID Foto : {foto_id}")
-
-    foto = Foto.query.get(foto_id)
-    if not foto:
-        return "Data foto tidak ditemukan atau sudah terhapus."
-
-    filepath = os.path.join(app.config['SAVE_DIR'], foto.url)
-
-    db.session.delete(foto)
-    db.session.commit()
-
-    if os.path.exists(filepath):
-        os.remove(filepath)
+    # foto_id = int(request.values.get('foto_id'))
+    # print(f"ID Foto : {foto_id}")
+    #
+    # foto = Foto.query.get(foto_id)
+    # if not foto:
+    #     return "Data foto tidak ditemukan atau sudah terhapus."
+    #
+    # filepath = os.path.join(app.config['SAVE_DIR'], foto.url)
+    #
+    # db.session.delete(foto)
+    # db.session.commit()
+    #
+    # if os.path.exists(filepath):
+    #     os.remove(filepath)
+    raise Exception(f"User {current_user.username} try to delete kegiatan embung foto")
 
     return "ok"
 
