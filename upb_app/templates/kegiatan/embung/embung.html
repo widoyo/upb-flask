@@ -172,12 +172,12 @@
             aria-labelledby="kegiatan-tab">
                 {% for date, keg in kegiatan.items() %}
                     {% for k in keg %}
-                    <div class="card border-secondary">
+                    <div class="card border-secondary mb-2">
                         <div class="card-header">
                           <b><span id="tgl2">{{ date }}</span></b>
                           <span style="float: right">
                               <!-- delete button -->
-                              <input type="button" value="Hapus" onclick="deleteKegiatan({{ k.id }}, '{{ k.sampling.strftime('%d %b %Y') }}')" class="btn btn-sm btn-danger">
+                              <input type="button" value="Hapus Data &amp; Foto..." onclick="deleteKegiatan({{ k.id }}, '{{ k.sampling.strftime('%d %b %Y') }}')" class="btn btn-sm btn-danger">
                           </span>
                         </div>
                         <div class="card-body row">
@@ -228,10 +228,10 @@
                                 </div> -->
                                 <div class="container">
                                     <div class="row">
-                                        <div class="col text-center">
+                                        <div class="col-6 text-center">
                                             0%
                                         </div>
-                                        <div class="col text-center">
+                                        <div class="col-6 text-center">
                                             {% if '0' in k.fotos %}
                                                 {% with f=k.fotos['0'] %}
                                                 <a data-toggle="modal" href="#preview-foto-{{ f.id }}"
@@ -276,7 +276,7 @@
                                                           {% endif %}
                                                       </div>
                                                       <div class="modal-footer">
-                                                          <input type="button" value="Hapus" onclick="deleteFoto({{ f.id }})" class="btn btn-danger">
+                                                          <input type="button" value="Hapus Foto" onclick="deleteFoto({{ f.id }})" class="btn btn-danger">
                                                           <button type="button" class="btn btn-secondary" data-dismiss="modal">Tutup</button>
                                                       </div>
                                                     </div>
@@ -324,10 +324,10 @@
                                     </div>
                                     <br>
                                     <div class="row">
-                                        <div class="col text-center">
+                                        <div class="col-6 text-center">
                                             50%
                                         </div>
-                                        <div class="col text-center">
+                                        <div class="col-6 text-center">
                                             {% if '50' in k.fotos %}
                                                 {% with f=k.fotos['50'] %}
                                                 <a data-toggle="modal" href="#preview-foto-{{ f.id }}"
@@ -420,10 +420,10 @@
                                     </div>
                                     <br>
                                     <div class="row">
-                                        <div class="col text-center">
+                                        <div class="col-6 text-center">
                                             100%
                                         </div>
-                                        <div class="col text-center">
+                                        <div class="col-6 text-center">
                                             {% if '100' in k.fotos %}
                                                 {% with f=k.fotos['100'] %}
                                                 <a data-toggle="modal" href="#preview-foto-{{ f.id }}"
