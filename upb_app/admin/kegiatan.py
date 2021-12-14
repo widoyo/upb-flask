@@ -741,7 +741,6 @@ def kegiatan_embung_delete(embung_id):
     # db.session.delete(kegiatan)
     # db.session.commit()
     print(f"User {current_user.username} try to delete kegiatan embung", flush=True)
-    raise Exception(f"User {current_user.username} try to delete kegiatan embung")
 
     return "ok"
 
@@ -765,7 +764,6 @@ def kegiatan_embung_delete_foto(embung_id):
     # if os.path.exists(filepath):
     #     os.remove(filepath)
     print(f"User {current_user.username} try to delete kegiatan embung", flush=True)
-    raise Exception(f"User {current_user.username} try to delete kegiatan embung foto")
 
     return "ok"
 
