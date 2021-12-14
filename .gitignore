@@ -12,3 +12,4 @@ requirements.txt
 docker-compose.yml
 Dockerfile
 upbdb_backup.sql
+mad_admin.txt
