@@ -1,4 +1,4 @@
-from flask import Blueprint, request, render_template, redirect, url_for, flash
+from flask import Blueprint, request, render_template, redirect, url_for, flash, jsonify
 from flask_login import login_required
 from flask_wtf.csrf import generate_csrf
 from upb_app.models import Users, Bendungan
@@ -68,9 +68,9 @@ def user_password(user_id):
         user.set_password(password)
         db.session.commit()
 
-        flash('Password berhasil diubah !', 'success')
+        flash('Password {user.username} telah diubah !', 'success')
         return redirect(url_for('admin.users'))
-    return render_template('users/password.html', user=user)
+    return render_template('users/password.html', user_target=user)
 
 
 @bp.route('/user/<user_id>/delete', methods=['GET', 'POST'])
