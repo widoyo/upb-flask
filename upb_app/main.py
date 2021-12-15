@@ -7,7 +7,7 @@ from flask_login import current_user, login_required, login_user, logout_user
 from sqlalchemy import and_, extract
 from pytz import timezone
 
-from upb_app import app
+from upb_app import app, db
 from upb_app.models import Rencana, Bendungan, Embung, ManualTma, ManualDaily, Users, Foto
 from upb_app.forms import LoginForm
 
@@ -109,6 +109,22 @@ def adm():
 def page_not_found(e):
     return render_template('master/404.html'), 404
 
+
+@app.route('/mypassword', methods=['GET', 'POST'])
+@login_required
+def mypassword():
+    if request.method == 'POST':
+        user_id = request.form.get('user_id')
+        new_password = request.form.get('password')
+        if not user_id:
+            flash("User ID tidak ditemmukan", 'danger')
+            return redirect(url_for('login'))
+        user = Users.query.get(user_id)
+        user.set_password(new_password)
+        db.session.commit()
+        logout_user()
+        return redirect(url_for('login'))
+    return render_template('auth/mypassword.html', title='Passwordku')
 
 @app.route('/logout')
 @login_required

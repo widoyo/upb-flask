@@ -2,19 +2,10 @@
 
 {% set title = "Users" %}
 
-{% block css %}
-<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-datepicker/1.9.0/css/bootstrap-datepicker.css">
-<style>
-    .datepicker {
-        z-index: 10000 !important;
-    }
-</style>
-{% endblock %}
-
 {% block content %}
-    <div class="container">
+    <div id="app">
         <h1>
-            Users Index
+            User
             <a data-toggle="collapse" href="#adduser" role="button" class="btn btn-sm btn-outline-primary" aria-expanded="false" aria-controls="adduser">Tambah</a>
         </h1>
         <div class="row container">
@@ -52,23 +43,26 @@
                 </form>
             </div>
         </div>
-        <br>
         <table class="table table-hover table-bordered">
             <thead>
                 <tr>
                     <th>No</th>
                     <th>Username</th>
-                    <th>Unit</th>
                     <th>Pos</th>
-                    <th></th>
                 </tr>
             </thead>
             <tbody>
                 {% for u in users %}
                     <tr>
                         <td>{{ loop.index }}</td>
-                        <td>{{ u.username }}</td>
-                        <td>
+                        <td>{{ u.username }} <a href="#" class="float-right" id="userCtx" data-toggle="dropdown" aria-expanded="false"><span class="fas fa-ellipsis-v"></span></a>
+                            <div class="dropdown-menu" aria-labelledby="userCtx">
+                                <a class="dropdown-item" href="/admin/user/{{u.id}}/password">Ganti Password</a>
+                                <div class="dropdown-divider"></div>
+                                <a class="dropdown-item" href="/admin/user/{{u.id}}/delete">Hapus User</a>
+                              </div>
+                        </td>
+                        <!--<td>
                             {% if u.role == '2' %}
                                 Bendungan
                             {% elif u.role == '3' %}
@@ -76,7 +70,7 @@
                             {% elif u.role in ['1', '4'] %}
                                 Balai Sungai
                             {% endif %}
-                        </td>
+                        </td>-->
                         <td>
                             {% if u.role == '2' %}
                                 {{ u.bendungan.name }}
@@ -86,14 +80,9 @@
                                 -
                             {% endif %}
                         </td>
-                        <td class="text-center"><a href="#"><i class="fa fa-pen"></i></a></td>
                     </tr>
                 {% endfor %}
             </tbody>
         </table>
     </div>
-{% endblock %}
-
-{% block js %}
-
 {% endblock %}

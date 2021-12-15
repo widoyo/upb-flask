@@ -68,9 +68,9 @@ def user_password(user_id):
         user.set_password(password)
         db.session.commit()
 
-        flash('Password berhasil diubah !', 'success')
+        flash('Password {user.username} telah diubah !', 'success')
         return redirect(url_for('admin.users'))
-    return render_template('users/password.html', user=user)
+    return render_template('users/password.html', user_target=user)
 
 
 @bp.route('/user/password', methods=['POST'])
