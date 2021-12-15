@@ -151,12 +151,12 @@
 </nav>
 
 <!-- Modal Ganti Password -->
-<div class="modal fade" id="form-change-password" tabindex="-1" role="dialog" aria-labelledby="modalVerifikasi" aria-hidden="true">
+<div class="modal fade" id="form-change-password" tabindex="-1" role="dialog" aria-labelledby="modalPassword" aria-hidden="true">
   <div class="modal-dialog" role="document">
     <div class="modal-content">
         <form method="POST" action="{{ url_for('admin.user_password_self') }}">
           <div class="modal-header">
-            <h5 class="modal-title" id="modalVerifikasi">Ganti Password user {{ current_user.username }}</h5>
+            <h5 class="modal-title" id="modalPassword">Ganti Password user {{ current_user.username }}</h5>
             <button type="button" class="close" data-dismiss="modal" aria-label="Close">
               <span aria-hidden="true">&times;</span>
             </button>
