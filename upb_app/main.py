@@ -114,14 +114,10 @@ def page_not_found(e):
 @login_required
 def mypassword():
     if request.method == 'POST':
-        user_id = request.form.get('user_id')
         new_password = request.form.get('password')
-        if not user_id:
-            flash("User ID tidak ditemmukan", 'danger')
-            return redirect(url_for('login'))
-        user = Users.query.get(user_id)
-        user.set_password(new_password)
+        current_user.set_password(new_password)
         db.session.commit()
+
         logout_user()
         return redirect(url_for('login'))
     return render_template('auth/mypassword.html', title='Passwordku')

@@ -123,16 +123,6 @@
                 {% endif %}
             </ul>
             <ul class="nav navbar-nav ml-auto">
-
-                <li class="nav-item dropdown">
-                  <a class="nav-link dropdown-toggle" href="#" id="bendunganDropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                      {{ user.username }}
-                  </a>
-                    <div class="dropdown-menu" aria-labelledby="bendunganDropdown">
-                      <a href="#form-change-password" class="dropdown-item" data-toggle="modal">Ganti Password</a>
-                    </div>
-                </li>
-
                 {% if user %}
                 <li class="nav-item dropdown">
                     <a class="nav-link dropdown-toggle" href="#" id="userDropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">{{ user.username }}</a>
@@ -153,29 +143,3 @@
         </div>
     </div>
 </nav>
-
-<!-- Modal Ganti Password -->
-<div class="modal fade" id="form-change-password" tabindex="-1" role="dialog" aria-labelledby="modalPassword" aria-hidden="true">
-  <div class="modal-dialog" role="document">
-    <div class="modal-content">
-        <form method="POST" action="{{ url_for('admin.user_password_self') }}">
-          <div class="modal-header">
-            <h5 class="modal-title" id="modalPassword">Ganti Password user {{ current_user.username }}</h5>
-            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-              <span aria-hidden="true">&times;</span>
-            </button>
-          </div>
-          <div class="modal-body">
-              <div class="form-group">
-                  <label class="form-text" for="password">Password Baru <b></b></label>
-                  <input class="form-control" type="text" name="password" id="password" required value="">
-              </div>
-          </div>
-          <div class="modal-footer">
-              <input type="submit" name="submit" value="Ganti" class="btn btn-success">
-              <button type="button" class="btn btn-danger" data-dismiss="modal">Batal</button>
-          </div>
-        </form>
-    </div>
-  </div>
-</div>
