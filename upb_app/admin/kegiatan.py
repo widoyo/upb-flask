@@ -808,7 +808,7 @@ def kegiatan_embung_csv(embung_id):
     for date, kegiat in kegiatan.items():
         if kegiat:
             for keg in kegiat:
-                bag = keg.bagian.nama or "Petugas OP"
+                bag = keg.bagian.nama if keg.bagian else "Petugas OP"
                 fotos = keg.fotos
                 pre_csv.append([
                     date.strftime("%d %B %Y"), bag, keg.lokasi,
