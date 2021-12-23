@@ -311,10 +311,11 @@
                                                               </div>
                                                           </div>
                                                       </div>
+                                                      <p style="color: red" id="foto-warning-1"></p>
                                                   </div>
                                                   <div class="modal-footer">
                                                       <input type="button" value="Upload" onclick="uploadFoto({{ k.id }}, '0%')" class="btn btn-primary">
-                                                      <button type="button" class="btn btn-danger" data-dismiss="modal">Batal</button>
+                                                      <button type="button" class="btn btn-danger" data-dismiss="modal" onclick="clearWarning()">Batal</button>
                                                   </div>
                                                 </div>
                                               </div>
@@ -407,10 +408,11 @@
                                                               </div>
                                                           </div>
                                                       </div>
+                                                      <p style="color: red" id="foto-warning-2"></p>
                                                   </div>
                                                   <div class="modal-footer">
                                                       <input type="button" value="Upload" onclick="uploadFoto({{ k.id }}, '50%')" class="btn btn-primary">
-                                                      <button type="button" class="btn btn-danger" data-dismiss="modal">Batal</button>
+                                                      <button type="button" class="btn btn-danger" data-dismiss="modal" onclick="clearWarning()">Batal</button>
                                                   </div>
                                                 </div>
                                               </div>
@@ -503,10 +505,11 @@
                                                               </div>
                                                           </div>
                                                       </div>
+                                                      <p style="color: red" id="foto-warning-3"></p>
                                                   </div>
                                                   <div class="modal-footer">
                                                       <input type="button" value="Upload" onclick="uploadFoto({{ k.id }}, '100%')" class="btn btn-primary">
-                                                      <button type="button" class="btn btn-danger" data-dismiss="modal">Batal</button>
+                                                      <button type="button" class="btn btn-danger" data-dismiss="modal" onclick="clearWarning()">Batal</button>
                                                   </div>
                                                 </div>
                                               </div>
@@ -760,16 +763,25 @@
         {% for date, keg in kegiatan.items() %}
             {% for k in keg %}
                 $('#fotoFile1-{{ k.id }}').on('change', function(event) {
-                    console.log("Input Change Detected");
-                    readURL(event, 'blah1-{{ k.id }}');
+                    try {
+                        readURL(event, 'blah1-{{ k.id }}');
+                    } catch (err) {
+                        document.getElementById("foto-warning-1").innerHTML = `Error : ${err.message}`
+                    }
                 });
                 $('#fotoFile2-{{ k.id }}').on('change', function(event) {
-                    console.log("Input Change Detected");
-                    readURL(event, 'blah2-{{ k.id }}');
+                    try {
+                        readURL(event, 'blah2-{{ k.id }}');
+                    } catch (err) {
+                        document.getElementById("foto-warning-2").innerHTML = `Error : ${err.message}`
+                    }
                 });
                 $('#fotoFile3-{{ k.id }}').on('change', function(event) {
-                    console.log("Input Change Detected");
-                    readURL(event, 'blah3-{{ k.id }}');
+                    try {
+                        readURL(event, 'blah3-{{ k.id }}');
+                    } catch (err) {
+                        document.getElementById("foto-warning-3").innerHTML = `Error : ${err.message}`
+                    }
                 });
             {% endfor %}
         {% endfor %}
@@ -783,9 +795,8 @@
         let f = event.target.files[0];
 		filenameFoto = f.name;
         let reader = new FileReader();
-
+        
         fileLastModified = f.lastModifiedDate.toISOString();
-        console.log(fileCreatedAt);
 
         reader.onloadend = function(e){
             console.log(`onload function called, parameter : ${e}`);
@@ -904,6 +915,12 @@
                 }
             });
         });
+    }
+
+    function clearWarning() {
+        document.getElementById("foto-warning-1").innerHTML = ""
+        document.getElementById("foto-warning-2").innerHTML = ""
+        document.getElementById("foto-warning-3").innerHTML = ""
     }
 
     function srcnull(){
