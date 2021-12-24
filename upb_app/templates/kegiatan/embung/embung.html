@@ -795,8 +795,8 @@
         let f = event.target.files[0];
 		filenameFoto = f.name;
         let reader = new FileReader();
-        
-        fileLastModified = f.lastModifiedDate.toISOString();
+
+        fileLastModified = new Date(f.lastModified).toISOString();
 
         reader.onloadend = function(e){
             console.log(`onload function called, parameter : ${e}`);
