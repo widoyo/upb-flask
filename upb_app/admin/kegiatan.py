@@ -744,8 +744,6 @@ def kegiatan_embung_delete(embung_id):
     with open('mad_admin.txt', 'a') as f:
         f.write(f"User {current_user.username} try to access {request.path}\n")
 
-    raise Exception(f"{datetime.datetime.now().strftime('%Y-%m-%d %H:%M:%S')} - User {current_user.username} try to delete kegiatan embung")
-
     return "ok"
 
 
@@ -770,8 +768,6 @@ def kegiatan_embung_delete_foto(embung_id):
 
     with open('mad_admin.txt', 'a') as f:
         f.write(f"{datetime.datetime.now().strftime('%Y-%m-%d %H:%M:%S')} - User {current_user.username} try to access {request.path}\n")
-
-    raise Exception(f"User {current_user.username} try to delete kegiatan embung")
 
     return "ok"
 
