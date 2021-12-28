@@ -137,6 +137,7 @@ def piket_banjir_add(bendungan_id):
             db.session.rollback()
             print(f"Piket Banjir Error : {e}")
             flash(f"Terjadi kesalahan saat mencoba menyimpan laporan Piket Banjir", 'danger')
+            return redirect(url_for('admin.piket_bendungan', bendungan_id=bendungan_id))
 
     sent = pb_new.cdate_wib.strftime("%H.%M")
     limpasan = "mengalami" if pb_new.spillway_tma else "tidak mengalami"
