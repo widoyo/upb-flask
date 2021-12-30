@@ -4,7 +4,7 @@ from flask_login import login_required, current_user
 from flask_wtf.csrf import generate_csrf
 from sqlalchemy import and_, extract
 from sqlalchemy.exc import IntegrityError
-from upb_app.helper import month_range, day_range
+from upb_app.helper import month_range, day_range, query_with_sampling_range
 from upb_app.models import ManualDaily, ManualTma, ManualPiezo, ManualVnotch
 from upb_app.models import Bendungan, BendungAlert, CurahHujanTerkini
 from upb_app.models import Embung, ManualTmaEmbung, ManualDailyEmbung, Foto, wil_sungai
@@ -37,9 +37,32 @@ def operasi():
 @login_required
 @admin_only
 def operasi_harian():
-    waduk = Bendungan.query.order_by(Bendungan.wil_sungai, Bendungan.id).all()
-
     sampling, end = day_range(request.values.get('sampling'))
+    waduk = Bendungan.query.all()
+
+    all_daily = {w.id:None for w in waduk}
+    for d in query_with_sampling_range(ManualDaily, sampling, end):
+        if d:
+            all_daily[d.bendungan_id] = d
+
+    all_vnotch = {w.id:None for w in waduk}
+    for v in query_with_sampling_range(ManualVnotch, sampling, end):
+        if v:
+            all_vnotch[d.bendungan_id] = v
+
+    all_piezo = {w.id:None for w in waduk}
+    for p in query_with_sampling_range(ManualPiezo, sampling, end):
+        if p:
+            all_piezo[d.bendungan_id] = p
+
+    all_tma = query_with_sampling_range(ManualTma, sampling, end)
+    tma = {w.id:[] for w in waduk}
+    for t in all_tma:
+        tma[t.bendungan_id].append(t)
+
+    fotos = Foto.query.filter(Foto.obj_type == "manual_tma", Foto.obj_id.in_([t.id for t in all_tma])).all()
+    fotos = {f.obj_id:f for f in fotos}
+
     data = {
         '1': [],
         '2': [],
@@ -47,31 +70,6 @@ def operasi_harian():
     }
     count = 1
     for w in waduk:
-        daily = ManualDaily.query.filter(
-                                    and_(
-                                        ManualDaily.sampling >= sampling,
-                                        ManualDaily.sampling <= end),
-                                    ManualDaily.bendungan_id == w.id
-                                    ).first()
-        vnotch = ManualVnotch.query.filter(
-                                    and_(
-                                        ManualVnotch.sampling >= sampling,
-                                        ManualVnotch.sampling <= end),
-                                    ManualVnotch.bendungan_id == w.id
-                                    ).first()
-        tma = ManualTma.query.filter(
-                                    and_(
-                                        ManualTma.sampling >= sampling,
-                                        ManualTma.sampling <= end),
-                                    ManualTma.bendungan_id == w.id
-                                    ).all()
-        piezo = ManualPiezo.query.filter(
-                                    and_(
-                                        ManualPiezo.sampling >= sampling,
-                                        ManualPiezo.sampling <= end),
-                                    ManualPiezo.bendungan_id == w.id
-                                    ).first()
-
         tma_d = {
             '6': {
                 'tma': None,
@@ -89,11 +87,16 @@ def operasi_harian():
                 'foto': None
             },
         }
-        for t in tma:
+
+        # 4 lines of code below is querying something, find out what
+        for t in tma[w.id]:
             tma_d[f"{t.sampling.hour}"]['tma'] = None if not t.tma else round(t.tma, 2)
             tma_d[f"{t.sampling.hour}"]['vol'] = None if not t.vol else round(t.vol, 2)
-            tma_d[f"{t.sampling.hour}"]['foto'] = None if not t.foto else t.foto
+            tma_d[f"{t.sampling.hour}"]['foto'] = None if t.id not in fotos else fotos[t.id]
 
+        daily = all_daily[w.id]
+        vnotch = all_vnotch[w.id]
+        piezo = all_piezo[w.id]
         data[w.wil_sungai].append({
             'no': count,
             'id': w.id,

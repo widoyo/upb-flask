@@ -1,9 +1,15 @@
 import datetime
 import calendar
+from sqlalchemy import and_
 
 weekday_name = ["Minggu", "Senin", "Selasa", "Rabu", "Kamis", "Jum'at", "Sabtu"]
 month_name = ["Januari", "Februari", "Maret", "April", "Mei", "Juni", "Juli",
                 "Agustus", "September", "Oktober", "November", "Desember"]
+
+
+def query_with_sampling_range(model, start, end):
+    return model.query.filter(and_(model.sampling >= start, model.sampling <= end)).all()
+
 
 def to_date(datestring):
     """datestring harus berformat yyyy/mm/dd"""
