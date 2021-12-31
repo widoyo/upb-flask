@@ -2,7 +2,7 @@ import os
 import logging
 from functools import wraps
 from flask import Flask, redirect, url_for, request
-# from flask_debugtoolbar import DebugToolbarExtension
+from flask_debugtoolbar import DebugToolbarExtension
 from flask_sqlalchemy import SQLAlchemy
 from flask_socketio import SocketIO
 from flask_login import LoginManager, current_user
@@ -13,7 +13,7 @@ app.config['UPLOAD_FOLDER'] = f"static/img/foto"
 app.config['SAVE_DIR'] = f"{os.getcwd()}/upb_app/"
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 
-# toolbar = DebugToolbarExtension(app)
+toolbar = DebugToolbarExtension(app)
 socketio = SocketIO(app)
 
 db = SQLAlchemy(app)
