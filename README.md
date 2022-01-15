@@ -10,13 +10,13 @@
 - using db.create_all() because single table creation call upb_app init file which call the config.py file, resetting config 'SQLALCHEMY_DATABASE_URI' into postgres setting
 
 ### Run using Docker Compose
-- run on the background
+- run on the background\
 `sudo docker-compose up -d`
-- check services status
+- check services status\
 `sudo docker-compose ps`
-- check logs
+- check logs\
 `sudo docker-compose logs web`
-- open database console
+- open database console\
 `sudo docker-compose exec db psql -U <dbuser> -d <dbname>`
-- stop services
+- stop services\
 `sudo docker-compose down`
