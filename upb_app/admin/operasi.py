@@ -141,6 +141,8 @@ def operasi_bendungan(bendungan_id):
                                     ManualTma.bendungan_id == bendungan_id,
                                     ManualTma.sampling.between(sampling, end)
                                 ).all()
+    fotos = Foto.query.filter(Foto.obj_type == "manual_tma", Foto.obj_id.in_([t.id for t in tma])).all()
+    fotos = {f.obj_id:f for f in fotos}
 
     periodik = {}
     for i in range(day, 0, -1):
@@ -150,7 +152,10 @@ def operasi_bendungan(bendungan_id):
             'tma': {
                 '06': None,
                 '12': None,
-                '18': None
+                '18': None,
+                '06-foto': None,
+                '12-foto': None,
+                '18-foto': None
             }
         }
     for d in manual_daily:
@@ -159,6 +164,7 @@ def operasi_bendungan(bendungan_id):
         sampl = t.sampling.replace(hour=0)
         jam = t.sampling.strftime("%H")
         periodik[sampl]['tma'][jam] = t
+        periodik[sampl]['tma'][f'{jam}-foto'] = None if t.id not in fotos else fotos[t.id]
 
     return render_template('operasi/bendungan.html',
                             csrf=generate_csrf(),

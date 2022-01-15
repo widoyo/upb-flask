@@ -570,8 +570,8 @@
                         </td>
                         <td class="text-center">
                             {% if per.tma['06'] %}
-                                {% if per.tma['06'].foto != None %}
-                                    <a href="#" onclick="switchFoto('{{ per.tma['06'].foto.url }}', '{{ per.tma['06'].readable_date() }}', {{ per.tma['06'].foto.id }})" type="button" data-toggle="modal" data-target="#fotoPeilschaal">
+                                {% if per.tma['06-foto'] != None %}
+                                    <a href="#" onclick="switchFoto('{{ per.tma['06-foto'].url }}', '{{ per.tma['06'].readable_date() }}', {{ per.tma['06-foto'].id }})" type="button" data-toggle="modal" data-target="#fotoPeilschaal">
                                         <i class="fas fa-image"></i>
                                     </a>
                                 {% else %}<span>-</span>{% endif %}
@@ -605,8 +605,8 @@
                         </td>
                         <td class="text-center">
                             {% if per.tma['12'] %}
-                                {% if per.tma['12'].foto != None %}
-                                    <a href="#" onclick="switchFoto('{{ per.tma['12'].foto.url }}', '{{ per.tma['12'].readable_date() }}', {{ per.tma['12'].foto.id }})" type="button" data-toggle="modal" data-target="#fotoPeilschaal">
+                                {% if per.tma['12-foto'] != None %}
+                                    <a href="#" onclick="switchFoto('{{ per.tma['12-foto'].url }}', '{{ per.tma['12'].readable_date() }}', {{ per.tma['12-foto'].id }})" type="button" data-toggle="modal" data-target="#fotoPeilschaal">
                                         <i class="fas fa-image"></i>
                                     </a>
                                 {% else %}<span>-</span>{% endif %}
@@ -640,8 +640,8 @@
                         </td>
                         <td class="text-center">
                             {% if per.tma['18'] %}
-                                {% if per.tma['18'].foto != None %}
-                                    <a href="#" onclick="switchFoto('{{ per.tma['18'].foto.url }}', '{{ per.tma['18'].readable_date() }}', {{ per.tma['18'].foto.id }})" type="button" data-toggle="modal" data-target="#fotoPeilschaal">
+                                {% if per.tma['18-foto'] != None %}
+                                    <a href="#" onclick="switchFoto('{{ per.tma['18-foto'].url }}', '{{ per.tma['18'].readable_date() }}', {{ per.tma['18-foto'].id }})" type="button" data-toggle="modal" data-target="#fotoPeilschaal">
                                         <i class="fas fa-image"></i>
                                     </a>
                                 {% else %}<span>-</span>{% endif %}
