@@ -90,8 +90,8 @@
                                   {% if e.petugas %}{{ e.petugas }}
                                   {% else %} - {% endif %}
                               </td>
-                              {% if e.fotos['0'] %}
-                                {% with f = e.fotos['0'] %}
+                              {% if fotos[e.id]['0'] %}
+                                {% with f = fotos[e.id]['0'] %}
                                 <td class="text-center">
                                     <a data-toggle="modal" href="#preview-foto-{{ f.id }}"
                                         role="button" aria-expanded="false"
@@ -144,8 +144,8 @@
                               <td class="text-center">-</td>
                               {% endif %}
 
-                              {% if e.fotos['50'] %}
-                                {% with f = e.fotos['50'] %}
+                              {% if fotos[e.id]['50'] %}
+                                {% with f = fotos[e.id]['50'] %}
                                 <td class="text-center">
                                     <a data-toggle="modal" href="#preview-foto-{{ f.id }}"
                                         role="button" aria-expanded="false"
@@ -198,8 +198,8 @@
                               <td class="text-center">-</td>
                               {% endif %}
 
-                              {% if e.fotos['100'] %}
-                                {% with f = e.fotos['100'] %}
+                              {% if fotos[e.id]['100'] %}
+                                {% with f = fotos[e.id]['100'] %}
                                 <td class="text-center">
                                     <a data-toggle="modal" href="#preview-foto-{{ f.id }}"
                                         role="button" aria-expanded="false"
@@ -318,8 +318,8 @@
                                 <td colspan="4">Belum Dilaporkan</td>
                               {% endif %}
 
-                              {% if e.fotos['0'] %}
-                                {% with f = e.fotos['0'] %}
+                              {% if fotos[e.id]['0'] %}
+                                {% with f = fotos[e.id]['0'] %}
                                 <td class="text-center">
                                     <a data-toggle="modal" href="#preview-foto-{{ f.id }}"
                                         role="button" aria-expanded="false"
@@ -372,8 +372,8 @@
                               <td class="text-center">-</td>
                               {% endif %}
 
-                              {% if e.fotos['50'] %}
-                                {% with f = e.fotos['50'] %}
+                              {% if fotos[e.id]['50'] %}
+                                {% with f = fotos[e.id]['50'] %}
                                 <td class="text-center">
                                     <a data-toggle="modal" href="#preview-foto-{{ f.id }}"
                                         role="button" aria-expanded="false"
@@ -426,8 +426,8 @@
                               <td class="text-center">-</td>
                               {% endif %}
 
-                              {% if e.fotos['100'] %}
-                                {% with f = e.fotos['100'] %}
+                              {% if fotos[e.id]['100'] %}
+                                {% with f = fotos[e.id]['100'] %}
                                 <td class="text-center">
                                     <a data-toggle="modal" href="#preview-foto-{{ f.id }}"
                                         role="button" aria-expanded="false"

@@ -137,6 +137,12 @@ def embung_harian():
     kegiatan = KegiatanEmbung.query.filter(
                                 KegiatanEmbung.sampling == sampling.strftime('%Y-%m-%d')
                             ).all()
+    all_fotos = Foto.query.filter(Foto.obj_type == "kegiatan_embung", Foto.obj_id.in_([k.id for k in kegiatan])).all()
+    fotos = {k.id: {} for k in kegiatan}
+    for f in all_fotos:
+        length = len(f.keterangan)
+        tag = f.keterangan[:length-1]
+        fotos[f.obj_id][tag] = f
 
     embung_a = {
         '1': {},
@@ -178,7 +184,8 @@ def embung_harian():
                             sampling=sampling,
                             wil_sungai=wilayah,
                             embung_a=embung_a,
-                            embung_b=embung_b)
+                            embung_b=embung_b,
+                            fotos=fotos)
 
 
 @bp.route('/showcase/toggle', methods=['POST'])
