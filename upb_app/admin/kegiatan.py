@@ -589,6 +589,13 @@ def kegiatan_embung(embung_id):
                                     extract('month', KegiatanEmbung.sampling) == sampling.month,
                                     extract('year', KegiatanEmbung.sampling) == sampling.year
                                 ).all()
+    all_fotos = Foto.query.filter(Foto.obj_type == "kegiatan_embung", Foto.obj_id.in_([k.id for k in all_kegiatan])).all()
+    fotos = {k.id: {} for k in all_kegiatan}
+    for f in all_fotos:
+        length = len(f.keterangan)
+        tag = f.keterangan[:length-1]
+        fotos[f.obj_id][tag] = f
+
     days = calendar.monthrange(sampling.year, sampling.month)[1]
     kegiatan = {}
     for i in range(days, 0, -1):
@@ -604,6 +611,7 @@ def kegiatan_embung(embung_id):
                             name=embung.nama,
                             bagian=embung.bagian,
                             kegiatan=kegiatan,
+                            fotos=fotos,
                             sampling=datetime.datetime.now() + datetime.timedelta(hours=7),
                             sampling_dt=sampling)
 

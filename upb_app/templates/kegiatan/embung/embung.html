@@ -232,8 +232,8 @@
                                             0%
                                         </div>
                                         <div class="col-6 text-center">
-                                            {% if '0' in k.fotos %}
-                                                {% with f=k.fotos['0'] %}
+                                            {% if '0' in fotos[k.id] %}
+                                                {% with f=fotos[k.id]['0'] %}
                                                 <a data-toggle="modal"
                                                     href="#preview-foto"
                                                     role="button"
@@ -289,8 +289,8 @@
                                             50%
                                         </div>
                                         <div class="col-6 text-center">
-                                            {% if '50' in k.fotos %}
-                                                {% with f=k.fotos['50'] %}
+                                            {% if '50' in fotos[k.id] %}
+                                                {% with f=fotos[k.id]['50'] %}
                                                 <a data-toggle="modal"
                                                     href="#preview-foto"
                                                     role="button"
@@ -346,8 +346,8 @@
                                             100%
                                         </div>
                                         <div class="col-6 text-center">
-                                            {% if '100' in k.fotos %}
-                                                {% with f=k.fotos['100'] %}
+                                            {% if '100' in fotos[k.id] %}
+                                                {% with f=fotos[k.id]['100'] %}
                                                 <a data-toggle="modal"
                                                     href="#preview-foto"
                                                     role="button"
@@ -500,8 +500,8 @@
                                 <td class="text-center">{{ k.selesai or "-" }}</td>
                                 <td>{{ k.kendala or "-" }}</td>
                                 <td>{{ k.petugas or "-" }}</td>
-                                {% if k.fotos['0'] %}
-                                {% with f = k.fotos['0'] %}
+                                {% if fotos[k.id]['0'] %}
+                                {% with f = fotos[k.id]['0'] %}
                                 <td class="text-center">
                                     <img class="img-card" id="foto-{{ f.id }}" src="{{ url_for('static', filename=f.url[7:]) }}" alt="" style="width: 8rem;height: 8rem;">
                                 </td>
@@ -510,8 +510,8 @@
                                 <td class="text-center">-</td>
                                 {% endif %}
 
-                                {% if k.fotos['50'] %}
-                                {% with f = k.fotos['50'] %}
+                                {% if fotos[k.id]['50'] %}
+                                {% with f = fotos[k.id]['50'] %}
                                 <td class="text-center">
                                     <img class="img-card" id="foto-{{ f.id }}" src="{{ url_for('static', filename=f.url[7:]) }}" alt="" style="width: 8rem;height: 8rem;">
                                 </td>
@@ -520,8 +520,8 @@
                                 <td class="text-center">-</td>
                                 {% endif %}
 
-                                {% if k.fotos['100'] %}
-                                {% with f = k.fotos['100'] %}
+                                {% if fotos[k.id]['100'] %}
+                                {% with f = fotos[k.id]['100'] %}
                                 <td class="text-center">
                                     <img class="img-card" id="foto-{{ f.id }}" src="{{ url_for('static', filename=f.url[7:]) }}" alt="" style="width: 8rem;height: 8rem;">
                                 </td>
@@ -826,7 +826,7 @@
     var fotoKegiatan = {
         {% for date, keg in kegiatan.items() %}
             {% for k in keg %}
-                {% for _, f in k.fotos.items() %}
+                {% for _, f in fotos[k.id].items() %}
                     {{ f.id }}: {
                         rencana: "{{ k.rencana }}",
                         rencanaDate: "{{ k.sampling.strftime('%d %b %Y') }}",

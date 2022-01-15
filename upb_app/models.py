@@ -544,8 +544,8 @@ class KegiatanEmbung(BaseLog):
     bagian_id = db.Column(db.Integer, db.ForeignKey('bagian_embung.id'), nullable=True)
     embung_id = db.Column(db.Integer, db.ForeignKey('embung.id'), nullable=True)
 
-    embung = relationship('Embung', back_populates='kegiatan')
-    bagian = relationship('BagianEmbung', back_populates='kegiatan')
+    embung = relationship('Embung', back_populates='kegiatan', lazy='joined')
+    bagian = relationship('BagianEmbung', back_populates='kegiatan', lazy='joined')
 
     __table_args__ = (db.UniqueConstraint('embung_id', 'sampling', 'bagian_id',
                                           name='kegiatan_embung_sampling_bagian_id'),)
