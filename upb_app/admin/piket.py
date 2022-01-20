@@ -85,7 +85,7 @@ def piket_bendungan(bendungan_id):
         relay -= datetime.timedelta(days=1)
 
     sampling = datetime.datetime.strptime(sampling, "%Y-%m-%d")
-    petugas = Petugas.query.filter(Petugas.bendungan_id==bendungan_id).all()
+    petugas = Petugas.query.filter(Petugas.bendungan_id==bendungan_id).order_by(Petugas.id).all()
 
     return render_template('piket/bendungan.html',
                             csrf=generate_csrf(),
