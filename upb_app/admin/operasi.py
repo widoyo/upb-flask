@@ -684,6 +684,75 @@ def operasi_harian_embung():
                             wil_sungai=wil_sungai)
 
 
+@bp.route('/embung/<embung_id>/operasi/csv')
+@login_required  # @petugas_only
+@role_check_embung
+def operasi_embung_csv(embung_id):
+    emb = Embung.query.get(embung_id)
+
+    if not emb:
+        abort(404)
+
+    date = request.values.get('sampling')
+    date = datetime.datetime.strptime(date, "%Y-%m-%d") if date else datetime.datetime.utcnow()
+    sampling = datetime.datetime.strptime(f"{date.year}-{date.month}-01", "%Y-%m-%d")
+
+    now = datetime.datetime.now()
+    if sampling.year == now.year and sampling.month == now.month:
+        day = now.day
+    else:
+        day = calendar.monthrange(sampling.year, sampling.month)[1]
+    end = datetime.datetime.strptime(f"{date.year}-{date.month}-{day} 23:59:59", "%Y-%m-%d %H:%M:%S")
+
+    manual_daily = ManualDailyEmbung.query.filter(
+                                        ManualDailyEmbung.embung_id == emb.id,
+                                        ManualDailyEmbung.sampling.between(sampling, end)
+                                    ).all()
+    tma = ManualTmaEmbung.query.filter(
+                                    ManualTmaEmbung.embung_id == emb.id,
+                                    ManualTmaEmbung.sampling.between(sampling, end)
+                                ).all()
+    periodik = {}
+    for i in range(day):
+        sampl = datetime.datetime.strptime(f"{sampling.year}-{sampling.month}-{i+1}", "%Y-%m-%d")
+        periodik[sampl] = {
+            'daily': None,
+            'tma': None
+        }
+
+    for d in manual_daily:
+        periodik[d.sampling]['daily'] = d
+    for t in tma:
+        sampl = t.sampling.replace(hour=0)
+        periodik[sampl]['tma'] = t
+
+    pre_csv = [['waktu','tma','vol',
+        'inflow_q','inflow_v','intake_q','intake_v','spillway_q','spillway_v']]
+    for sampl, data in periodik.items():
+        pre_csv.append([
+            sampl.strftime('%Y-%m-%d'),
+            data['tma'].tma if data['tma'] else None,
+            data['tma'].vol if data['tma'] else None,
+            data['daily'].inflow_deb if data['daily'] else None,
+            data['daily'].inflow_vol if data['daily'] else None,
+            data['daily'].intake_deb if data['daily'] else None,
+            data['daily'].intake_vol if data['daily'] else None,
+            data['daily'].spillway_deb if data['daily'] else None,
+            data['daily'].spillway_vol if data['daily'] else None,
+        ])
+
+    output = io.StringIO()
+    writer = csv.writer(output, delimiter='\t')
+    for l in pre_csv:
+        writer.writerow(l)
+    output.seek(0)
+    return Response(output,
+                    mimetype="text/csv",
+                    headers={
+                        "Content-Disposition": f"attachment;filename={emb.nama.replace(' ', '_')}_{sampling.strftime('%d_%B_%Y')}.csv"
+                    })
+
+
 @bp.route('/embung/<embung_id>/operasi')
 @login_required  # @petugas_only
 @role_check_embung
