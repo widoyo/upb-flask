@@ -115,7 +115,7 @@ def kegiatan_bendungan(bendungan_id):
                             name=bend.name,
                             petugas=petugas,
                             kegiatan=kegiatan,
-                            sampling=datetime.datetime.now() + datetime.timedelta(hours=7),
+                            sampling=datetime.datetime.now(),
                             sampling_dt=sampling)
 
 
@@ -400,6 +400,11 @@ def pemeliharaan_lapor(bendungan_id):
     new_id = obj.id if obj else row.id
     latest = Foto.query.order_by(Foto.id.desc()).first()
     raw = request.form.get('foto')
+    if raw:
+        print(raw)
+    else:
+        print(request.form.keys())
+        print('raw kosong')
     imageStr = raw.split(',')[1]
     filename = f"pemeliharaan_{latest.id}_{request.form.get('filename')}"
     img_file = os.path.join(app.config['UPLOAD_FOLDER'], filename)
@@ -612,7 +617,7 @@ def kegiatan_embung(embung_id):
                             bagian=embung.bagian,
                             kegiatan=kegiatan,
                             fotos=fotos,
-                            sampling=datetime.datetime.now() + datetime.timedelta(hours=7),
+                            sampling=datetime.datetime.now(),
                             sampling_dt=sampling)
 
 

@@ -28,7 +28,7 @@ def keamanan_bendungan(bendungan_id):
     bend = Bendungan.query.get(bendungan_id)
 
     date = request.values.get('sampling')
-    now = datetime.datetime.now() + datetime.timedelta(hours=7)
+    now = datetime.datetime.now()
     date = datetime.datetime.strptime(date, "%Y-%m-%d") if date else now
     sampling = datetime.datetime.strptime(f"{date.year}-{date.month}-01", "%Y-%m-%d")
 

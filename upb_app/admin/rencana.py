@@ -140,7 +140,7 @@ def rtow_imports(bendungan_id):
     if request.method == "POST":
         upload = request.files['upload'].read().decode("utf-8")
         print(upload)
-        raw = upload.split('\r\n')
+        raw = upload.splitlines()
         seps = "\t_;_,_|".split('_')
         sep = None
 

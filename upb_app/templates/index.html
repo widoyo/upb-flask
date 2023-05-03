@@ -1,419 +1,299 @@
-{% extends 'master/base.html' %}
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link rel="shortcut icon" href="/static/images/pupr.ico">
+    <title>Unit Pengelola Bendungan BBWSBS</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-GLhlTQ8iRABdZLl6O3oVMWSktQOp6b7In1Zl3/Jr59b6EGGoI1aFkw7cmDA6j6gD" crossorigin="anonymous">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.3/font/bootstrap-icons.css">
+    <style>
+      .card {
+        height: 200px;
+      }
+      .upb-card .row { margin-top: 30px;}
+      section { margin: 30px 0; padding: 20px 0;}
+      ul.situs-sodara li { display: inline; }
+      li span.dot {
+        background-color: rgba(16, 16, 16, .7);
+        margin-right: 12px;
+        display: inline-block;
+        width: 12px;
+        height: 12px;
+        border-radius: 50%
+      }
+      .topo-bg {
+        margin-top: -30px;
+        padding-top: 30px !important;
+        background-color: #2942af;
+        background-image: url('/static/images/trianglify-2.png');
+        background-repeat: no-repeat;
+        background-size: 100% 100%;
+        margin-bottom: 0;
+      }
 
-{% block css %}
-<style>
-    .section {
-        margin-bottom: 60px;
-    }
-    .each_bd {
-        display: none;
-    }
-</style>
-{% endblock %}
-
-{% block content %}
-<div class="row section">
-    <div class="col-md-6"><p><b>Status: {{ tgl.strftime('%d %b %Y') }}</b></p>
-        <h3>Volume Total</h3>
-        <p><small class="text-muted">(Juta M<sup>3</sup>)</small></p>
-        <canvas id="pieChart"></canvas>
-    </div>
-    <div class="col-md-3">
-        <p>&nbsp;</p>
-        <h3>Outflow </h3>
-        <p><small class="text-muted">(M<sup>3</sup>/detik)</small></p>
-        <table class="table">
-            <tr><td>Rencana (RTOW)</td><td class="text-right">{{ "{:,.3f}".format(rtow.outflow) }}</td></tr>
-            <tr><td>Realisasi</td><td class="text-right">{{ "{:,.3f}".format(real.outflow) }}</td></tr>
-        </table>
-    </div>
-    <div class="col-md-3">
-        <p>&nbsp;</p>
-        <h3>Inflow</h3>
-        <p> <small class="text-muted">(M<sup>3</sup>/detik)</small></p>
-        <table class="table">
-            <tr><td>Rencana (RTOW)</td><td class="text-right">{{ "{:,.3f}".format(rtow.inflow) }}</td></tr>
-            <tr><td>Realisasi</td><td class="text-right">{{ "{:,.3f}".format(real.inflow) }}</td></tr>
-        </table>
-    </div>
-</div><hr>
-<div class="row">
-    <div class="col-md">
-        <h3>Volume per Bendungan
-
-        </h3>
-    </div>
-</div>
-<div class="row section">
-    <div class="col-md-4">
-        <h4>
-            Hulu
-            <small class="text-muted">[<a href="#/" onClick="toggleEachBd('wil_1')" id="wil_1_title">lihat</a>]</small>
-        </h4>
-        <div class="overflow-auto" id="wil_1" style="max-height: 600px; display: none;">
-
+    </style>
+  </head>
+  <body>
+    <section class="w-100 mt-0 topo-bg">
+    <div class="container-fluid">
+      <div class="row">
+        {% if current_user.is_anonymous %}
+        <div class="col text-end"><a href="#" class="btn btn-outline-light me-5" data-bs-toggle="offcanvas" data-bs-target="#staticBackdrop" aria-controls="staticBackdrop"><i class="bi bi-key me-2"></i> Login</a>
+          <div class="offcanvas offcanvas-end" data-bs-backdrop="static" tabindex="-1" id="staticBackdrop" aria-labelledby="staticBackdropLabel">
+            <div class="offcanvas-header">
+              <h5 class="offcanvas-title" id="staticBackdropLabel">Login</h5>
+              <button type="button" class="btn-close" data-bs-dismiss="offcanvas" aria-label="Close"></button>
+            </div>
+            <div class="offcanvas-body">
+              <div>
+                <form action="/login" method="post" novalidate>
+                  <img class="mb-4" src="{{ url_for('static', filename='img/bbwsbs.png') }}" style="width:120px;" alt="bbwsbs">
+                  <h1 class="mb-3 fw-lighter">
+                      Unit Pengelola Bendungan<br>
+                  </h1>
+                  {{ form.hidden_tag() }}
+                  
+                  <label for="inputUsername" class="visually-hidden">Username</label>
+                  <input type="text" name="username" id="inputUsername" class="form-control" placeholder="Username" required autofocus>
+                  <label for="inputPassword" class="visually-hidden">Password</label>
+                  <input type="password" name="password" id="inputPassword" class="form-control" placeholder="Password" required>
+                  <div class="checkbox mb-3"></div>
+                  <button class="btn btn-lg btn-primary btn-block" type="submit">Login</button>
+              </form>
+              </div>
+            </div>
+          </div>        
         </div>
-    </div>
-    <div class="col-md-4">
-        <h4>
-            Madiun
-            <small class="text-muted">[<a href="#/" onClick="toggleEachBd('wil_2')" id="wil_2_title">lihat</a>]</small>
-        </h4>
-        <div class="overflow-auto" id="wil_2" style="max-height: 600px; display: none;">
-
-        </div>
-    </div>
-    <div class="col-md-4">
-        <h4>
-            Hilir
-            <small class="text-muted">[<a href="#/" onClick="toggleEachBd('wil_3')" id="wil_3_title">lihat</a>]</small>
-        </h4>
-        <div class="overflow-auto" id="wil_3" style="max-height: 600px; display: none;">
-
-        </div>
-    </div>
-</div><hr>
-<div class="row">
-    <div class="col"><h3>Kegiatan</h3></div>
-</div>
-<div class="row section">
-    {% for gal in gallery %}
-    <div class="col-md-3 align-middle pt-1 pb-1">
-        <a data-toggle="modal" href="#gallery-scroll"
-            role="button" aria-expanded="false"
-            class="card-link" onclick="openGallery({{ gal.id }})">
-            <img class="img-fluid" id="foto-{{ gal.id }}" src="{{ url_for('static', filename=gal.url[7:]) }}" alt="NO IMAGE" style="width: 100%; height: auto;">
-        </a>
-    </div>
-
-        {% if loop.index % 4 == 0 %}
-        </div>
-        <div class="row">
+        {% else %}
+        <div class="col text-end"><a href="{{ url_for('admin.operasi') }}" class="btn btn-outline-light me-3"><i class="bi bi-clipboard me-2"></i> Catatan Operasi</a></div>
         {% endif %}
-
-    {% endfor %}
-</div>
-
-    <!-- MODAL + CAROUSEL -->
-    <div class="modal fade" id="gallery-scroll" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
-        <div class="modal-dialog modal-lg modal-dialog-centered" role="document">
-        <div class="modal-content">
-            <div class="modal-header">
-                <h5 class="modal-title" id="gallery_name">Galeri Kegiatan</h5>
-                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                <span aria-hidden="true">&times;</span>
-                </button>
-            </div>
-            <div class="modal-body">
-            <div id="carouselExampleControls" class="carousel slide" data-ride="carousel">
-                <div class="carousel-inner">
-                    {% for gal in gallery %}
-                    <div class="carousel-item" id="img-show-{{ gal.id }}" name="img-show">
-                        <img class="img-fluid w-100" src="{{ url_for('static', filename=gal.url[7:]) }}" id="foto-modal-show">
-                    </div>
-                    {% endfor %}
-                </div>
-                <a class="carousel-control-prev" href="#carouselExampleControls" role="button" data-slide="prev">
-                    <span class="carousel-control-prev-icon" aria-hidden="true"></span>
-                    <span class="sr-only">Previous</span>
-                </a>
-                <a class="carousel-control-next" href="#carouselExampleControls" role="button" data-slide="next">
-                    <span class="carousel-control-next-icon" aria-hidden="true"></span>
-                    <span class="sr-only">Next</span>
-                </a>
-            </div>
-            </div>
-        </div>
-        </div>
+      </div>
     </div>
+    <div class="container-fluid mt-5 py-5 text-light">
+      <div class="row">
+        <div class="col-sm-6 text-center mx-auto">
+          <p class="display-5 fw-lighter text-dark">Tampungan</p>
+          <p><b>38</b> Bendungan, hari ini</p>
+          <div id="chart" class="" align="center"></div>
+        </div>
+        <div class="col-sm-6 text-center">
+          <div ><img src="{{ url_for('static', filename='img/bbwsbs_cloud.png') }}" alt="BBWSBS" height="120" class=""></div>
+          <p class="fs-1 fw-lighter mt-5 text-lowercase">UNIT PENGELOLA BENDUNGAN</p>
+          <a href="#navbar" class="btn btn-warning btn-lg"><i class="bi bi-clock-history me-2"></i>UPB 1 .. 8</a>
+          <a href="#foto_kegiatan" class="ms-3 btn btn-outline-warning btn-lg"><i class="bi bi-cup-hot me-2"></i> Foto Kegiatan</a>
+        </div>
+      </div>
+    </div>
+  </section>
+        <nav id="navbar" class="navbar navbar-expand-lg bg-body-tertiary">
+          <div class="container-fluid">
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarScroll" aria-controls="navbarScroll" aria-expanded="false" aria-label="Toggle navigation">
+              <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse" id="navbarScroll">
+              <ul class="navbar-nav me-auto my-2 my-lg-0 navbar-nav-scroll" style="--bs-scroll-height: 100px;">
+                <li class="nav-item">
+                  <a class="nav-link active" aria-current="page" href="#"><i class="bi bi-house me-2"></i> Home</a>
+                </li>
+                <li class="nav-item dropdown">
+                  <a class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+                    <i class="bi bi-water ms-4 me-2"></i> Bendungan
+                  </a>
+                  <ul class="dropdown-menu">
+                    <li><a class="dropdown-item" href="/bendungan">Data Tampungan</a></li>
+                    <li><a class="dropdown-item" href="/bendungan/kegiatan">Kegiatan</a></li>
+                    <li><hr class="dropdown-divider"></li>
+                    <li><a class="dropdown-item" href="#">Petugas</a></li>
+                  </ul>
+                </li>
+                <li class="nav-item">
+                  <a class="nav-link active" aria-current="page" href="/embung"><i class="bi bi-rainbow ms-4 me-2"></i> Embung</a>
+                </li>
+                <li class="nav-item dropdown">
+                  <a class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+                    <i class="bi bi-map ms-4 me-2"></i> Peta
+                  </a>
+                  <ul class="dropdown-menu">
+                    <li><a class="dropdown-item" href="#">Bendungan</a></li>
+                    <li><hr class="dropdown-divider"></li>
+                    <li><a class="dropdown-item" href="#">Embung</a></li>
+                  </ul>
+                </li>
+                <li class="nav-item dropdown">
+                  <a class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+                    <i class="bi bi-info-circle ms-4 me-2"></i> Profil
+                  </a>
+                  <ul class="dropdown-menu">
+                    <li><a class="dropdown-item" href="#">Wilayah Kerja</a></li>
+                    <li><a class="dropdown-item" href="#">Organisasi</a></li>
+                    <li><hr class="dropdown-divider"></li>
+                    <li><a class="dropdown-item" href="#">Hubungi Kami</a></li>
+                  </ul>
+                </li>
+              </ul>
+            </div>
+          </div>
+        </nav>
+  <section>
+<div class="container upb-card">
+  <div class="row">
+    <div class="col">
+      <div id="root"></div>
+      <h2>Tampungan (Juta M<sup>3</sup>)</h2>
+    </div>
+  </div>
+  <div class="row">
+    <div class="col-sm-3">
+      <div class="card">
+        <div class="card-body">
+          <h5 class="card-title">UPB 1</h5>
+
+        </div>
+        
+      </div>
+    </div>
+    <div class="col-sm-3">
+      <div class="card">
+        <div class="card-body">
+          <h5 class="card-title">UPB 2</h5>
+          <i style="font-size:96px" class="bi bi-pie-chart-fill display-6 text-danger"></i>          
+        </div>
+        
+      </div>
+    </div>
+    <div class="col-sm-3">
+      <div class="card">
+        <div class="card-body text-center">
+          <h5 class="card-title">UPB 3</h5>
+          <i style="font-size:96px" class="bi bi-pie-chart-fill display-6 text-success"></i>
+        </div>
+        
+      </div>
+    </div>
+    <div class="col-sm-3">
+      <div class="card">
+        <div class="card-body text-center">
+          <h5 class="card-title">UPB 4</h5>
+          <i style="font-size:96px" class="bi bi-pie-chart-fill display-6 text-success"></i>
+        </div>
+        
+      </div>
+    </div>
+  </div>
+  <div class="row">
+    <div class="col-sm-3">
+      <div class="card">
+        <div class="card-body">
+          <div class="card-title">UPB 5</div>
+
+        </div>
+        
+      </div>
+    </div>
+    <div class="col-sm-3">
+      <div class="card">
+        <div class="card-body">
+          <div class="card-title">UPB 6</div>
+          
+        </div>
+        
+      </div>
+    </div>
+    <div class="col-sm-3">
+      <div class="card">
+        <div class="card-body">
+          <div class="card-title">UPB 7</div>
+          
+        </div>
+        
+      </div>
+    </div>
+    <div class="col-sm-3">
+      <div class="card">
+        <div class="card-body">
+          <div class="card-title">UPB 8</div>
+
+        </div>
+        
+      </div>
+    </div>
+  </div>
 </div>
-<br>
-{% endblock %}
-
-{% block js %}
-<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.9.4/Chart.js"></script>
-<script>
-    function add(accumulator, a) {
-        return accumulator + a;
-    }
-
-    function toggleEachBd(divId) {
-        var x = document.getElementById(divId);
-        var title = document.getElementById(`${divId}_title`);
-
-        if (x.style.display === 'none') {
-            x.style.display = "block";
-            title.innerHTML = "tutup";
-        } else {
-            x.style.display = 'none';
-            title.innerHTML = "lihat";
-        }
-    }
-
-    var volumeData = [
-        ["RTOW", {{ rtow.volume }}],
-        ["Realisasi", {{ real.volume }}],
-        ["Potensial", {{ vol_potensi }}]
-    ];
-    volumeData = volumeData.sort(function (a, b) {
-        return a[1] - b[1];
-    });
-
-    var xValues = [];
-    var yValues = [];
-    var barColors = [];
-    Object.values(volumeData).forEach(function(val, idx, arr) {
-        volEach = val[1];
-        // if (idx - 1 >= 0) {
-        //     volEach -= arr[idx - 1][1];
-        // }
-        // yValues.push(volEach);
-
-        if (val[0] == "Potensial") {
-            yValues.push(volEach - arr[idx - 1][1]);
-            xValues.push("Potensial");
-            barColors.push("#eee");
-        }
-        else if (val[0] == "Realisasi") {
-            yValues.push(volEach);
-            xValues.push("Realisasi");
-            barColors.push("#0277bd");
-        }
-        else if (val[0] == "RTOW") {
-            yValues.push(volEach);
-            xValues.push("RTOW");
-            barColors.push("aqua");
-        }
-        else {
-            yValues.push(volEach);
-            xValues.push("TBA");
-            barColors.push("white");
-        }
-    });
-
-    var allChart = new Chart("pieChart", {
-      type: "pie",
-      data: {
-        labels: xValues,
-        datasets: [{
-          backgroundColor: barColors,
-          borderColor: "#aaa",
-          borderWidth: 1,
-          data: yValues
-        }]
-      },
-      options: {
-        //borderAlign: 'inner',
-        showAllTooltips: true,
-        title: {
-          display: true,
-          text: "Rencana & Realisasi Volume Bendungan",
-          fontColor: "#888",
-          fontSize: 16,
-          fontStyle: 'normal'
+  </section>
+  <section id="foto_kegiatan">
+    <div class="container">
+      <div class="row justify-content-center">
+        <div class="col w-100">
+          <h2>Foto Kegiatan Hari ini</h2>
+          <img src="https://via.placeholder.com/728x200.png?text=Bendungan+Anu:+Pelumasan+Kemudi
+          " alt="" class="img-fluid rounded ">
+          
+        </div>
+      </div>
+    </div>
+  </section>
+  <footer class="bg-light pt-5 pb-5">
+    <div class="container">
+      <div class="row">
+        <div class="col"><img src="{{ url_for('static', filename='img/pupr.png') }}" alt="PUPR" width="90px">
+        </div>
+        <div class="col"><h5>Bendungan</h5>
+        <ul>
+          <li>Tampungan Hari ini</li>
+          <li>Kegiatan</li>
+          <li>Petugas</li>
+        </ul>
+        </div>
+        <div class="col"><h5>Embung</h5>
+          <ul>
+            <li>Tampungan Hari ini</li>
+            <li>Kegiatan</li>
+            <li>Petugas</li>
+          </ul>
+        </div>
+        <div class="col"><h5>UPB</h5>
+          <ul>
+            <li>Organisasi</li>
+            <li>Alamat</li>
+            <li>Tim</li>
+          </ul>
+        </div>
+        <div class="col"><img src="{{ url_for('static', filename='img/bbwsbs.png') }}" style="width:120px;" alt="BBWSBS">
+                  <p class="small text-muted mt-1">&copy; 2019 - 2023<br/> UPB BBWS Bengawan Solo</p>
+</div>
+      </div>
+    </div>
+  </footer>
+  <div class="container">
+    <div class="row">
+      <div class="col"><ul class="situs-sodara mt-3">
+        <li><span class="dot"></span> <a href="https://sda.pu.go.id" class="link-secondary">Dirjen Sumber Daya Air</a></li>
+        <li><span class="dot ms-5"></span> <a href="https://sda.pu.go.id/balai/bbwsbengawansolo/portal/" class="link-secondary">Portal BBWSBS</a></li> 
+        <li><span class="dot ms-5"></span> <a href="https://hidrologi.bbws-bsolo.net"  class="link-secondary">Hidrologi &amp; Kualitas Air BBWSBS</a></li> 
+        <li><span class="dot ms-5"></span> <a href="http://bbwsbengawansolo.net/eppid/" class="link-secondary">One Stop Service BBWSBS</a></li> 
+      </ul></div>
+    </div>
+  </div>
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/js/bootstrap.bundle.min.js" integrity="sha384-w76AqPfDkMBDXo30jS1Sgez6pr3x5MlQ1ZAGC+nuZB+EYdgRZgiwxhTBTkF7CXvN" crossorigin="anonymous"></script>
+  <script src="https://cdn.jsdelivr.net/npm/apexcharts"></script>
+    <script>
+      var options = {
+        series: [85, 100-85],
+        labels: ['Realisasi', ''],
+        chart: {
+          type: 'donut',
+          width: 380,
         },
         legend: {
-            display: false,
-            position: 'left',
-            labels: {
-                fontColor: "black",
-                boxWidth: 30,
-                padding: 30
-            }
-        },
-        tooltips: {
-            enabled: false,
-            callbacks: {
-                label: function(tooltipItem, data) {
-                    var dataset = data.datasets[tooltipItem.datasetIndex];
-                    var total = dataset.data.reduce(function(previousValue, currentValue, currentIndex, array) {
-                        return previousValue + currentValue;
-                    });
-                    // var currentValue = dataset.data[tooltipItem.index];
-                    var currentValue = parseFloat(volumeData[tooltipItem.index][1]/1000000).toFixed(2);
-                    var percentage = parseFloat((currentValue/total) * 100).toFixed(2);
-
-                    var name = data.labels[tooltipItem.index];
-                    var formattedValue = (currentValue).toLocaleString(
-                        undefined,
-                        { minimumFractionDigits: 2 }
-                    );
-
-                    return `${name} : ${formattedValue} Juta M<sup>3</sup>`;
-                }
-            }
-        },
-        events: false,
-        animation: {
-            duration: 500,
-            easing: "easeOutQuart",
-            onComplete: function () {
-              var ctx = this.chart.ctx;
-              ctx.font = Chart.helpers.fontString(Chart.defaults.global.defaultFontFamily, 'normal', Chart.defaults.global.defaultFontFamily);
-              ctx.textAlign = 'center';
-              ctx.textBaseline = 'bottom';
-
-              var labels = this.data.labels
-              this.data.datasets.forEach(function (dataset) {
-
-                for (var i = 0; i < dataset.data.length; i++) {
-                  var model = dataset._meta[Object.keys(dataset._meta)[0]].data[i]._model,
-                      total = dataset._meta[Object.keys(dataset._meta)[0]].total,
-                      mid_radius = model.innerRadius + (model.outerRadius - model.innerRadius)/2,
-                      start_angle = model.startAngle,
-                      end_angle = model.endAngle,
-                      mid_angle = start_angle + (end_angle - start_angle)/2;
-
-                  var x = mid_radius * Math.cos(mid_angle);
-                  var y = mid_radius * Math.sin(mid_angle);
-
-                  ctx.fillStyle = '#222';
-                  ctx.fillText(labels[i], model.x + x, model.y + y);
-                  ctx.fillText(parseFloat(dataset.data[i]/1000000).toFixed(2), model.x + x, model.y + y + 15);
-                }
-              });
-            }
+          show: false,
+          labels: {
+            colors: '#eeeeee',
+          }
         }
-      }
-    });
-
-    var wil_col = {'1': document.getElementById('wil_1'),
-    '2': document.getElementById('wil_2'),
-    '3': document.getElementById('wil_3')};
-    fetch('/api/bendungan/volume')
-        .then(response => response.json())
-        .then(data => {
-            data.forEach(function(bend, idx, bendungan) {
-                var volumeData = [
-                    ["Realisasi", bend['volume_real']],
-                    ["Potensial", bend['volume_potensial']]
-                ];
-                var canv_el = document.createElement('canvas');
-                canv_el.setAttribute('id', `pieChart-${idx}`);
-                wil_col[`${bend.wil}`].appendChild(canv_el);
-                wil_col[`${bend.wil}`].appendChild(document.createElement("HR"));
-                // volumeData = volumeData.sort(function (a, b) {
-                //     return a[1] - b[1];
-                // });
-
-                var xValues = [];
-                var yValues = [];
-                var barColors = [];
-                Object.values(volumeData).forEach(function(val, idx2, arr) {
-                    volEach = val[1];
-                    if (idx2 - 1 >= 0) {
-                        volEach -= arr[idx2 - 1][1];
-                    }
-                    yValues.push(volEach);
-
-                    if (val[0] == "Potensial") {
-                        xValues.push("Kap. Tampungan");
-                        barColors.push("#eee");
-                    } else if (val[0] == "Realisasi") {
-                        xValues.push("Vol saat ini");
-                        barColors.push("#0277bd");
-                    } else if (val[0] == "RTOW") {
-                        xValues.push("RTOW");
-                        barColors.push("aqua");
-                    } else {
-                        xValues.push("TBA");
-                        barColors.push("white");
-                    }
-                });
-
-                new Chart(`pieChart-${idx}`, {
-                  type: "pie",
-                  data: {
-                    labels: xValues,
-                    datasets: [{
-                      backgroundColor: barColors,
-                      borderColor: "black",
-                      borderWidth: 0,
-                      data: yValues
-                    }]
-                  },
-                  options: {
-                        showAllTooltips: true,
-                        title: {
-                          display: true,
-                          text: `${bend.name}`,
-                        },
-                        subtitle: {
-                            display: true,
-                            text: 'anu',
-                        },
-                        legend: {
-                            display: false,
-                            position: 'right',
-                            labels: {
-                                fontColor: "black",
-                                boxWidth: 30,
-                                padding: 30,
-                            }
-                        },
-                        tooltips: {
-                            enabled: false,
-                            callbacks: {
-                                label: function(tooltipItem, data) {
-                                    var dataset = data.datasets[tooltipItem.datasetIndex];
-                                    var total = dataset.data.reduce(function(previousValue, currentValue, currentIndex, array) {
-                                        return previousValue + currentValue;
-                                    });
-                                    var currentValue = dataset.data[tooltipItem.index];
-                                    var percentage = parseFloat((currentValue/total) * 100).toFixed(2);
-
-                                    var name = data.labels[tooltipItem.index];
-
-                                    return `${name} : ${percentage} %`;
-                                }
-                            }
-                        },
-                        events: false,
-                        animation: {
-                            duration: 500,
-                            easing: "easeOutQuart",
-                            onComplete: function () {
-                              var ctx = this.chart.ctx;
-                              ctx.font = Chart.helpers.fontString(Chart.defaults.global.defaultFontFamily, 'normal', Chart.defaults.global.defaultFontFamily);
-                              ctx.textAlign = 'center';
-                              ctx.textBaseline = 'bottom';
-
-                              var labels = this.data.labels
-                              this.data.datasets.forEach(function (dataset) {
-
-                                for (var i = 0; i < dataset.data.length; i++) {
-                                  var model = dataset._meta[Object.keys(dataset._meta)[0]].data[i]._model,
-                                      total = dataset._meta[Object.keys(dataset._meta)[0]].total,
-                                      mid_radius = model.innerRadius + (model.outerRadius - model.innerRadius)/2,
-                                      start_angle = model.startAngle,
-                                      end_angle = model.endAngle,
-                                      mid_angle = start_angle + (end_angle - start_angle)/2;
-
-                                  var x = mid_radius * Math.cos(mid_angle);
-                                  var y = mid_radius * Math.sin(mid_angle);
-
-                                  ctx.fillStyle = '#444';
-                                  var percent = String(Math.round(dataset.data[i]/total*100)) + "%";
-                                  ctx.fillText(labels[i], model.x + x, model.y + y);
-                                  ctx.fillText(percent, model.x + x, model.y + y + 15);
-                                }
-                              });
-                            }
-                        }
-                    }
-                });
-            });
-        });
-    function clearActive(){
-        document.getElementsByName("img-show").forEach(function (el) {
-            el.classList.remove("active");
-        });
-    }
-
-    function openGallery(img_id) {
-        console.log("Opening Gallery");
-        clearActive();
-        document.getElementById(`img-show-${ img_id }`).classList.add("active");
-    }
-</script>
-{% endblock %}
+      };
+      var chart = new ApexCharts(document.querySelector("#chart"), options);
+        chart.render();
+    </script>
+  </body>
+</html>

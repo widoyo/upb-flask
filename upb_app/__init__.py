@@ -7,8 +7,11 @@ from flask_sqlalchemy import SQLAlchemy
 from flask_socketio import SocketIO
 from flask_login import LoginManager, current_user
 
+from flask_vite import Vite
+
+
 app = Flask(__name__)
-app.config.from_object(os.environ['APP_SETTINGS'])
+app.config.from_object('config.DevelopmentConfig')
 app.config['UPLOAD_FOLDER'] = f"static/img/foto"
 app.config['SAVE_DIR'] = f"{os.getcwd()}/upb_app/"
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
@@ -20,10 +23,16 @@ db = SQLAlchemy(app)
 login = LoginManager(app)
 login.login_view = 'login'
 
+vite = Vite(app)
+
 # DECORATORS
 from upb_app.models import Bendungan
 
-
+@app.route('/debug-sentry')
+def trigger_error():
+    division_by_zero = 1 / 0
+    
+    
 def admin_only(f):
     @wraps(f)
     def decorated_function(*args, **kwargs):
@@ -91,4 +100,4 @@ if __name__ == '__main__':
     gunicorn_logger = logging.getLogger('gunicorn.error')
     app.logger.handlers = gunicorn_logger.handlers
     app.logger.setLevel(gunicorn_logger.level)
-    socketio.run(app)
+    app.run()

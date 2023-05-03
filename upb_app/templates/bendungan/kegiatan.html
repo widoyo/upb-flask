@@ -77,7 +77,8 @@
         $('#datepicker').on('changeDate', function () {
             window.location = "{{ url_for('bendungan.kegiatan') }}?sampling=" + $('#datepicker').datepicker('getFormattedDate')
         });
-        $('#datepicker').text(moment($('#datepicker').text()).format('ddd, D MMM YYYY'));
+        //$('#datepicker').text(moment($('#datepicker').text()).format('ddd, D MMM YYYY'));
+        //$('#datepicker').text(moment($('#datepicker').text()).format('YYYY-MM-DD'));
 
         let tgls = document.querySelectorAll("#waktu");
         tgls.forEach(function(el){

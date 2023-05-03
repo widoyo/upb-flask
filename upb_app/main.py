@@ -83,6 +83,7 @@ def index():
         gallery = random.sample(showcased_foto, min(8, len(showcased_foto)))
 
     return render_template('index.html',
+                           form = LoginForm(),
                             vol_potensi=vol_potensi,
                             real=real,
                             rtow=rtow,
@@ -126,7 +127,7 @@ def mypassword():
 @login_required
 def logout():
     logout_user()
-    return redirect(url_for('login'))
+    return redirect('/')
 
 
 @app.route('/login', methods=['GET', 'POST'])
