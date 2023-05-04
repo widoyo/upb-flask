@@ -6,7 +6,6 @@ import os
 import json
 import daemonocle
 import paho.mqtt.subscribe as subscribe
-import mysql.connector
 
 from pprint import pprint
 

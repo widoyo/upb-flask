@@ -83,6 +83,7 @@ def index():
         gallery = random.sample(showcased_foto, min(8, len(showcased_foto)))
 
     return render_template('index.html',
+                           form=LoginForm(),
                             vol_potensi=vol_potensi,
                             real=real,
                             rtow=rtow,
