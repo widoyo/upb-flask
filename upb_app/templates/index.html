@@ -19,27 +19,20 @@
       .card {
         height: 200px;
       }
-      .upb-card .row { margin-top: 30px;}
+      /*.upb-card .row { margin-top: 30px;}*/
       section { margin: 30px 0; padding: 20px 0;}
-      ul.situs-sodara li { display: inline; }
-      li span.dot {
-        background-color: rgba(16, 16, 16, .7);
-        margin-right: 12px;
-        display: inline-block;
-        width: 12px;
-        height: 12px;
-        border-radius: 50%
-      }
-      .topo-bg-old {
-        margin-top: -30px;
-        padding-top: 30px !important;
-        background-color: #2942af;
-        background-image: url('/static/images/trianglify-2.png');
-        background-repeat: no-repeat;
-        background-size: 100% 100%;
-        margin-bottom: 0;
-      }
+      @media (min-width: 480px) {
+        ul.situs-sodara li { display: inline; }
+        li span.dot {
+          background-color: rgba(16, 16, 16, .7);
+          margin-right: 12px;
+          display: inline-block;
+          width: 12px;
+          height: 12px;
+          border-radius: 50%
+        }
 
+      }
     </style>
   </head>
   <body>
@@ -83,7 +76,7 @@
         <div class="col-sm-6 text-center mx-auto">
           
           <p class="display-5 fw-lighter text-dark"><b id="numBds"></b> Bendungan</p>
-          <p class="display-6 fw-lighter"><span id="sampling"></span></p>
+          <p class="display-6 fw-lighter"><span class="sampling"></span></p>
           <div id="chart" class="" align="center"></div>
         </div>
         <div class="col-sm-6 text-center">
@@ -146,7 +139,7 @@
           </div>
         </nav>
   <section>
-<div class="container upb-card">
+  <div class="container upb-card" id="upbCardList">
   <div class="row">
     <div class="col">
       <div id="root"></div>
@@ -154,90 +147,13 @@
       <p>per  <span class="sampling"></span></p>
     </div>
   </div>
-  <div class="row">
-    <div class="col-sm-3">
-      <div class="card">
-        <div class="card-body">
-          <h5 class="card-title">UPB 1</h5>
-
-        </div>
-        
-      </div>
-    </div>
-    <div class="col-sm-3">
-      <div class="card">
-        <div class="card-body">
-          <h5 class="card-title">UPB 2</h5>
-          <i style="font-size:96px" class="bi bi-pie-chart-fill display-6 text-danger"></i>          
-        </div>
-        
-      </div>
-    </div>
-    <div class="col-sm-3">
-      <div class="card">
-        <div class="card-body text-center">
-          <h5 class="card-title">UPB 3</h5>
-          <i style="font-size:96px" class="bi bi-pie-chart-fill display-6 text-success"></i>
-        </div>
-        
-      </div>
-    </div>
-    <div class="col-sm-3">
-      <div class="card">
-        <div class="card-body text-center">
-          <h5 class="card-title">UPB 4</h5>
-          <i style="font-size:96px" class="bi bi-pie-chart-fill display-6 text-success"></i>
-        </div>
-        
-      </div>
-    </div>
-  </div>
-  <div class="row">
-    <div class="col-sm-3">
-      <div class="card">
-        <div class="card-body">
-          <div class="card-title">UPB 5</div>
-
-        </div>
-        
-      </div>
-    </div>
-    <div class="col-sm-3">
-      <div class="card">
-        <div class="card-body">
-          <div class="card-title">UPB 6</div>
-          
-        </div>
-        
-      </div>
-    </div>
-    <div class="col-sm-3">
-      <div class="card">
-        <div class="card-body">
-          <div class="card-title">UPB 7</div>
-          
-        </div>
-        
-      </div>
-    </div>
-    <div class="col-sm-3">
-      <div class="card">
-        <div class="card-body">
-          <div class="card-title">UPB 8</div>
-
-        </div>
-        
-      </div>
-    </div>
-  </div>
-</div>
   </section>
   <section id="foto_kegiatan">
     <div class="container">
       <div class="row justify-content-center">
         <div class="col w-100">
           <h2>Foto Kegiatan Hari ini</h2>
-          <img src="https://via.placeholder.com/728x200.png?text=Bendungan+Anu:+Pelumasan+Kemudi
+          <img src="https://via.placeholder.com/728x200.png?text=Bendungan+A:+Pembersihan+Intake
           " alt="" class="img-fluid rounded ">
           
         </div>
@@ -251,22 +167,20 @@
         </div>
         <div class="col"><h5>Bendungan</h5>
         <ul>
-          <li>Tampungan Hari ini</li>
-          <li>Kegiatan</li>
-          <li>Petugas</li>
+          <li><a href="/bendungan">Tampungan Hari ini</a></li>
+          <li><a href="/bendungan/kegiatan">Kegiatan</a></li>
+          <li><a href="/bendungan/petugas">Petugas</a></li>
         </ul>
         </div>
         <div class="col"><h5>Embung</h5>
           <ul>
-            <li>Tampungan Hari ini</li>
-            <li>Kegiatan</li>
-            <li>Petugas</li>
+            <li><a href="/embung">Tampungan Hari ini</a></li>
           </ul>
         </div>
         <div class="col"><h5>UPB</h5>
           <ul>
-            <li>Organisasi</li>
-            <li>Alamat</li>
+            <li><a href="/profile/struktur-organisasi">Organisasi</a></li>
+            <li><a href="/profile/kontak-kami">Alamat</a></li>
             <li>Tim</li>
           </ul>
         </div>
@@ -286,6 +200,16 @@
       </ul></div>
     </div>
   </div>
+  <template id="tplUpb">
+    <div class="col-sm-3">
+      <div class="card">
+        <div class="card-header">
+          <h5 class="card-title"></h5>
+        </div>
+        <div class="card-body"></div>
+      </div>
+    </div>
+  </template>
   <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/js/bootstrap.bundle.min.js" integrity="sha384-w76AqPfDkMBDXo30jS1Sgez6pr3x5MlQ1ZAGC+nuZB+EYdgRZgiwxhTBTkF7CXvN" crossorigin="anonymous"></script>
   <script src="https://cdn.jsdelivr.net/npm/apexcharts"></script>
     <script>
@@ -319,7 +243,6 @@
             totalReal: volReal,
             sampling: volume_upb[0].sampling
           };
-          console.log(ret);
           return ret;
         } catch (error) {
           console.log("Error: ", error);
@@ -350,6 +273,12 @@
         }
       };
       fetchTampunganBendungan().then( x => {
+        document.querySelector('#numBds').innerHTML = x.numBds;
+        let sampling = new Date(x.sampling);
+        document.querySelectorAll('.sampling').forEach((e) => {
+          // anu
+          e.innerHTML = sampling.toDateString();
+        });
         options.series = [
           {name: 'Volume',
           data:[
@@ -359,7 +288,7 @@
             },
             {
               x: 'Realisasi', 
-              y: 100,
+              y: (x.totalReal/1000000).toFixed(2),
               colors: '#ff0000', 
               goals: [{
                 name: 'Rencana',
@@ -369,12 +298,96 @@
               }]},
             {
               x: 'Potensi', 
-              y: ((x.totalPotensi - x.totalReal)/1000000).toFixed(2)}]//(x.totalReal/1000000).toFixed(2)},
+              y: (x.totalPotensi/1000000).toFixed(2)}]//},
           }];
-        document.querySelector('#numBds').innerHTML = x.numBds;
-        document.querySelector('#sampling').innerHTML = new Date(x.sampling).toDateString();
         var chart = new ApexCharts(document.querySelector("#chart"), options);
         chart.render();
+        let r = document.querySelector('#upbCardList');
+        let row = document.createElement('div')
+        row.classList.add('row');
+        let opts = Object.assign({}, options);
+        opts.chart.width = 140;
+        opts.chart.type = 'pie';
+        opts.dataLabels = {enabled: false};
+        opts.title.text = '';
+        opts.fill = {colors: ['#cccccc', '#ff9900']};
+        opts.chart.toolbar = {show: false};
+        [1,2,3,4].forEach((i) => {
+          let divChart = document.createElement('div');
+          let divBdList = document.createElement('div');
+          divChart.classList.add('col');
+          divBdList.classList.add('col');
+          let olBds = document.createElement('ol');
+          olBds.style = "font-size: 0.8em;";
+          let iPot = 0, iReal = 0, iRenc = 0;
+          x.upbs[i].forEach((e) => {
+            iPot = iPot + e.volume_potensial;
+            iRenc = iRenc + e.volume_rotw;
+            iReal = iReal + e.volume_real;
+            let li = document.createElement('li');
+            li.innerHTML = '<a href="/bendungan/'+e.id+'">'+e.name.replace('Bd ', '')+'</a>';
+            olBds.appendChild(li);
+          });
+          divBdList.appendChild(olBds);
+          let kosong = ((iPot - iReal) / iPot) * 100;
+          let isi = (iReal / iPot) * 100;
+          opts.series = [kosong, isi];
+          opts.labels = ['Kosong', 'Isi'];
+          opts.legend.show = true;
+          
+          let chart = new ApexCharts(divChart, opts);
+          let t = document.querySelector('#tplUpb');
+          let cardBody = t.content.cloneNode(true);
+          cardBody.querySelector('.card-title').innerHTML = 'UPB ' + i + ' <small class="fw-light float-end">'+x.upbs[i].length+' <span style="font-size:0.7em">bendungan</span></small>';
+          let iRow = document.createElement('div');
+          iRow.classList.add('row');
+          iRow.append(divChart);
+          iRow.append(divBdList);
+          cardBody.querySelector('.card-body').appendChild(iRow);
+          row.appendChild(cardBody);
+          chart.render();
+        });
+        r.appendChild(row);
+        row.classList.add('mb-5');
+        row = document.createElement('div')
+        row.classList.add('row');
+        [5,6,7,8].forEach((i) => {
+          let divChart = document.createElement('div');
+          let divBdList = document.createElement('div');
+          divChart.classList.add('col');
+          divBdList.classList.add('col');
+          let olBds = document.createElement('ol');
+          olBds.style = "font-size: 0.8em;";
+          let iPot = 0, iReal = 0, iRenc = 0;
+          x.upbs[i].forEach((e) => {
+            iPot = iPot + e.volume_potensial;
+            iRenc = iRenc + e.volume_rotw;
+            iReal = iReal + e.volume_real;
+            let li = document.createElement('li');
+            li.innerHTML = '<a href="/bendungan/'+e.id+'">'+e.name.replace('Bd ', '')+'</a>';
+            olBds.appendChild(li);
+          });
+          divBdList.appendChild(olBds);
+          let kosong = ((iPot - iReal) / iPot) * 100;
+          let isi = (iReal / iPot) * 100;
+          opts.series = [kosong, isi];
+          opts.labels = ['Kosong', 'Isi'];
+          opts.legend.show = true;
+          
+          let chart = new ApexCharts(divChart, opts);
+          let t = document.querySelector('#tplUpb');
+          let cardBody = t.content.cloneNode(true);
+          cardBody.querySelector('.card-title').innerHTML = 'UPB ' + i + ' <small class="fw-light float-end">'+x.upbs[i].length+' <span style="font-size:0.7em">bendungan</span></small>';
+          let iRow = document.createElement('div');
+          iRow.classList.add('row');
+          iRow.append(divChart);
+          iRow.append(divBdList);
+          cardBody.querySelector('.card-body').appendChild(iRow);
+          row.appendChild(cardBody);
+          chart.render();
+        });
+        r.appendChild(row);
+        
       });
       
     </script>
