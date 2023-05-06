@@ -265,6 +265,14 @@
           }
           
         },
+        plotOptions: {
+          bar: {
+            distributed: true
+          }
+        },
+        fill: {
+          colors: ['#adb5bd', '#fd7e14', '#0d6efd']
+        },
         legend: {
           show: false,
           labels: {
@@ -306,16 +314,19 @@
         let row = document.createElement('div')
         row.classList.add('row');
         let opts = Object.assign({}, options);
-        opts.chart.width = 140;
+        opts.chart.width = 120;
         opts.chart.type = 'pie';
         opts.dataLabels = {enabled: false};
         opts.title.text = '';
         opts.fill = {colors: ['#cccccc', '#ff9900']};
         opts.chart.toolbar = {show: false};
+        opts.yaxis.labels = {formatter: function(v) { return v + '%'; }};
         [1,2,3,4].forEach((i) => {
+          let divColChart = document.createElement('div');
           let divChart = document.createElement('div');
           let divBdList = document.createElement('div');
-          divChart.classList.add('col');
+          divColChart.classList.add('col');
+          divColChart.appendChild(divChart);
           divBdList.classList.add('col');
           let olBds = document.createElement('ol');
           olBds.style = "font-size: 0.8em;";
@@ -329,11 +340,15 @@
             olBds.appendChild(li);
           });
           divBdList.appendChild(olBds);
+          let sVol = '<p style="font-size:0.7em">Rcn.: '+(iRenc/1000000).toFixed(2)+' Jt M<sup>3</sup></br>';
+            sVol += 'Rea.: '+(iReal/1000000).toFixed(2)+' Jt M<sup>3</sup></br>';
+            sVol += 'Pot.: '+(iPot/1000000).toFixed(2)+' Jt M<sup>3</sup></p>';
+          divColChart.insertAdjacentHTML('beforeend', sVol);
           let kosong = ((iPot - iReal) / iPot) * 100;
           let isi = (iReal / iPot) * 100;
-          opts.series = [kosong, isi];
+          opts.series = [parseInt(kosong), parseInt(isi)];
           opts.labels = ['Kosong', 'Isi'];
-          opts.legend.show = true;
+          opts.legend.show = false;
           
           let chart = new ApexCharts(divChart, opts);
           let t = document.querySelector('#tplUpb');
@@ -341,7 +356,7 @@
           cardBody.querySelector('.card-title').innerHTML = 'UPB ' + i + ' <small class="fw-light float-end">'+x.upbs[i].length+' <span style="font-size:0.7em">bendungan</span></small>';
           let iRow = document.createElement('div');
           iRow.classList.add('row');
-          iRow.append(divChart);
+          iRow.append(divColChart);
           iRow.append(divBdList);
           cardBody.querySelector('.card-body').appendChild(iRow);
           row.appendChild(cardBody);
@@ -352,9 +367,11 @@
         row = document.createElement('div')
         row.classList.add('row');
         [5,6,7,8].forEach((i) => {
+          let divColChart = document.createElement('div');
           let divChart = document.createElement('div');
           let divBdList = document.createElement('div');
-          divChart.classList.add('col');
+          divColChart.classList.add('col');
+          divColChart.appendChild(divChart);
           divBdList.classList.add('col');
           let olBds = document.createElement('ol');
           olBds.style = "font-size: 0.8em;";
@@ -368,11 +385,15 @@
             olBds.appendChild(li);
           });
           divBdList.appendChild(olBds);
+          let sVol = '<p style="font-size:0.7em">Rcn.: '+(iRenc/1000000).toFixed(2)+' Jt M<sup>3</sup></br>';
+            sVol += 'Rea.: '+(iReal/1000000).toFixed(2)+' Jt M<sup>3</sup></br>';
+            sVol += 'Pot.: '+(iPot/1000000).toFixed(2)+' Jt M<sup>3</sup></p>';
+          divColChart.insertAdjacentHTML('beforeend', sVol);
           let kosong = ((iPot - iReal) / iPot) * 100;
           let isi = (iReal / iPot) * 100;
           opts.series = [kosong, isi];
           opts.labels = ['Kosong', 'Isi'];
-          opts.legend.show = true;
+          opts.legend.show = false;
           
           let chart = new ApexCharts(divChart, opts);
           let t = document.querySelector('#tplUpb');
@@ -380,7 +401,7 @@
           cardBody.querySelector('.card-title').innerHTML = 'UPB ' + i + ' <small class="fw-light float-end">'+x.upbs[i].length+' <span style="font-size:0.7em">bendungan</span></small>';
           let iRow = document.createElement('div');
           iRow.classList.add('row');
-          iRow.append(divChart);
+          iRow.append(divColChart);
           iRow.append(divBdList);
           cardBody.querySelector('.card-body').appendChild(iRow);
           row.appendChild(cardBody);
