@@ -18,18 +18,13 @@
     </section>
     <div name="filter">
         <h4>
-            <a id="datepicker" style="color: blue" href="#">
-                <span class="badge badge-primary">
-                    <i class="fa fa-calendar"></i>
-                </span>
+            <a id="datepicker" href="#">
+                <i class="bi bi-calendar-day"></i>
                 {{ sampling.strftime('%d %B %Y') }}
             </a>
             &nbsp;
-            <a href="{{ url_for('admin.bendungan_harian_csv') }}?sampling={{ sampling.strftime('%Y-%m-%d') }}">
-                <span class="badge badge-primary">
-                    <i class="fa fa-download"></i>
-                </span>
-                CSV
+            <a class="ml-5" href="{{ url_for('admin.bendungan_harian_csv') }}?sampling={{ sampling.strftime('%Y-%m-%d') }}">
+                <i class="bi bi-cloud-download"></i> Download CSV
             </a>
         </h4>
 

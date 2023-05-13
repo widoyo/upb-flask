@@ -1,5 +1,5 @@
 <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
-    <div class="container">
+    <div class="container-fluid">
         {# <a href="/dashboard" class="navbar-brand">{{ env('APP_NAME', 'App') }}</a> #}
         <!-- <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbar-main" aria-expanded="false" aria-label="Toggle navigation">
             <span class="navbar-toggler-icon"></span>
@@ -12,7 +12,7 @@
                 <span class="navbar-toggler-icon"></span>
             </button>
         </div>
-        <a class="navbar-brand" href="/">UPB BBWS BSOLO</a>
+        <a class="navbar-brand font-weight-lighter" href="/">UPB BBWS <span class="text-warning">BS</span></a>
 
         <div class="collapse navbar-collapse" id="navbar-main">
             <!-- Sidebar -->
@@ -21,103 +21,104 @@
                     <li class="nav-item {% if subtitle == 'Operasi' %}active{% endif %}">
                         <a class="nav-link" href="{{ url_for('admin.operasi_bendungan', bendungan_id=user.bendungan_id) }}">
                             <!-- <i class="fas fa-home mr-2"></i> -->
-                            <span class="h4">Operasi</span>
-                            <div><small>TMA, Vol, Debit</small></div>
+                            <span class="h4 font-weight-lighter"><i class="bi bi-clipboard-check text-primary"></i> Operasi</span>
+                            <div><small class="font-weight-lighter">TMA, Vol, Debit</small></div>
                         </a>
                     </li>
 
                     <li class="nav-item {% if subtitle == 'Keamanan' %}active{% endif %}">
                         <a class="nav-link" href="{{ url_for('admin.keamanan_bendungan', bendungan_id=user.bendungan_id) }}">
                             <!-- <i class="fas fa-home mr-2"></i> -->
-                            <span class="h4">Keamanan</span>
-                            <div><small>VNotch, Piezometer</small></div>
+                            <span class="h4 font-weight-lighter"><i class="bi bi-shield-lock text-primary"></i> Keamanan</span>
+                            <div><small class="font-weight-lighter">VNotch, Piezometer</small></div>
                         </a>
                     </li>
 
                     <li class="nav-item {% if subtitle == 'Kegiatan' %}active{% endif %}">
                         <a class="nav-link" href="{{ url_for('admin.kegiatan_bendungan', bendungan_id=user.bendungan_id) }}">
                             <!-- <i class="fas fa-home mr-2"></i> -->
-                            <span class="h4">Kegiatan</span>
-                            <div><small>Foto kegiatan</small></div>
+                            <span class="h4 font-weight-lighter"><i class="bi bi-activity text-primary"></i> Kegiatan</span>
+                            <div><small class="font-weight-lighter">Foto kegiatan</small></div>
                         </a>
                     </li>
 
                     <li class="nav-item {% if subtitle == 'Kinerja' %}active{% endif %}">
                         <a class="nav-link" href="{{ url_for('admin.asset', bendungan_id=user.bendungan_id) }}">
                             <!-- <i class="fas fa-home mr-2"></i> -->
-                            <span class="h4">Kinerja</span>
-                            <div><small>Kinerja Bendungan</small></div>
+                            <span class="h4 font-weight-lighter"><i class="bi bi-graph-up text-primary"></i> Kinerja</span>
+                            <div><small class="font-weight-lighter">Kinerja Bendungan</small></div>
                         </a>
                     </li>
                     <li class="nav-item {% if subtitle == 'Piket' %}active{% endif %}">
                         <a class="nav-link" href="{{ url_for('admin.piket_bendungan', bendungan_id=user.bendungan_id) }}">
                             <!-- <i class="fas fa-home mr-2"></i> -->
-                            <span class="h4">Piket</span>
-                            <div><small>Piket Banjir</small></div>
+                            <span class="h4 font-weight-lighter"><i class="bi bi-clock-history text-primary"></i> Piket</span>
+                            <div><small class="font-weight-lighter">Piket Banjir</small></div>
                         </a>
                     </li>
                 {% elif user.role == '3' %}
                     <li class="nav-item {% if subtitle == 'Operasi' %}active{% endif %}">
                         <a class="nav-link" href="{{ url_for('admin.operasi_embung', embung_id=user.embung_id) }}">
-                            <span class="h4">Operasi</span>
-                            <div><small>TMA, Debit</small></div>
+                            <span class="h4 font-weight-lighter"><i class="bi bi-clipboard-check text-primary"></i> Operasi</span>
+                            <div><small class="font-weight-lighter">TMA, Debit</small></div>
                         </a>
                     </li>
                     <li class="nav-item {% if subtitle == 'Kegiatan' %}active{% endif %}">
                         <a class="nav-link" href="{{ url_for('admin.kegiatan_embung', embung_id=user.embung_id) }}">
-                            <span class="h4">Kegiatan</span>
-                            <div><small>Foto kegiatan</small></div>
+                            <span class="h4 font-weight-lighter"><i class="bi bi-activity text-primary"></i> Kegiatan</span>
+                            <div><small class="font-weight-lighter">Foto kegiatan</small></div>
                         </a>
                     </li>
                 {% elif user.role in ['1', '4'] %}
                     <li class="nav-item {% if title == 'Users' %}active{% endif %}">
                         <a class="nav-link" href="/admin/users">
-                            User
+                            <i class="bi-people text-primary"></i> User
                         </a>
                     </li>
                     <li class="nav-item dropdown">
                       <a class="nav-link dropdown-toggle {% if title == 'Bendungan' %}active{% endif %}" href="#" id="bendunganDropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                          Bendungan
+                        <i class="bi-symmetry-vertical text-primary"></i> Bendungan
                       </a>
                         <div class="dropdown-menu" aria-labelledby="bendunganDropdown">
-                          <a class="dropdown-item" href="{{ url_for('admin.bendungan') }}">Teknis</a>
-                          <a class="dropdown-item" href="{{ url_for('admin.operasi_harian') }}">Operasi</a>
-                          <a class="dropdown-item" href="{{ url_for('admin.kegiatan') }}">Kegiatan</a>
-                          <a class="dropdown-item" href="{{ url_for('admin.piket_index') }}">Piket</a>
+                          <a class="dropdown-item" href="{{ url_for('admin.bendungan') }}"><i class="bi bi-hammer mr-1"></i> Teknis</a>
+                          <a class="dropdown-item" href="{{ url_for('admin.operasi_harian') }}"><i class="bi bi-clipboard-check mr-1"></i> Operasi</a>
+                          <a class="dropdown-item" href="{{ url_for('admin.kegiatan') }}"><i class="bi bi-activity mr-1"></i> Kegiatan</a>
+                          <div class="dropdown-divider"></div>
+                          <a class="dropdown-item" href="{{ url_for('admin.piket_index') }}"><i class="bi bi-clock-history mr-1"></i> Piket</a>
                         </div>
                     </li>
                     <li class="nav-item dropdown">
                       <a class="nav-link dropdown-toggle {% if title == 'Embung' %}active{% endif %}" href="#" id="bendunganDropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                          Embung
+                        <i class="bi-symmetry-horizontal text-primary"></i> Embung
                       </a>
                         <div class="dropdown-menu" aria-labelledby="bendunganDropdown">
-                          <a class="dropdown-item" href="{{ url_for('admin.embung') }}">Teknis</a>
-                          <a class="dropdown-item" href="{{ url_for('admin.operasi_harian_embung') }}">Operasi</a>
-                          <a class="dropdown-item" href="{{ url_for('admin.kegiatan_index_embung') }}">Kegiatan</a>
+                          <a class="dropdown-item" href="{{ url_for('admin.embung') }}"><i class="bi bi-hammer mr-1"></i> Teknis</a>
+                          <a class="dropdown-item" href="{{ url_for('admin.operasi_harian_embung') }}"><i class="bi bi-clipboard-check mr-1"></i> Operasi</a>
+                          <a class="dropdown-item" href="{{ url_for('admin.kegiatan_index_embung') }}"><i class="bi bi-activity mr-1"></i> Kegiatan</a>
                         </div>
                     </li>
                     <li class="nav-item dropdown {% if title == 'Petugas' %}active{% endif %}">
                         <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                            Petugas
+                            <i class="text-primary bi-person"></i> Petugas
                         </a>
                           <div class="dropdown-menu" aria-labelledby="navbarDropdown">
-                            <a class="dropdown-item" href="{{ url_for('admin.petugas_bendungan') }}">Data</a>
-                            <a class="dropdown-item" href="{{ url_for('admin.petugas_bendungan_kinerja') }}">Kinerja</a>
+                            <a class="dropdown-item" href="{{ url_for('admin.petugas_bendungan') }}"><i class="bi bi-clipboard-check mr-1"></i> Data</a>
+                            <a class="dropdown-item" href="{{ url_for('admin.petugas_bendungan_kinerja') }}"><i class="bi bi-graph-up mr-1"></i> Kinerja</a>
                           </div>
                     </li>
                     <li class="nav-item {% if title == 'Rencana' %}active{% endif %}">
                         <a class="nav-link" href="{{ url_for('admin.rtow') }}">
-                            RTOW
+                            <i class="bi-clock text-primary"></i> RTOW
                         </a>
                     </li>
                     <li class="nav-item {% if title == 'Kinerja' %}active{% endif %}">
                         <a class="nav-link" href="{{ url_for('admin.kinerja') }}">
-                            Kinerja
+                            <i class="bi-graph-up text-primary"></i> Kinerja
                         </a>
                     </li>
                     <li class="nav-item {% if title == 'Galeri' %}active{% endif %}">
                         <a class="nav-link" href="{{ url_for('admin.galeri') }}">
-                            Galeri
+                            <i class="bi-card-image text-primary"></i>  Galeri
                         </a>
                     </li>
                 {% endif %}
@@ -126,10 +127,10 @@
                 {% if user %}
                 <li class="nav-item dropdown">
                     <a class="nav-link dropdown-toggle" href="#" id="userDropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">{{ user.username }}</a>
-                    <div class="dropdown-menu" aria-labelledby="userDropdown">
-                        <a class="dropdown-item" href="/mypassword">Ganti Password</a>
+                    <div class="dropdown-menu  dropdown-menu-right" aria-labelledby="userDropdown">
+                        <a class="dropdown-item" href="/mypassword"><i class="bi bi-key mr-1"></i> Ganti Password</a>
                         <div class="dropdown-divider"></div>
-                        <a class="dropdown-item" href="/logout">Logout</a>
+                        <a class="dropdown-item" href="/logout"><i class="bi bi-power mr-1"></i> Logout</a>
                      </div>
                 </li>
                 {% else %}
