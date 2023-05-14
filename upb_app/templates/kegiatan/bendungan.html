@@ -78,7 +78,7 @@
         </div>
         <br>
         <h3>
-            Bulan <span id="datepicker" style="color: #18bc9c"><i class="fa fa-calendar"></i> {{ sampling_dt.strftime('%B %Y') }}</span>
+            Bulan <span id="datepicker" style="color: #18bc9c"><i class="bi bi-calendar-month ml-2"></i> {{ sampling_dt.strftime('%B %Y') }}</span>
         </h3>
         <table class="table table-hover table-bordered">
             <thead>
@@ -96,7 +96,7 @@
                     <tr>
                         <td>
                             <span id="tgl">{{ date.strftime("%Y-%m-%d") }}</span>
-                            <a href="{{ url_for('admin.kegiatan_paper', bendungan_id=bend_id) }}?sampling={{ date.strftime("%Y-%m-%d") }}" class="text-right"><i class="fa fa-print"></i></a>
+                            <a href="{{ url_for('admin.kegiatan_paper', bendungan_id=bend_id) }}?sampling={{ date.strftime("%Y-%m-%d") }}" class="text-right"><i class="bi bi-printer float-right" title="Versi Cetak"></i></a>
                         </td>
                         <td>
                             {% if keg.koordinator %}

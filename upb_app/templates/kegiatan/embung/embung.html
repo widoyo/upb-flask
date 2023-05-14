@@ -105,7 +105,7 @@
                                 <div class="input-group date" id="timemulai" data-target-input="nearest">
                                     <input type="text" name="mulai" class="form-control datetimepicker-input" data-target="#timemulai"/>
                                     <div class="input-group-append" data-target="#timemulai" data-toggle="datetimepicker">
-                                        <div class="input-group-text"><i class="fa fa-clock"></i></div>
+                                        <div class="input-group-text"><i class="bi bi-clock"></i></div>
                                     </div>
                                 </div>
                               </div>
@@ -114,7 +114,7 @@
                                   <div class="input-group date" id="timeselesai" data-target-input="nearest">
                                       <input type="text" name="selesai" class="form-control datetimepicker-input" data-target="#timeselesai"/>
                                       <div class="input-group-append" data-target="#timeselesai" data-toggle="datetimepicker">
-                                          <div class="input-group-text"><i class="fa fa-clock"></i></div>
+                                          <div class="input-group-text"><i class="bi bi-clock"></i></div>
                                       </div>
                                   </div>
                               </div>
@@ -147,7 +147,7 @@
         <br>
         <h3>
             Bulan
-            <span id="datepicker" style="color: #18bc9c"><i class="fa fa-calendar"></i> {{ sampling_dt.strftime('%B %Y') }}</span>
+            <span id="datepicker" style="color: #18bc9c"><i class="bi bi-calendar-month"></i> {{ sampling_dt.strftime('%B %Y') }}</span>
             <a href="{{ url_for('admin.kegiatan_embung_csv', embung_id=emb_id) }}?sampling={{ sampling.strftime('%Y-%m-%d') }}">CSV</a>
         </h3>
         <nav>
