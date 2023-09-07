@@ -862,4 +862,4 @@ class Periodik(db.Model):
         data = [d for d in self.query.filter(self.sampling >=
                                              sejak).order_by(self.sampling)]
         lokasi_hari_hujan = [d.lokasi_id for d in data if (d.rain or 0) > 0]
-        print(lokasi_hujan)
+        print(lokasi_hari_hujan)

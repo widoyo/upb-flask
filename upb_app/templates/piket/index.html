@@ -20,14 +20,14 @@
         <h4>
             <a id="datepicker" style="color: blue" href="#">
                 <span class="badge badge-primary">
-                    <i class="fa fa-calendar"></i>
+                    <i class="bi bi-calendar-date"></i>
                 </span>
                 {{ sampling.strftime('%d %B %Y') }}
             </a>
             &nbsp;
             <a href="{{ url_for('admin.piket_banjir_csv') }}?sampling={{ sampling.strftime('%Y-%m-%d') }}">
                 <span class="badge badge-primary">
-                    <i class="fa fa-download"></i>
+                    <i class="bi bi-download"></i>
                 </span>
                 CSV
             </a>

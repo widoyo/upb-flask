@@ -101,7 +101,7 @@
         <h3>
             Data Harian
             <span id="datepicker" style="color: #18bc9c">
-                <i class="fa fa-calendar"></i> {{ sampling_dt.strftime('%B %Y') }}
+                <i class="bi bi-calendar-month"></i> {{ sampling_dt.strftime('%B %Y') }}
             </span>
             <a href="{{ url_for('admin.operasi_embung_csv', embung_id=embung.id) }}?sampling={{ sampling.strftime('%Y-%m-%d') }}">CSV</a>
         </h3>

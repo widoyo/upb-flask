@@ -4,7 +4,7 @@ from flask_login import login_required, current_user
 from flask_wtf.csrf import generate_csrf
 from sqlalchemy import and_, extract
 from sqlalchemy.exc import IntegrityError
-from upb_app.helper import month_range, day_range, query_with_sampling_range
+from upb_app.helper import month_range, day_range, query_with_sampling_range, row2dict
 from upb_app.models import ManualDaily, ManualTma, ManualPiezo, ManualVnotch
 from upb_app.models import Bendungan, BendungAlert, CurahHujanTerkini
 from upb_app.models import Embung, ManualTmaEmbung, ManualDailyEmbung, Foto, wil_sungai
@@ -611,6 +611,49 @@ def operasi_csv(bendungan_id):
                         "Content-Disposition": f"attachment;filename={bend.nama}-{sampling.strftime('%d %B %Y')}.csv"
                     })
 
+
+@bp.route('/embung/operasi/csv')
+@admin_only
+def operasi_harian_embung_csv():
+    cols = "nama-wil-tma-vol-inflow_debit-inflow_vol-outflow_intake_q-outflow_intake_v-outflow_spillway_q-outflow_spillway_v".split('-')
+    all_embung = Embung.query.filter(Embung.is_verified == '1').order_by(Embung.wil_sungai, Embung.nama).all()
+    sampling, end = day_range(request.values.get('sampling'))
+
+    all_daily = ManualDailyEmbung.query.filter(
+                                and_(
+                                    ManualDailyEmbung.sampling >= sampling,
+                                    ManualDailyEmbung.sampling <= end)
+                                ).all()
+    all_tma = ManualTmaEmbung.query.filter(
+                                and_(
+                                    ManualTmaEmbung.sampling >= sampling,
+                                    ManualTmaEmbung.sampling <= end)
+                                ).all()
+    embungs = dict(list([(a.embung_id, row2dict(a)) for a in all_daily]))
+    for a in all_tma:
+        embungs[a.embung_id].update({'tma': a.tma, 'vol': a.vol})
+    embung = []
+    for e in all_embung:
+        try:
+            emb = embungs[e.id]
+        except KeyError:
+            emb = {}
+        embung.append([e.nama, e.wil_sungai] + [emb.get('tma'), emb.get('vol'), 
+                                                emb.get('inflow_deb'), emb.get('inflow_vol'),
+                                                emb.get('intake_deb'), emb.get('inflow_vol'),
+                                                emb.get('spillway_deb'), emb.get('spillway_vol')]) 
+    output = io.StringIO()
+    writer = csv.writer(output, delimiter='\t')
+    writer.writerow(cols)
+    for l in embung:
+        writer.writerow(l)
+    output.seek(0)
+    return Response(output,
+                    mimetype="text/csv",
+                    headers={
+                        "Content-Disposition": f"attachment;filename=embung-{sampling.strftime('%d %B %Y')}.csv"
+                    })
+    
 
 @bp.route('/embung/operasi')
 @login_required  # @petugas_only

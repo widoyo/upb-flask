@@ -29,7 +29,7 @@
                 <a href="#">
                     <i class="fas fa-calendar"></i> <span id="tgl">{{ sampling }}</span>
                 </a>
-                <a onclick="download_all()" href="#" class="btn btn-sm btn-outline-primary ml-2"><i class="fa fa-download"></i></a>
+                <a onclick="download_all()" href="#" class="btn btn-sm btn-outline-primary ml-2"><i class="bi bi-download"></i></a>
             </h4>
             <div class="form-group">
                 <input type="text" class="form-control" id="search" placeholder="Cari Bendungan">
@@ -52,7 +52,7 @@
                     {% if d.is_empty %}
                     <b>Tidak Ada Petugas</b>
                     {% else %}
-                    <i class="fa fa-user"></i>
+                    <i class="bi bi-person"></i>
                     <b>Koordinator</b><br>
                     <ul>
                         <li>
@@ -121,7 +121,7 @@
                     </ul>
                     {% for t, petugas in d.petugas.items() %}
                         {% if petugas %}
-                        <i class="fa fa-user"></i>
+                        <i class="bi bi-person"></i>
                         <b>{{ t.title() }}</b><br>
                         <ul>
                             {% for p in petugas %}

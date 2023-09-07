@@ -97,3 +97,5 @@ def get_hari_tanggal(date):
     bulan = month_name[int(date.strftime("%m")) - 1]
     tahun = date.strftime("%Y")
     return f"{hari}/{tanggal} {bulan} {tahun}"
+
+row2dict = lambda r: {c.name: str(getattr(r, c.name)) for c in r.__table__.columns}
