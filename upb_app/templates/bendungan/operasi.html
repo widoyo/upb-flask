@@ -39,7 +39,7 @@
                 <thead>
                     <tr>
                         <th rowspan="3" colspan="2" class="align-middle text-center">Tahun / Bulan / Dekade</th>
-                        <th colspan="12" class="text-center">Musim Hujan {{ tanggal2[0][-4:] }}/{{ tanggal2[12][-4:]}}</th>
+                        <th colspan="12" class="text-center">Musim Hujan {{ tanggal2[0][-4:] }}/{% if tanggal2|length > 12 %}{{ tanggal2[12][-4:]}}{% endif %}</th>
                     </tr>
                     <tr>
                         {% for t in tanggal2[0:12] %}
@@ -100,7 +100,7 @@
                 <thead>
                     <tr>
                         <th rowspan="3" colspan="2" class="align-middle text-center">Tahun / Bulan / Dekade</th>
-                        <th colspan="12" class="text-center">Musim Kering {{ tanggal2[12][-4:] }}</th>
+                        <th colspan="12" class="text-center">Musim Kering {% if tanggal2|length > 12 %}{{ tanggal2[12][-4:]}}{% endif %}</th>
                     </tr>
                     <tr>
                         {% for t in tanggal2[12:24] %}

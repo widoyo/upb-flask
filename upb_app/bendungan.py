@@ -223,7 +223,7 @@ def operasi(lokasi_id):
             i += 1
     operasi2 = {}
     for k, v in operasi.items():
-        operasi2[k] = list(map(lambda x: float(x), v.split(',')))
+        operasi2[k] = list(v.split(','))
     tanggal_2 = list(map(lambda x: x.strip("'"), tanggal.split(',')))
     return render_template('bendungan/operasi.html',
                             waduk=pos,
