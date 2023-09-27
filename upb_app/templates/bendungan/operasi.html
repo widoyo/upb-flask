@@ -4,10 +4,11 @@
 
 {% block css %}
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-datepicker/1.9.0/css/bootstrap-datepicker.css">
+    <link rel="stylesheet" href="https://printjs-4de6.kxcdn.com/print.min.css">
 {% endblock %}
 
 {% block content %}
-    <div class="container">
+    <div class="container" id="my">
         <div class="row">
             <div class="col-md-6">
                 <h1>{{ waduk.name }} RTOW</h1>
@@ -18,6 +19,9 @@
                     <a class="btn btn-primary disabled" href="{{ url_for('bendungan.operasi', lokasi_id=waduk.id) }}">RTOW</a>
                     <a class="btn btn-primary" href="{{ url_for('bendungan.vnotch', lokasi_id=waduk.id) }}">VNotch</a>
                     <a class="btn btn-primary" href="{{ url_for('bendungan.piezo', lokasi_id=waduk.id) }}">Piezometer</a>
+                    <a class="btn btn-primary" href="">CCTV</a>
+                    <a class="btn btn-primary" href="">RTTG</a>
+                    <a class="btn btn-primary" href="#" onClick="printJS({ printable: 'my', type: 'html', header: 'RTOW {{ waduk.name }}' })">print<i class="bi bi-print"></i></a>
                 </div>
             </div>
         </div>
@@ -30,13 +34,129 @@
         <div>
             <canvas id="operasiChart" style="width: 100%; height: 300px; border: solid 1px #eee;" class="chartjs-render-monitor"></canvas>
         </div>
-        <p>{{ waduk.name }}</p>
-        <div>
-            <canvas id="outflowChart" style="width: 100%; height: 300px; border: solid 1px #eee;" class="chartjs-render-monitor"></canvas>
-        </div>
-        <p>{{ waduk.name }}</p>
-        <div>
-            <canvas id="inflowChart" style="width: 100%; height: 300px; border: solid 1px #eee;" class="chartjs-render-monitor"></canvas>
+        <div class="mt-5">
+            <table class="table table-striped table-bordered">
+                <thead>
+                    <tr>
+                        <th rowspan="3" colspan="2" class="align-middle text-center">Tahun / Bulan / Dekade</th>
+                        <th colspan="12" class="text-center">Musim Hujan {{ tanggal2[0][-4:] }}/{{ tanggal2[12][-4:]}}</th>
+                    </tr>
+                    <tr>
+                        {% for t in tanggal2[0:12] %}
+                        {% if loop.index % 2 %}
+                        <th colspan="2" class="text-center">{{ t[3:6] }}</th>
+                        {% endif %}
+                        {% endfor %}
+                    </tr>
+                    <tr>
+                        {% for t in tanggal2[0:12] %}
+                        <th class="text-center">{{ loop.cycle('1', '2') }}</th>
+                        {% endfor %}
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <th rowspan="2" class="align-middle">TMA (m)</th>
+                        <th>Pola</th>
+                        {% for d in operasi2.po_tma[0:12] %}
+                        <td class="text-right">{{ d }}</td>
+                        {% endfor %}
+                    </tr>
+                    <tr>
+                        <th>Aktual</th>
+                        {% for d in operasi2.real[0:12] %}
+                        <td class="text-right">{{ d }}</td>
+                        {% endfor %}
+                    </tr>
+                    <tr>
+                        <th rowspan="2" class="align-middle">Debit Inflow (m<sup>3</sup>/det)</th>
+                        <th>Pola</th>
+                        {% for d in operasi2.po_inflow[0:12] %}
+                        <td class="text-right">{{ d }}</td>
+                        {% endfor %}
+                    </tr>
+                    <tr>
+                        <th>Aktual</th>
+                        {% for d in operasi2.real_inflow[0:12] %}
+                        <td class="text-right">{{ d }}</td>
+                        {% endfor %}
+                    </tr>
+                    <tr>
+                        <th rowspan="2" class="align-middle">Debit Outflow (m<sup>3</sup>/det)</th>
+                        <th>Pola</th>
+                        {% for d in operasi2.po_outflow[0:12] %}
+                        <td class="text-right">{{ d }}</td>
+                        {% endfor %}
+                    </tr>
+                    <tr>
+                        <th>Aktual</th>
+                        {% for d in operasi2.real_outflow[0:12] %}
+                        <td class="text-right">{{ d }}</td>
+                        {% endfor %}
+                    </tr>
+                </tbody>
+            </table>
+            <table class="table table-striped table-bordered mt-5">
+                <thead>
+                    <tr>
+                        <th rowspan="3" colspan="2" class="align-middle text-center">Tahun / Bulan / Dekade</th>
+                        <th colspan="12" class="text-center">Musim Kering {{ tanggal2[12][-4:] }}</th>
+                    </tr>
+                    <tr>
+                        {% for t in tanggal2[12:24] %}
+                        {% if loop.index % 2 %}
+                        <th colspan="2" class="text-center">{{ t[3:6] }}</th>
+                        {% endif %}
+                        {% endfor %}
+                    </tr>
+                    <tr>
+                        {% for t in tanggal2[12:24] %}
+                        <th class="text-center">{{ loop.cycle('1', '2') }}</th>
+                        {% endfor %}
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <th rowspan="2" class="align-middle">TMA (m)</th>
+                        <th>Pola</th>
+                        {% for d in operasi2.po_tma[12:24] %}
+                        <td class="text-right">{{ d }}</td>
+                        {% endfor %}
+                    </tr>
+                    <tr>
+                        <th>Aktual</th>
+                        {% for d in operasi2.real[12:24] %}
+                        <td class="text-right">{{ d }}</td>
+                        {% endfor %}
+                    </tr>
+                    <tr>
+                        <th rowspan="2" class="align-middle">Debit Inflow (m<sup>3</sup>/det)</th>
+                        <th>Pola</th>
+                        {% for d in operasi2.po_inflow[12:24] %}
+                        <td class="text-right">{{ d }}</td>
+                        {% endfor %}
+                    </tr>
+                    <tr>
+                        <th>Aktual</th>
+                        {% for d in operasi2.real_inflow[12:24] %}
+                        <td class="text-right">{{ d }}</td>
+                        {% endfor %}
+                    </tr>
+                    <tr>
+                        <th rowspan="2" class="align-middle">Debit Outflow (m<sup>3</sup>/det)</th>
+                        <th>Pola</th>
+                        {% for d in operasi2.po_outflow[12:24] %}
+                        <td class="text-right">{{ d }}</td>
+                        {% endfor %}
+                    </tr>
+                    <tr>
+                        <th>Aktual</th>
+                        {% for d in operasi2.real_outflow[12:24] %}
+                        <td class="text-right">{{ d }}</td>
+                        {% endfor %}
+                    </tr>
+                </tbody>
+            </table>
         </div>
     </div>
 
@@ -47,7 +167,8 @@
     <script src="{{ url_for('static', filename='js/id.js') }}"></script>
     <script src="{{ url_for('static', filename='js/bootstrap-editable.min.js') }}"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-datepicker/1.9.0/js/bootstrap-datepicker.min.js" type="text/javascript"></script>
-    <script src="https://cdn.jsdelivr.net/npm/chart.js@2.8.0"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0"></script>
+    <script src="https://printjs-4de6.kxcdn.com/print.min.js"></script>
     <script>
         $(document).ready(function() {
           $(function () {
@@ -85,14 +206,20 @@
                 labels: {
                     usePointStyle: true,
                 },
+                maxWidth: 100,
+                fullSize: false
             },
             scales: {
-                yAxes: [{
-                    ticks: {
+                y: {
                         beginAtZero: false,
-                        min: {{ waduk.muka_air_min }}
-                    }
-                }]
+                        min: {{ waduk.muka_air_min }} - 10
+                    },
+                y1: {
+                    position: 'right',
+                    display: true,
+                    type: 'linear',
+                    max: 1
+                }
             },
             tooltips: {
                 position: "nearest",
@@ -103,29 +230,7 @@
                 },
             },
         };
-        let options_flow = {
-            responsive: true,
-            legend: {
-                labels: {
-                    usePointStyle: true,
-                },
-            },
-            scales: {
-                yAxes: [{
-                    ticks: {
-                        beginAtZero: false
-                    }
-                }]
-            },
-            tooltips: {
-                position: "nearest",
-                mode: "index",
-                intersect: false,
-                callbacks: {
-                    label: (item, data) => `${data.datasets[item.datasetIndex].label} : ${item.yLabel} m3`,
-                },
-            },
-        };
+
         let ctx = document.getElementById('operasiChart').getContext('2d');
         let myChart = new Chart(ctx, {
             type: 'line',
@@ -184,66 +289,39 @@
                         borderWidth: 1,
                         fill: false,
                         pointStyle: 'line'
+                    },
+                    {
+                        label: "Inflow Pola",
+                        data: [{{ operasi.po_inflow|safe }}],
+                        type: 'bar',
+                        yAxisID: 'y1',
+                        backgroundColor: 'rgb(27,69,123)'
+                    },
+                    {
+                        label: "Outflow Pola",
+                        data: [{{ operasi.po_outflow|safe }}],
+                        type: 'bar',
+                        yAxisID: 'y1',
+                        backgroundColor: 'rgb(170, 65, 0)'
+                    },
+                    {
+                        label: "Inflow",
+                        data: [{{ operasi.real_inflow|safe }}],
+                        type: 'bar',
+                        yAxisID: 'y1',
+                        backgroundColor: 'rgb(0,97,149)'
+                    },
+                    {
+                        label: "Outflow",
+                        data: [{{ operasi.real_outflow|safe }}],
+                        type: 'bar',
+                        yAxisID: 'y1',
+                        backgroundColor: 'rgb(55, 105, 31)'
                     }
                 ]
             },
             options: options
         });
 
-        let ctx_out = document.getElementById('outflowChart').getContext('2d');
-        let outChart = new Chart(ctx_out, {
-            type: 'line',
-            data: {
-                labels: [{{ tanggal|safe }}],
-                datasets: [
-                    {
-                        label: "Outflow Rencana",
-                        data: [{{ operasi.po_outflow|safe }}],
-                        backgroundColor: 'rgba(0,0,255,0.5)',
-                        borderColor: 'rgba(0,0,255,1)',
-                        borderWidth: 1,
-                        fill: false
-                    },
-                    {
-                        label: "Outflow Realisasi",
-                        data: [{{ operasi.real_outflow|safe }}],
-                        backgroundColor: 'rgba(0,0,0,0.5)',
-                        borderColor: 'rgba(0,0,0,1)',
-                        borderWidth: 1,
-                        fill: false,
-                        pointStyle: 'rectRot'
-                    }
-                ]
-            },
-            options: options_flow
-        });
-
-        let ctx_in = document.getElementById('inflowChart').getContext('2d');
-        let inChart = new Chart(ctx_in, {
-            type: 'line',
-            data: {
-                labels: [{{ tanggal|safe }}],
-                datasets: [
-                    {
-                        label: "Inflow Rencana",
-                        data: [{{ operasi.po_inflow|safe }}],
-                        backgroundColor: 'rgba(0,0,255,0.5)',
-                        borderColor: 'rgba(0,0,255,1)',
-                        borderWidth: 1,
-                        fill: false
-                    },
-                    {
-                        label: "Inflow Realisasi",
-                        data: [{{ operasi.real_inflow|safe }}],
-                        backgroundColor: 'rgba(0,0,0,0.5)',
-                        borderColor: 'rgba(0,0,0,1)',
-                        borderWidth: 1,
-                        fill: false,
-                        pointStyle: 'rectRot'
-                    }
-                ]
-            },
-            options: options_flow
-        });
     </script>
 {% endblock %}

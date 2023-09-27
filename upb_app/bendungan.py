@@ -221,12 +221,17 @@ def operasi(lokasi_id):
             operasi['real_outflow'] += str(real_out)
             operasi['real_inflow'] += str(real_in)
             i += 1
-
+    operasi2 = {}
+    for k, v in operasi.items():
+        operasi2[k] = list(map(lambda x: float(x), v.split(',')))
+    tanggal_2 = list(map(lambda x: x.strip("'"), tanggal.split(',')))
     return render_template('bendungan/operasi.html',
                             waduk=pos,
                             sampling=sampling,
                             operasi=operasi,
                             tanggal=tanggal,
+                            tanggal2 = tanggal_2,
+                            operasi2 = operasi2,
                             year=year)
 
 
