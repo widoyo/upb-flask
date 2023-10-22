@@ -48,7 +48,7 @@ def operasi_harian():
     all_vnotch = {w.id:None for w in waduk}
     for v in query_with_sampling_range(ManualVnotch, sampling, end):
         if v:
-            all_vnotch[d.bendungan_id] = v
+            all_vnotch[v.bendungan_id] = v
 
     all_piezo = {w.id:None for w in waduk}
     for p in query_with_sampling_range(ManualPiezo, sampling, end):

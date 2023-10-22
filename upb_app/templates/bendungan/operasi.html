@@ -13,7 +13,7 @@
             <div class="col-md-6">
                 <h1>{{ waduk.name }} RTOW</h1>
             </div>
-            <div class="col-md-6">
+            <div class="col-md-6 d-print-none">
                 <div class="btn-group" role="group" style="float: right">
                     <a class="btn btn-primary" href="{{ url_for('bendungan.tma', lokasi_id=waduk.id) }}">TMA</a>
                     <a class="btn btn-primary disabled" href="{{ url_for('bendungan.operasi', lokasi_id=waduk.id) }}">RTOW</a>
@@ -21,7 +21,6 @@
                     <a class="btn btn-primary" href="{{ url_for('bendungan.piezo', lokasi_id=waduk.id) }}">Piezometer</a>
                     <a class="btn btn-primary" href="">CCTV</a>
                     <a class="btn btn-primary" href="">RTTG</a>
-                    <a class="btn btn-primary" href="#" onClick="printJS({ printable: 'my', type: 'html', header: 'RTOW {{ waduk.name }}' })">print<i class="bi bi-print"></i></a>
                 </div>
             </div>
         </div>
@@ -212,13 +211,22 @@
             scales: {
                 y: {
                         beginAtZero: false,
-                        min: {{ waduk.muka_air_min }} - 10
+                        min: {{ waduk.muka_air_min }} - 10,
+                        title: {
+                            display:true,
+                            text: 'MDPL'
+                        }
                     },
                 y1: {
                     position: 'right',
                     display: true,
                     type: 'linear',
-                    max: 1
+                    max: 1,
+                    title: {
+                        display:true,
+                        text: 'M3/det'
+                    }
+                    
                 }
             },
             tooltips: {
