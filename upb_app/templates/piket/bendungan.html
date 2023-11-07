@@ -304,6 +304,11 @@
         });
     }
     $(document).ready(function() {
+        const today = new Date();
+        const sampling_text = today.toLocaleDateString('ID', {day:'numeric', month:'long', year:'numeric'});
+        const sampling_value = today.getFullYear() + '-' + (today.getMonth() +1) + '-'+ today.getDate();
+        Array.from(document.getElementsByClassName('ml-2')).forEach((e) => { e.innerHTML = '<i class="fa fa-calendar"></i> ' + sampling_text; });
+    
         // resolve package confict
         let datepicker = $.fn.datepicker.noConflict();
         $.fn.bootstrapDP = datepicker;
