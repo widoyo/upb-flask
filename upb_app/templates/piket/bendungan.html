@@ -33,7 +33,7 @@
                           <div>
                               <div class="form-group">
                                   <label class="form-text" for="sampling"><b>Tanggal</b></label>
-                                  <input class="form-control" type="text" name="sampling" id="sampling" hidden required value="{{ now.strftime('%Y-%m-%d') }}">
+                                  <input class="form-control smpl" type="text" name="sampling" id="sampling" hidden required value="{{ now.strftime('%Y-%m-%d') }}">
                                   <p class="ml-2" id="form-datepicker"><i class="fas fa-calendar"></i> <span id="sampling-pb-text">{{ now }}</span></p>
                               </div>
                           </div>
@@ -308,6 +308,7 @@
         const sampling_text = today.toLocaleDateString('ID', {day:'numeric', month:'long', year:'numeric'});
         const sampling_value = today.getFullYear() + '-' + (today.getMonth() +1) + '-'+ today.getDate();
         Array.from(document.getElementsByClassName('ml-2')).forEach((e) => { e.innerHTML = '<i class="fa fa-calendar"></i> ' + sampling_text; });
+        Array.from(document.getElementsByClassName('smpl')).forEach((e) => { e.value = sampling_value; });
     
         // resolve package confict
         let datepicker = $.fn.datepicker.noConflict();
