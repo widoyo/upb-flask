@@ -4,7 +4,7 @@ from flask_login import login_required, current_user
 from flask_wtf.csrf import generate_csrf
 from sqlalchemy import extract, and_
 from psycopg2 import IntegrityError
-from upb_app.helper import utc2wib, month_range, day_range, get_hari_tanggal
+from upb_app.helper import utc2wib, month_range1, day_range, get_hari_tanggal
 from upb_app.models import PiketBanjir, Bendungan, Petugas, wil_sungai
 from upb_app.forms import AddPiketBanjir
 from upb_app import db, petugas_only, role_check, admin_only
@@ -58,9 +58,9 @@ def piket_bendungan(bendungan_id):
     bend = Bendungan.query.get(bendungan_id)
 
     sampling = request.values.get('sampling')
-    now = utc2wib(datetime.datetime.now())
+    now = datetime.datetime.now()
     sampling = sampling or now.strftime("%Y-%m-%d")
-    start, end, days = month_range(sampling)
+    start, end, days = month_range1(sampling)
     # print(start, end, days)
 
     piket_banjir_query = PiketBanjir.query.filter(

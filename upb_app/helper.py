@@ -40,6 +40,21 @@ def month_range(date=None):
     return start, end, day
 
 
+def month_range1(date=None):
+    ''' input str format (%Y-%m-%d)
+    return start of the month, todays date or end of the month, and number of days '''
+    now = datetime.datetime.now()
+    date = datetime.datetime.strptime(date, "%Y-%m-%d") if date else now
+    start = datetime.datetime.strptime(f"{date.year}-{date.month}-01", "%Y-%m-%d")
+    if start.year == now.year and start.month == now.month:
+        day = now.day
+    else:
+        day = calendar.monthrange(start.year, start.month)[1]
+    end = start + datetime.timedelta(days=(day-1), hours=23)
+
+    return start, end, day
+
+
 def week_range(date=None):
     ''' input str format (%Y-%m-%d)
     return current date, monday of the week and saturday of the week '''
