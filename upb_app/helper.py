@@ -80,6 +80,17 @@ def day_range(date=None):
     return start, end
 
 
+def day_range1(date=None):
+    ''' input str format (%Y-%m-%d)
+    return start of the day and end of the day '''
+    now = datetime.datetime.now()
+    def_date = date if date else now.strftime("%Y-%m-%d")
+    start = datetime.datetime.strptime(def_date, "%Y-%m-%d")
+    end = start + datetime.timedelta(hours=23, minutes=55)
+
+    return start, end
+
+
 def utc2wib(date):
     ''' date : python datetime object '''
     return date + datetime.timedelta(hours=7)
