@@ -28,12 +28,12 @@
                     </h5>
                     <hr>
                     <form action="{{ url_for('admin.operasi_daily_add', bendungan_id=bend_id) }}" method="POST">
-                        <input id="csrf_token" name="csrf_token" type="hidden" value="{{ csrf }}">
+                        <input id="csrf_token" name="csrf_token" type="hidden" value="{{ csrf }}">       
                         <div class="collapse" id="tmapagi">
                           <div>
                               <div class="form-group">
                                   <label class="form-text" for="sampling"><b>Tanggal</b></label>
-                                  <input class="form-control smpl" type="text" name="sampling" id="datepicker_pagi" hidden required value="{{ sampling.strftime('%Y-%m-%d') }}">
+                                  <input class="form-control" type="text" name="sampling" id="datepicker_pagi" hidden required value="{{ sampling.strftime('%Y-%m-%d') }}">
                                   <p class="ml-2" id="sampling-pagi"><i class="fas fa-calendar"></i> {{ sampling.strftime('%d %B %Y') }}</p>
                                   <input class="form-control" type="text" name="jam" hidden required value="06">
                               </div>
@@ -60,7 +60,7 @@
                           <div class="row">
                               <div class="col-md-12 form-group">
                                   <label for="foto"><b>Foto Bendungan</b></label>
-                                  <input type="file" class="form-control-file" id="fotoFile-pagi" required>
+                                  <input type="file" class="form-control-file" id="fotoFile-pagi" required accept="image/jpeg">
                                   <div>
                                       <img class="img-fluid" id="foto-pagi" src="{{ url_for('static', filename='images/null.jpg') }}" alt="gambar disini">
                                   </div>
@@ -137,7 +137,7 @@
                           <div>
                               <div class="form-group">
                                   <label class="form-text" for="datepicker-siang"><b>Tanggal</b></label>
-                                  <input class="form-control smpl" type="text" name="hari" id="datepicker-siang" hidden required value="{{ sampling.strftime('%Y-%m-%d') }}">
+                                  <input class="form-control" type="text" name="hari" id="datepicker-siang" hidden required value="{{ sampling.strftime('%Y-%m-%d') }}">
                                   <p class="ml-2" id="sampling-siang"><i class="fas fa-calendar"></i> {{ sampling.strftime('%d %B %Y') }}</p>
                                   <input class="form-control" type="text" name="jam" hidden required value="12">
                               </div>
@@ -157,7 +157,7 @@
                           <div class="row">
                               <div class="col-md-12 form-group">
                                   <label for="foto"><b>Foto Bendungan</b></label>
-                                  <input type="file" class="form-control-file" id="fotoFile-siang" required>
+                                  <input type="file" class="form-control-file" id="fotoFile-siang" required required accept="image/jpeg">
                                   <div>
                                       <img class="img-fluid" id="foto-siang" src="{{ url_for('static', filename='images/null.jpg') }}" alt="gambar disini">
                                   </div>
@@ -185,7 +185,7 @@
                           <div>
                               <div class="form-group">
                                   <label class="form-text" for="datepicker-sore"><b>Tanggal</b></label>
-                                  <input class="form-control smpl" type="text" name="hari" id="datepicker-sore" hidden required value="{{ sampling.strftime('%Y-%m-%d') }}">
+                                  <input class="form-control" type="text" name="hari" id="datepicker-sore" hidden required value="{{ sampling.strftime('%Y-%m-%d') }}">
                                   <p class="ml-2" id="sampling-sore"><i class="fas fa-calendar"></i> {{ sampling.strftime('%d %B %Y') }}</p>
                                   <input class="form-control" type="text" name="jam" hidden required value="18">
                               </div>
@@ -205,7 +205,7 @@
                           <div class="row">
                               <div class="col-md-12 form-group">
                                   <label for="foto"><b>Foto Bendungan</b></label>
-                                  <input type="file" class="form-control-file" id="fotoFile-sore" required>
+                                  <input type="file" class="form-control-file" id="fotoFile-sore" required required accept="image/jpeg">
                                   <div>
                                       <img class="img-fluid" id="foto-sore" src="{{ url_for('static', filename='images/null.jpg') }}" alt="gambar disini">
                                   </div>
@@ -236,7 +236,7 @@
                           <div>
                               <div class="form-group">
                                   <label class="form-text" for="sampling"><b>Tanggal</b></label>
-                                  <input class="form-control smpl" type="text" name="sampling" id="datepicker-vn" hidden required value="{{ sampling.strftime('%Y-%m-%d') }}">
+                                  <input class="form-control" type="text" name="sampling" id="datepicker-vn" hidden required value="{{ sampling.strftime('%Y-%m-%d') }}">
                                   <p class="ml-2" id="sampling-vn"><i class="fas fa-calendar"></i> {{ sampling.strftime('%d %B %Y') }}</p>
                               </div>
                           </div>
@@ -356,7 +356,7 @@
                           <div>
                               <div class="form-group">
                                   <label class="form-text" for="sampling"><b>Tanggal</b></label>
-                                  <input class="form-control smpl" type="text" name="sampling" id="datepicker-piezo" hidden required value="{{ sampling.strftime('%Y-%m-%d') }}">
+                                  <input class="form-control" type="text" name="sampling" id="datepicker-piezo" hidden required value="{{ sampling.strftime('%Y-%m-%d') }}">
                                   <p class="ml-2" id="sampling-piezo"><i class="fas fa-calendar"></i> {{ sampling.strftime('%d %B %Y') }}</p>
                               </div>
                               <h5>PiezoMeter</h5>
@@ -410,7 +410,7 @@
                         <div class="collapse" id="banjir">
                           <div class="form-group">
                               <label class="form-text" for="sampling"><b>Tanggal</b></label>
-                              <input class="form-control smpl" type="text" name="tanggal" id="datepicker-banjir" hidden required value="{{ sampling.strftime('%Y-%m-%d') }}">
+                              <input class="form-control" type="text" name="tanggal" id="datepicker-banjir" hidden required value="{{ sampling.strftime('%Y-%m-%d') }}">
                               <p class="ml-2" id="sampling-banjir"><i class="fas fa-calendar"></i> {{ sampling.strftime('%d %B %Y') }}</p>
                           </div>
                           <div class="form-group">
@@ -456,7 +456,7 @@
                         <div class="collapse" id="ch_terkini">
                             <div class="form-group">
                                 <label class="form-text" for="sampling"><b>Tanggal</b></label>
-                                <input class="form-control smpl" type="text" name="tanggal" id="datepicker-ch" hidden required value="{{ sampling.strftime('%Y-%m-%d') }}">
+                                <input class="form-control" type="text" name="tanggal" id="datepicker-ch" hidden required value="{{ sampling.strftime('%Y-%m-%d') }}">
                                 <p class="ml-2" id="sampling-ch"><i class="fas fa-calendar"></i> {{ sampling.strftime('%d %B %Y') }}</p>
                             </div>
                             <div class="form-group">
@@ -779,7 +779,7 @@
                                 <input type="number" id="foto-change-id" name="foto_id" step="1" hidden required>
                                 <input type="text" id="foto-change-redirect" name="redirect_url" hidden required
                                     value="{{ url_for(request.endpoint, **request.view_args) }}">
-                                <input type="file" class="form-control-file" id="fotoFile-change" required>
+                                <input type="file" class="form-control-file" id="fotoFile-change" required required accept="image/jpeg">
                                 <div>
                                     <img class="img-fluid" id="foto-change" src="{{ url_for('static', filename='images/null.jpg') }}" alt="gambar disini">
                                 </div>
@@ -807,11 +807,6 @@
 <script src="{{ url_for('static', filename='js/MinifyJpegAsync.js') }}"></script>
 <script>
     $(document).ready(function() {
-        const today = new Date();
-        const sampling_text = today.toLocaleDateString('ID', {day:'numeric', month:'long', year:'numeric'});
-        const sampling_value = today.getFullYear() + '-' + (today.getMonth() +1) + '-'+ today.getDate();
-        Array.from(document.getElementsByClassName('ml-2')).forEach((e) => { e.innerHTML = '<i class="fa fa-calendar"></i> ' + sampling_text; });
-        Array.from(document.getElementsByClassName('smpl')).forEach((e) => { e.value = sampling_value; });
         
         // resolve package confict
         let datepicker = $.fn.datepicker.noConflict();
@@ -835,8 +830,12 @@
         $('#sampling-pagi').on('changeDate', function () {
             let date = $('#sampling-pagi').datepicker('getFormattedDate');
             $('#sampling-pagi').text(moment(date).format('DD MMMM YYYY'));
+            console.log(date);
+            let fd = new FormData(document.getElementsByTagName('form')[0]);
             $('#datepicker_pagi').attr('value', moment(date).format('YYYY-MM-DD'));
+            fd.set('sampling', date);
             $('.datepicker').hide();
+            console.log(fd.get('sampling'));
         });
 
         $('#sampling-siang').datepicker({
@@ -973,7 +972,6 @@
                     imgFoto = "data:image/jpeg;base64," + btoa(data);
                     let img = new Image();
                     img.src = imgFoto;
-
                     document.getElementById(`foto-change`).src = imgFoto;
                     document.getElementById(`fotoBase64-change`).value = imgFoto;
                 });
