@@ -240,7 +240,7 @@
                                                     aria-expanded="false"
                                                     class="card-link"
                                                     onclick="pickPreview({{ f.id }})">
-                                                    <img class="img-card" id="foto-{{ f.id }}" src="{{ url_for('static', filename=f.url[7:]) }}" alt="" style="width: 4rem;height: 4rem;">
+                                                    <img class="img-card" id="foto-{{ f.id }}" src="" alt="" style="width: 4rem;height: 4rem;">
                                                 </a>
                                                 {% endwith %}
                                             {% else %}
@@ -297,7 +297,7 @@
                                                     aria-expanded="false"
                                                     class="card-link"
                                                     onclick="pickPreview({{ f.id }})">
-                                                    <img class="img-card" id="foto-{{ f.id }}" src="{{ url_for('static', filename=f.url[7:]) }}" alt="" style="width: 4rem;height: 4rem;">
+                                                    <img class="img-card" id="foto-{{ f.id }}" src="" alt="" style="width: 4rem;height: 4rem;">
                                                 </a>
                                                 {% endwith %}
                                             {% else %}
@@ -354,7 +354,7 @@
                                                     aria-expanded="false"
                                                     class="card-link"
                                                     onclick="pickPreview({{ f.id }})">
-                                                    <img class="img-card" id="foto-{{ f.id }}" src="{{ url_for('static', filename=f.url[7:]) }}" alt="" style="width: 4rem;height: 4rem;">
+                                                    <img class="img-card" id="foto-{{ f.id }}" src="" alt="" style="width: 4rem;height: 4rem;">
                                                 </a>
                                                 {% endwith %}
                                             {% else %}
@@ -453,7 +453,7 @@
                             {% if keg.0.fotos['0'] %}
                             {% with f = keg.0.fotos['0'] %}
                             <td class="text-center">
-                                <img class="img-card" id="foto-{{ f.id }}" src="{{ url_for('static', filename=f.url[7:]) }}" alt="" style="width: 8rem;height: 8rem;">
+                                <img class="img-card" id="foto-{{ f.id }}" src="" alt="" style="width: 8rem;height: 8rem;">
                             </td>
                             {% endwith %}
                             {% else %}
@@ -463,7 +463,7 @@
                             {% if keg.0.fotos['50'] %}
                             {% with f = keg.0.fotos['50'] %}
                             <td class="text-center">
-                                <img class="img-card" id="foto-{{ f.id }}" src="{{ url_for('static', filename=f.url[7:]) }}" alt="" style="width: 8rem;height: 8rem;">
+                                <img class="img-card" id="foto-{{ f.id }}" src="" alt="" style="width: 8rem;height: 8rem;">
                             </td>
                             {% endwith %}
                             {% else %}
@@ -473,7 +473,7 @@
                             {% if keg.0.fotos['100'] %}
                             {% with f = keg.0.fotos['100'] %}
                             <td class="text-center">
-                                <img class="img-card" id="foto-{{ f.id }}" src="{{ url_for('static', filename=f.url[7:]) }}" alt="" style="width: 8rem;height: 8rem;">
+                                <img class="img-card" id="foto-{{ f.id }}" src="" alt="" style="width: 8rem;height: 8rem;">
                             </td>
                             {% endwith %}
                             {% else %}
@@ -503,7 +503,7 @@
                                 {% if fotos[k.id]['0'] %}
                                 {% with f = fotos[k.id]['0'] %}
                                 <td class="text-center">
-                                    <img class="img-card" id="foto-{{ f.id }}" src="{{ url_for('static', filename=f.url[7:]) }}" alt="" style="width: 8rem;height: 8rem;">
+                                    <img class="img-card" id="foto-{{ f.id }}" src="" alt="" style="width: 8rem;height: 8rem;">
                                 </td>
                                 {% endwith %}
                                 {% else %}
@@ -513,7 +513,7 @@
                                 {% if fotos[k.id]['50'] %}
                                 {% with f = fotos[k.id]['50'] %}
                                 <td class="text-center">
-                                    <img class="img-card" id="foto-{{ f.id }}" src="{{ url_for('static', filename=f.url[7:]) }}" alt="" style="width: 8rem;height: 8rem;">
+                                    <img class="img-card" id="foto-{{ f.id }}" src="" alt="" style="width: 8rem;height: 8rem;">
                                 </td>
                                 {% endwith %}
                                 {% else %}
@@ -523,7 +523,7 @@
                                 {% if fotos[k.id]['100'] %}
                                 {% with f = fotos[k.id]['100'] %}
                                 <td class="text-center">
-                                    <img class="img-card" id="foto-{{ f.id }}" src="{{ url_for('static', filename=f.url[7:]) }}" alt="" style="width: 8rem;height: 8rem;">
+                                    <img class="img-card" id="foto-{{ f.id }}" src="" alt="" style="width: 8rem;height: 8rem;">
                                 </td>
                                 {% endwith %}
                                 {% else %}
@@ -830,7 +830,7 @@
                     {{ f.id }}: {
                         rencana: "{{ k.rencana }}",
                         rencanaDate: "{{ k.sampling.strftime('%d %b %Y') }}",
-                        imgSrc: "{{ url_for('static', filename=f.url[7:]) }}",
+                        imgSrc: "",
                         keterangan: "{{ f.keterangan }}",
                         uploadDate: "{{ f.cdate_wib.strftime('%d %B %Y, %H:%M') }}",
                         modifiedDate: "{{ 'Belum terdata' if not f.origin_last_modified else f.origin_lm_wib.strftime('%d %B %Y, %H:%M') }}",
