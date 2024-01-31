@@ -29,7 +29,7 @@ def admin_only(f):
     def decorated_function(*args, **kwargs):
         if current_user.role not in ['1', '4']:
             if current_user.role == '3':
-                return redirect(url_for('admin.kegiatan_embung', embung_id=current_user.embung_id))
+                return redirect(url_for('admin.operasi_embung', embung_id=current_user.embung_id))
             return redirect(url_for('admin.operasi'))
         return f(*args, **kwargs)
     return decorated_function
