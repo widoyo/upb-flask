@@ -604,7 +604,7 @@ def kegiatan_embung(embung_id):
                                     KegiatanEmbung.embung_id == embung_id,
                                     extract('month', KegiatanEmbung.sampling) == sampling.month,
                                     extract('year', KegiatanEmbung.sampling) == sampling.year
-                                ).limit(3).all()
+                                ).limit(3).order_by(KegiatanEmbung.sampling.desc()).all()
     all_fotos = Foto.query.filter(Foto.obj_type == "kegiatan_embung", Foto.obj_id.in_([k.id for k in all_kegiatan])).all()
     fotos = {k.id: {} for k in all_kegiatan}
     for f in all_fotos:
