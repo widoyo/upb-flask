@@ -146,6 +146,8 @@ def login():
             dest_url = request.args.get('next')
             if not dest_url:
                 dest_url = url_for("admin.operasi")
+                if user.role == '3':
+                    dest_url = url_for("admin.operasi_embung", embung_id=user.embung_id)
             flash('Login Sukses', 'success')
             return redirect(dest_url)
         else:

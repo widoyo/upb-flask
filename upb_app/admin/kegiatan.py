@@ -79,6 +79,7 @@ def kegiatan_bendungan(bendungan_id):
     bend = Bendungan.query.get(bendungan_id)
 
     sampling, end, day = month_range(request.values.get('sampling'))
+    is_csv = request.values.get('csv')
     all_kegiatan = Kegiatan.query.filter(
                                     Kegiatan.bendungan_id == bendungan_id,
                                     Kegiatan.sampling >= sampling.strftime("%Y-%m-%d"),
@@ -109,6 +110,21 @@ def kegiatan_bendungan(bendungan_id):
         kegiatan[pem.sampling]['id'] = pem.id
         kegiatan[pem.sampling]['pemeliharaan'].append(f"{pem.jenis}, {pem.keterangan}")
 
+    if is_csv:
+        output = []
+        for i in kegiatan.keys():
+            row = i.strftime("%Y-%m-%d") + '\t'
+            for j in kegiatan[i].keys():
+                if j == 'id':
+                    continue
+                #row += '{j}\t'
+                row += '\n'.join([u for u in kegiatan[i][j]])
+            output.append(row + '\n')
+        return Response(output,
+                    mimetype="text/csv",
+                    headers={
+                        "Content-Disposition": f"attachment;filename=kegiatan_{bend.nama.replace(' ', '_')}-{sampling.strftime('%B_%Y')}.csv"
+                    })
     return render_template('kegiatan/bendungan.html',
                             csrf=generate_csrf(),
                             bend_id=bend.id,
@@ -588,7 +604,7 @@ def kegiatan_embung(embung_id):
                                     KegiatanEmbung.embung_id == embung_id,
                                     extract('month', KegiatanEmbung.sampling) == sampling.month,
                                     extract('year', KegiatanEmbung.sampling) == sampling.year
-                                ).all()
+                                ).limit(3).all()
     all_fotos = Foto.query.filter(Foto.obj_type == "kegiatan_embung", Foto.obj_id.in_([k.id for k in all_kegiatan])).all()
     fotos = {k.id: {} for k in all_kegiatan}
     for f in all_fotos:
