@@ -79,8 +79,9 @@
         <br>
         <h3>
             Bulan <span id="datepicker" style="color: #18bc9c"><i class="bi bi-calendar-month ml-2"></i> {{ sampling_dt.strftime('%B %Y') }}</span>
+            <button class="btn btn-outline-primary mx-4" onClick="toXlsx()">Download</button>
         </h3>
-        <table class="table table-hover table-bordered">
+        <table class="table table-hover table-bordered" id="table_kegiatan">
             <thead>
                 <tr class="table-active">
                     <th class="text-center align-middle">Tanggal</th>
@@ -161,12 +162,19 @@
 {% endblock %}
 
 {% block js %}
+<!-- use version 0.20.1 -->
+<script lang="javascript" src="https://cdn.sheetjs.com/xlsx-0.20.1/package/dist/xlsx.full.min.js"></script>
 <script src="{{ url_for('static', filename='js/moment.min.js') }}"></script>
 <script src="{{ url_for('static', filename='js/id.js') }}"></script>
 <script src="{{ url_for('static', filename='js/bootstrap-editable.min.js') }}"></script>
 <script src="{{ url_for('static', filename='js/bootstrap-datepicker.min.js') }}"></script>
 <script src="{{ url_for('static', filename='js/MinifyJpegAsync.js') }}"></script>
 <script>
+    function toXlsx() {
+        var wb = XLSX.utils.table_to_book(document.getElementById('table_kegiatan'));
+        XLSX.writeFile(wb, "Kegiatan_{{ name.replace(' ', '_')}}_{{ sampling_dt.strftime('%b_%Y') }}.xlsx")
+    }
+
     $(document).ready(function() {
         // resolve package confict
         let datepicker = $.fn.datepicker.noConflict();

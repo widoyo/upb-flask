@@ -131,7 +131,7 @@ def kegiatan_bendungan(bendungan_id):
                             name=bend.name,
                             petugas=petugas,
                             kegiatan=kegiatan,
-                            sampling=datetime.datetime.now() + datetime.timedelta(hours=7),
+                            sampling=datetime.datetime.now(),
                             sampling_dt=sampling)
 
 
