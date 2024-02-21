@@ -16,6 +16,7 @@
                 <th rowspan="2" class="text-center align-middle">Nama</th>
                 <th rowspan="2" class="text-center align-middle">Kab</th>
                 <th rowspan="2" class="text-center align-middle">Tampungan (m<sup>3</sup>)</th>
+                <th rowspan="2" class="text-center align-middle">Sedimen (m<sup>3</sup>)</th>
                 <th rowspan="2" class="text-center align-middle">Irigasi (Ha)</th>
                 <th rowspan="2" class="text-center align-middle">Elev Puncak (m)</th>
                 <th rowspan="2" class="text-center align-middle">MAB (m)</th>
@@ -60,6 +61,19 @@
                                 data-pk="{{ bend.id }}">
                                 {% if bend.volume %}
                                 <span style="color: blue">{{ bend.volume }}</span>
+                                {% else %}<span style="color: red">Empty</span>{% endif %}
+                            </a>
+                        </td>
+                        <td class="text-right">
+                            <a data-url="/admin/bendungan/update"
+                                class="editable"
+                                data-name="sedimen"
+                                data-type="number"
+                                data-title="{{ nama }}, Sedimen"
+                                data-step=".01"
+                                data-pk="{{ bend.id }}">
+                                {% if bend.sedimen %}
+                                <span style="color: blue">{{ bend.sedimen }}</span>
                                 {% else %}<span style="color: red">Empty</span>{% endif %}
                             </a>
                         </td>
