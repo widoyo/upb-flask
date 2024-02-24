@@ -327,6 +327,13 @@ class Embung(BaseLog):
         cleaned = re.sub('[,.-]', '', self.nama)
         return cleaned.lower().replace(' ', '_')
 
+    @property
+    def str_jenis(self):
+        return 'air baku' if self.jenis == 'a' else 'penampung air'
+    
+    @property
+    def ws(self):
+        return wil_sungai[str(self.wil_sungai)]
 
 class Petugas(BaseLog):
     __tablename__ = 'petugas'

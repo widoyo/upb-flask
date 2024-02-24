@@ -17,16 +17,18 @@
 
 {% block content %}
     <div>
-        <p class="mb-0 fw-lighter text-muted">{{ name }}</p>
-        <h2>Kegiatan</h2>
+        <p class="mb-0 fw-lighter text-muted">{{ embung.nama }} <span class="badge badge-pill badge-secondary">{{ embung.str_jenis }}</span></p>
+        <h2>Kegiatan<br>
+            <a class="btn btn-sm btn-outline-primary" data-toggle="collapse" href="#rencana" role="button" aria-expanded="false" aria-controls="rencana">
+                <i class="bi bi-clipboard2-plus"></i> Form Rencana
+              </a>
+            <a class="btn btn-sm btn-outline-primary" data-toggle="collapse" href="#pencapaian" role="button" aria-expanded="false" aria-controls="pencapaian">
+                <i class="bi bi-clipboard2-check"></i> Laporan Pencapaian
+              </a>
+        </h2>
         <div class="forms">
             <div class="row">
                 <div class="col-md-6">
-                    <h5>
-                      <a data-toggle="collapse" href="#rencana" role="button" aria-expanded="false" aria-controls="rencana">
-                        Form Rencana <small><i class="fas fa-play"></i></small>
-                      </a>
-                    </h5>
                     <form action="{{ url_for('admin.kegiatan_embung_add', embung_id=emb_id) }}" method="POST">
                         <input id="csrf_token" name="csrf_token" type="hidden" value="{{ csrf }}">
                         <div class="collapse" id="rencana">
@@ -72,11 +74,7 @@
                     <br>
                 </div>
                 <div class="col-md-6">
-                    <h5>
-                      <a data-toggle="collapse" href="#pencapaian" role="button" aria-expanded="false" aria-controls="pencapaian">
-                        Laporan Pencapaian <small><i class="fas fa-play"></i></small>
-                      </a>
-                    </h5>
+                      
                     <!-- <form method="POST"> -->
                         <input id="csrf_token" name="csrf_token" type="hidden" value="{{ csrf }}">
                         <div class="collapse" id="pencapaian">
@@ -100,9 +98,8 @@
                               <label class="form-text"><b>Jam Kerja</b></label>
                           </div>
                           <div class="form-group row">
-                              <div class="col-md-6">
-                                  <label for="mulai">Mulai <small id="timepickerhelp"class="form-text text-muted">(Tekan icon jam)</small></label>
-
+                              <div class="col-sm-6">
+                                  <label for="mulai">Mulai <small id="timepickerhelp" class="text-muted">(Tekan icon jam)</small></label>
                                 <div class="input-group date" id="timemulai" data-target-input="nearest">
                                     <input type="text" name="mulai" class="form-control datetimepicker-input" data-target="#timemulai"/>
                                     <div class="input-group-append" data-target="#timemulai" data-toggle="datetimepicker">
@@ -110,8 +107,8 @@
                                     </div>
                                 </div>
                               </div>
-                              <div class="col-md-6">
-                                  <label for="selesai">Selesai <small id="timepickerhelp"class="form-text text-muted">(Tekan icon jam)</small></label>
+                              <div class="col-sm-6">
+                                  <label for="selesai">Selesai <small id="timepickerhelp"class="text-muted">(Tekan icon jam)</small></label>
                                   <div class="input-group date" id="timeselesai" data-target-input="nearest">
                                       <input type="text" name="selesai" class="form-control datetimepicker-input" data-target="#timeselesai"/>
                                       <div class="input-group-append" data-target="#timeselesai" data-toggle="datetimepicker">
@@ -146,10 +143,9 @@
             </div>
         </div>
     
-        <h3>
-            Bulan
+        <h3 class="font-weight-lighter">
             <span id="datepicker" style="color: #18bc9c"><i class="bi bi-calendar-month"></i> {{ sampling_dt.strftime('%B %Y') }}</span>
-            <a href="{{ url_for('admin.kegiatan_embung_csv', embung_id=emb_id) }}?sampling={{ sampling.strftime('%Y-%m-%d') }}">CSV</a>
+            <a class="btn btn-outline-secondary ml-3" href="{{ url_for('admin.kegiatan_embung_csv', embung_id=emb_id) }}?sampling={{ sampling.strftime('%Y-%m-%d') }}"><i class="bi bi-cloud-download"></i></a>
         </h3>
         <nav>
           <div class="nav nav-tabs" id="nav-tab" role="tablist">
@@ -176,9 +172,9 @@
                     <div class="card border-secondary mb-2">
                         <div class="card-header">
                           <b><span id="tgl2">{{ date }}</span></b>
-                          <span style="float: right">
+                          <span class="pl-3">
                               <!-- delete button -->
-                              <input type="button" value="Hapus Data &amp; Foto..." onclick="deleteKegiatan({{ k.id }}, '{{ k.sampling.strftime('%d %b %Y') }}')" class="btn btn-sm btn-danger">
+                              <i class="bi bi-trash text-danger" onClick="deleteKegiatan({{ k.id }}, '{{ k.sampling.strftime('%d %b %Y') }}')"></i>
                           </span>
                         </div>
                         <div class="card-body row">
@@ -265,7 +261,7 @@
                                                       <p>{{ k.rencana }}, <br>(<span id="tgl2">{{ k.sampling }}</span>)</p>
                                                       <div class="form-group">
                                                           <div class="custom-file" style="height: 100%;">
-                                                              <input type="file" class="custom-file-input" id="fotoFile1-{{ k.id }}" accept="image/*">
+                                                              <input type="file" class="custom-file-input" id="fotoFile1-{{ k.id }}" accept="image/jpeg">
                                                               <label class="custom-file-label" for="customFile">Ambil Gambar</label>
                                                               <div>
                                                                   <img id="blah1-{{ k.id }}" src="{{ url_for('static', filename='images/null.jpg') }}" class="img-responsive" style="width: 100%;border: solid 1px #ccc" alt=" pra tinjau gambar">
@@ -547,11 +543,13 @@
         <!-- Modal for Foto Preview -->
         <div class="modal fade" id="preview-foto" tabindex="-1" role="dialog" aria-labelledby="previewFotoModal" aria-hidden="true">
           <div class="modal-dialog" role="document">
-            <div class="modal-content text-center">
+            <div class="modal-content">
               <div class="modal-header">
-                <h5 class="modal-title" id="previewFotoModal">
-                    <span id="pf-rencana"></span> <small>(<span id="pf-rencana-tgl"></span>)</small>
-                </h5>
+                
+                <p class="modal-title" id="previewFotoModal">
+                    <span class="font-weight-light small" id="pf-rencana-tgl"></span><br>
+                    <span id="pf-rencana"></span> 
+                </p>
                 <button type="button" class="close" data-dismiss="modal" aria-label="Close">
                   <span aria-hidden="true">&times;</span>
                 </button>
@@ -560,7 +558,7 @@
                   <div class="form-group">
                       <img class="img-fluid" src="{{ url_for('static', filename='images/null.jpg') }}" id="preview-foto-img">
                       <div style="position: absolute;top: 70%;left: 0;width: 100%;background-color: rgba(255, 255, 255, 0.6);">
-                          <p class="text-center" id="preview-foto-ket"></p>
+                          <p class="text-center pt-3" id="preview-foto-ket"></p>
                       </div>
                   </div>
                   {% if user.role in ['1', '4'] %}

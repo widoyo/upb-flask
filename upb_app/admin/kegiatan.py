@@ -628,8 +628,9 @@ def kegiatan_embung(embung_id):
                             bagian=embung.bagian,
                             kegiatan=kegiatan,
                             fotos=fotos,
-                            sampling=datetime.datetime.now() + datetime.timedelta(hours=7),
-                            sampling_dt=sampling)
+                            sampling=datetime.datetime.now(),
+                            sampling_dt=sampling,
+                            embung=embung)
 
 
 @bp.route('/embung/<embung_id>/kegiatan/add', methods=['POST'])
@@ -717,7 +718,10 @@ def kegiatan_embung_foto(embung_id):
 
     latest = Foto.query.order_by(Foto.id.desc()).first()
     raw = request.form.get('foto')
-    imageStr = raw.split(',')[1]
+    try:
+        imageStr = raw.split(',')[1]
+    except IndexError:
+        return "error"
     filename = f"kegiatan_embung_{latest.id}_{request.form.get('filename')}"
     img_file = os.path.join(app.config['UPLOAD_FOLDER'], filename)
     save_file = os.path.join(app.config['SAVE_DIR'], img_file)
