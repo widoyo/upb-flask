@@ -79,10 +79,9 @@
         </div>
         <div class="container mt-5 pt-5" align="center" style="max-width: 300px">
           <form action="" method="post" novalidate>
-              <img class="mb-4" src="{{ url_for('static', filename='images/logo_pu.png') }}" alt="" width="72" height="72">
-              <h1 class="h3 mb-3 font-weight-normal">
-                  Login UPB<br>
-                  BBWS Bengawan Solo
+              <img class="mb-4" src="{{ url_for('static', filename='img/bbwsbs.png') }}" alt="BBWS BS" width="120">
+              <h1 class="h2 mb-3 font-weight-lighter">
+                  unit pengelola bendungan
               </h1>
               {{ form.hidden_tag() }}
               <label for="inputUsername" class="sr-only">Username</label>
@@ -91,7 +90,7 @@
               <input type="password" name="password" id="inputPassword" class="form-control" placeholder="Password" required>
               <div class="checkbox mb-3"></div>
               <button class="btn btn-lg btn-primary btn-block" type="submit">Login</button>
-              <p class="mt-5 mb-3 text-muted">&copy; BBWS Bengawan Solo 2019</p>
+              <p class="mt-5 mb-3 small text-muted">&copy; BBWS Bengawan Solo 2019 - sekarang</p>
           </form>
         </div>
     </body>
