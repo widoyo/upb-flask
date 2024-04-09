@@ -29,14 +29,24 @@
                     <form action="{{ url_for('admin.operasi_daily_embung_add', embung_id=embung.id) }}" method="POST">
                         <input id="csrf_token" name="csrf_token" type="hidden" value="{{ csrf }}">
                         <div class="collapse" id="tmaharian">
-                          <div>
-                              <div class="form-group">
+                          <div class="row">
+                              <div class="col-md-6 form-group">
                                   <label class="form-text" for="sampling"><b>Tanggal</b></label>
                                   <input class="form-control" type="text" name="sampling" id="datepicker_harian" hidden required value="{{ sampling.strftime('%Y-%m-%d') }}">
                                   <p class="ml-2" id="sampling-harian"><i class="bi bi-calendar"></i> {{ sampling.strftime('%d %B %Y') }}</p>
-                                  <input class="form-control" type="text" name="jam" hidden required value="06">
                               </div>
-                          </div>
+                              <div class="col-md-6 form-group">
+                                <label class="form-text" for="sampling"><b>Waktu</b></label>
+                                <div class="form-check form-check-inline">
+                                    <input class="form-check-input" type="radio" name="jam" id="jam1" value="06">
+                                    <label class="form-check-label" for="jam1">Pagi</label>
+                                  </div>
+                                  <div class="form-check form-check-inline">
+                                    <input class="form-check-input" type="radio" name="jam" id="jam2" value="18">
+                                    <label class="form-check-label" for="jam2">Sore</label>
+                                  </div>
+                            </div>
+                        </div>
                           <div class="row">
                               <div class="col-md-6 form-group">
                                   <label class="form-text" for="tma-harian"><b>TMA</b></label>
@@ -106,9 +116,9 @@
         <table class="table table-hover table-striped table-bordered">
             <thead>
                 <tr class="table-active">
-                    <th rowspan="3" class="text-center align-middle">Tanggal</th>
-                    <th rowspan="3" class="text-center align-middle">TMA</th>
-                    <th rowspan="3" class="text-center align-middle">Volume</th>
+                    <th rowspan="3" class="text-center align-middle">Tgl</th>
+                    <th rowspan="2" colspan="2" class="text-center align-middle">TMA</th>
+                    <th rowspan="2" colspan="2" class="text-center align-middle">Volume</th>
                     <th colspan="2" class="text-center align-middle">Inflow</th>
                     <th colspan="4" class="text-center align-middle">Outflow</th>
                 </tr>
@@ -119,6 +129,10 @@
                     <th colspan="2" class="text-center align-middle">Spillway</th>
                 </tr>
                 <tr class="table-active">
+                    <th class="text-center align-middle">Pagi</th>
+                    <th class="text-center align-middle">Sore</th>
+                    <th class="text-center align-middle">Pagi</th>
+                    <th class="text-center align-middle">Sore</th>
                     <th class="text-center align-middle">Deb</th>
                     <th class="text-center align-middle">Vol</th>
                     <th class="text-center align-middle">Deb</th>
@@ -128,8 +142,8 @@
             <tbody>
                 {% for date, per in periodik.items() %}
                     <tr>
-                        <td id="tgl">{{ date.strftime("%Y-%m-%d") }}</td>
-                        <td class="text-right">
+                        <td class="tgl">{{ date.strftime("%Y-%m-%d") }}</td>
+                        <td class="text-right">  
                             <a data-url="{{ url_for('admin.operasi_tma_embung_update') }}"
                                 class="editable"
                                 data-name="tma"
@@ -145,6 +159,19 @@
                         <td class="text-right">
                             <a data-url="{{ url_for('admin.operasi_tma_embung_update') }}"
                                 class="editable"
+                                data-name="tma"
+                                data-type="number"
+                                data-title="TMA"
+                                data-step=".01"
+                                data-pk="{{ per.tma['18'].id }}">
+                                {% if per.tma['18'] %}
+                                <span style="color: blue">{{ per.tma['18'].tma }}</span>
+                                {% else %}<span style="color: red">Empty</span>{% endif %}
+                            </a>
+                        </td>
+                        <td class="text-right">
+                            <a data-url="{{ url_for('admin.operasi_tma_embung_update') }}"
+                                class="editable"
                                 data-name="vol"
                                 data-type="number"
                                 data-title="Vol"
@@ -152,6 +179,19 @@
                                 data-pk="{{ per.tma['06'].id }}">
                                 {% if per.tma['06'] %}
                                 <span style="color: blue">{{ per.tma['06'].vol }}</span>
+                                {% else %}<span style="color: red">Empty</span>{% endif %}
+                            </a>
+                        </td>
+                        <td class="text-right">
+                            <a data-url="{{ url_for('admin.operasi_tma_embung_update') }}"
+                                class="editable"
+                                data-name="vol"
+                                data-type="number"
+                                data-title="Vol"
+                                data-step=".01"
+                                data-pk="{{ per.tma['18'].id }}">
+                                {% if per.tma['18'] %}
+                                <span style="color: blue">{{ per.tma['18'].vol }}</span>
                                 {% else %}<span style="color: red">Empty</span>{% endif %}
                             </a>
                         </td>
@@ -274,7 +314,7 @@
             $('.datepicker').hide();
         });
 
-        let tgls = document.querySelectorAll("#tgl");
+        let tgls = document.querySelectorAll(".tgl");
         tgls.forEach(function(el){
             console.log(el.value);
             el.innerText = moment(el.innerText).format('ddd, D');
@@ -299,6 +339,11 @@
             //         {value: 'kejadian luar biasa', text: 'Kejadian Luar Biasa'}
             //     ]
             // });
+            var t = new Date();
+            $('#jam1').prop('checked', true);
+            if (t.getHours() > 12) {
+                $('#jam2').prop('checked', true);
+            }
         });
     });
 </script>
