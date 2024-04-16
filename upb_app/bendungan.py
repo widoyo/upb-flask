@@ -103,6 +103,7 @@ def index():
             'tma18': tma_d['18'],
             'vol': None if not vol else "{:,.3f}".format(vol),
             'intake_deb': None if not daily or not daily.intake_deb else "{:,.2f}".format(daily.intake_deb),
+            'inflow_deb': None if not daily or not daily.inflow_deb else "{:,.2f}".format(daily.inflow_deb),
             'spillway_deb': None if not daily or not daily.spillway_deb else "{:,.2f}".format(daily.spillway_deb),
             'debit': None if not vnotch or not vnotch.vn1_deb else "{:,.2f}".format(vnotch.vn1_deb),
             'kondisi': kondisi or "Normal",
