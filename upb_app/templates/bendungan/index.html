@@ -20,7 +20,7 @@
                     <th rowspan="3" class="text-center align-middle">Nama Bendungan</th>
                     <th rowspan="3" class="text-center align-middle">Kondisi</th>
                     <th colspan="5" class="text-center align-middle">Data Teknis Bendungan</th>
-                    <th colspan="9" class="text-center align-middle">
+                    <th colspan="10" class="text-center align-middle">
                         <span id="datepicker"><i class="fas fa-calendar"></i> {{ sampling.strftime('%d %b %Y') }}</span>
                     </th>
                 </tr>
@@ -36,6 +36,7 @@
                     <th rowspan="2" class="text-center align-middle">Vol (Juta M<sup>3</sup>)</th>
                     <!-- <th rowspan="2">TMA Banjir (Juta M3)</th> -->
                     <th colspan="2" class="text-center align-middle">Outflow (M<sup>3</sup>/det)</th>
+                    <th rowspan="2" class="text-center align-middle">Inflow (M<sup>3</sup>/det)</th>
                     <th rowspan="2" class="text-center align-middle">VNotch (L/det)</th>
                     <th rowspan="2" class="text-center align-middle">Curah Hujan (mm)</th>
                     <th rowspan="2" class="text-center align-middle">TMA Banjir (m)</th>
@@ -48,7 +49,7 @@
             <tbody>
                 {% for wil_s, data in waduk.items() %}
                     <tr>
-                        <td colspan="17" class="text-center text-light" style="background-color:#0277BD;"><big><b>Wilayah {{ wil_sungai[wil_s] }}</b></big></td>
+                        <td colspan="18" class="text-center text-light" style="background-color:#0277BD;"><big><b>Wilayah {{ wil_sungai[wil_s] }}</b></big></td>
                     </tr>
                     {% for w in data %}
                         <tr>
@@ -71,6 +72,7 @@
                             <td class="text-right">{% if w.tma18 %}{{ w.tma18 }}{% else %}-{% endif %}</td>
                             <td class="text-right">{% if w.vol %}{{ w.vol }}{% else %}-{% endif %}</td>
                             <td class="text-right">{% if w.intake_deb %}{{ w.intake_deb }}{% else %}-{% endif %}</td>
+                            <td class="text-right">{% if w.inflow_deb %}{{ w.inflow_deb }}{% else %}-{% endif %}</td>
                             <td class="text-right">{% if w.spillway_deb %}{{ w.spillway_deb }}{% else %}-{% endif %}</td>
                             <td class="text-right">{% if w.debit %}{{ w.debit }}{% else %}-{% endif %}</td>
                             <td class="text-right">
