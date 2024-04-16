@@ -672,57 +672,33 @@ def operasi_harian_embung():
                                     ManualTmaEmbung.sampling >= sampling,
                                     ManualTmaEmbung.sampling <= end)
                                 ).all()
-
     all_periodik = {
-        'tma': {},
+        'tma': {
+            '06': None,
+            '12': None,
+            '18': None,
+            },
         'daily': {}
     }
-    for d in all_daily:
-        all_periodik['daily'][d.embung_id] = d
+    dailies = dict([(d.embung_id, d) for d in all_daily])
+    tmas = {}
     for t in all_tma:
-        all_periodik['tma'][t.embung_id] = t
+        if t.embung_id not in tmas:
+            tmas[t.embung_id] = {t.sampling.strftime('%H'): t}
+        else:
+            tmas[t.embung_id].update({t.sampling.strftime('%H'): t})
 
-    embung_a = {
-        '1': {},
-        '2': {},
-        '3': {},
-        '4': {}
-    }
-    embung_b = {
-        '1': {},
-        '2': {},
-        '3': {},
-        '4': {}
-    }
     wilayah = wil_sungai
     wilayah['4'] = "Lain-Lain"
-    count_a = 0
-    count_b = 0
     for e in all_embung:
-        if e.jenis == 'a':
-            count_a += 1
-            embung_a[e.wil_sungai or '4'][e.id] = {
-                'embung': e,
-                'daily': all_periodik['daily'].get(e.id, None),
-                'tma': all_periodik['tma'].get(e.id, None),
-                'no': count_a
-            }
-        elif e.jenis == 'b':
-            count_b += 1
-            embung_b[e.wil_sungai or '4'][e.id] = {
-                'embung': e,
-                'daily': all_periodik['daily'].get(e.id, None),
-                'tma': all_periodik['tma'].get(e.id, None),
-                'no': count_b
-            }
-    embung = {
-        'b': embung_b,
-        'a': embung_a
-    }
-
+        #jam = all_periodik['tma'][e.id].sampling.strftime('%H')
+        e.daily = dailies.get(e.id, None)
+        e.tma = tmas.get(e.id, None)
+    for e in all_embung:
+        print(e.tma)
     return render_template('operasi/index_embung.html',
                             csrf=generate_csrf(),
-                            embung=embung,
+                            embung=all_embung,
                             sampling=sampling,
                             wil_sungai=wil_sungai)
 
