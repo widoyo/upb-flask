@@ -86,7 +86,7 @@
                         <tr class="data">
                           <td>{{ loop.index }}</td>
                           <td>
-                            <a href="{{ url_for('admin.operasi_embung', embung_id=emb.id) }}">{{ emb.nama }}</a>
+                            <a href="{{ url_for('admin.operasi_embung', embung_id=emb.id) }}">{{ emb.nama }}</a> <small>{{ emb.kab }}</small>
                           </td>
                           <td align="right" class="tma_vol">
                             {% if emb.tma and emb.tma['06'] %}

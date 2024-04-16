@@ -318,6 +318,7 @@ class Embung(BaseLog):
     irigasi = db.Column(db.Float)
     is_verified = db.Column(db.String(1))
     wil_sungai = db.Column(db.String(1))
+    elevasi = db.Column(db.Integer, nullable=True)
 
     kegiatan = relationship('KegiatanEmbung', back_populates='embung')
     bagian = relationship('BagianEmbung', back_populates='embung')
