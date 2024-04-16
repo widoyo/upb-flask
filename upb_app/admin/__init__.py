@@ -1,8 +1,10 @@
 from flask import Blueprint, jsonify, request, render_template, redirect, url_for, flash
-from flask_login import login_required
+from flask_login import login_required, current_user
+from flask_wtf.csrf import generate_csrf
 from upb_app.models import Bendungan, Embung, Users, KegiatanEmbung, Foto, wil_sungai
+from upb_app.models import ManualTmaEmbung, ManualDailyEmbung
 from upb_app import db
-from upb_app import admin_only
+from upb_app import admin_only, role_check_embung
 from upb_app.helper import day_range
 from sqlalchemy import and_
 from telegram import Bot
@@ -53,13 +55,24 @@ def bend_update():
     }
     return jsonify(result)
 
+@bp.route('/embung/home')
+@login_required
+def embung_home():
+    embung = Embung.query.get(current_user.embung_id)
+    operasi = ManualTmaEmbung.query.filter(ManualTmaEmbung.embung_id==embung.id).order_by(ManualTmaEmbung.sampling.desc()).limit(15)
+    kegiatan = KegiatanEmbung.query.filter(KegiatanEmbung.embung_id==embung.id).order_by(KegiatanEmbung.sampling.desc()).limit(15)
+    fotos = Foto.query.filter(Foto.obj_type=='kegiatan_embung', Foto.obj_id.in_([k.id for k in kegiatan]))
+    return render_template('embung/home.html', csrf=generate_csrf(), 
+                           embung=embung, operasi=operasi, kegiatan=kegiatan, 
+                           sampling=datetime.date.today(),
+                           foto=fotos)
 
 @bp.route('/embung')
 @login_required
 @admin_only
 def embung():
     ''' Home Embung '''
-    embung = Embung.query.order_by(Embung.is_verified.desc(), Embung.id).all()
+    embung = Embung.query.order_by(Embung.is_verified.desc(), Embung.wil_sungai, Embung.elevasi.desc()).all()
 
     results = {
         'Hulu': [],

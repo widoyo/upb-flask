@@ -659,7 +659,7 @@ def operasi_harian_embung_csv():
 @login_required  # @petugas_only
 @admin_only
 def operasi_harian_embung():
-    all_embung = Embung.query.filter(Embung.is_verified == '1').order_by(Embung.wil_sungai, Embung.elevasi).all()
+    all_embung = Embung.query.filter(Embung.is_verified == '1').order_by(Embung.wil_sungai, Embung.elevasi.desc()).all()
     sampling, end = day_range(request.values.get('sampling'))
 
     all_daily = ManualDailyEmbung.query.filter(
@@ -672,14 +672,6 @@ def operasi_harian_embung():
                                     ManualTmaEmbung.sampling >= sampling,
                                     ManualTmaEmbung.sampling <= end)
                                 ).all()
-    all_periodik = {
-        'tma': {
-            '06': None,
-            '12': None,
-            '18': None,
-            },
-        'daily': {}
-    }
     dailies = dict([(d.embung_id, d) for d in all_daily])
     tmas = {}
     for t in all_tma:
