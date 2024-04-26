@@ -8,80 +8,117 @@
 
 {% block content %}
 <div class="container">
-    <h1>Embung</h1>
-    <nav>
-      <div class="nav nav-tabs" id="nav-tab" role="tablist">
-        <a class="nav-item nav-link active"
-            id="nav-home-tab" data-toggle="tab"
-            href="#nav-home" role="tab"
-            aria-controls="penampung-air" aria-selected="true">
-            <h3>Penampung Air <small><span class="badge badge-pill badge-secondary" id="eb_len"></span></small></h3>
-        </a>
-        <a class="nav-item nav-link"
-            id="nav-profile-tab" data-toggle="tab"
-            href="#nav-profile" role="tab"
-            aria-controls="air-baku" aria-selected="false">
-            <h3>Air Baku <small><span class="badge badge-pill badge-secondary" id="ea_len"></span></small></h3>
-        </a>
-      </div>
-    </nav>
-    <div class="tab-content" id="nav-tabContent">
-      <div class="tab-pane fade show active mt-2"
-        id="nav-home" role="tabpanel"
-        aria-labelledby="penampung-air-tab">
-        <table id="bpa" class="table table-bordered">
-            <thead>
-                <tr>
-                    <th>No</th>
-                    <th>Nama</th>
-                    <th>Kec, Kab</th>
-                    <th>Tampungan</th>
-                    <th>Irigasi</th>
-                </tr>
-            </thead>
-            <tbody>
-                {% for e in embung_b %}
-                    <tr>
-                      <td>{{ loop.index }}</td>
-                      <td>
-                          {{ e.nama }}
-                          {% if e.is_verified == '0' %}**{% endif %}
-                      </td>
-                      <td>{{ e.kec }}, <b>{{ e.kab }}</b></td>
-                      <td class="text-right">{{ e.tampungan }}</td>
-                      <td class="text-right">{{ e.irigasi }}</td>
-                    </tr>
-                {% endfor %}
-            </tbody>
+    <h1 class="font-weight-lighter">Embung <small class="font-weight-lighter text-muted">({{ ctx.hulu.all_embung|length + ctx.madiun.all_embung|length + ctx.hilir.all_embung|length }})</small></h1>
+    <div class="row">
+      <div class="col">
+        <div class="card">
+          <div class="card-body">
+            <h5 class="card-title">Hulu <small class="text-weight-lighter">({{ ctx.hulu.all_embung|length }})</small></h5>
+            <div class="row">
+              <div class="col-sm-4"><small class="float-left text-secondary">Vol {{ ctx.hulu.all_embung|length }} embung</small></div>
+              <div class="col-sm-6"><h1 class="float-right text-monospace">{{ "{:0,.0f}".format(ctx.hulu.vol).replace(',', '.') }}</h1></div>
+              <div class="col-sm-2">M <sup>3</sup></div>
+            </div>
+            <div class="row">
+              <div class="col-sm-4"><small class="float-left text-secondary">Tampungan </small></div>
+              <div class="col-sm-6"><h1 class="float-right text-monospace">{{ "{:0,.0f}".format(ctx.hulu.tampungan).replace(',', '.') }}</h1></div>
+              <div class="col-sm-2">M <sup>3</sup></div>
+            </div>
+            <a href="#table_hulu" data-toggle="collapse" class="card-link">Daftar Embung</a>
+          </div>
+        </div>
+
+        <table class="table collapse" id="table_hulu">
+          <thead>
+            <tr>
+              <th></th>
+              <th><small class="font-weight-lighter">Nama, Kab</small></th>
+              <th><small class="font-weight-lighter">Vol M<sup>3</sup></small></th>
+            </tr>
+          </thead>
+          <tbody>
+          {% for e in ctx.hulu.all_embung %}
+          <tr>
+            <td>{{ loop.index }}</td>
+            <td>{{ e.nama.replace('Embung ', '') }} {% if e.kab %}<small class="text-secondary">{{ e.kab[:4] }}</small>{% endif %}</td>
+            <td class="text-monospace text-right">{% if e.vol %}<small>{{ "{:0,.0f}".format(e.vol) }}</small>{% endif %}</td>
+          </tr>
+          {% endfor %}
+          </tbody>
         </table>
       </div>
-      <div class="tab-pane fade mt-2"
-        id="nav-profile" role="tabpanel"
-        aria-labelledby="air-baku-tab">
-        <table id="ab" class="table table-bordered ">
-            <thead>
-                    <tr>
-                            <th>No</th>
-                            <th>Nama</th>
-                            <th>Kec, Kab</th>
-                            <th>Tampungan</th>
-                            <th>Air Baku</th>
-                    </tr>
-            </thead>
-            <tbody>
-                {% for e in embung_a %}
-                    <tr>
-                      <td>{{ loop.index }}</td>
-                      <td>
-                          {{ e.nama }}
-                          {% if e.is_verified == '0' %}**{% endif %}
-                      </td>
-                      <td>{{ e.kec }}, <b>{{ e.kab }}</b></td>
-                      <td class="text-right">{{ e.tampungan }}</td>
-                      <td class="text-right">{{ e.air_baku }}</td>
-                    </tr>
-                {% endfor %}
-            </tbody>
+      <div class="col">
+        <div class="card">
+          <div class="card-body">
+            <h5 class="card-title">Madiun  <small class="text-weight-lighter">({{ ctx.madiun.all_embung|length }})</small></h5>
+            <div class="row">
+              <div class="col-sm-4"><small class="float-left text-secondary">Vol {{ ctx.madiun.all_embung|length }} embung</small></div>
+              <div class="col-sm-6"><h1 class="float-right text-monospace">{{ "{:0,.0f}".format(ctx.madiun.vol).replace(',', '.') }}</h1></div>
+              <div class="col-sm-2">M <sup>3</sup></div>
+            </div>
+            <div class="row">
+              <div class="col-sm-4"><small class="float-left text-secondary">Tampungan </small></div>
+              <div class="col-sm-6"><h1 class="float-right text-monospace">{{ "{:0,.0f}".format(ctx.madiun.tampungan).replace(',', '.') }}</h1></div>
+              <div class="col-sm-2">M <sup>3</sup></div>
+            </div>
+            <a href="#table_madiun" data-toggle="collapse" class="card-link">Daftar Embung</a>
+          </div>
+        </div>
+        
+        <table class="table collapse" id="table_madiun">
+          <thead>
+            <tr>
+              <th></th>
+              <th><small class="font-weight-lighter">Nama, Kab</small></th>
+              <th><small class="font-weight-lighter">Vol M<sup>3</sup></small></th>
+            </tr>
+          </thead>
+          <tbody>
+          {% for e in ctx.madiun.all_embung %}
+          <tr>
+            <td>{{ loop.index }}</td>
+            <td>{{ e.nama.replace('Embung ', '') }} {% if e.kab %}<small class="text-secondary">{{ e.kab[:4] }}</small>{% endif %}</td>
+            <td class="text-monospace text-right">{% if e.vol %}{{ e.vol }}{% endif %}</td>
+          </tr>
+          {% endfor %}
+          </tbody>
+        </table>
+      </div>
+      <div class="col">
+        <div class="card">
+          <div class="card-body">
+            <h5 class="card-title">Hilir <small class="text-weight-lighter">({{ ctx.hilir.all_embung|length }})</small></h5>
+            <div class="row">
+              <div class="col-sm-4"><small class="float-left text-secondary">Vol {{ ctx.hilir.all_embung|length }} embung</small></div>
+              <div class="col-sm-6"><h1 class="float-right text-monospace">{{ "{:0,.0f}".format(ctx.hilir.vol).replace(',', '.') }}</h1></div>
+              <div class="col-sm-2">M <sup>3</sup></div>
+            </div>
+            <div class="row">
+              <div class="col-sm-4"><small class="float-left text-secondary">Tampungan </small></div>
+              <div class="col-sm-6"><h1 class="float-right text-monospace">{{ "{:0,.0f}".format(ctx.hilir.tampungan).replace(',', '.') }}</h1></div>
+              <div class="col-sm-2">M <sup>3</sup></div>
+            </div>
+            <a href="#table_hilir" data-toggle="collapse" class="card-link">Daftar Embung</a>
+          </div>
+        </div>
+
+        <table class="table collapse" id="table_hilir">
+          <thead>
+            <tr>
+              <th></th>
+              <th><small class="font-weight-lighter">Nama, Kab</small></th>
+              <th><small class="font-weight-lighter">Vol M<sup>3</sup></small></th>
+            </tr>
+          </thead>
+          <tbody>
+          {% for e in ctx.hilir.all_embung %}
+          <tr>
+            <td>{{ loop.index }}</td>
+            <td>{{ e.nama.replace('Embung ', '') }} {% if e.kab %}<small class="text-secondary">{{ e.kab[:4] }}</small>{% endif %}</td>
+            <td class="text-monospace text-right">{% if e.vol %}<small>{{ "{:0,.0f}".format(e.vol) }}</small>{% endif %}</td>
+          </tr>
+          {% endfor %}
+          </tbody>
         </table>
       </div>
     </div>
