@@ -58,6 +58,8 @@ def index():
 
     ctx = {
         'sampling': sampling,
+        '_sampling': _sampling,
+        'sampling_': sampling_,
         'hulu': {
             'all_embung': e_hulu,
             'tampungan': sum([e.tampungan for e in e_hulu if e.tampungan]),
