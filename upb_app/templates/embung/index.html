@@ -29,7 +29,7 @@
       {% for e in ctx.hulu.all_embung %}
         <tr>
           <td>{{ loop.index }}</td>
-          <td>{{ e.nama }}</td>
+          <td>{{ e.nama }} <small class="text-muted">{{ e.kab }}</small></td>
           <td class="text-right">{% if e.tampungan %}{{ "{:0,.0f}".format(e.tampungan).replace(',', '.') }}{% endif %}</td>
           <td class="text-right">{% if e.irigasi %}{{ "{:0,.0f}".format(e.irigasi).replace(',', '.') }}{% endif %}</td>
           <td class="text-right">{% if e._06 and e._06.tma %}{{ "{:0,.1f}".format(e._06.tma).replace('.', ',') }}{% endif %}</td>
@@ -64,7 +64,7 @@
       {% for e in ctx.madiun.all_embung %}
         <tr>
           <td>{{ loop.index }}</td>
-          <td>{{ e.nama }}</td>
+          <td>{{ e.nama }} <small class="text-muted">{{ e.kab }}</small></td>
           <td class="text-right">{% if e.tampungan %}{{ "{:0,.0f}".format(e.tampungan).replace(',', '.') }}{% endif %}</td>
           <td class="text-right">{% if e.irigasi %}{{ "{:0,.0f}".format(e.irigasi).replace(',', '.') }}{% endif %}</td>
           <td class="text-right">{% if e._06 and e._06.tma %}{{ "{:0,.1f}".format(e._06.tma).replace('.', ',') }}{% endif %}</td>
@@ -99,7 +99,7 @@
       {% for e in ctx.hilir.all_embung %}
         <tr>
           <td>{{ loop.index }}</td>
-          <td>{{ e.nama }}</td>
+          <td>{{ e.nama }} <small class="text-muted">{{ e.kab }}</small></td>
           <td class="text-right">{% if e.tampungan %}{{ "{:0,.0f}".format(e.tampungan).replace(',', '.') }}{% endif %}</td>
           <td class="text-right">{% if e.irigasi %}{{ "{:0,.0f}".format(e.irigasi).replace(',', '.') }}{% endif %}</td>
           <td class="text-right">{% if e._06 and e._06.tma %}{{ "{:0,.1f}".format(e._06.tma).replace('.', ',') }}{% endif %}</td>
