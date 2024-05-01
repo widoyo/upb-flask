@@ -4,7 +4,21 @@
 
 {% block content %}
 <div class="container">
-    <h1 class="font-weight-lighter">Embung <small class="font-weight-lighter text-muted">({{ ctx.hulu.all_embung|length + ctx.madiun.all_embung|length + ctx.hilir.all_embung|length }})</small></h1>
+  <div class="row align-items-center">
+    <div class="col">
+      <h1 class="font-weight-lighter">Embung <small class="font-weight-lighter text-muted">({{ ctx.hulu.all_embung|length + ctx.madiun.all_embung|length + ctx.hilir.all_embung|length }})</small></h1>
+    </div>
+    <div class="col text-right">
+      <a href="?s={{ ctx._sampling.strftime('%Y-%m-%d')}}" class="h5 font-weight-light mr-5">{{ ctx._sampling.strftime('%d') }} <i class="fas fa-chevron-left ml-1"></i></a>
+      <span class="display-4">{{ ctx.sampling.strftime('%d') }}</span> {{ ctx.sampling.strftime('%b') }}
+      {% if ctx.sampling_ %}
+      <a href="?s={{ ctx.sampling_.strftime('%Y-%m-%d')}}" class="h5 font-weight-light ml-5"><i class="fas fa-chevron-right mr-1"></i> {{ ctx.sampling_.strftime('%d') }}</a>
+      {% else %}
+      <i class="ml-5 fas fa-chevron-right"></i>
+      {% endif %}
+    </div>
+  </div>
+    
     <div class="row align-items-end mt-3 mb-2">
       <div class="col-3"><h2><small>Wilayah</small> Hulu <small class="text-secondary font-weight-lighter">({{ ctx.hulu.all_embung|length }})</small></h2></div>
       <div class="col-3"><small class="text-secondary text-uppercase">tampungan</small> {{ "{:0,.0f}".format(ctx.hulu.tampungan).replace(',', '.') }} M<sup>3</sup></div>
