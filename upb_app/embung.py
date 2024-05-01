@@ -23,63 +23,62 @@ def index():
         sampling_ = None
 
     embung = Embung.query.filter(Embung.is_verified=='1').order_by(Embung.wil_sungai, Embung.nama).all()
-    tmavol = dict([(t.embung_id, {'tma': t.tma, 'vol': t.vol}) for t in ManualTmaEmbung.query.filter(and_(
+    alltmavol = [(t.embung_id, {'jam': t.sampling.strftime('%H'), 'tma': t.tma, 'vol': t.vol}) for t in ManualTmaEmbung.query.filter(and_(
                                         extract('month', ManualTmaEmbung.sampling) == sampling.month,
                                         extract('year', ManualTmaEmbung.sampling) == sampling.year,
-                                        extract('day', ManualTmaEmbung.sampling) == sampling.day)).order_by(ManualTmaEmbung.sampling.asc())])
-    _tmavol = dict([(t.embung_id, {'tma': t.tma, 'vol': t.vol}) for t in ManualTmaEmbung.query.filter(and_(
-                                        extract('month', ManualTmaEmbung.sampling) == sampling.month,
-                                        extract('year', ManualTmaEmbung.sampling) == sampling.year,
-                                        extract('day', ManualTmaEmbung.sampling) == _sampling.day)).order_by(ManualTmaEmbung.sampling.asc())])
+                                        extract('day', ManualTmaEmbung.sampling) == sampling.day)).order_by(ManualTmaEmbung.sampling.asc())]
     e_hulu = [e for e in embung if e.wil_sungai == '1']
     e_madiun = [e for e in embung if e.wil_sungai == '2']
     e_hilir = [e for e in embung if e.wil_sungai == '3']
+    tmavol = {}
+    for t in alltmavol:
+        if t[0] in tmavol:
+            tmavol[t[0]].update({'_' + t[1]['jam']: t[1]})
+        else:
+            tmavol.update({t[0]: {'_' + t[1]['jam']: t[1]}})
+            
+    # {embung_id: {_6: {'vol': 1, 'tma': 2}, _18: {'vol': 2, 'tma': 3}}}
     
     for e in e_hulu:
         data = tmavol.get(e.id, None)
-        _data = _tmavol.get(e.id, None)
         if data:
-            e.tma = data.get('tma')
-            e.vol = data.get('vol')
-        if _data:
-            e._vol = _data.get('vol')
+            for k, v in data.items():
+                setattr(e, k, v)
+                
     for e in e_madiun:
         data = tmavol.get(e.id, None)
-        _data = _tmavol.get(e.id, None)
         if data:
-            e.tma = data.get('tma')
-            e.vol = data.get('vol')
-        if _data:
-            e._vol = _data.get('vol')
+            for k, v in data.items():
+                setattr(e, k, v)
     for e in e_hilir:
         data = tmavol.get(e.id, None)
-        _data = _tmavol.get(e.id, None)
         if data:
-            e.tma = data.get('tma')
-            e.vol = data.get('vol')
-        if _data:
-            e._vol = _data.get('vol')
+            for k, v in data.items():
+                setattr(e, k, v)
 
     ctx = {
+        'sampling': sampling,
         'hulu': {
             'all_embung': e_hulu,
             'tampungan': sum([e.tampungan for e in e_hulu if e.tampungan]),
-            'vol': sum([e.vol for e in e_hulu if hasattr(e, 'vol')]),
-            '_vol':  sum([e.vol for e in e_hulu if hasattr(e, 'vol')])
+            'irigasi': sum([e.irigasi for e in e_hulu if e.irigasi]),
+            'vol_06': sum([e._06['vol'] for e in e_hulu if hasattr(e, '_06')]),
+            'vol_18': sum([e._18['vol'] for e in e_hulu if hasattr(e, '_18')]),
         },
         'madiun': {
             'all_embung': e_madiun,
             'tampungan': sum([e.tampungan for e in e_madiun if e.tampungan]),
-            'vol': sum([e.vol for e in e_madiun if hasattr(e, 'vol')]),
-            '_vol':  sum([e.vol for e in e_hulu if hasattr(e, 'vol')])
+            'irigasi': sum([e.irigasi for e in e_madiun if e.irigasi]),
+            'vol_06': sum([e._06['vol'] for e in e_madiun if hasattr(e, '_06')]),
+            'vol_18': sum([e._18['vol'] for e in e_madiun if hasattr(e, '_18')]),
         },
         'hilir': {
             'all_embung': e_hilir,
             'tampungan': sum([e.tampungan for e in e_hilir if e.tampungan]),
-            'vol': sum([e.vol for e in e_hilir if hasattr(e, 'vol')]),
-            '_vol':  sum([e.vol for e in e_hulu if hasattr(e, 'vol')])
+            'irigasi': sum([e.irigasi for e in e_hilir if e.irigasi]),
+            'vol_06': sum([e._06['vol'] for e in e_hilir if hasattr(e, '_06')]),
+            'vol_18': sum([e._18['vol'] for e in e_hilir if hasattr(e, '_18')]),
         }
     }
-    
 
     return render_template('embung/index.html', ctx=ctx)

@@ -2,194 +2,113 @@
 
 {% set title = "Embung" %}
 
-{% block css %}
-<link rel="stylesheet" href="//cdn.datatables.net/1.10.20/css/jquery.dataTables.min.css">
-{% endblock %}
-
 {% block content %}
 <div class="container">
     <h1 class="font-weight-lighter">Embung <small class="font-weight-lighter text-muted">({{ ctx.hulu.all_embung|length + ctx.madiun.all_embung|length + ctx.hilir.all_embung|length }})</small></h1>
-    <div class="row">
-      <div class="col">
-        <div class="card">
-          <div class="card-body">
-            <h5 class="card-title">Hulu <small class="text-weight-lighter">({{ ctx.hulu.all_embung|length }})</small></h5>
-            <div class="row">
-              <div class="col-sm-4"><small class="float-left text-secondary">Vol {{ ctx.hulu.all_embung|length }} embung</small></div>
-              <div class="col-sm-6"><h1 class="float-right text-monospace">{{ "{:0,.0f}".format(ctx.hulu.vol).replace(',', '.') }}</h1></div>
-              <div class="col-sm-2">M <sup>3</sup></div>
-            </div>
-            <div class="row">
-              <div class="col-sm-4"><small class="float-left text-secondary">Tampungan </small></div>
-              <div class="col-sm-6"><h1 class="float-right text-monospace">{{ "{:0,.0f}".format(ctx.hulu.tampungan).replace(',', '.') }}</h1></div>
-              <div class="col-sm-2">M <sup>3</sup></div>
-            </div>
-            <a href="#table_hulu" data-toggle="collapse" class="card-link">Daftar Embung</a>
-          </div>
-        </div>
-
-        <table class="table collapse" id="table_hulu">
-          <thead>
-            <tr>
-              <th></th>
-              <th><small class="font-weight-lighter">Nama, Kab</small></th>
-              <th><small class="font-weight-lighter">Vol M<sup>3</sup></small></th>
-            </tr>
-          </thead>
-          <tbody>
-          {% for e in ctx.hulu.all_embung %}
-          <tr>
-            <td>{{ loop.index }}</td>
-            <td>{{ e.nama.replace('Embung ', '') }} {% if e.kab %}<small class="text-secondary">{{ e.kab[:4] }}</small>{% endif %}</td>
-            <td class="text-monospace text-right">{% if e.vol %}<small>{{ "{:0,.0f}".format(e.vol) }}</small>{% endif %}</td>
-          </tr>
-          {% endfor %}
-          </tbody>
-        </table>
-      </div>
-      <div class="col">
-        <div class="card">
-          <div class="card-body">
-            <h5 class="card-title">Madiun  <small class="text-weight-lighter">({{ ctx.madiun.all_embung|length }})</small></h5>
-            <div class="row">
-              <div class="col-sm-4"><small class="float-left text-secondary">Vol {{ ctx.madiun.all_embung|length }} embung</small></div>
-              <div class="col-sm-6"><h1 class="float-right text-monospace">{{ "{:0,.0f}".format(ctx.madiun.vol).replace(',', '.') }}</h1></div>
-              <div class="col-sm-2">M <sup>3</sup></div>
-            </div>
-            <div class="row">
-              <div class="col-sm-4"><small class="float-left text-secondary">Tampungan </small></div>
-              <div class="col-sm-6"><h1 class="float-right text-monospace">{{ "{:0,.0f}".format(ctx.madiun.tampungan).replace(',', '.') }}</h1></div>
-              <div class="col-sm-2">M <sup>3</sup></div>
-            </div>
-            <a href="#table_madiun" data-toggle="collapse" class="card-link">Daftar Embung</a>
-          </div>
-        </div>
-        
-        <table class="table collapse" id="table_madiun">
-          <thead>
-            <tr>
-              <th></th>
-              <th><small class="font-weight-lighter">Nama, Kab</small></th>
-              <th><small class="font-weight-lighter">Vol M<sup>3</sup></small></th>
-            </tr>
-          </thead>
-          <tbody>
-          {% for e in ctx.madiun.all_embung %}
-          <tr>
-            <td>{{ loop.index }}</td>
-            <td>{{ e.nama.replace('Embung ', '') }} {% if e.kab %}<small class="text-secondary">{{ e.kab[:4] }}</small>{% endif %}</td>
-            <td class="text-monospace text-right">{% if e.vol %}{{ e.vol }}{% endif %}</td>
-          </tr>
-          {% endfor %}
-          </tbody>
-        </table>
-      </div>
-      <div class="col">
-        <div class="card">
-          <div class="card-body">
-            <h5 class="card-title">Hilir <small class="text-weight-lighter">({{ ctx.hilir.all_embung|length }})</small></h5>
-            <div class="row">
-              <div class="col-sm-4"><small class="float-left text-secondary">Vol {{ ctx.hilir.all_embung|length }} embung</small></div>
-              <div class="col-sm-6"><h1 class="float-right text-monospace">{{ "{:0,.0f}".format(ctx.hilir.vol).replace(',', '.') }}</h1></div>
-              <div class="col-sm-2">M <sup>3</sup></div>
-            </div>
-            <div class="row">
-              <div class="col-sm-4"><small class="float-left text-secondary">Tampungan </small></div>
-              <div class="col-sm-6"><h1 class="float-right text-monospace">{{ "{:0,.0f}".format(ctx.hilir.tampungan).replace(',', '.') }}</h1></div>
-              <div class="col-sm-2">M <sup>3</sup></div>
-            </div>
-            <a href="#table_hilir" data-toggle="collapse" class="card-link">Daftar Embung</a>
-          </div>
-        </div>
-
-        <table class="table collapse" id="table_hilir">
-          <thead>
-            <tr>
-              <th></th>
-              <th><small class="font-weight-lighter">Nama, Kab</small></th>
-              <th><small class="font-weight-lighter">Vol M<sup>3</sup></small></th>
-            </tr>
-          </thead>
-          <tbody>
-          {% for e in ctx.hilir.all_embung %}
-          <tr>
-            <td>{{ loop.index }}</td>
-            <td>{{ e.nama.replace('Embung ', '') }} {% if e.kab %}<small class="text-secondary">{{ e.kab[:4] }}</small>{% endif %}</td>
-            <td class="text-monospace text-right">{% if e.vol %}<small>{{ "{:0,.0f}".format(e.vol) }}</small>{% endif %}</td>
-          </tr>
-          {% endfor %}
-          </tbody>
-        </table>
-      </div>
+    <div class="row align-items-end mt-3 mb-2">
+      <div class="col-3"><h2><small>Wilayah</small> Hulu <small class="text-secondary font-weight-lighter">({{ ctx.hulu.all_embung|length }})</small></h2></div>
+      <div class="col-3"><small class="text-secondary text-uppercase">tampungan</small> {{ "{:0,.0f}".format(ctx.hulu.tampungan).replace(',', '.') }} M<sup>3</sup></div>
+      <div class="col-2"><small class="text-secondary text-uppercase">irigasi</small> {{ "{:0,.0f}".format(ctx.hulu.irigasi).replace(',', '.') }} M<sup>3</sup></div>
+      <div class="col-2"><small class="text-secondary text-uppercase">volume pagi</small> {{ "{:0,.0f}".format(ctx.hulu.vol_06).replace(',', '.') }} M<sup>3</sup></div> 
+      <div class="col-2"><small class="text-uppercase text-secondary">volume sore</small> {{ "{:0,.0f}".format(ctx.hulu.vol_18).replace(',', '.') }} M<sup>3</sup></div>
     </div>
+    <table class="table">
+      <thead class="text-muted">
+        <tr class="bg-light">
+          <th>&nbsp;</th>
+          <th class="font-weight-light">Nama</th>
+          <th class="text-right font-weight-light">Tampungan</th>
+          <th class="text-right font-weight-light">Irigasi</th>
+          <th class="text-right font-weight-light">TMA Pagi</th>
+          <th class="text-right font-weight-light">Vol Pagi</th>
+          <th class="text-right font-weight-light">TMA Sore</th>
+          <th class="text-right font-weight-light">Vol Sore</th>
+        </tr>
+      </thead>
+      <tbody>
+      {% for e in ctx.hulu.all_embung %}
+        <tr>
+          <td>{{ loop.index }}</td>
+          <td>{{ e.nama }}</td>
+          <td class="text-right">{% if e.tampungan %}{{ "{:0,.0f}".format(e.tampungan).replace(',', '.') }}{% endif %}</td>
+          <td class="text-right">{% if e.irigasi %}{{ "{:0,.0f}".format(e.irigasi).replace(',', '.') }}{% endif %}</td>
+          <td class="text-right">{% if e._06 and e._06.tma %}{{ "{:0,.0f}".format(e._06.tma).replace(',', '.') }}{% endif %}</td>
+          <td class="text-right">{% if e._06 and e._06.vol %}{{ "{:0,.0f}".format(e._06.vol).replace(',', '.') }}{% endif %}</td>
+          <td class="text-right">{% if e._18 and e._18.tma %}{{ "{:0,.0f}".format(e._18.tma).replace(',', '.') }}{% endif %}</td>
+          <td class="text-right">{% if e._18 and e._18.vol %}{{ "{:0,.0f}".format(e._18.vol).replace(',', '.') }}{% endif %}</td>
+        </tr>
+      {% endfor %}
+      </tbody>
+    </table>
+    <div class="row align-items-end mt-3 mb-2">
+      <div class="col-3"><h2><small>Wilayah</small> Madiun <small class="text-secondary font-weight-lighter">({{ ctx.madiun.all_embung|length }})</small></h2></div>
+      <div class="col-3"><small class="text-secondary text-uppercase">tampungan</small> {{ "{:0,.0f}".format(ctx.madiun.tampungan).replace(',', '.') }} M<sup>3</sup></div>
+      <div class="col-2"><small class="text-secondary text-uppercase">irigasi</small> {{ "{:0,.0f}".format(ctx.madiun.irigasi).replace(',', '.') }} M<sup>3</sup></div>
+      <div class="col-2"><small class="text-secondary text-uppercase">volume pagi</small> {{ "{:0,.0f}".format(ctx.madiun.vol_06).replace(',', '.') }} M<sup>3</sup></div> 
+      <div class="col-2"><small class="text-uppercase text-secondary">volume sore</small> {{ "{:0,.0f}".format(ctx.madiun.vol_18).replace(',', '.') }} M<sup>3</sup></div>
+    </div>
+    <table class="table">
+      <thead class="text-muted">
+        <tr class="bg-light">
+          <th>&nbsp;</th>
+          <th class="font-weight-light">Nama</th>
+          <th class="text-right font-weight-light">Tampungan</th>
+          <th class="text-right font-weight-light">Irigasi</th>
+          <th class="text-right font-weight-light">TMA Pagi</th>
+          <th class="text-right font-weight-light">Vol Pagi</th>
+          <th class="text-right font-weight-light">TMA Sore</th>
+          <th class="text-right font-weight-light">Vol Sore</th>
+        </tr>
+      </thead>
+      <tbody>
+      {% for e in ctx.madiun.all_embung %}
+        <tr>
+          <td>{{ loop.index }}</td>
+          <td>{{ e.nama }}</td>
+          <td class="text-right">{% if e.tampungan %}{{ "{:0,.0f}".format(e.tampungan).replace(',', '.') }}{% endif %}</td>
+          <td class="text-right">{% if e.irigasi %}{{ "{:0,.0f}".format(e.irigasi).replace(',', '.') }}{% endif %}</td>
+          <td class="text-right">{% if e._06 and e._06.tma %}{{ "{:0,.0f}".format(e._06.tma).replace(',', '.') }}{% endif %}</td>
+          <td class="text-right">{% if e._06 and e._06.vol %}{{ "{:0,.0f}".format(e._06.vol).replace(',', '.') }}{% endif %}</td>
+          <td class="text-right">{% if e._18 and e._18.tma %}{{ "{:0,.0f}".format(e._18.tma).replace(',', '.') }}{% endif %}</td>
+          <td class="text-right">{% if e._18 and e._18.vol %}{{ "{:0,.0f}".format(e._18.vol).replace(',', '.') }}{% endif %}</td>
+        </tr>
+      {% endfor %}
+      </tbody>
+    </table>
+    <div class="row align-items-end mt-3 mb-2">
+      <div class="col-3"><h2><small>Wilayah</small> Hilir <small class="text-secondary font-weight-lighter">({{ ctx.hilir.all_embung|length }})</small></h2></div>
+      <div class="col-3"><small class="text-secondary text-uppercase">tampungan</small> {{ "{:0,.0f}".format(ctx.hilir.tampungan).replace(',', '.') }} M<sup>3</sup></div>
+      <div class="col-2"><small class="text-secondary text-uppercase">irigasi</small> {{ "{:0,.0f}".format(ctx.hilir.irigasi).replace(',', '.') }} M<sup>3</sup></div>
+      <div class="col-2"><small class="text-secondary text-uppercase">volume pagi</small> {{ "{:0,.0f}".format(ctx.hilir.vol_06).replace(',', '.') }} M<sup>3</sup></div> 
+      <div class="col-2"><small class="text-uppercase text-secondary">volume sore</small> {{ "{:0,.0f}".format(ctx.hilir.vol_18).replace(',', '.') }} M<sup>3</sup></div>
+    </div>
+    <table class="table">
+      <thead class="text-muted">
+        <tr class="bg-light">
+          <th>&nbsp;</th>
+          <th class="font-weight-light">Nama</th>
+          <th class="text-right font-weight-light">Tampungan</th>
+          <th class="text-right font-weight-light">Irigasi</th>
+          <th class="text-right font-weight-light">TMA Pagi</th>
+          <th class="text-right font-weight-light">Vol Pagi</th>
+          <th class="text-right font-weight-light">TMA Sore</th>
+          <th class="text-right font-weight-light">Vol Sore</th>
+        </tr>
+      </thead>
+      <tbody>
+      {% for e in ctx.hilir.all_embung %}
+        <tr>
+          <td>{{ loop.index }}</td>
+          <td>{{ e.nama }}</td>
+          <td class="text-right">{% if e.tampungan %}{{ "{:0,.0f}".format(e.tampungan).replace(',', '.') }}{% endif %}</td>
+          <td class="text-right">{% if e.irigasi %}{{ "{:0,.0f}".format(e.irigasi).replace(',', '.') }}{% endif %}</td>
+          <td class="text-right">{% if e._06 and e._06.tma %}{{ "{:0,.0f}".format(e._06.tma).replace(',', '.') }}{% endif %}</td>
+          <td class="text-right">{% if e._06 and e._06.vol %}{{ "{:0,.0f}".format(e._06.vol).replace(',', '.') }}{% endif %}</td>
+          <td class="text-right">{% if e._18 and e._18.tma %}{{ "{:0,.0f}".format(e._18.tma).replace(',', '.') }}{% endif %}</td>
+          <td class="text-right">{% if e._18 and e._18.vol %}{{ "{:0,.0f}".format(e._18.vol).replace(',', '.') }}{% endif %}</td>
+        </tr>
+      {% endfor %}
+      </tbody>
+    </table>
 </div>
-{% endblock %}
-
-{% block js %}
-<script src="//cdn.datatables.net/1.10.20/js/jquery.dataTables.min.js"></script>
-<script>
-    jQuery.fn.dataTable.Api.register( 'sum()', function ( ) {
-            return this.flatten().reduce( function ( a, b ) {
-                    if ( typeof a === 'string' ) {
-                            a = a.replace(/[^\d.-]/g, '') * 1;
-                    }
-                    if ( typeof b === 'string' ) {
-                            b = b.replace(/[^\d.-]/g, '') * 1;
-                    }
-
-            return a + b;
-            }, 0 );
-    } );
-    function updateLen(id, val) {
-        document.getElementById(id).innerHTML = val;
-    }
-    $(document).ready(function() {
-            let eb_len = {{ embung_b|length }};
-            let ea_len = {{ embung_a|length }};
-            updateLen("ea_len", ea_len);
-            updateLen("eb_len", eb_len);
-            var numberFormat = function (obj) {
-                    return parseInt(obj).toLocaleString('id-ID');
-            };
-            var dt_bpa = $('#bpa').DataTable({
-                    "order": [[3, 'desc']],
-                    "paging": false,
-                    "dom": '<"summary">f',
-                    "language": {
-                            "decimal": ",",
-                            "thousands": "."
-                    }
-            });
-            $('div.summary').html('Banyak: <b id="s_banyak" class="s_item">102</b>, Tampungan: <b class="s_item"><span id="s_tampungan">-</span> M<sup>3</sup>, </b>Irigasi: <b class="s_item"><span id="s_irigasi"></span> Ha</b>');
-            var dt_ab = $('#ab').DataTable({
-                    "order": [[3, 'desc']],
-                    "dom": '<"summary_ab">f',
-                    "paging": false,
-                    "language": {
-                            "decimal": ",",
-                            "thousands": "."
-                    }
-            });
-            $('div.summary_ab').html('Banyak: <b id="s_banyak_ab" class="s_item">72</b> Tampungan: <b class="s_item"><span  id="s_tampungan_ab">-</span> M<sup>3</sup></b>Air Baku: <b class="s_item"><span id="s_airbaku"></span> KK</b>');
-            dt_bpa.on('draw', function () {
-                    var tampungan = dt_bpa.column(3, {filter: 'applied'}).data().sum();
-                    $('#s_tampungan').text(numberFormat(tampungan));
-                    $('#s_banyak').text(dt_bpa.rows({filter: 'applied'}).data().length)
-                    $('#s_irigasi').text(numberFormat(dt_bpa.column(4, {filter: 'applied'}).data().sum()));
-                    updateLen("eb_len", dt_bpa.rows({filter: 'applied'}).data().length);
-            });
-            dt_ab.on('draw', function () {
-                    $('#s_banyak_ab').text(dt_ab.rows({filter: 'applied'}).data().length)
-                    $('#s_tampungan_ab').text(numberFormat(dt_ab.column(3, {filter: 'applied'}).data().sum()));
-                    $('#s_airbaku').text(numberFormat(dt_ab.column(4, {filter: 'applied'}).data().sum()));
-                    updateLen("ea_len", dt_ab.rows({filter: 'applied'}).data().length);
-            });
-            $('#s_tampungan').text(dt_bpa.column(3, {filter: 'applied'}).data().sum());
-            $('#s_irigasi').text(numberFormat(dt_bpa.column(4, {filter: 'applied'}).data().sum()));
-            $('#s_tampungan').text(numberFormat($('#s_tampungan').text()));
-            $('#s_tampungan_ab').text(numberFormat(dt_ab.column(3, {filter: 'applied'}).data().sum()));
-            $('#s_airbaku').text(numberFormat(dt_ab.column(4, {filter: 'applied'}).data().sum()));
-    });
-  </script>
-
 {% endblock %}
