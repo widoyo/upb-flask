@@ -9,8 +9,8 @@
       <div class="col-3"><h2><small>Wilayah</small> Hulu <small class="text-secondary font-weight-lighter">({{ ctx.hulu.all_embung|length }})</small></h2></div>
       <div class="col-3"><small class="text-secondary text-uppercase">tampungan</small> {{ "{:0,.0f}".format(ctx.hulu.tampungan).replace(',', '.') }} M<sup>3</sup></div>
       <div class="col-2"><small class="text-secondary text-uppercase">irigasi</small> {{ "{:0,.0f}".format(ctx.hulu.irigasi).replace(',', '.') }} M<sup>3</sup></div>
-      <div class="col-2"><small class="text-secondary text-uppercase">volume pagi</small> {{ "{:0,.0f}".format(ctx.hulu.vol_06).replace(',', '.') }} M<sup>3</sup></div> 
-      <div class="col-2"><small class="text-uppercase text-secondary">volume sore</small> {{ "{:0,.0f}".format(ctx.hulu.vol_18).replace(',', '.') }} M<sup>3</sup></div>
+      <div class="col-2"><small class="text-secondary text-uppercase">vol pagi</small> {{ "{:0,.0f}".format(ctx.hulu.vol_06).replace(',', '.') }} M<sup>3</sup></div> 
+      <div class="col-2"><small class="text-uppercase text-secondary">vol sore</small> {{ "{:0,.0f}".format(ctx.hulu.vol_18).replace(',', '.') }} M<sup>3</sup></div>
     </div>
     <table class="table">
       <thead class="text-muted">
@@ -32,9 +32,9 @@
           <td>{{ e.nama }}</td>
           <td class="text-right">{% if e.tampungan %}{{ "{:0,.0f}".format(e.tampungan).replace(',', '.') }}{% endif %}</td>
           <td class="text-right">{% if e.irigasi %}{{ "{:0,.0f}".format(e.irigasi).replace(',', '.') }}{% endif %}</td>
-          <td class="text-right">{% if e._06 and e._06.tma %}{{ "{:0,.0f}".format(e._06.tma).replace(',', '.') }}{% endif %}</td>
+          <td class="text-right">{% if e._06 and e._06.tma %}{{ "{:0,.1f}".format(e._06.tma).replace('.', ',') }}{% endif %}</td>
           <td class="text-right">{% if e._06 and e._06.vol %}{{ "{:0,.0f}".format(e._06.vol).replace(',', '.') }}{% endif %}</td>
-          <td class="text-right">{% if e._18 and e._18.tma %}{{ "{:0,.0f}".format(e._18.tma).replace(',', '.') }}{% endif %}</td>
+          <td class="text-right">{% if e._18 and e._18.tma %}{{ "{:0,.1f}".format(e._18.tma).replace('.', ',') }}{% endif %}</td>
           <td class="text-right">{% if e._18 and e._18.vol %}{{ "{:0,.0f}".format(e._18.vol).replace(',', '.') }}{% endif %}</td>
         </tr>
       {% endfor %}
@@ -44,8 +44,8 @@
       <div class="col-3"><h2><small>Wilayah</small> Madiun <small class="text-secondary font-weight-lighter">({{ ctx.madiun.all_embung|length }})</small></h2></div>
       <div class="col-3"><small class="text-secondary text-uppercase">tampungan</small> {{ "{:0,.0f}".format(ctx.madiun.tampungan).replace(',', '.') }} M<sup>3</sup></div>
       <div class="col-2"><small class="text-secondary text-uppercase">irigasi</small> {{ "{:0,.0f}".format(ctx.madiun.irigasi).replace(',', '.') }} M<sup>3</sup></div>
-      <div class="col-2"><small class="text-secondary text-uppercase">volume pagi</small> {{ "{:0,.0f}".format(ctx.madiun.vol_06).replace(',', '.') }} M<sup>3</sup></div> 
-      <div class="col-2"><small class="text-uppercase text-secondary">volume sore</small> {{ "{:0,.0f}".format(ctx.madiun.vol_18).replace(',', '.') }} M<sup>3</sup></div>
+      <div class="col-2"><small class="text-secondary text-uppercase">vol pagi</small> {{ "{:0,.0f}".format(ctx.madiun.vol_06).replace(',', '.') }} M<sup>3</sup></div> 
+      <div class="col-2"><small class="text-uppercase text-secondary">vol sore</small> {{ "{:0,.0f}".format(ctx.madiun.vol_18).replace(',', '.') }} M<sup>3</sup></div>
     </div>
     <table class="table">
       <thead class="text-muted">
@@ -67,9 +67,9 @@
           <td>{{ e.nama }}</td>
           <td class="text-right">{% if e.tampungan %}{{ "{:0,.0f}".format(e.tampungan).replace(',', '.') }}{% endif %}</td>
           <td class="text-right">{% if e.irigasi %}{{ "{:0,.0f}".format(e.irigasi).replace(',', '.') }}{% endif %}</td>
-          <td class="text-right">{% if e._06 and e._06.tma %}{{ "{:0,.0f}".format(e._06.tma).replace(',', '.') }}{% endif %}</td>
+          <td class="text-right">{% if e._06 and e._06.tma %}{{ "{:0,.1f}".format(e._06.tma).replace('.', ',') }}{% endif %}</td>
           <td class="text-right">{% if e._06 and e._06.vol %}{{ "{:0,.0f}".format(e._06.vol).replace(',', '.') }}{% endif %}</td>
-          <td class="text-right">{% if e._18 and e._18.tma %}{{ "{:0,.0f}".format(e._18.tma).replace(',', '.') }}{% endif %}</td>
+          <td class="text-right">{% if e._18 and e._18.tma %}{{ "{:0,.1f}".format(e._18.tma).replace('.', ',') }}{% endif %}</td>
           <td class="text-right">{% if e._18 and e._18.vol %}{{ "{:0,.0f}".format(e._18.vol).replace(',', '.') }}{% endif %}</td>
         </tr>
       {% endfor %}
@@ -79,8 +79,8 @@
       <div class="col-3"><h2><small>Wilayah</small> Hilir <small class="text-secondary font-weight-lighter">({{ ctx.hilir.all_embung|length }})</small></h2></div>
       <div class="col-3"><small class="text-secondary text-uppercase">tampungan</small> {{ "{:0,.0f}".format(ctx.hilir.tampungan).replace(',', '.') }} M<sup>3</sup></div>
       <div class="col-2"><small class="text-secondary text-uppercase">irigasi</small> {{ "{:0,.0f}".format(ctx.hilir.irigasi).replace(',', '.') }} M<sup>3</sup></div>
-      <div class="col-2"><small class="text-secondary text-uppercase">volume pagi</small> {{ "{:0,.0f}".format(ctx.hilir.vol_06).replace(',', '.') }} M<sup>3</sup></div> 
-      <div class="col-2"><small class="text-uppercase text-secondary">volume sore</small> {{ "{:0,.0f}".format(ctx.hilir.vol_18).replace(',', '.') }} M<sup>3</sup></div>
+      <div class="col-2"><small class="text-secondary text-uppercase">vol pagi</small> {{ "{:0,.0f}".format(ctx.hilir.vol_06).replace(',', '.') }} M<sup>3</sup></div> 
+      <div class="col-2"><small class="text-uppercase text-secondary">vol sore</small> {{ "{:0,.0f}".format(ctx.hilir.vol_18).replace(',', '.') }} M<sup>3</sup></div>
     </div>
     <table class="table">
       <thead class="text-muted">
@@ -102,9 +102,9 @@
           <td>{{ e.nama }}</td>
           <td class="text-right">{% if e.tampungan %}{{ "{:0,.0f}".format(e.tampungan).replace(',', '.') }}{% endif %}</td>
           <td class="text-right">{% if e.irigasi %}{{ "{:0,.0f}".format(e.irigasi).replace(',', '.') }}{% endif %}</td>
-          <td class="text-right">{% if e._06 and e._06.tma %}{{ "{:0,.0f}".format(e._06.tma).replace(',', '.') }}{% endif %}</td>
+          <td class="text-right">{% if e._06 and e._06.tma %}{{ "{:0,.1f}".format(e._06.tma).replace('.', ',') }}{% endif %}</td>
           <td class="text-right">{% if e._06 and e._06.vol %}{{ "{:0,.0f}".format(e._06.vol).replace(',', '.') }}{% endif %}</td>
-          <td class="text-right">{% if e._18 and e._18.tma %}{{ "{:0,.0f}".format(e._18.tma).replace(',', '.') }}{% endif %}</td>
+          <td class="text-right">{% if e._18 and e._18.tma %}{{ "{:0,.0f}".format(e._18.tma).replace('.', ',') }}{% endif %}</td>
           <td class="text-right">{% if e._18 and e._18.vol %}{{ "{:0,.0f}".format(e._18.vol).replace(',', '.') }}{% endif %}</td>
         </tr>
       {% endfor %}
