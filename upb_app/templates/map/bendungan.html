@@ -1,98 +1,113 @@
-{% extends 'master/base.html' %}
-
-{% set title = "Peta" %}
-
-{% block css %}
-    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.3.4/dist/leaflet.css" integrity="sha512-puBpdR0798OZvTTbP4A8Ix/l+A4dHDD0DGqYW6RQ+9jxkRFclaxxQb/SJAWZfWAkuyeQUytO7+7N4QKrDh+drA==" crossorigin=""/>
-    <style>
-        #mymap-wrapper {
-            padding-top: 56px;
-        }
-        @media (min-width: 576px) {
-            #mymap-wrapper {
-                padding-top: 105px;
-            }
-        }
-    </style>
-    <script src='https://api.mapbox.com/mapbox.js/v3.2.1/mapbox.js'></script>
-    <link href='https://api.mapbox.com/mapbox.js/v3.2.1/mapbox.css' rel='stylesheet' />
-{% endblock %}
-
-{% block content %}
-<div id="mymap-wrapper" class="position-fixed w-100 h-100" style="left:0;bottom:0; z-index: -1;">
-    <div id="mymap" class="w-100 h-100">
-
-    </div>
+{% extends 'master/base.html' %} {% set title = "Peta" %} {% block css %}
+<link
+  rel="stylesheet"
+  href="https://unpkg.com/leaflet@1.3.4/dist/leaflet.css"
+  integrity="sha512-puBpdR0798OZvTTbP4A8Ix/l+A4dHDD0DGqYW6RQ+9jxkRFclaxxQb/SJAWZfWAkuyeQUytO7+7N4QKrDh+drA=="
+  crossorigin=""
+/>
+<style>
+  #mymap-wrapper {
+    padding-top: 56px;
+  }
+  @media (min-width: 576px) {
+    #mymap-wrapper {
+      padding-top: 105px;
+    }
+  }
+</style>
+<script src="https://api.mapbox.com/mapbox.js/v3.2.1/mapbox.js"></script>
+<link
+  href="https://api.mapbox.com/mapbox.js/v3.2.1/mapbox.css"
+  rel="stylesheet"
+/>
+{% endblock %} {% block content %}
+<div
+  id="mymap-wrapper"
+  class="position-fixed w-100 h-100"
+  style="left: 0; bottom: 0; z-index: -1"
+>
+  <div id="mymap" class="w-100 h-100"></div>
 </div>
-{% endblock %}
+{% endblock %} {% block js %}
+<script
+  src="https://unpkg.com/leaflet@1.3.4/dist/leaflet.js"
+  integrity="sha512-nMMmRyTVoLYqjP9hrbed9S+FzjZHW5gY1TWCHA5ckwXZBadntCNs8kEqAWdrb9O7rxbCaA4lKTIWjDXZxflOcA=="
+  crossorigin=""
+></script>
+<script src="//api.tiles.mapbox.com/mapbox.js/plugins/leaflet-omnivore/v0.3.1/leaflet-omnivore.min.js"></script>
+<script>
+    var mymap = L.map('mymap', { layers: layers }).setView([-7.5099, 111.5], 9);
 
-{% block js %}
-    <script src="https://unpkg.com/leaflet@1.3.4/dist/leaflet.js" integrity="sha512-nMMmRyTVoLYqjP9hrbed9S+FzjZHW5gY1TWCHA5ckwXZBadntCNs8kEqAWdrb9O7rxbCaA4lKTIWjDXZxflOcA==" crossorigin=""></script>
-    <script src='//api.tiles.mapbox.com/mapbox.js/plugins/leaflet-omnivore/v0.3.1/leaflet-omnivore.min.js'></script>
-    <script>
-        var mymap = L.map('mymap').setView([-7.5099, 111.5], 9);
+    var apiKey = "pk.eyJ1Ijoid2lkb3lvIiwiYSI6ImNqcTNmNGh5NjFlMGk0Mm9iamJxdXIxaHUifQ.hxfPpTyy8g60K9baKtbvRw";
 
-        L.tileLayer('https://api.tiles.mapbox.com/v4/{id}/{z}/{x}/{y}.png?access_token=pk.eyJ1Ijoid2lkb3lvIiwiYSI6ImNqcTNmNGh5NjFlMGk0Mm9iamJxdXIxaHUifQ.hxfPpTyy8g60K9baKtbvRw', {
-            maxZoom: 18,
-            attribution: 'Map data &copy; <a href="https://www.openstreetmap.org/">OpenStreetMap</a> contributors, ' +
-                '<a href="https://creativecommons.org/licenses/by-sa/2.0/">CC-BY-SA</a>, ' +
-                'Imagery © <a href="https://www.mapbox.com/">Mapbox</a>',
-            id: 'mapbox.streets'
-        }).addTo(mymap);
+    var layerIds = ["streets-v12"];
 
-        let kmlGroup = L.geoJSON(null, {
-            style: {
-                color: "#808080",
-                weight: 4
-            }
-        });
+    var attribution =
+      'Map data &copy; <a href="https://www.openstreetmap.org/">OpenStreetMap</a> contributors, <a href="https://creativecommons.org/licenses/by-sa/2.0/">CC-BY-SA</a>, Imagery © <a href="https://www.mapbox.com/">Mapbox</a>';
 
-        // Load kml file
-        let kml1 = omnivore.kml("{{ url_for('static', filename='kml/hilir.kml') }}", null, kmlGroup).addTo(mymap);
-        let kml2 = omnivore.kml("{{ url_for('static', filename='kml/hulu.kml') }}", null, kmlGroup).addTo(mymap);
-        let kml3 = omnivore.kml("{{ url_for('static', filename='kml/madiun.kml') }}", null, kmlGroup).addTo(mymap);
+    var layers = layerIds.map((layerId) => {
+      return L.tileLayer(
+        "https://api.mapbox.com/styles/v1/mapbox/{style}/tiles/256/{z}/{x}/{y}?access_token={apiKey}",
+        {
+          maxZoom: 18, // maximum zoom
+          attribution: attribution,
+          apiKey: apiKey,
+          style: layerId,
+        }
+      );
+    });
 
-        var defIcon = L.icon({
-            iconSize: [40, 40],
-            iconAnchor: [12, 41],
-            popupAnchor: [-77, -7],
-            shadowSize: [41, 41],
-            iconUrl: "{{ url_for('static', filename='images/marker/marker-icon-blue.png') }}",
-            shadowUrl: "{{ url_for('static', filename='images/marker/marker-shadow.png') }}"
-        });
-        var lokasi = [
-            {% for l in bendungan %}
-                {
-                    id: {{ l.id }},
-                    nama: '{{ l.nama }}',
-                    ll: [ {{ l.ll }} ],
-                    vol: '{{ l.vol }} m<sup>3</sup>',
-                    wil: '{{ l.wil }}',
-                    kab: '{{ l.kab }}',
-                    lbi: '{{ l.lbi }} Ha',
-                    latest: {{ 'false' if not l.latest else 'true' }},
-                    latest_vol: '{{ l.latest.vol }} m<sup>3</sup> ({{ l.latest.hour }}:00)',
-                    latest_tma: '{{ l.latest.tma }} m ({{ l.latest.hour }}:00)',
-                },
-            {% endfor %}
-        ];
-        lokasi.forEach(e => {
-            var m = L.marker(e.ll);
-            // m.bindTooltip(`${e.nama},\n${e.vol} m3`);
-            m.setIcon(defIcon);
-            m.bindPopup('<h6> <a href="/bendungan/' + e.id + '">' + e.nama + '</a></h6>' + (
-                      e ? '<b>Kab. ' + e.kab + ' (' + e.wil + ')</b>'
-                      + '<br>'
-                      + 'Kapasitas : ' + e.vol + '<br>'
-                      + 'Irigasi : ' + e.lbi + '<br>'
-                      // + '<br>'
-                      + '<b>Data Hari ini</b><br />'
-                      + 'Volume : ' + ((e.latest) ? e.latest_vol : '-') + '<br>'
-                      + 'TMA : ' + ((e.latest) ? e.latest_tma : '-') + '<br>'
-                      : 'Pilih Bendungan'
-                  )
-              );
-            m.addTo(mymap);
-        });
-    </script>
+    let kmlGroup = L.geoJSON(null, {
+      style: {
+        color: "#808080",
+        weight: 4,
+      },
+    });
+
+    // Load kml file
+    let kml1 = omnivore.kml("{{ url_for('static', filename='kml/BatasDAS.kml') }}", null, kmlGroup).addTo(mymap);
+
+    var defIcon = L.icon({
+        iconSize: [35, 35],
+        iconAnchor: [12, 41],
+        popupAnchor: [-77, -7],
+        shadowSize: [41, 41],
+        iconUrl: "{{ url_for('static', filename='images/marker/marker-icon-blue.png') }}",
+        shadowUrl: "{{ url_for('static', filename='images/marker/marker-shadow.png') }}"
+    });
+    var lokasi = [
+        {% for l in bendungan %}{% if l.ll %}
+            {
+                id: {{ l.id }},
+                nama: '{{ l.nama }}',
+                ll: [ {{ l.ll }} ],
+                vol: '{{ l.vol }} m<sup>3</sup>',
+                wil: '{{ l.wil }}',
+                kab: '{{ l.kab }}',
+                lbi: '{{ l.lbi }} Ha',
+                latest: {{ 'false' if not l.latest else 'true' }},
+                latest_vol: '{{ l.latest.vol }} m<sup>3</sup> ({{ l.latest.hour }}:00)',
+                latest_tma: '{{ l.latest.tma }} m ({{ l.latest.hour }}:00)',
+            },
+        {% endif %}{% endfor %}
+    ];
+    lokasi.forEach(e => {
+      var m = L.marker(e.ll);
+      // m.bindTooltip(`${e.nama},\n${e.vol} m3`);
+      m.setIcon(defIcon);
+      m.bindPopup('<h6> <a href="/bendungan/' + e.id + '">' + e.nama + '</a></h6>' + (
+                e ? '<b>Kab. ' + e.kab + ' (' + e.wil + ')</b>'
+                + '<br>'
+                + 'Kapasitas : ' + e.vol + '<br>'
+                + 'Irigasi : ' + e.lbi + '<br>'
+                // + '<br>'
+                + '<b>Data Hari ini</b><br />'
+                + 'Volume : ' + ((e.latest) ? e.latest_vol : '-') + '<br>'
+                + 'TMA : ' + ((e.latest) ? e.latest_tma : '-') + '<br>'
+                : 'Pilih Bendungan'
+            )
+        );
+      m.addTo(mymap);
+  });
+</script>
 {% endblock %}
