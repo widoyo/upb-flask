@@ -36,8 +36,6 @@
 ></script>
 <script src="//api.tiles.mapbox.com/mapbox.js/plugins/leaflet-omnivore/v0.3.1/leaflet-omnivore.min.js"></script>
 <script>
-    var mymap = L.map('mymap', { layers: layers }).setView([-7.5099, 111.5], 9);
-
     var apiKey = "pk.eyJ1Ijoid2lkb3lvIiwiYSI6ImNqcTNmNGh5NjFlMGk0Mm9iamJxdXIxaHUifQ.hxfPpTyy8g60K9baKtbvRw";
 
     var layerIds = ["streets-v12"];
@@ -57,6 +55,7 @@
       );
     });
 
+    var mymap = L.map("mymap", { layers: layers }).setView([-7.5099, 111.5], 9);
     let kmlGroup = L.geoJSON(null, {
       style: {
         color: "#808080",
@@ -67,7 +66,7 @@
     // Load kml file
     let kml1 = omnivore.kml("{{ url_for('static', filename='kml/BatasDAS.kml') }}", null, kmlGroup).addTo(mymap);
 
-    var defIcon = L.icon({
+      var defIcon = L.icon({
         iconSize: [35, 35],
         iconAnchor: [12, 41],
         popupAnchor: [-77, -7],
