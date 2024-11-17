@@ -3,7 +3,7 @@ from flask import Response, url_for, jsonify
 from flask_login import login_required
 from sqlalchemy import and_
 from upb_app.helper import to_date
-from upb_app.models import Bendungan, Rencana, wil_sungai
+from upb_app.models import Bendungan, Rencana, wil_sungai, WET_MONTHS, DRY_MONTHS
 from upb_app import db, admin_only
 import datetime
 import calendar
@@ -26,6 +26,28 @@ def rtow():
     end = datetime.datetime.strptime(f"{year}-10-31", "%Y-%m-%d")
 
     bends = Bendungan.query.all()
+    '''
+    TABUNGAN ALGORITMA, YANG ADA TERLALU RUWET
+    bds_1 = [b for b in bends if b.wil_sungai == '1']
+    bds_2 = [b for b in bends if b.wil_sungai == '2']
+    bds_3 = [b for b in bends if b.wil_sungai == '3']
+    rencana = Rencana.query.filter(
+                            and_(
+                                Rencana.sampling >= start,
+                                Rencana.sampling <= end),
+                            ).order_by(Rencana.sampling).all()
+    for b in bds_1:
+        b.rencana_row1 = [r for r in rencana if r.bendungan_id == b.id and r.sampling.month in WET_MONTHS]
+        b.rencana_row2 = [r for r in rencana if r.bendungan_id == b.id and r.sampling.month in DRY_MONTHS]
+    for b in bds_2:
+        b.rencana_row1 = [r for r in rencana if r.bendungan_id == b.id and r.sampling.month in WET_MONTHS]
+        b.rencana_row2 = [r for r in rencana if r.bendungan_id == b.id and r.sampling.month in DRY_MONTHS]
+    for b in bds_3:
+        b.rencana_row1 = [r for r in rencana if r.bendungan_id == b.id and r.sampling.month in WET_MONTHS]
+        b.rencana_row2 = [r for r in rencana if r.bendungan_id == b.id and r.sampling.month in DRY_MONTHS]
+        
+    print('len(rencana):', len(rencana))
+    '''
     rencana = Rencana.query.filter(
                             and_(
                                 Rencana.sampling >= start,
@@ -75,7 +97,7 @@ def rtow():
             "bend": bend,
             "data": temp
         }
-
+    #print('len(rtow):', rtow['2']['data'][108]['data'])
     return render_template('rencana/index.html',
                             sampling=sampling,
                             rtow=rtow,
@@ -140,7 +162,7 @@ def rtow_imports(bendungan_id):
     if request.method == "POST":
         upload = request.files['upload'].read().decode("utf-8")
         print(upload)
-        raw = upload.split('\r\n')
+        raw = upload.splitlines()
         seps = "\t_;_,_|".split('_')
         sep = None
 

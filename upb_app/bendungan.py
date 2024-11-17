@@ -226,7 +226,10 @@ def operasi(lokasi_id):
     for k, v in operasi.items():
         operasi2[k] = list(v.split(','))
     tanggal_2 = list(map(lambda x: x.strip("'"), tanggal.split(',')))
-    return render_template('bendungan/operasi.html',
+    template = 'bendungan/operasi.html'
+    if pos.wil_sungai in ('2', '3'):
+        template = 'bendungan/rtow_3_kolom.html'
+    return render_template(template,
                             waduk=pos,
                             sampling=sampling,
                             operasi=operasi,

@@ -11,6 +11,10 @@ import datetime
 import hashlib
 import re
 
+WET_MONTHS = (11,12,1,2,3,4) # bulan-bulan baris ke-1
+DRY_MONTHS = (5,6,7,8,9,10) # bulan-bulan baris ke-2
+LAST_DAY_MONTH = (31,28,31,30,31,30,31,31,30,31,30,31)
+
 wil_sungai = {
     '1': "Hulu",
     '2': "Madiun",
@@ -783,6 +787,8 @@ class Lokasi(BaseLog):
     devices = relationship('Device', back_populates='lokasi')
     periodik = relationship('Periodik', back_populates='lokasi',
                             order_by="desc(Periodik.sampling)")
+    daily = relationship('LoggerDaily', back_populates='lokasi',
+                            order_by="desc(LoggerDaily.sampling)")
     latest_sampling = db.Column(db.DateTime)
     latest_up = db.Column(db.DateTime)
     latest_id = db.Column(db.Integer)
@@ -835,6 +841,16 @@ class Raw(db.Model):
     received = db.Column(db.DateTime, default=datetime.datetime.utcnow)
 
 
+class LoggerDaily(db.Model):
+    __tablename__ = 'logger_daily'
+    id = db.Column(db.Integer, primary_key=True)
+    sampling = db.Column(db.DateTime, index=True)
+    sn = db.Column(db.String(8), db.ForeignKey('device.sn'))
+    lokasi_id = db.Column(db.Integer, db.ForeignKey('lokasi.id'), nullable=True)
+    content = db.Column(db.Text)
+    cdate = db.Column(db.DateTime, default=datetime.datetime.now)
+    lokasi = relationship("Lokasi", back_populates="daily")
+    
 class Periodik(db.Model):
     __tablename__ = 'periodik'
 
