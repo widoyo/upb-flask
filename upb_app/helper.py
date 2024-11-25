@@ -37,6 +37,9 @@ def month_range(date=None):
     else:
         day = calendar.monthrange(start.year, start.month)[1]
     end = start + datetime.timedelta(days=(day-1), hours=23)
+    
+    if end.day > 15:
+        start = start.replace(day=15)
 
     return start, end, day
 
