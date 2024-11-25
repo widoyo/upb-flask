@@ -79,6 +79,8 @@ def kegiatan_bendungan(bendungan_id):
     bend = Bendungan.query.get(bendungan_id)
 
     sampling, end, day = month_range(request.values.get('sampling'))
+    day = 5
+    sampling = end - datetime.timedelta(days=day-1)
     is_csv = request.values.get('csv')
     all_kegiatan = Kegiatan.query.filter(
                                     Kegiatan.bendungan_id == bendungan_id,
@@ -92,7 +94,7 @@ def kegiatan_bendungan(bendungan_id):
                                     Pemeliharaan.sampling <= end.strftime("%Y-%m-%d")
                                 ).all()
     kegiatan = {}
-    sampl = end
+    sampl = datetime.datetime.strptime(end.strftime('%Y-%m-%d'), '%Y-%m-%d')
     for i in range(day):
         kegiatan[sampl] = {
             'id': 0,
