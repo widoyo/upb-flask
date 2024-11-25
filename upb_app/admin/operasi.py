@@ -145,8 +145,8 @@ def operasi_bendungan(bendungan_id):
     fotos = {f.obj_id:f for f in fotos}
 
     periodik = {}
-    for i in range(day, 0, -1):
-        sampl = datetime.datetime.strptime(f"{sampling.year}-{sampling.month}-{i}", "%Y-%m-%d")
+    for i in range(day):
+        sampl = end - datetime.timedelta(days=i)
         periodik[sampl] = {
             'daily': None,
             'tma': {

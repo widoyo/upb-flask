@@ -30,18 +30,11 @@ def month_range(date=None):
     ''' input str format (%Y-%m-%d)
     return start of the month, todays date or end of the month, and number of days '''
     now = datetime.datetime.now(tz=ZoneInfo('Asia/Jakarta'))
-    date = datetime.datetime.strptime(date, "%Y-%m-%d") if date else now
-    start = datetime.datetime.strptime(f"{date.year}-{date.month}-01", "%Y-%m-%d")
-    if start.year == now.year and start.month == now.month:
-        day = now.day
-    else:
-        day = calendar.monthrange(start.year, start.month)[1]
-    end = start + datetime.timedelta(days=(day-1), hours=23)
-    
-    if end.day > 15:
-        start = start.replace(day=15)
-
-    return start, end, day
+    sampling = datetime.datetime.strptime(date, "%Y-%m-%d") if date else now
+    days = 5
+    start = sampling - datetime.timedelta(days=days)
+    end = sampling.replace(hour=23)
+    return start, end, days
 
 
 def week_range(date=None):

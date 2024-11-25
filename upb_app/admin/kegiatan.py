@@ -92,8 +92,8 @@ def kegiatan_bendungan(bendungan_id):
                                     Pemeliharaan.sampling <= end.strftime("%Y-%m-%d")
                                 ).all()
     kegiatan = {}
-    for i in range(day, 0, -1):
-        sampl = datetime.datetime.strptime(f"{sampling.year}-{sampling.month}-{i}", "%Y-%m-%d")
+    sampl = end
+    for i in range(day):
         kegiatan[sampl] = {
             'id': 0,
             'koordinator': [],
@@ -102,6 +102,7 @@ def kegiatan_bendungan(bendungan_id):
             'operasi': [],
             'pemeliharaan': []
         }
+        sampl = sampl - datetime.timedelta(days=1)
 
     for keg in all_kegiatan:
         kegiatan[keg.sampling]['id'] = keg.id
