@@ -132,6 +132,8 @@ def operasi_bendungan(bendungan_id):
     bend = Bendungan.query.get(bendungan_id)
 
     sampling, end, day = month_range(request.values.get('sampling'))
+    day = 5
+    sampling = end - datetime.timedelta(days=day)
 
     manual_daily = ManualDaily.query.filter(
                                         ManualDaily.bendungan_id == bendungan_id,
@@ -145,8 +147,8 @@ def operasi_bendungan(bendungan_id):
     fotos = {f.obj_id:f for f in fotos}
 
     periodik = {}
+    sampl = datetime.datetime.strptime(end.strftime('%Y-%m-%d'), '%Y-%m-%d')
     for i in range(day):
-        sampl = end - datetime.timedelta(days=i)
         periodik[sampl] = {
             'daily': None,
             'tma': {
@@ -158,6 +160,8 @@ def operasi_bendungan(bendungan_id):
                 '18-foto': None
             }
         }
+        sampl = sampl - datetime.timedelta(days=1)
+    
     for d in manual_daily:
         periodik[d.sampling]['daily'] = d
     for t in tma:
