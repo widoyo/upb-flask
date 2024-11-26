@@ -59,6 +59,7 @@ def piket_bendungan(bendungan_id):
     sampling = request.args.get('s', datetime.date.today().strftime('%Y-%m-%d'))
     days = request.args.get('d', 5)
     end = datetime.datetime.strptime(sampling, '%Y-%m-%d')
+    end = end.replace(hour=23)
     start = end - datetime.timedelta(days=days - 1)
 
     sampling = start
@@ -89,7 +90,8 @@ def piket_bendungan(bendungan_id):
     return render_template('piket/bendungan.html',
                             csrf=generate_csrf(),
                             sampling=sampling - datetime.timedelta(days=1),
-                            now=end + datetime.timedelta(days=days),
+                            now = datetime.date.today(),
+                            end = end + datetime.timedelta(days=days),
                             from_to = sampling.strftime('%d - ') + end.strftime('%d %b'),
                             bend=bend,
                             reports=reports,
