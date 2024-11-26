@@ -71,14 +71,13 @@ def piket_bendungan(bendungan_id):
                                     ).all()
     piket_banjir = {}
     for piket in piket_banjir_query:
-        piket_banjir[piket.sampling] = piket
+        print('piket.sampling', piket.sampling)
+        piket_banjir[piket.sampling.date()] = piket
 
     reports = []
-    relay = end
-    while True:
-        if relay < start:
-            break
-
+    relay = end.date()
+    while relay >= start.date():
+        print('relay:', relay)
         reports.append({
             'sampling': relay,
             'piket_banjir': piket_banjir[relay] if relay in piket_banjir else None
