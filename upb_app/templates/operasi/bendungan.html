@@ -85,16 +85,16 @@
                           <div class="row">
                               <div class="col-md-6 form-group">
                                   <label class="form-text" for="out-deb-pagi"><b>Intake Debit</b></label>
-                                  <input class="form-control" type="number" name="intake_deb" id="out-deb-pagi" required value="0" step="0.001" aria-describedby="out-debpagihelp">
-                                  <small id="out-debpagihelp" class="form-text text-muted">m<sup>3</sup>/detik</small>
-                              </div>
-                              <div class="col-md-6 form-group">
-                                  <label class="form-text" for="out-vol-pagi"><b>Intake Volume</b></label>
-                                  <input class="form-control" type="number" name="intake_vol" id="out-vol-pagi" required value="0" step="0.001" aria-describedby="out-volpagihelp">
-                                  <small id="out-volpagihelp" class="form-text text-muted">m<sup>3</sup></small>
-                              </div>
-                          </div>
-                          <div class="form-group">
+                                <input class="form-control" type="number" name="intake_deb" id="out-deb-pagi" required value="0" step="0.001" aria-describedby="out-debpagihelp">
+                                <small id="out-debpagihelp" class="form-text text-muted">m<sup>3</sup>/detik</small>
+                            </div>
+                            <div class="col-md-6 form-group">
+                                <label class="form-text" for="out-vol-pagi"><b>Intake Volume</b></label>
+                                <input class="form-control" type="number" name="intake_vol" id="out-vol-pagi" required value="0" step="0.001" aria-describedby="out-volpagihelp">
+                                <small id="out-volpagihelp" class="form-text text-muted">m<sup>3</sup></small>
+                            </div>
+                        </div>
+                  <div class="form-group">
                               <label class="form-text" for="jenis"><b>Keterangan Intake</b></label>
                               <select id="intake_ket" name="intake_ket" class="form-control">
                                 <option value="">- pilih -</option>
@@ -484,13 +484,22 @@
             </div>
             <br>
         </div>
-        <h3>
-            Data Harian
-            <span id="datepicker" style="color: #18bc9c">
-                <i class="bi bi-calendar-clock"></i> {{ sampling_dt.strftime('%B %Y') }}
-            </span>
-            <a href="{{ url_for('admin.operasi_csv', bendungan_id=bend_id) }}?sampling={{ sampling.strftime('%Y-%m-%d') }}">CSV</a>
-        </h3>
+        <div class="row">
+            <div class="col-sm-6">
+                <h3>
+                    Data Harian
+                    <span id="datepicker" style="color: #18bc9c">
+                        <i class="bi bi-calendar-clock"></i> {{ sampling_dt.strftime('%B %Y') }}
+                    </span>
+                    <a href="{{ url_for('admin.operasi_csv', bendungan_id=bend_id) }}?sampling={{ sampling.strftime('%Y-%m-%d') }}">CSV</a>
+                </h3>        
+            </div>
+            <div class="col-sm-6">
+                <a class="btn btn-outline-primary btn-sm mr-3" href="?s={{ sampling_dt.strftime('%Y-%m-%d') }}"><i class="bi bi-chevron-left"></i></a> 
+                {{ from_to }} 
+                <a class="ml-3 btn btn-outline-primary btn-sm" href="?s={{ sampling.strftime('%Y-%m-%d') }}"><i class="bi bi-chevron-right"></i></a></div>
+        </div>
+        
         <table class="table table-hover table-striped table-bordered">
             <thead>
                 <tr class="table-active">

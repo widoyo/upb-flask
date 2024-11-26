@@ -130,25 +130,29 @@ def operasi_harian():
 @role_check
 def operasi_bendungan(bendungan_id):
     bend = Bendungan.query.get(bendungan_id)
-
-    sampling, end, day = month_range(request.values.get('sampling'))
-    day = 5
-    sampling = end - datetime.timedelta(days=day)
+    sampling = request.args.get('s', datetime.date.today().strftime('%Y-%m-%d'))
+    days = request.args.get('d', 5)
+    end = datetime.datetime.strptime(sampling, '%Y-%m-%d')
+    start = end - datetime.timedelta(days=days)
+    print()
+    #sampling, end, day = month_range(request.values.get('sampling'))
+    #day = 5
+    sampling = start
 
     manual_daily = ManualDaily.query.filter(
                                         ManualDaily.bendungan_id == bendungan_id,
-                                        ManualDaily.sampling.between(sampling, end)
+                                        ManualDaily.sampling.between(start, end)
                                     ).all()
     tma = ManualTma.query.filter(
                                     ManualTma.bendungan_id == bendungan_id,
-                                    ManualTma.sampling.between(sampling, end)
+                                    ManualTma.sampling.between(start, end)
                                 ).all()
     fotos = Foto.query.filter(Foto.obj_type == "manual_tma", Foto.obj_id.in_([t.id for t in tma])).all()
     fotos = {f.obj_id:f for f in fotos}
 
     periodik = {}
     sampl = datetime.datetime.strptime(end.strftime('%Y-%m-%d'), '%Y-%m-%d')
-    for i in range(day):
+    for i in range(days):
         periodik[sampl] = {
             'daily': None,
             'tma': {
@@ -175,7 +179,8 @@ def operasi_bendungan(bendungan_id):
                             name=bend.name,
                             bend_id=bend.id,
                             periodik=periodik,
-                            sampling=end,
+                            from_to = (sampling + datetime.timedelta(days=1)).strftime('%d - ') + end.strftime('%d %b'),
+                            sampling=end + datetime.timedelta(days=days),
                             sampling_dt=sampling)
 
 
