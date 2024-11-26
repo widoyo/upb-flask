@@ -56,12 +56,12 @@ def piket_index():
 @role_check
 def piket_bendungan(bendungan_id):
     bend = Bendungan.query.get(bendungan_id)
+    sampling = request.args.get('s', datetime.date.today().strftime('%Y-%m-%d'))
+    days = request.args.get('d', 5)
+    end = datetime.datetime.strptime(sampling, '%Y-%m-%d')
+    start = end - datetime.timedelta(days=days - 1)
 
-    sampling = request.values.get('sampling')
-    now = datetime.datetime.now()
-    sampling = sampling or now.strftime("%Y-%m-%d")
-    start, end, days = month_range(sampling)
-    # print(start, end, days)
+    sampling = start
 
     piket_banjir_query = PiketBanjir.query.filter(
                                         PiketBanjir.obj_type == 'bendungan',
@@ -73,7 +73,7 @@ def piket_bendungan(bendungan_id):
         piket_banjir[piket.sampling] = piket
 
     reports = []
-    relay = end - datetime.timedelta(hours=23)
+    relay = end
     while True:
         if relay < start:
             break
@@ -84,13 +84,13 @@ def piket_bendungan(bendungan_id):
         })
         relay -= datetime.timedelta(days=1)
 
-    sampling = datetime.datetime.strptime(sampling, "%Y-%m-%d")
     petugas = Petugas.query.filter(Petugas.bendungan_id==bendungan_id).order_by(Petugas.id).all()
 
     return render_template('piket/bendungan.html',
                             csrf=generate_csrf(),
-                            sampling=sampling,
-                            now=now,
+                            sampling=sampling - datetime.timedelta(days=1),
+                            now=end + datetime.timedelta(days=days),
+                            from_to = sampling.strftime('%d - ') + end.strftime('%d %b'),
                             bend=bend,
                             reports=reports,
                             petugas=petugas)
