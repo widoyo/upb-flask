@@ -133,7 +133,7 @@ def operasi_bendungan(bendungan_id):
     sampling = request.args.get('s', datetime.date.today().strftime('%Y-%m-%d'))
     days = request.args.get('d', 5)
     end = datetime.datetime.strptime(sampling, '%Y-%m-%d')
-    start = end - datetime.timedelta(days=days)
+    start = end - datetime.timedelta(days=days - 1)
     print()
     #sampling, end, day = month_range(request.values.get('sampling'))
     #day = 5

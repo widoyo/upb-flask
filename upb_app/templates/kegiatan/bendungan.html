@@ -76,11 +76,19 @@
                 <!-- </form> -->
             </div>
         </div>
-        <br>
-        <h3>
-            Bulan <span id="datepicker" style="color: #18bc9c"><i class="bi bi-calendar-month ml-2"></i> {{ sampling_dt.strftime('%B %Y') }}</span>
-            <button class="btn btn-outline-primary mx-4" onClick="toXlsx()">Download</button>
-        </h3>
+        <div class="row">
+            <div class="col-sm-6">
+                <h3>
+                    Bulan <span id="datepicker" style="color: #18bc9c"><i class="bi bi-calendar-month ml-2"></i> {{ sampling_dt.strftime('%B %Y') }}</span>
+                    <button class="btn btn-outline-primary mx-4" onClick="toXlsx()">Download</button>
+                </h3>
+            </div>
+            <div class="col-sm-6">
+                <a class="btn btn-outline-primary btn-sm mr-3" href="?s={{ sampling_dt.strftime('%Y-%m-%d') }}"><i class="bi bi-chevron-left"></i></a> 
+                {{ from_to }} 
+                <a class="ml-3 btn btn-outline-primary btn-sm" href="?s={{ sampling.strftime('%Y-%m-%d') }}"><i class="bi bi-chevron-right"></i></a></div>
+            </div>
+        </div>
         <table class="table table-hover table-bordered" id="table_kegiatan">
             <thead>
                 <tr class="table-active">

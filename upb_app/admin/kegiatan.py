@@ -77,10 +77,13 @@ def kegiatan():
 @role_check
 def kegiatan_bendungan(bendungan_id):
     bend = Bendungan.query.get(bendungan_id)
+    sampling = request.args.get('s', datetime.date.today().strftime('%Y-%m-%d'))
+    days = request.args.get('d', 5)
+    end = datetime.datetime.strptime(sampling, '%Y-%m-%d')
+    start = end - datetime.timedelta(days=days - 1)
 
-    sampling, end, day = month_range(request.values.get('sampling'))
-    day = 5
-    sampling = end - datetime.timedelta(days=day-1)
+    sampling = start
+
     is_csv = request.values.get('csv')
     all_kegiatan = Kegiatan.query.filter(
                                     Kegiatan.bendungan_id == bendungan_id,
@@ -95,7 +98,7 @@ def kegiatan_bendungan(bendungan_id):
                                 ).all()
     kegiatan = {}
     sampl = datetime.datetime.strptime(end.strftime('%Y-%m-%d'), '%Y-%m-%d')
-    for i in range(day):
+    for i in range(days):
         kegiatan[sampl] = {
             'id': 0,
             'koordinator': [],
@@ -134,8 +137,9 @@ def kegiatan_bendungan(bendungan_id):
                             name=bend.name,
                             petugas=petugas,
                             kegiatan=kegiatan,
-                            sampling=datetime.datetime.now(),
-                            sampling_dt=sampling)
+                            from_to = sampling.strftime('%d - ') + end.strftime('%d %b'),
+                            sampling=end + datetime.timedelta(days=days),
+                            sampling_dt=sampling - datetime.timedelta(days=1))
 
 
 @bp.route('/bendungan/<bendungan_id>/kegiatan/paper')
