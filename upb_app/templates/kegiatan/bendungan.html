@@ -195,7 +195,7 @@
             minViewMode: "months"
         });
         $('#datepicker').on('changeDate', function () {
-            window.location = "{{ url_for('admin.kegiatan_bendungan', bendungan_id=bend_id) }}?sampling=" + $('#datepicker').datepicker('getFormattedDate')
+            window.location = "{{ url_for('admin.kegiatan_bendungan', bendungan_id=bend_id) }}?s=" + $('#datepicker').datepicker('getFormattedDate')
         });
 
         $('#sampling-kegiatan').datepicker({

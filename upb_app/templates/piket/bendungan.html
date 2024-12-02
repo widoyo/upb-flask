@@ -330,7 +330,7 @@
             minViewMode: "months"
         });
         $('#datepicker').on('changeDate', function () {
-            window.location = "{{ url_for('admin.piket_bendungan', bendungan_id=bend.id) }}?&sampling=" + $('#datepicker').datepicker('getFormattedDate')
+            window.location = "{{ url_for('admin.piket_bendungan', bendungan_id=bend.id) }}?&s=" + $('#datepicker').datepicker('getFormattedDate')
         });
 
         $('#form-datepicker').datepicker({
@@ -353,7 +353,7 @@
         let tgls = document.querySelectorAll("#tgl");
         tgls.forEach(function(el){
             console.log(el.value);
-            el.innerText = moment(el.innerText).format('ddd, D');
+            el.innerText = moment(el.innerText).format('ddd, D MMM');
         });
         $('#sampling-pb-text').text(moment("{{ now }}").format('DD MMMM YYYY'));
         updateDate();

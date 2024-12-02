@@ -491,7 +491,7 @@
                     <span id="datepicker" style="color: #18bc9c">
                         <i class="bi bi-calendar-clock"></i> {{ sampling_dt.strftime('%B %Y') }}
                     </span>
-                    <a href="{{ url_for('admin.operasi_csv', bendungan_id=bend_id) }}?sampling={{ now.strftime('%Y-%m-%d') }}">CSV</a>
+                    <a href="{{ url_for('admin.operasi_csv', bendungan_id=bend_id) }}?sampling={{ sampling_dt.strftime('%Y-%m-%d') }}">CSV</a>
                 </h3>        
             </div>
             <div class="col-sm-6">
@@ -828,7 +828,7 @@
             minViewMode: "months"
         });
         $('#datepicker').on('changeDate', function () {
-            window.location = "{{ url_for('admin.operasi_bendungan', bendungan_id=bend_id) }}?sampling=" + $('#datepicker').datepicker('getFormattedDate')
+            window.location = "{{ url_for('admin.operasi_bendungan', bendungan_id=bend_id) }}?s=" + $('#datepicker').datepicker('getFormattedDate')
         });
 
         $('#sampling-pagi').datepicker({
@@ -941,7 +941,7 @@
 
         let tgls = document.querySelectorAll("#tgl");
         tgls.forEach(function(el){
-            el.innerText = moment(el.innerText).format('ddd, D');
+            el.innerText = moment(el.innerText).format('ddd, D MMM');
         });
 
         let imgFoto = '';
