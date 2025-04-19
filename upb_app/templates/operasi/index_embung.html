@@ -49,8 +49,8 @@
                       <tr class="table-active">
                           <th rowspan="3" class="text-center align-middle">No</th>
                           <th rowspan="3" class="text-center align-middle">Embung</th>
-                          <th rowspan="2" colspan="2" class="text-center align-middle">TMA</th>
-                          <th rowspan="2" colspan="2" class="text-center align-middle">Vol</th>
+                          <th rowspan="2" colspan="2" class="text-center align-middle">Pagi</th>
+                          <th rowspan="2" colspan="2" class="text-center align-middle">Sore</th>
                           <th colspan="2" class="text-center align-middle">Inflow</th>
                           <th colspan="4" class="text-center align-middle">Outflow</th>
                       </tr>
@@ -61,10 +61,10 @@
                           <th colspan="2" class="text-center align-middle">Spillway</th>
                       </tr>
                       <tr class="table-active">
-                        <th class="text-center align-middle">Pagi</th>
-                        <th class="text-center align-middle">Sore</th>
-                        <th class="text-center align-middle">Pagi</th>
-                        <th class="text-center align-middle">Sore</th>
+                        <th class="text-center align-middle">TMA</th>
+                        <th class="text-center align-middle">Vol</th>
+                        <th class="text-center align-middle">TMA</th>
+                        <th class="text-center align-middle">Vol</th>
                         <th class="text-center align-middle">Q</th>
                           <th class="text-center align-middle">V</th>
                           <th class="text-center align-middle">Q</th>
@@ -94,13 +94,13 @@
                             {% endif %}
                           </td>
                           <td align="right" class="tma_vol">
-                            {% if emb.tma and emb.tma['18'] %}
-                             {{ emb.tma['18'].tma}}
+                            {% if emb.tma and emb.tma['06'] %}
+                            {{ emb.tma['06'].vol }}
                             {% endif %}
                           </td>
                           <td align="right" class="tma_vol">
-                            {% if emb.tma and emb.tma['06'] %}
-                            {{ emb.tma['06'].vol }}
+                            {% if emb.tma and emb.tma['18'] %}
+                             {{ emb.tma['18'].tma}}
                             {% endif %}
                           </td>
                           <td align="right" class="tma_vol">
