@@ -783,7 +783,7 @@ def operasi_embung(embung_id):
         abort(404)
 
     sampling, end, day = month_range(request.values.get('sampling'))
-
+    print('Sampling: {}, End: {}, Day: {}'.format(sampling, end, day))
     manual_daily = ManualDailyEmbung.query.filter(
                                         ManualDailyEmbung.embung_id == embung_id,
                                         ManualDailyEmbung.sampling.between(sampling, end)
@@ -805,11 +805,17 @@ def operasi_embung(embung_id):
             }
         }
     for d in manual_daily:
-        periodik[d.sampling]['daily'] = d
+        try:
+            periodik[d.sampling]['daily'] = d
+        except KeyError:
+            pass
     for t in tma:
         sampl = t.sampling.replace(hour=0)
         jam = t.sampling.strftime("%H")
-        periodik[sampl]['tma'][jam] = t
+        try:
+            periodik[sampl]['tma'][jam] = t
+        except KeyError:
+            pass
 
     return render_template('operasi/embung.html',
                             csrf=generate_csrf(),
