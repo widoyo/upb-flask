@@ -5,7 +5,7 @@ from wtforms.validators import DataRequired, Optional
 from upb_app.models import Bendungan, Petugas
 import datetime
 
-bends = [(b.id, b.nama) for b in Bendungan.query.all()]
+bends = []
 bends.insert(0, (0, "Tidak Ada"))
 roles = [
     ('1', '1'),
@@ -61,7 +61,7 @@ kategori = [
     ('sedang', 'Sedang'),
     ('berat', 'Berat')
 ]
-daftar_petugas = [(f"{p.id}", p.nama) for p in Petugas.query.filter(Petugas.is_active == '1').all()]
+daftar_petugas = []
 kinerja_petugas = [
     ("all", "All"),
     ("koordinator", "Koordinator"),

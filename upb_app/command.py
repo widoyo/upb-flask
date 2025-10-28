@@ -29,10 +29,6 @@ MQTT_PORT = 14983
 MQTT_TOPIC = "upbbsolo"
 MQTT_CLIENT = ""
 
-logging.basicConfig(
-        filename='/tmp/upbflask.log',
-        level=logging.DEBUG, format='%(asctime)s [%(levelname)s] %(message)s')
-
 
 @app.cli.command()
 @click.argument('command')
@@ -106,6 +102,48 @@ def recordperiodic(raw, is_new=True):
         db.session.rollback()
         db.session.flush()
         return f"({sn}) Errors : {e}"
+
+
+@app.cli.command()
+def fetch_primabot():
+    from requests.auth import HTTPBasicAuth
+    from upb_app.models import LoggerDaily
+    basic = HTTPBasicAuth('upbbsolo', 'upbbisa')
+    for d in Device.query.all():
+        click.echo(d.sn)
+        url = 'https://prinus.net/api/sensor/{}'.format(d.sn)
+        req = requests.get(url, auth=basic)
+        if req.status_code == 200:
+            data = json.loads(req.text)
+            common_keys = 'device;sampling;battery;signal_quality;up_since'.split(';')
+            arr_keys = 'tick;tipping_factor'.split(';')
+            awlr_keys = 'distance;sensor_height;sensor_resolution'.split(';')
+            if len(data):
+                try:
+                    sn = data[0].get('device').split('/')[1]
+                    if sn != d.sn:
+                        click.echo("Kok SN Berbeda? database: {} vs remote: {}".format(d.sn, sn))
+                        return
+                except:
+                    return
+                sampling = datetime.datetime.fromisoformat(data[0].get('sampling'))
+                if d.latest_sampling:
+                    if d.latest_sampling < sampling:
+                        d.latest_sampling = sampling
+                        db.session.commit()
+                else:
+                    d.latest_sampling = sampling
+                    db.session.commit()
+                    
+                content = dict([(k, data[0].get(k)) for k in common_keys])
+                if arr_keys[0] in data[0]:
+                    content.update(dict([(k, data[0].get(k)) for k in arr_keys]))
+                if awlr_keys[0] in data[0]:
+                    content.update(dict([(k, data[0].get(k)) for k in awlr_keys]))
+                click.echo(content)
+
+                #content = {'sampling': sampling, 'battery': }
+                #ld = LoggerDaily(sn=sn, sampling=sampling.date())
 
 
 @app.cli.command()

@@ -4,7 +4,7 @@ from functools import wraps
 from flask import Flask, redirect, url_for, request
 from flask_debugtoolbar import DebugToolbarExtension
 from flask_sqlalchemy import SQLAlchemy
-from flask_socketio import SocketIO
+#from flask_socketio import SocketIO
 from flask_login import LoginManager, current_user
 
 app = Flask(__name__)
@@ -14,7 +14,6 @@ app.config['SAVE_DIR'] = f"{os.getcwd()}/upb_app/"
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 
 toolbar = DebugToolbarExtension(app)
-socketio = SocketIO(app)
 
 db = SQLAlchemy(app)
 login = LoginManager(app)
@@ -91,4 +90,4 @@ if __name__ == '__main__':
     gunicorn_logger = logging.getLogger('gunicorn.error')
     app.logger.handlers = gunicorn_logger.handlers
     app.logger.setLevel(gunicorn_logger.level)
-    socketio.run(app)
+    app.run()

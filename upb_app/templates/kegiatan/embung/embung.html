@@ -447,8 +447,8 @@
                             <td>{{ keg.0.kendala or "-" }}</td>
                             <td>{{ keg.0.petugas or "-" }}</td>
 
-                            {% if keg.0.fotos['0'] %}
-                            {% with f = keg.0.fotos['0'] %}
+                            {% if fotos[keg.0.id]['0'] %} {# ini yang berulang-ulang #}
+                            {% with f = fotos[keg.0.id]['0'] %}
                             <td class="text-center">
                                 <img class="img-card lazy" id="foto-{{ f.id }}" data-src="{{ url_for('static', filename=f.url[7:]) }}" alt="" style="width: 8rem;height: 8rem;">
                             </td>
@@ -457,8 +457,8 @@
                             <td class="text-center">-</td>
                             {% endif %}
 
-                            {% if keg.0.fotos['50'] %}
-                            {% with f = keg.0.fotos['50'] %}
+                            {% if fotos[keg.0.id]['50'] %}
+                            {% with f = fotos[keg.0.id]['50'] %}
                             <td class="text-center">
                                 <img class="img-card lazy" id="foto-{{ f.id }}" data-src="{{ url_for('static', filename=f.url[7:]) }}" alt="" style="width: 8rem;height: 8rem;">
                             </td>
@@ -467,8 +467,8 @@
                             <td class="text-center">-</td>
                             {% endif %}
 
-                            {% if keg.0.fotos['100'] %}
-                            {% with f = keg.0.fotos['100'] %}
+                            {% if fotos[keg.0.id]['100'] %}
+                            {% with f = fotos[keg.0.id]['100'] %}
                             <td class="text-center">
                                 <img class="img-card lazy" id="foto-{{ f.id }}" data-src="{{ url_for('static', filename=f.url[7:]) }}" alt="" style="width: 8rem;height: 8rem;">
                             </td>
