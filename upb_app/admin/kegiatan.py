@@ -139,6 +139,7 @@ def kegiatan_bendungan(bendungan_id):
                             kegiatan=kegiatan,
                             from_to = sampling.strftime('%d - ') + end.strftime('%d %b'),
                             sampling=end + datetime.timedelta(days=days),
+                            now=datetime.datetime.now(),
                             sampling_dt=sampling - datetime.timedelta(days=1))
 
 
