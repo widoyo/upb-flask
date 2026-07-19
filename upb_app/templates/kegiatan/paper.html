@@ -110,7 +110,11 @@
                         </div>
                         {% endif %}
 
+			{%if keg.foto and keg.foto.url %}
                         <img src="{{ url_for('static', filename=keg.foto.url[7:]) }}" style="width: 50%; height: auto;">
+			{% else %}
+			<p>Tidak ada foto</p>
+			{% endif %}
                         <div style="vertical-align: top">{{ keg.kegiatan.uraian }} - {{ keg.kegiatan.petugas.title() }}</div>
                     </td>
                 </tr>
