@@ -38,7 +38,8 @@ def operasi():
 @admin_only
 def operasi_harian():
     sampling, end = day_range(request.values.get('sampling'))
-    waduk = Bendungan.query.all()
+    #waduk = Bendungan.query.all()
+    waduk = Bendungan.query.order_by(Bendungan.wil_sungai, Bendungan.id).all()
 
     all_daily = {w.id:None for w in waduk}
     for d in query_with_sampling_range(ManualDaily, sampling, end):
