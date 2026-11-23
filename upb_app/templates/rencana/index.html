@@ -29,7 +29,7 @@
             <tr>
                 <th>Bendungan</th>
                 {% for date in rencana.date_list %}
-                    <th>{{ date[3:] }}</th>
+                    <td>{{ date[3:] }}</td>
                 {% endfor %}
             </tr>
         </thead>
@@ -38,7 +38,7 @@
                 <tr>
                     <td>
                         {{ r.bend.name }}<br>
-                        <a href="{{ url_for('admin.rtow_exports', bendungan_id=r.bend.id) }}">Exp</a> | <a href="{{ url_for('admin.rtow_imports', bendungan_id=r.bend.id) }}">Imp</a>
+                        <a href="{{ url_for('admin.rtow_exports', bendungan_id=r.bend.id, sampling=sampling.strftime('%Y-%m-%d')) }}">Exp</a> | <a href="{{ url_for('admin.rtow_imports', bendungan_id=r.bend.id) }}">Imp</a>
                     </td>
                     {% for date in rencana.date_list %}
                         {% if r.data[date] %}

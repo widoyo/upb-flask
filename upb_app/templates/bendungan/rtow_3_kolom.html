@@ -31,8 +31,8 @@
         <div>
             <canvas id="operasiChart" style="height: 800px; border: solid 1px #eee;" class="chartjs-render-monitor"></canvas>
         </div>
-        <div class="mt-5">
-                <table class="table table-striped table-bordered">
+        <div class="mt-5 table-responsive">
+            <table class="table table-striped table-bordered">
                 <thead>
                     <tr>
                         <th rowspan="3" colspan="2" class="align-middle text-center">Tahun / Bulan / Dekade</th>
@@ -199,6 +199,7 @@
         // chart
         let options = {
             responsive: true,
+            maintainAspectRatio: true,
             legend: {
                 labels: {
                     usePointStyle: true,
